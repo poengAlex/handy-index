@@ -1,7 +1,15 @@
 <template>
 	<q-card class="my-card" v-if="video !== undefined">
 		<q-responsive :ratio="16 / 9">
-			<q-img :src="video.images[0]" fit="fill" @error="video.images[0] = '315x300-no-image.png'">
+			<q-img v-if="nsfw" :src="video.images[0]" fit="fill" @error="video.images[0] = '315x300-no-image.png'">
+				<div class="absolute-bottom text-subtitle1 text-center ellipsis-2-lines" style="height: 40%;">
+					{{ video.title }}
+					<q-tooltip>
+						{{ video.title }}
+					</q-tooltip>
+				</div>
+			</q-img>
+			<q-img v-else src="https://via.placeholder.com/315x300.png?text=NSFW" fit="fill">
 				<div class="absolute-bottom text-subtitle1 text-center ellipsis-2-lines" style="height: 40%;">
 					{{ video.title }}
 					<q-tooltip>
@@ -112,6 +120,7 @@ dayjs.extend(relativeTime);
 dayjs.extend(duration);
 const propsIn = defineProps(['tableValue']);
 const video = ref<PartnerVideo>();
+const nsfw = ref(false);
 const emit = defineEmits<{
 	(e: 'change', newValue: any, key: string): void
 }>();

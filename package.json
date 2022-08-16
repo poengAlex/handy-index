@@ -11,6 +11,7 @@
     "importApiIndex": "rimraf src/_SCRIPTAPIINDEX && openapi --exportSchemas true --input https://scripts01.handyfeeling.com/api/script/index/v0/spec --output src/_SCRIPTAPIINDEX --name ScriptApiIndex --indent 4"
   },
   "dependencies": {
+    "@ohdoki/handy-sdk": "^2.1.15",
     "@quasar/extras": "^1.0.0",
     "@vueuse/core": "^9.1.0",
     "dayjs": "^1.11.4",

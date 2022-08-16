@@ -4,21 +4,30 @@
 			<q-toolbar class="GPL__toolbar" style="height: 64px">
 				<q-btn flat dense round @click="toggleLeftDrawer" aria-label="Menu" icon="menu" class="q-mx-md" />
 
-				<q-toolbar-title v-if="$q.screen.gt.sm" shrink class="row items-center no-wrap">
-					<img src="https://cdn.quasar.dev/img/layout-gallery/logo-google.svg">
-					<span class="q-ml-sm">Index</span>
+				<q-toolbar-title v-if="$q.screen.gt.sm" shrink class="row items-center no-wrap cursor-pointer"
+					@click="router.push('/')">
+					<svg width="15" height="29" viewBox="0 0 21 29" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<path
+							d="M4.94359 29C3.63375 28.9958 2.37874 28.4626 1.45253 27.5169C0.526327 26.5712 0.00415282 25.2897 0 23.9523V5.04773C0.00415282 3.7103 0.526327 2.42885 1.45253 1.48313C2.37874 0.537416 3.63375 0.00424031 4.94359 0C6.25344 0.00424031 7.50845 0.537416 8.43465 1.48313C9.36086 2.42885 9.88303 3.7103 9.88719 5.04773V23.9523C9.89403 26.7278 7.66188 29 4.94359 29Z"
+							fill="#616161" />
+						<path
+							d="M16.0564 12.067C14.7465 12.0713 13.4915 12.6044 12.5653 13.5501C11.6391 14.4959 11.1169 15.7773 11.1128 17.1147V28.4896H21V17.1147C20.9958 15.7773 20.4737 14.4959 19.5475 13.5501C18.6212 12.6044 17.3662 12.0713 16.0564 12.067Z"
+							fill="#616161" />
+					</svg>
+
+					<span class="q-ml-xs">Index</span>
 				</q-toolbar-title>
 
 				<q-space />
 
-				<q-input class="GPL__toolbar-input" dense standout="bg-primary" v-model="search" placeholder="Search">
+				<!-- <q-input class="GPL__toolbar-input" dense standout="bg-primary" v-model="search" placeholder="Search">
 					<template v-slot:prepend>
 						<q-icon v-if="search === ''" name="search" />
 						<q-icon v-else name="clear" class="cursor-pointer" @click="search = ''" />
 					</template>
-				</q-input>
+				</q-input> -->
 
-				<q-btn v-if="$q.screen.gt.xs" flat dense no-wrap color="primary" icon="add" no-caps label="Create"
+				<!-- <q-btn v-if="$q.screen.gt.xs" flat dense no-wrap color="primary" icon="add" no-caps label="Create"
 					class="q-ml-sm q-px-md">
 					<q-menu anchor="top end" self="top end">
 						<q-list class="text-grey-8" style="min-width: 100px">
@@ -35,15 +44,16 @@
 							</q-item>
 						</q-list>
 					</q-menu>
-				</q-btn>
+				</q-btn> -->
 
-				<q-btn v-if="$q.screen.gt.xs" flat dense no-wrap color="primary" icon="cloud_upload" no-caps
-					label="Upload" class="q-ml-sm q-px-md" />
+				<!-- <q-btn v-if="$q.screen.gt.xs" flat dense no-wrap color="primary" icon="cloud_upload" no-caps
+					label="Upload" class="q-ml-sm q-px-md" /> -->
 
 				<q-space />
 
 				<div class="q-gutter-sm row items-center no-wrap">
-					<q-btn round dense flat color="text-grey-7" icon="apps">
+					<div id="handy-ui"></div>
+					<!-- <q-btn round dense flat color="text-grey-7" icon="apps">
 						<q-tooltip>Google Apps</q-tooltip>
 					</q-btn>
 					<q-btn round dense flat color="grey-8" icon="notifications">
@@ -57,13 +67,13 @@
 							<img src="https://cdn.quasar.dev/img/boy-avatar.png">
 						</q-avatar>
 						<q-tooltip>Account</q-tooltip>
-					</q-btn>
+					</q-btn> -->
 				</div>
 			</q-toolbar>
 		</q-header>
 
 		<q-drawer v-model="leftDrawerOpen" bordered behavior="mobile" @click="leftDrawerOpen = false">
-			<q-scroll-area class="fit">
+			<q-scroll-area class="fit ">
 				<q-toolbar class="GPL__toolbar">
 					<q-toolbar-title class="row items-center text-grey-8">
 						<img class="q-pl-md"
@@ -73,34 +83,34 @@
 				</q-toolbar>
 
 				<q-list padding>
-					<q-item v-for="link in links1" :key="link.text" clickable class="GPL__drawer-item" to="partners">
+					<q-item key="link" clickable class="GPL__drawer-item" to="partners">
 						<q-item-section avatar>
-							<q-icon :name="link.icon" />
+							<q-icon name="map" />
 						</q-item-section>
 						<q-item-section>
-							<q-item-label>{{ link.text }}</q-item-label>
+							<q-item-label>TEST</q-item-label>
 						</q-item-section>
 					</q-item>
 
 					<q-separator class="q-my-md" />
 
-					<q-item v-for="link in links2" :key="link.text" clickable class="GPL__drawer-item">
+					<q-item key="linktext" clickable class="GPL__drawer-item">
 						<q-item-section avatar>
-							<q-icon :name="link.icon" />
+							<q-icon name="map" />
 						</q-item-section>
 						<q-item-section>
-							<q-item-label>{{ link.text }}</q-item-label>
+							<q-item-label>{{ 'test2' }}</q-item-label>
 						</q-item-section>
 					</q-item>
 
 					<q-separator class="q-my-md" />
 
-					<q-item v-for="link in links3" :key="link.text" clickable class="GPL__drawer-item">
+					<q-item key="link.text2" clickable class="GPL__drawer-item">
 						<q-item-section avatar>
-							<q-icon :name="link.icon" />
+							<q-icon name="filter" />
 						</q-item-section>
 						<q-item-section>
-							<q-item-label>{{ link.text }}</q-item-label>
+							<q-item-label>{{ "link.text" }}</q-item-label>
 						</q-item-section>
 					</q-item>
 
@@ -125,35 +135,13 @@
 
 			<q-page-sticky v-if="$q.screen.gt.sm" expand position="left">
 				<div class="fit q-pt-xl q-px-sm column">
-					<q-btn round flat color="grey-8" stack no-caps size="26px" class="GPL__side-btn">
-						<q-icon size="22px" name="photo" />
-						<div class="GPL__side-btn__label">Videos</div>
-					</q-btn>
-
-					<q-btn round flat color="grey-8" stack no-caps size="26px" class="GPL__side-btn">
-						<q-icon size="22px" name="collections_bookmark" />
-						<div class="GPL__side-btn__label">Sites</div>
-						<q-badge floating color="red" text-color="white" style="top: 8px; right: 16px">
-							1
-						</q-badge>
-					</q-btn>
-
-					<q-btn round flat color="grey-8" stack no-caps size="26px" class="GPL__side-btn">
-						<q-icon size="22px" name="assistant" />
-						<div class="GPL__side-btn__label">Tags</div>
-
-					</q-btn>
-
-					<q-btn round flat color="grey-8" stack no-caps size="26px" class="GPL__side-btn">
-						<q-icon size="22px" name="group" />
-						<div class="GPL__side-btn__label">Favorites</div>
-					</q-btn>
-
-					<q-btn round flat color="grey-8" stack no-caps size="26px" class="GPL__side-btn">
-						<q-icon size="22px" name="import_contacts" />
-						<div class="GPL__side-btn__label">Playlists</div>
-						<q-badge floating color="red" text-color="white" style="top: 8px; right: 16px">
-							New
+					<q-btn v-for="(link, index) in links" :key="index" round flat color="grey-8" stack no-caps
+						size="26px" class="GPL__side-btn" :to="link.link">
+						<q-icon size="22px" :name="link.icon" />
+						<div class="GPL__side-btn__label">{{ link.text }}</div>
+						<q-badge v-if="link.badge" floating color="red" text-color="white"
+							style="top: 8px; right: 16px">
+							{{ link.badge }}
 						</q-badge>
 					</q-btn>
 				</div>
@@ -162,49 +150,50 @@
 	</q-layout>
 </template>
 
-<script>
-import { ref } from 'vue'
-export default {
-	name: 'GooglePhotosLayout',
-	setup() {
-		const leftDrawerOpen = ref(false)
-		const search = ref('')
-		const storage = ref(0.26)
-		function toggleLeftDrawer() {
-			leftDrawerOpen.value = !leftDrawerOpen.value
-		}
-		return {
-			leftDrawerOpen,
-			search,
-			storage,
-			links1: [
-				{ icon: 'photo', text: 'Videos' },
-				{ icon: 'photo_album', text: 'Sites' },
-				{ icon: 'assistant', text: 'Tags' },
-				{ icon: 'people', text: 'Sharing' },
-				{ icon: 'book', text: 'Photo books' }
-			],
-			links2: [
-				{ icon: 'archive', text: 'Archive' },
-				{ icon: 'delete', text: 'Trash' }
-			],
-			links3: [
-				{ icon: 'settings', text: 'Settings' },
-				{ icon: 'help', text: 'Help & Feedback' },
-				{ icon: 'get_app', text: 'App Downloads' }
-			],
-			createMenu: [
-				{ icon: 'photo_album', text: 'Album' },
-				{ icon: 'people', text: 'Shared Album' },
-				{ icon: 'movie', text: 'Movie' },
-				{ icon: 'library_books', text: 'Animation' },
-				{ icon: 'dashboard', text: 'Collage' },
-				{ icon: 'book', text: 'Photo book' }
-			],
-			toggleLeftDrawer
-		}
+<script setup lang="ts">
+import { initHandy } from 'src/logic/handy';
+import { onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router';
+const leftDrawerOpen = ref(false)
+const router = useRouter();
+const search = ref('')
+
+const links = ref<{ text: string, link: string, badge?: string, icon: string }[]>([
+	{
+		text: "Videos",
+		link: "/videos",
+		icon: "movie"
+	},
+	{
+		text: "Sites",
+		link: "/sites",
+		icon: "public",
+		badge: "1"
+	},
+	{
+		text: "Tags",
+		link: "/tags",
+		icon: "sell"
+	},
+	{
+		text: "Favorites",
+		link: "/favorites",
+		icon: "favorite"
+	},
+	{
+		text: "Playlists",
+		link: "/playlists",
+		icon: "collections_bookmark",
+		badge: "New"
 	}
+])
+
+function toggleLeftDrawer() {
+	leftDrawerOpen.value = !leftDrawerOpen.value
 }
+onMounted(() => {
+	initHandy();
+})
 </script>
 
 <style lang="sass">
