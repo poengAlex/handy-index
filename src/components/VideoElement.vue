@@ -117,7 +117,7 @@ const emit = defineEmits<{
 }>();
 
 onMounted(() => {
-	console.log('onMounted');
+	// console.log('onMounted');
 	video.value = propsIn.tableValue.row;
 });
 </script>

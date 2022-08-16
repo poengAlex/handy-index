@@ -1,90 +1,83 @@
 <template>
-	<q-page class="container ">
-		<div v-if="videos.length > 0">{{ videos[0] }}</div>
-		<div class="q-pa-md">
-			<!-- <q-badge v-for="(value, key) in tagColors" :key="key"
-				:style="{ backgroundColor: value.color, color: value.textColor }" class="q-ml-xs">
-				{{ key }}</q-badge> -->
-			<div class="row full-width q-pa-xs">
-				<q-expansion-item filled :class="{ 'col-12': filterExpanded, 'col-8': !filterExpanded }"
-					expand-separator icon="filter_alt" label="Advanced filter" v-model="filterExpanded">
-					<q-card>
-						<q-card-section>
-							<q-input class="" filled dense debounce="50" v-model="filter" placeholder="Search"
-								@update:model-value="filterAndSortVideos" clearable>
-								<template v-slot:append>
-									<q-icon name="search" />
-								</template>
-							</q-input>
-							<q-select v-model="tagsSelected" :options="tagsFiltered" use-chips stack-label
-								label="Filter by tags" multiple use-input @update:model-value="filterAndSortVideos"
-								@filter="filterFnTags">
-								<template v-if="tagsSelected.length !== 0" v-slot:append>
-									<q-icon name="cancel" @click.stop.prevent="tagsSelected = []; filterAndSortVideos()"
-										class="cursor-pointer" />
-								</template>
-							</q-select>
-							<!-- {{ JSON.stringify(tagsSelected) }} -->
-							<q-select v-model="partnersSelected" :options="partnersFiltered" option-label="name"
-								use-chips stack-label label="Filter by sites" multiple use-input
-								@update:model-value="filterAndSortVideos" @filter="filterFnPartners">
-								<template v-if="partnersSelected.length !== 0" v-slot:append>
-									<q-icon name="cancel"
-										@click.stop.prevent="partnersSelected = []; filterAndSortVideos()"
-										class="cursor-pointer" />
-								</template>
-							</q-select>
-							<!-- {{ JSON.stringify(partnersSelected) }} -->
-							<div class="q-gutter-sm">
-								<q-icon name="sort"></q-icon>
-								<q-btn flat dense :icon="sortOrderDecending ? 'arrow_downward' : 'arrow_upward'"
-									@click="sortOrderDecending = !sortOrderDecending; filterAndSortVideos()">
-								</q-btn>
+	<q-page class="container _q-pa-md">
+		<!-- <div v-if="videos.length > 0">{{ videos[0] }}</div> -->
+		<q-table ref="qtableref" grid title="Videos" :rows="videosFiltered" row-key="name" hide-header
+			v-model:pagination="pagination" :rows-per-page-options="rowsPerPageOptions" virtual-scroll
+			@update:pagination="paginationUpdated">
+			<template v-slot:top>
+				<!-- Search and filter -->
+				<div class="row full-width q-pt-sm">
+					<q-expansion-item filled :class="{ 'col-12': filterExpanded, 'col-8': !filterExpanded }"
+						expand-separator icon="filter_alt" label="Advanced filter" v-model="filterExpanded">
+						<q-card>
+							<q-card-section>
+								<q-input class="" filled dense debounce="50" v-model="filter" placeholder="Search"
+									@update:model-value="filterAndSortVideos" clearable>
+									<template v-slot:append>
+										<q-icon name="search" />
+									</template>
+								</q-input>
+								<q-select v-model="tagsSelected" :options="tagsFiltered" use-chips stack-label
+									label="Filter by tags" multiple use-input @update:model-value="filterAndSortVideos"
+									@filter="filterFnTags">
+									<template v-if="tagsSelected.length !== 0" v-slot:append>
+										<q-icon name="cancel"
+											@click.stop.prevent="tagsSelected = []; filterAndSortVideos()"
+											class="cursor-pointer" />
+									</template>
+								</q-select>
+								<q-select v-model="partnersSelected" :options="partnersFiltered" option-label="name"
+									use-chips stack-label label="Filter by sites" multiple use-input
+									@update:model-value="filterAndSortVideos" @filter="filterFnPartners">
+									<template v-if="partnersSelected.length !== 0" v-slot:append>
+										<q-icon name="cancel"
+											@click.stop.prevent="partnersSelected = []; filterAndSortVideos()"
+											class="cursor-pointer" />
+									</template>
+								</q-select>
+								<div class="q-gutter-sm">
+									<q-icon name="sort"></q-icon>
+									<q-btn flat dense :icon="sortOrderDecending ? 'arrow_downward' : 'arrow_upward'"
+										@click="sortOrderDecending = !sortOrderDecending; filterAndSortVideos()">
+									</q-btn>
+									<q-radio v-model="sortBy" val="createdAt" label="Added time"
+										@update:model-value="filterAndSortVideos" />
+									<q-radio v-model="sortBy" val="updatedAt" label="Updated time"
+										@update:model-value="filterAndSortVideos" />
+									<q-radio v-model="sortBy" val="duration" label="Duration"
+										@update:model-value="filterAndSortVideos" />
+									<q-radio v-model="sortBy" val="title" label="Video name"
+										@update:model-value="filterAndSortVideos" />
+								</div>
+							</q-card-section>
+						</q-card>
+					</q-expansion-item>
+					<q-input class="col-4" v-if="!filterExpanded" filled dense debounce="300" v-model="filter"
+						placeholder="Search">
+						<template v-slot:append>
+							<q-icon name="search" />
+						</template>
+					</q-input>
+				</div>
+				<!-- END Search and filter -->
+			</template>
 
-								<q-radio v-model="sortBy" val="createdAt" label="Added time"
-									@update:model-value="filterAndSortVideos" />
-								<q-radio v-model="sortBy" val="updatedAt" label="Updated time"
-									@update:model-value="filterAndSortVideos" />
-								<q-radio v-model="sortBy" val="duration" label="Duration"
-									@update:model-value="filterAndSortVideos" />
-								<q-radio v-model="sortBy" val="title" label="Video name"
-									@update:model-value="filterAndSortVideos" />
-							</div>
-						</q-card-section>
-					</q-card>
-				</q-expansion-item>
-				<q-input class="col-4" v-if="!filterExpanded" filled dense debounce="300" v-model="filter"
-					placeholder="Search">
-					<template v-slot:append>
-						<q-icon name="search" />
-					</template>
-				</q-input>
-			</div>
-			<q-table ref="qtableref" grid title="Videos" :rows="videosFiltered" row-key="name" hide-header
-				v-model:pagination="pagination" :rows-per-page-options="rowsPerPageOptions" virtual-scroll
-				@update:pagination="paginationUpdated">
-				<template v-slot:top>
-
-				</template>
-
-				<template v-slot:item="props">
-					<div class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 col-xl-3">
-						<!-- Vue elements need a unique key to trigger a rerender -->
-						<video-element :table-value="props" :key="(props.row as PartnerVideo).partnerVideoId">
-						</video-element>
-						<!-- {{ props }} -->
-					</div>
-				</template>
-			</q-table>
-		</div>
+			<template v-slot:item="props">
+				<div class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 col-xl-3">
+					<!-- Vue elements need a unique key to trigger a rerender -->
+					<video-element :table-value="props" :key="(props.row as PartnerVideo).partnerVideoId">
+					</video-element>
+				</div>
+			</template>
+		</q-table>
 	</q-page>
 </template>
 
 <script setup lang="ts">
 import { QTable, useQuasar } from 'quasar';
 import { PartnerVideo, Partner } from 'src/_SCRIPTAPIINDEX';
-import { computed, nextTick, onMounted, ref, watch } from 'vue';
-import { initApi, apiIndex, partners, partnerIdToPartnerName } from '../logic/api-wrapper'
+import { computed, onMounted, ref, watch } from 'vue';
+import { initApi, apiIndex, partners } from '../logic/api-wrapper'
 import { createNotify } from '../logic/utils'
 
 import VideoElement from 'src/components/VideoElement.vue';
@@ -107,14 +100,27 @@ const tagsSelected = ref<any[]>([]);
 
 const filterExpanded = ref(true);
 const rowsPerPageOptions = computed(() => {
-	return $q.screen.gt.xs
-		? $q.screen.gt.sm ? [10, 25, 100] : [10, 15]
-		: [10]
+	let initalVideos = 24;
+	if ($q.screen.lg || $q.screen.xl) {
+		initalVideos = initalVideos - initalVideos % 4;
+		return [initalVideos, 100, 0]
+	} else if ($q.screen.md) {
+		initalVideos = initalVideos - initalVideos % 3;
+		return [initalVideos, 100, 0]
+	} else if ($q.screen.sm) {
+		initalVideos = initalVideos - initalVideos % 2;
+		return [initalVideos, 100, 0]
+	} else if ($q.screen.xs) {
+		return [initalVideos, 100, 0]
+	} else {
+		console.error("Cannot detect screen width");
+		return [10];
+	}
 })
 const filter = ref('')
 const pagination = ref({
 	page: 1,
-	rowsPerPage: getItemsPerPage()
+	rowsPerPage: rowsPerPageOptions.value[0]
 })
 
 function filterFnTags(val: any, update: any, abort: () => void) {
@@ -134,15 +140,21 @@ function filterFnPartners(val: any, update: any, abort: () => void) {
 	})
 }
 
-function getItemsPerPage() {
-	if ($q.screen.lt.sm) {
-		return 10
-	}
-	if ($q.screen.lt.md) {
-		return 10
-	}
-	return 25
-}
+// function getItemsPerPage() {
+// 	const initalVideos = rowsPerPageOptions.value[0];
+// 	if ($q.screen.lg || $q.screen.xl) {
+// 		return initalVideos - initalVideos % 4;
+// 	} else if ($q.screen.md) {
+// 		return initalVideos - initalVideos % 3;
+// 	} else if ($q.screen.sm) {
+// 		return initalVideos - initalVideos % 2;
+// 	} else if ($q.screen.xs) {
+// 		return initalVideos
+// 	} else {
+// 		console.error("Cannot detect screen width");
+// 		return initalVideos;
+// 	}
+// }
 
 function filterAndSortVideos() {
 	console.log('filterAndSortVideos');
@@ -234,7 +246,7 @@ function filterAndSortVideos() {
 }
 
 watch(() => $q.screen.name, () => {
-	pagination.value.rowsPerPage = getItemsPerPage()
+	pagination.value.rowsPerPage = rowsPerPageOptions.value[0]
 })
 
 // TODO: Scroll to top of table
