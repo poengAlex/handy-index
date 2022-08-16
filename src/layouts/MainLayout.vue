@@ -83,34 +83,24 @@
 				</q-toolbar>
 
 				<q-list padding>
-					<q-item key="link" clickable class="GPL__drawer-item" to="partners">
+					<q-item v-for="(link, index) in links" :key="index" clickable class="GPL__drawer-item"
+						:to="link.link">
 						<q-item-section avatar>
-							<q-icon name="map" />
+							<q-icon :name="link.icon" />
 						</q-item-section>
 						<q-item-section>
-							<q-item-label>TEST</q-item-label>
+							<q-item-label>{{ link.text }}</q-item-label>
 						</q-item-section>
 					</q-item>
 
 					<q-separator class="q-my-md" />
 
-					<q-item key="linktext" clickable class="GPL__drawer-item">
+					<q-item v-for="link in links3" :key="link.text" clickable class="GPL__drawer-item">
 						<q-item-section avatar>
-							<q-icon name="map" />
+							<q-icon :name="link.icon" />
 						</q-item-section>
 						<q-item-section>
-							<q-item-label>{{ 'test2' }}</q-item-label>
-						</q-item-section>
-					</q-item>
-
-					<q-separator class="q-my-md" />
-
-					<q-item key="link.text2" clickable class="GPL__drawer-item">
-						<q-item-section avatar>
-							<q-icon name="filter" />
-						</q-item-section>
-						<q-item-section>
-							<q-item-label>{{ "link.text" }}</q-item-label>
+							<q-item-label>{{ link.text }}</q-item-label>
 						</q-item-section>
 					</q-item>
 
@@ -154,9 +144,16 @@
 import { initHandy } from 'src/logic/handy';
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router';
-const leftDrawerOpen = ref(false)
+const leftDrawerOpen = ref(true)
 const router = useRouter();
+const storage = ref(0.26)
 const search = ref('')
+
+const links3 = [
+	{ icon: 'settings', text: 'Settings' },
+	{ icon: 'help', text: 'Help & Feedback' },
+	{ icon: 'get_app', text: 'App Downloads' }
+]
 
 const links = ref<{ text: string, link: string, badge?: string, icon: string }[]>([
 	{
