@@ -1,4 +1,4 @@
-import { OpenAPIConfig, ScriptApiIndex } from "src/_SCRIPTAPIINDEX";
+import { OpenAPIConfig, Partner, ScriptApiIndex } from "src/_SCRIPTAPIINDEX";
 import { ref } from "vue";
 
 export type Server = "production" | "staging" | "dev";
@@ -23,6 +23,21 @@ const API_URL = {
 const pipeline = ref({
 	server: "production" as Server
 });
+
+export const partners = ref<Partner[]>([]);
+
+// TODO: This should be optimized
+export function partnerIdToPartnerName(partnerId: string) {
+	// console.log('partnerIdToPartnerName', partnerId);
+	let partnerName = "Unknown partner";
+	partners.value.forEach(partner => {
+		if (partner.partnerId === partnerId) {
+			// console.log('MATCH!');
+			partnerName = partner.name;
+		}
+	});
+	return partnerName;
+}
 
 export let apiIndex: ScriptApiIndex;
 
