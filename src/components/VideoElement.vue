@@ -1,31 +1,28 @@
 <template>
-	<q-card class="my-card" v-if="video !== undefined">
+	<q-card class="cursor-pointer" v-if="video !== undefined" @click="$emit('click', video)">
 		<q-responsive :ratio="16 / 9">
-			<q-img v-if="nsfw" :src="video.images[0]" fit="fill" @error="video.images[0] = '315x300-no-image.png'">
-				<div class="absolute-bottom text-subtitle1 text-center ellipsis-2-lines" style="height: 40%;">
-					{{ video.title }}
+			<q-img :src="settings.nsfw ? video.images[0] : 'https://via.placeholder.com/315x300.png?text=NSFW'"
+				fit="fill" @error="video.images[0] = '315x300-no-image.png'">
+				<div class="absolute-bottom" style="height: 40%;padding: 0px;">
+					<div class="row items-center justify-evenly full-height full-width">
+						<div class="ellipsis-2-lines text-picture text-subtitle1 q-pl-lg q-pr-lg">
+							{{ video.title }}
+						</div>
+					</div>
+
 					<q-tooltip>
 						{{ video.title }}
 					</q-tooltip>
 				</div>
 			</q-img>
-			<q-img v-else src="https://via.placeholder.com/315x300.png?text=NSFW" fit="fill">
-				<div class="absolute-bottom text-subtitle1 text-center ellipsis-2-lines" style="height: 40%;">
-					{{ video.title }}
-					<q-tooltip>
-						{{ video.title }}
-					</q-tooltip>
-				</div>
-			</q-img>
+
 			<q-tooltip anchor="center middle" self="center middle" :delay="1000">
 				<div style="width: 400px !important">
-					<q-img :src="video.gifs[0]" fit="fill" width="100%" @error="video.gifs[0] = '315x300-no-image.png'">
+					<q-img :src="settings.nsfw ? video.gifs[0] : 'https://via.placeholder.com/315x300.png?text=NSFW'"
+						fit="fill" width="100%" @error="video.gifs[0] = '315x300-no-image.png'">
 					</q-img>
 					<div class="row">
-						<div class="text-overline col _bg-blue">{{
-								partnerIdToPartnerName(video.partnerId)
-						}}
-						</div>
+						<partner :partner-id="video.partnerId"></partner>
 						<div class="col-auto text-overline  _bg-green" v-if="video.duration">
 
 							{{
@@ -59,10 +56,7 @@
 
 		<q-card-section class="q-pa-xs q-pb-sm">
 			<div class="row">
-				<div class="text-overline col _bg-blue q-pl-sm">{{
-						partnerIdToPartnerName(video.partnerId)
-				}}
-				</div>
+				<partner class="q-pl-sm" :partner-id="video.partnerId"></partner>
 				<div class="col-auto text-overline  _bg-green" v-if="video.duration">
 
 					{{
@@ -116,13 +110,16 @@ import duration from "dayjs/plugin/duration";
 import { partners, partnerIdToPartnerName } from '../logic/api-wrapper';
 import { createNotifyWarning } from "src/logic/utils";
 import { PartnerVideo } from "src/_SCRIPTAPIINDEX";
+import { useSettingsStore } from '../stores/settings'
+import Partner from "./Partner.vue";
+const settings = useSettingsStore()
 dayjs.extend(relativeTime);
 dayjs.extend(duration);
 const propsIn = defineProps(['tableValue']);
 const video = ref<PartnerVideo>();
-const nsfw = ref(false);
+
 const emit = defineEmits<{
-	(e: 'change', newValue: any, key: string): void
+	(e: 'click', video: PartnerVideo): void
 }>();
 
 onMounted(() => {
@@ -131,5 +128,14 @@ onMounted(() => {
 });
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+$paddingEnd: 0px;
+
+.text-picture {
+	// height: 35%;
+	line-height: 1.2;
+	padding-top: $paddingEnd;
+	padding-bottom: $paddingEnd;
+	overflow: hidden;
+}
 </style>

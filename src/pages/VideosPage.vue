@@ -1,6 +1,8 @@
 <template>
 	<q-page class="container _q-pa-md full-height">
-
+		<q-inner-loading :showing="loading">
+			<q-spinner size="50px" color="black" />
+		</q-inner-loading>
 		<!-- <div v-if="videos.length > 0">{{ videos[0] }}</div> -->
 
 		<!-- Search and filter -->
@@ -60,12 +62,13 @@
 
 		<q-table v-if="true" id="qtable" ref="qtableref" class="" grid :rows="videosFiltered" row-key="name" hide-header
 			v-model:pagination="pagination" :rows-per-page-options="rowsPerPageOptions" virtual-scroll
-			@update:pagination="paginationUpdated">
+			@update:pagination="paginationUpdated" :loading="loading">
 
 			<template v-slot:item="props">
 				<div class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 col-xl-3">
 					<!-- Vue elements need a unique key to trigger a rerender -->
-					<video-element :table-value="props" :key="(props.row as PartnerVideo).partnerVideoId">
+					<video-element @click="videoClick" :table-value="props"
+						:key="(props.row as PartnerVideo).partnerVideoId">
 					</video-element>
 				</div>
 			</template>
@@ -79,11 +82,15 @@ import { PartnerVideo, Partner } from 'src/_SCRIPTAPIINDEX';
 import { computed, onMounted, ref, watch } from 'vue';
 import { initApi, apiIndex, partners } from '../logic/api-wrapper'
 import { createNotify } from '../logic/utils'
-
 import VideoElement from 'src/components/VideoElement.vue';
+import { useRoute, useRouter } from 'vue-router';
+import { useSettingsStore } from '../stores/settings'
+const settings = useSettingsStore()
 
+const route = useRoute();
+const router = useRouter();
+const loading = ref(true);
 const qtableref = ref<QTable>();
-
 const sortBy = ref<'createdAt' | 'updatedAt' | 'title' | 'duration'>('title');
 const sortOrderDecending = ref(false);
 const videos = ref<PartnerVideo[]>([]);
@@ -137,6 +144,17 @@ function filterFnPartners(val: any, update: any, abort: () => void) {
 
 		const needle = val.toLowerCase()
 		partnersFiltered.value = partners.value.filter(v => v.name.toLowerCase().indexOf(needle) > -1)
+	})
+}
+
+function videoClick(video: PartnerVideo) {
+	console.log('videoClick', video);
+	router.push({
+		path: "/videos/" + video.partnerVideoId,
+		query: {
+			video: JSON
+				.stringify(video)
+		}
 	})
 }
 
@@ -308,13 +326,19 @@ onMounted(async () => {
 		partners.value = await apiIndex.index.getPartners();
 		console.log("partners.value:", partners.value);
 
-		videos.value = await apiIndex.index.getIndex();
-		// videos.value.reverse();
-		// videos.value = await apiIndex.index.getVideos(undefined, undefined, undefined, 100);
-		setTags();
-		console.log("videos.value:", videos.value);
-		filterAndSortVideos();
-		// qtableref.value?.sort()
+		apiIndex.index.getIndex().then(_videos => {
+			loading.value = false;
+			videos.value = _videos
+			// videos.value.reverse();
+			// videos.value = await apiIndex.index.getVideos(undefined, undefined, undefined, 100);
+			setTags();
+			console.log("videos.value:", videos.value);
+			filterAndSortVideos();
+			// qtableref.value?.sort()
+		}).catch((err: any) => {
+			console.error(err);
+			createNotify(err as string)
+		});
 	} catch (err) { console.error(err); createNotify(err as string) }
 });
 </script>

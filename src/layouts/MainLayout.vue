@@ -105,7 +105,15 @@
 					</q-item>
 
 					<q-separator class="q-my-md" />
-
+					<q-item clickable class="GPL__drawer-item GPL__drawer-item--storage">
+						<q-item-section avatar>
+							<q-icon name="visibility" />
+						</q-item-section>
+						<q-item-section top>
+							<!-- <q-item-label>NSFW</q-item-label> -->
+							<q-toggle v-model="settings.nsfw">NSFW</q-toggle>
+						</q-item-section>
+					</q-item>
 					<q-item clickable class="GPL__drawer-item GPL__drawer-item--storage">
 						<q-item-section avatar>
 							<q-icon name="cloud" />
@@ -144,10 +152,12 @@
 import { initHandy } from 'src/logic/handy';
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router';
-const leftDrawerOpen = ref(true)
+import { useSettingsStore } from '../stores/settings'
+const settings = useSettingsStore()
+const leftDrawerOpen = ref(false)
 const router = useRouter();
 const storage = ref(0.26)
-const search = ref('')
+const search = ref('');
 
 const links3 = [
 	{ icon: 'settings', text: 'Settings' },

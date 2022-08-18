@@ -2,6 +2,9 @@ import { OpenAPIConfig, Partner, ScriptApiIndex } from "src/_SCRIPTAPIINDEX";
 import { ref } from "vue";
 
 export type Server = "production" | "staging" | "dev";
+
+const TUBE_SITES_PARTNERS = ["pornhub.com"];
+
 const API_URL = {
     adm: {
       dev: "https://scripts01.dev.handyfeeling.com/api/script/adm/v0",
