@@ -15,7 +15,7 @@
 							fill="#616161" />
 					</svg>
 
-					<span class="q-ml-xs">Index</span>
+					<span class="q-ml-xs">Script index</span>
 				</q-toolbar-title>
 
 				<q-space />
@@ -76,8 +76,14 @@
 			<q-scroll-area class="fit ">
 				<q-toolbar class="GPL__toolbar">
 					<q-toolbar-title class="row items-center text-grey-8">
-						<img class="q-pl-md"
-							src="https://www.gstatic.com/images/branding/googlelogo/svg/googlelogo_clr_74x24px.svg">
+						<svg width="15" height="29" viewBox="0 0 21 29" fill="none" xmlns="http://www.w3.org/2000/svg">
+							<path
+								d="M4.94359 29C3.63375 28.9958 2.37874 28.4626 1.45253 27.5169C0.526327 26.5712 0.00415282 25.2897 0 23.9523V5.04773C0.00415282 3.7103 0.526327 2.42885 1.45253 1.48313C2.37874 0.537416 3.63375 0.00424031 4.94359 0C6.25344 0.00424031 7.50845 0.537416 8.43465 1.48313C9.36086 2.42885 9.88303 3.7103 9.88719 5.04773V23.9523C9.89403 26.7278 7.66188 29 4.94359 29Z"
+								fill="#616161" />
+							<path
+								d="M16.0564 12.067C14.7465 12.0713 13.4915 12.6044 12.5653 13.5501C11.6391 14.4959 11.1169 15.7773 11.1128 17.1147V28.4896H21V17.1147C20.9958 15.7773 20.4737 14.4959 19.5475 13.5501C18.6212 12.6044 17.3662 12.0713 16.0564 12.067Z"
+								fill="#616161" />
+						</svg>
 						<span class="q-ml-sm">Script index</span>
 					</q-toolbar-title>
 				</q-toolbar>

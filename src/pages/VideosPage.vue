@@ -105,7 +105,7 @@ const tags = ref<string[]>([]);
 const tagsFiltered = ref<string[]>([]);
 const tagsSelected = ref<any[]>([]);
 
-const filterExpanded = ref(true);
+const filterExpanded = ref(false);
 const rowsPerPageOptions = computed(() => {
 	let initalVideos = 24;
 	if ($q.screen.lg || $q.screen.xl) {

@@ -1,8 +1,8 @@
 <template>
-	<div @click="onTagClick" class=" col-auto cursor-pointer">
-		<q-chip class="q-ma-none q-ml-xs q-mb-xs" dense color="black" text-color="white">
+	<span @click.stop="onTagClick" class=" cursor-pointer">
+		<q-chip class="q-ma-none q-ml-xs q-mb-xs" size="sm" color="black" text-color="white">
 			{{ props.tag }}</q-chip>
-	</div>
+	</span>
 </template>
 
 <script setup lang="ts">

@@ -10,9 +10,9 @@
 						</div>
 					</div>
 
-					<q-tooltip>
+					<!-- <q-tooltip>
 						{{ video.title }}
-					</q-tooltip>
+					</q-tooltip> -->
 				</div>
 			</q-img>
 
@@ -67,17 +67,33 @@
 										1000).format('HH:mm:ss')
 					}}
 				</div>
-				<q-btn dense class="col-auto" flat icon="more_vert">
+				<q-btn dense class="col-auto" flat icon="more_vert" @click.stop="">
 					<q-menu>
-						<q-list style="width: 150px">
+						<q-list style="width: 200px">
 							<q-item clickable v-close-popup @click="createNotifyWarning('not implemented')">
+								<q-item-section avatar>
+									<q-icon color="primary" name="playlist_add" />
+								</q-item-section>
 								<q-item-section>Add to playlist</q-item-section>
 							</q-item>
 							<q-item clickable v-close-popup @click="createNotifyWarning('not implemented')">
+								<q-item-section avatar>
+									<q-icon color="primary" name="favorite" />
+								</q-item-section>
 								<q-item-section>Favorite</q-item-section>
 							</q-item>
 							<q-separator />
 							<q-item clickable v-close-popup @click="createNotifyWarning('not implemented')">
+								<q-item-section avatar>
+									<q-icon color="secondary" name="file_download" />
+								</q-item-section>
+								<q-item-section>Download token</q-item-section>
+							</q-item>
+							<q-separator />
+							<q-item clickable v-close-popup @click="createNotifyWarning('not implemented')">
+								<q-item-section avatar>
+									<q-icon color="warning" name="warning" />
+								</q-item-section>
 								<q-item-section>Report</q-item-section>
 							</q-item>
 						</q-list>
@@ -85,15 +101,14 @@
 				</q-btn>
 			</div>
 			<div class="column">
-				<q-item-label lines="2" class="col" style="min-height:48px">
-					<q-chip v-for="(tag, index) in video.tags" :key="index" class="q-ma-none q-ml-xs q-mb-xs"
-						color="black" text-color="white" size="sm">
-						{{ tag }}</q-chip>
+				<!-- <q-item-label :lines="video.lines !== undefined ? video.lines : 2" class="col-12"
+					style="min-height: 48px;" @mouseenter="video.lines = 0" @mouseleave="video.lines = 2">
+					<tag v-for="(tag, index) in video.tags" :key="index" :tag="tag"></tag> -->
+				<q-item-label class="col-12" style="min-height: 48px;" lines="2">
+					<tag v-for="(tag, index) in video.tags" :key="index" :tag="tag"></tag>
 					<q-tooltip max-width="300px" anchor="center middle" self="center middle">
 						<div class="row">
-							<q-chip dense v-for="(tag, index) in video.tags" :key="index"
-								class="q-ma-none q-ml-xs q-mb-xs col-auto" color="black" text-color="white">
-								{{ tag }}</q-chip>
+							<tag v-for="(tag, index) in video.tags" :key="index" :tag="tag"></tag>
 						</div>
 					</q-tooltip>
 				</q-item-label>
@@ -112,6 +127,7 @@ import { createNotifyWarning } from "src/logic/utils";
 import { PartnerVideo } from "src/_SCRIPTAPIINDEX";
 import { useSettingsStore } from '../stores/settings'
 import Partner from "./Partner.vue";
+import Tag from "./Tag.vue";
 const settings = useSettingsStore()
 dayjs.extend(relativeTime);
 dayjs.extend(duration);

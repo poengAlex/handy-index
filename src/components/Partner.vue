@@ -2,6 +2,9 @@
 	<div class="text-overline col cursor-pointer" @click.stop="partnerClick">{{
 			partnerIdToPartnerName(props.partnerId)
 	}}
+		<q-tooltip>
+			Go to site
+		</q-tooltip>
 	</div>
 </template>
 
