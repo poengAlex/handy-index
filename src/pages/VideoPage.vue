@@ -6,15 +6,22 @@
 				<div class="col-6">
 					<q-carousel class="rounded-borders" style="heigth: 400px;" swipeable animated v-model="slide"
 						thumbnails>
-						<q-carousel-slide v-for="(img, index) in video?.images" :name="index"
-							:img-src="settings.nsfw ? img : 'https://via.placeholder.com/315x300.png?text=NSFW'" />
-						<q-carousel-slide v-for="(gif, index) in video?.gifs" :name="video?.images.length + index"
-							:img-src="settings.nsfw ? gif : 'https://via.placeholder.com/315x300.png?text=NSFW'" />
+						<template v-if="video.images !== undefined">
+							<q-carousel-slide v-for="(img, index) in video?.images" :name="index" :key="index"
+								:img-src="settings.nsfw ? img : 'https://via.placeholder.com/315x300.png?text=NSFW'" />
+							<q-carousel-slide v-for="(gif, index) in video?.gifs" :name="video?.images.length + index"
+								:img-src="settings.nsfw ? gif : 'https://via.placeholder.com/315x300.png?text=NSFW'"
+								:key="index" />
+						</template>
+						<template v-else>
+							<q-carousel-slide name="no-image" img-src="315x300-no-image.png" />
+						</template>
+
 					</q-carousel>
 				</div>
 
 			</div>
-			<div class="col-12 row">
+			<div class=" col-12 row">
 				<div class="col-12 text-h4">{{ video?.title }}</div>
 				<div class="col-12">
 					<Partner class="col-3" :partner-id="video?.partnerId"></Partner>

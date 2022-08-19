@@ -12,7 +12,7 @@
 				label="Advanced filter" v-model="filterExpanded">
 				<q-card>
 					<q-card-section>
-						<q-input class="" filled dense debounce="50" v-model="filter" placeholder="Search"
+						<q-input class="" filled dense debounce="250" v-model="filter" placeholder="Search"
 							@update:model-value="filterAndSortVideos" clearable>
 							<template v-slot:append>
 								<q-icon name="search" />
@@ -51,8 +51,8 @@
 					</q-card-section>
 				</q-card>
 			</q-expansion-item>
-			<q-input class="col-4 gt-xs" v-if="!filterExpanded" filled dense debounce="300" v-model="filter"
-				placeholder="Search">
+			<q-input class="col-4 gt-xs" v-if="!filterExpanded" filled dense debounce="250" v-model="filter"
+				placeholder="Search" v-on:update:model-value="filterAndSortVideos">
 				<template v-slot:append>
 					<q-icon name="search" />
 				</template>

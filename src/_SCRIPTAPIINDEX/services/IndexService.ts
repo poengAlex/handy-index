@@ -186,4 +186,26 @@ gifId: string,
         });
     }
 
+    /**
+     * Lookup a matching video in index
+     * Lookup a matching video in index
+     * @param v video reference
+     * @param p partner reference
+     * @returns PartnerVideo Matching video
+     * @throws ApiError
+     */
+    public lookup(
+v?: string,
+p?: string,
+): CancelablePromise<PartnerVideo> {
+        return this.httpRequest.request({
+            method: 'GET',
+            url: '/lookup',
+            query: {
+                'v': v,
+                'p': p,
+            },
+        });
+    }
+
 }
