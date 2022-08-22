@@ -68,6 +68,7 @@ module.exports = {
     "space-before-function-paren": ["off", "never"],
     "indent": "off",
     "semi": ["off", "always"],
+	"unc-call-spacing": ["off","always"],
     // allow async-await
     'generator-star-spacing': 'off',
     'space-before-function-paren': 'off',

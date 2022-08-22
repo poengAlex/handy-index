@@ -1,11 +1,11 @@
 <template>
-	<q-page class="container q-pt-lg">
+	<q-page class="container q-pa-sm q-pt-lg">
 		<!-- {{ video }} -->
 		<div v-if="video !== undefined" class="row">
 			<div class="col-12 row">
-				<div class="col-6">
-					<q-carousel class="rounded-borders" style="heigth: 400px;" swipeable animated v-model="slide"
-						thumbnails>
+				<div class="col-12 col-md-6">
+					<q-carousel class="rounded-borders" control-type="regular" arrows control-color="accent"
+						style="heigth: 400px;" swipeable animated v-model="slide" thumbnails>
 						<template v-if="video.images !== undefined">
 							<q-carousel-slide v-for="(img, index) in video?.images" :name="index" :key="index"
 								:img-src="settings.nsfw ? img : 'https://via.placeholder.com/315x300.png?text=NSFW'" />
@@ -42,6 +42,11 @@
 							</Duration>
 						</q-chip>
 					</div>
+					<div class="col-auto cursor-pointer" @click="downloadToken(video as PartnerVideo)">
+						<q-chip class="bg-grey-4" icon="download">
+							Download script token
+						</q-chip>
+					</div>
 					<a class="col-auto _cursor-pointer" :href="video.videoUrl" target="_blank"
 						style="text-decoration: none;">
 						<q-chip class="bg-grey-4" icon="open_in_new">
@@ -51,7 +56,7 @@
 				</div>
 
 				<div class="col-12 row _q-pl-xs">
-					<Tag v-for="(tag, index) in video?.tags" :key="tag" :tag="tag"></Tag>
+					<Tag v-for="tag in video?.tags" :key="tag" :tag="tag"></Tag>
 				</div>
 				<div class="col-12 _q-pa-sm q-pl-none q-pr-sm q-pt-sm">
 					<q-banner class="bg-grey-4 " rounded>
@@ -70,7 +75,7 @@
 </template>
 
 <script setup lang="ts">
-import { partnerIdToPartnerName } from "src/logic/api-wrapper";
+import { apiIndex, downloadToken, initApi, partnerIdToPartnerName } from "src/logic/api-wrapper";
 import { createNotify } from "src/logic/utils";
 import { PartnerVideo } from "src/_SCRIPTAPIINDEX";
 import { onMounted, ref } from "vue";
@@ -84,19 +89,18 @@ const route = useRoute();
 const video = ref<PartnerVideo>();
 const slide = ref(0)
 
-onMounted(() => {
+onMounted(async () => {
 	console.log('onMounted - video');
 	console.log("route:", route, route.query);
-	if (route.query.video) {
-		try {
-			video.value = JSON.parse(route.query.video as string) as PartnerVideo;
-			console.log("video.value:", video.value);
-		} catch (err) {
-			console.error(err);
-			createNotify("Could not parse video information");
-		}
-	} else {
-		createNotify("Could not get video info from query");
+	initApi();
+	const partnerVideoId = route.params.partnerVideoId;
+	console.log("partnerVideoId:", partnerVideoId);
+
+	try {
+		video.value = await apiIndex.index.getVideo(partnerVideoId as string);
+	} catch (err) {
+		console.error(err);
+		createNotify(err as string)
 	}
 
 	setTimeout(() => {
@@ -113,5 +117,16 @@ onMounted(() => {
 });
 </script>
 
-<style scoped>
+<style lang="scss">
+//Hide scrollbar
+.q-carousel__navigation--bottom {
+	scrollbar-width: none !important;
+	-ms-overflow-style: none !important;
+}
+
+.q-carousel__navigation--bottom::-webkit-scrollbar {
+	width: 0;
+	height: 0;
+	display: none;
+}
 </style>

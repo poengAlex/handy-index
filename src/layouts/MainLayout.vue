@@ -15,7 +15,8 @@
 							fill="#616161" />
 					</svg>
 
-					<span class="q-ml-xs">Script index</span>
+					<span class="q-ml-xs headerName">Script
+						index</span>
 				</q-toolbar-title>
 
 				<q-space />
@@ -84,7 +85,7 @@
 								d="M16.0564 12.067C14.7465 12.0713 13.4915 12.6044 12.5653 13.5501C11.6391 14.4959 11.1169 15.7773 11.1128 17.1147V28.4896H21V17.1147C20.9958 15.7773 20.4737 14.4959 19.5475 13.5501C18.6212 12.6044 17.3662 12.0713 16.0564 12.067Z"
 								fill="#616161" />
 						</svg>
-						<span class="q-ml-sm">Script index</span>
+						<span class="q-ml-sm headerName">Script index</span>
 					</q-toolbar-title>
 				</q-toolbar>
 
@@ -155,6 +156,7 @@
 </template>
 
 <script setup lang="ts">
+import { initApi } from 'src/logic/api-wrapper';
 import { initHandy } from 'src/logic/handy';
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router';
@@ -210,37 +212,41 @@ onMounted(() => {
 </script>
 
 <style lang="sass">
+.headerName
+	padding-left: 2px
+	padding-top: 4px
+	font-size: 26px
 .GPL
-  &__toolbar
-    height: 64px
-  &__toolbar-input
-    width: 35%
-  &__drawer-item
-    line-height: 24px
-    border-radius: 0 24px 24px 0
-    margin-right: 12px
-    .q-item__section--avatar
-      padding-left: 12px
-      .q-icon
-        color: #5f6368
-    .q-item__label:not(.q-item__label--caption)
-      color: #3c4043
-      letter-spacing: .01785714em
-      font-size: .875rem
-      font-weight: 500
-      line-height: 1.25rem
-    &--storage
-      border-radius: 0
-      margin-right: 0
-      padding-top: 24px
-      padding-bottom: 24px
-  &__side-btn
-    &__label
-      font-size: 12px
-      line-height: 24px
-      letter-spacing: .01785714em
-      font-weight: 500
-  @media (min-width: 1024px)
-    &__page-container
-      padding-left: 94px
+	&__toolbar
+		height: 64px
+	&__toolbar-input
+		width: 35%
+	&__drawer-item
+		line-height: 24px
+		border-radius: 0 24px 24px 0
+		margin-right: 12px
+	.q-item__section--avatar
+		padding-left: 12px
+		.q-icon
+			color: #5f6368
+	.q-item__label:not(.q-item__label--caption)
+		color: #3c4043
+		letter-spacing: .01785714em
+		font-size: .875rem
+		font-weight: 500
+		line-height: 1.25rem
+	&--storage
+		border-radius: 0
+		margin-right: 0
+		padding-top: 24px
+		padding-bottom: 24px
+	&__side-btn
+		&__label
+			font-size: 12px
+			line-height: 24px
+			letter-spacing: .01785714em
+			font-weight: 500
+	@media (min-width: 1024px)
+		&__page-container
+			padding-left: 94px
 </style>

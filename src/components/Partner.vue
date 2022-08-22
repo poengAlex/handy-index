@@ -1,6 +1,6 @@
 <template>
 	<div class="text-overline col cursor-pointer" @click.stop="partnerClick">{{
-			partnerIdToPartnerName(props.partnerId)
+			apiIndex.partnerIdToPartnerName(props.partnerId)
 	}}
 		<q-tooltip>
 			Go to site
@@ -9,9 +9,10 @@
 </template>
 
 <script setup lang="ts">
-import { partnerIdToPartnerName } from "src/logic/api-wrapper";
+import { useIndexStore } from "src/stores/apiIndex";
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
+const apiIndex = useIndexStore();
 const props = defineProps(['partnerId']);
 const router = useRouter();
 function partnerClick() {

@@ -109,6 +109,7 @@ export type { VideoOpts } from './models/VideoOpts';
 export type { VideoProperties } from './models/VideoProperties';
 export type { VideoTag } from './models/VideoTag';
 export type { VideoTitle } from './models/VideoTitle';
+export { VideoType } from './models/VideoType';
 export type { VideoUpdateAttributes } from './models/VideoUpdateAttributes';
 
 export { $APIErrorObject } from './schemas/$APIErrorObject';
@@ -211,6 +212,7 @@ export { $VideoOpts } from './schemas/$VideoOpts';
 export { $VideoProperties } from './schemas/$VideoProperties';
 export { $VideoTag } from './schemas/$VideoTag';
 export { $VideoTitle } from './schemas/$VideoTitle';
+export { $VideoType } from './schemas/$VideoType';
 export { $VideoUpdateAttributes } from './schemas/$VideoUpdateAttributes';
 
 export { IndexService } from './services/IndexService';

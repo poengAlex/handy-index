@@ -1,8 +1,9 @@
 <template>
 	<q-card class="cursor-pointer" v-if="video !== undefined" @click="$emit('click', video)">
 		<q-responsive :ratio="16 / 9">
-			<q-img :src="settings.nsfw ? video.images[0] : 'https://via.placeholder.com/315x300.png?text=NSFW'"
-				fit="fill" @error="video.images[0] = '315x300-no-image.png'">
+			<q-img v-if="video.images !== undefined"
+				:src="settings.nsfw ? video.images[0] : 'https://via.placeholder.com/315x300.png?text=NSFW'" fit="fill"
+				@error="(video?.images as string[])[0] = '315x300-no-image.png'">
 				<div class="absolute-bottom" style="height: 40%;padding: 0px;">
 					<div class="row items-center justify-evenly full-height full-width">
 						<div class="ellipsis-2-lines text-picture text-subtitle1 q-pl-lg q-pr-lg">
@@ -18,8 +19,9 @@
 
 			<q-tooltip anchor="center middle" self="center middle" :delay="1000">
 				<div style="width: 400px !important">
-					<q-img :src="settings.nsfw ? video.gifs[0] : 'https://via.placeholder.com/315x300.png?text=NSFW'"
-						fit="fill" width="100%" @error="video.gifs[0] = '315x300-no-image.png'">
+					<q-img v-if="video.gifs !== undefined"
+						:src="settings.nsfw ? video.gifs[0] : 'https://via.placeholder.com/315x300.png?text=NSFW'"
+						fit="fill" width="100%" @error="(video?.gifs as string[])[0] = '315x300-no-image.png'">
 					</q-img>
 					<div class="row">
 						<partner :partner-id="video.partnerId"></partner>
@@ -122,7 +124,6 @@ import { onMounted, ref } from "vue";
 import dayjs from 'dayjs'
 import relativeTime from "dayjs/plugin/relativeTime";
 import duration from "dayjs/plugin/duration";
-import { partners, partnerIdToPartnerName } from '../logic/api-wrapper';
 import { createNotifyWarning } from "src/logic/utils";
 import { PartnerVideo } from "src/_SCRIPTAPIINDEX";
 import { useSettingsStore } from '../stores/settings'
@@ -134,9 +135,8 @@ dayjs.extend(duration);
 const propsIn = defineProps(['tableValue']);
 const video = ref<PartnerVideo>();
 
-const emit = defineEmits<{
-	(e: 'click', video: PartnerVideo): void
-}>();
+// eslint-disable-next-line func-call-spacing
+const emit = defineEmits<{ (e: 'click', video: PartnerVideo): void }>();
 
 onMounted(() => {
 	// console.log('onMounted');

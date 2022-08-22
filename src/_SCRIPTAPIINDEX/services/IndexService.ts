@@ -4,6 +4,7 @@
 import type { Partner } from '../models/Partner';
 import type { PartnerVideo } from '../models/PartnerVideo';
 import type { Script } from '../models/Script';
+import type { Tag } from '../models/Tag';
 import type { TokenURL } from '../models/TokenURL';
 import type { ULID } from '../models/ULID';
 
@@ -50,6 +51,28 @@ skip?: number,
     }
 
     /**
+     * Get a list of tags available to the current user
+     * Get a list of tags available to the current user
+     * @param take Tag list limit
+     * @param skip List offset
+     * @returns Tag Available tags
+     * @throws ApiError
+     */
+    public getTags(
+take: number = 1000,
+skip?: number,
+): CancelablePromise<Array<Tag>> {
+        return this.httpRequest.request({
+            method: 'GET',
+            url: '/tags',
+            query: {
+                'take': take,
+                'skip': skip,
+            },
+        });
+    }
+
+    /**
      * Get a list of videos available to the current user
      * Get a list of videos available to the current user
      * @param qt Video title query.
@@ -76,6 +99,25 @@ skip?: number,
                 'pf': pf,
                 'take': take,
                 'skip': skip,
+            },
+        });
+    }
+
+    /**
+     * Get video info
+     * Get video info
+     * @param partnerVideoId Video identifier
+     * @returns PartnerVideo Partner video info
+     * @throws ApiError
+     */
+    public getVideo(
+partnerVideoId: ULID,
+): CancelablePromise<PartnerVideo> {
+        return this.httpRequest.request({
+            method: 'GET',
+            url: '/videos/{partnerVideoId}',
+            path: {
+                'partnerVideoId': partnerVideoId,
             },
         });
     }

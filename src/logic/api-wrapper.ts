@@ -1,8 +1,10 @@
-import { OpenAPIConfig, Partner, ScriptApiIndex } from "src/_SCRIPTAPIINDEX";
+import { OpenAPIConfig, Partner, PartnerVideo, ScriptApiIndex } from "src/_SCRIPTAPIINDEX";
 import { ref } from "vue";
+import { useSettingsStore } from '../stores/settings'
+import { handy } from "./handy";
+import { createNotify, createNotifySuccess, createNotifyWarning } from "./utils";
 
-export type Server = "production" | "staging" | "dev";
-
+export let apiIndex: ScriptApiIndex;
 const TUBE_SITES_PARTNERS = ["pornhub.com"];
 
 const API_URL = {
@@ -23,33 +25,39 @@ const API_URL = {
     }
 }
 
-const pipeline = ref({
-	server: "production" as Server
-});
-
-export const partners = ref<Partner[]>([]);
-
-// TODO: This should be optimized
-export function partnerIdToPartnerName(partnerId: string) {
-	// console.log('partnerIdToPartnerName', partnerId);
-	let partnerName = "Unknown partner";
-	partners.value.forEach(partner => {
-		if (partner.partnerId === partnerId) {
-			// console.log('MATCH!');
-			partnerName = partner.name;
+export async function downloadToken(video: PartnerVideo) {
+	const handyKey = handy.getStoredKey();
+	if (handyKey === undefined) {
+		createNotifyWarning("You need to be connected with your Handy to download script tokens.")
+	}
+	initApi(handyKey);
+	console.log('downloadToken', video);
+	try {
+		const scripts = await apiIndex.index.getVideoScripts(video.partnerVideoId);
+		console.log("scripts:", scripts);
+		if (scripts.length === 0) {
+			createNotifyWarning("No scripts found on this video");
+		} else if (scripts.length > 0) {
+			// TODO: Add logic to handle multiple scripts
+			const script = scripts[0];
+			const token = await apiIndex.index.getTokenUrl(video.partnerVideoId, script.scriptId);
+			console.log("token:", token);
+			createNotifySuccess(JSON.stringify(token), "Simulated token download")
 		}
-	});
-	return partnerName;
+	} catch (err) {
+		console.error(err);
+		createNotify(err as string)
+	}
 }
 
-export let apiIndex: ScriptApiIndex;
-
-export function initApi() {
+// TODO: Could this be called somewher global place?
+export function initApi(token = "") {
+	const settings = useSettingsStore()
     const config: Partial<OpenAPIConfig> = {
-        // HEADERS: {
-        //     Authorization: "Bearer " + token
-        // },
-        BASE: API_URL.index[pipeline.value.server]
+        HEADERS: {
+            Authorization: "Bearer " + token
+        },
+        BASE: (API_URL.index as any)[settings.server]
     }
 	apiIndex = new ScriptApiIndex(config);
 }

@@ -80,12 +80,14 @@
 import { QTable, useQuasar } from 'quasar';
 import { PartnerVideo, Partner } from 'src/_SCRIPTAPIINDEX';
 import { computed, onMounted, ref, watch } from 'vue';
-import { initApi, apiIndex, partners } from '../logic/api-wrapper'
+// import { initApi, apiIndex } from '../logic/api-wrapper'
 import { createNotify } from '../logic/utils'
 import VideoElement from 'src/components/VideoElement.vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useSettingsStore } from '../stores/settings'
+import { useIndexStore } from 'src/stores/apiIndex';
 const settings = useSettingsStore()
+const apiIndex = useIndexStore();
 
 const route = useRoute();
 const router = useRouter();
@@ -139,22 +141,18 @@ function filterFnTags(val: any, update: any, abort: () => void) {
 }
 
 function filterFnPartners(val: any, update: any, abort: () => void) {
-	update(() => {
+	update(async () => {
 		console.log('searching - partners');
 
 		const needle = val.toLowerCase()
-		partnersFiltered.value = partners.value.filter(v => v.name.toLowerCase().indexOf(needle) > -1)
+		partnersFiltered.value = (await apiIndex.getPartners()).filter(v => v.name.toLowerCase().indexOf(needle) > -1)
 	})
 }
 
 function videoClick(video: PartnerVideo) {
 	console.log('videoClick', video);
 	router.push({
-		path: "/videos/" + video.partnerVideoId,
-		query: {
-			video: JSON
-				.stringify(video)
-		}
+		path: "/videos/" + video.partnerVideoId
 	})
 }
 
@@ -200,8 +198,7 @@ function filterAndSortVideos() {
 				let tagMatch = false;
 				video.tags!.forEach(tag => {
 					if (tagSelected === tag) {
-						console.log('MATCH tag', video, tag);
-
+						// console.log('MATCH tag', video, tag);
 						tagMatch = true;
 					}
 				});
@@ -321,12 +318,19 @@ function setTags() {
 
 onMounted(async () => {
 	console.log('onMounted - videos');
-	initApi();
+	if (route.query !== undefined) {
+		if (route.query.tag) {
+			console.log("route.query.tag:", route.query.tag);
+			filterExpanded.value = true;
+			tagsSelected.value.push(route.query.tag)
+		} else if (route.query.partner) {
+			filterExpanded.value = true;
+			const partner = JSON.parse(route.query.partner as string) as Partner;
+			partnersSelected.value.push(partner)
+		}
+	}
 	try {
-		partners.value = await apiIndex.index.getPartners();
-		console.log("partners.value:", partners.value);
-
-		apiIndex.index.getIndex().then(_videos => {
+		apiIndex.getIndex().then(_videos => {
 			loading.value = false;
 			videos.value = _videos
 			// videos.value.reverse();

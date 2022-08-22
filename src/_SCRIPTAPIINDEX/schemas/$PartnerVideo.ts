@@ -48,5 +48,8 @@ export const $PartnerVideo = {
     type: 'string',
 },
 },
+        type: {
+    type: 'VideoType',
+},
     },
 } as const;

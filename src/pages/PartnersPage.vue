@@ -22,11 +22,14 @@ import { apiIndex, initApi } from "src/logic/api-wrapper";
 import { createNotify } from "src/logic/utils";
 import { Partner } from "src/_SCRIPTAPIINDEX";
 import { onMounted, ref } from "vue";
+import { useRouter } from "vue-router";
 
+const router = useRouter();
 const partners = ref<Partner[]>([]);
 
 function goToPartnerVideos(partner: Partner) {
 	console.log('goToPartnerVideos', partner);
+	router.push("/sites/" + partner.partnerId);
 }
 
 onMounted(async () => {

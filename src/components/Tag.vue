@@ -12,5 +12,11 @@ const props = defineProps(['tag']);
 const router = useRouter();
 function onTagClick() {
 	console.log('Tag click. Tag:', props.tag);
+	router.push({
+		path: "/videos",
+		query: {
+			tag: props.tag
+		}
+	})
 }
 </script>

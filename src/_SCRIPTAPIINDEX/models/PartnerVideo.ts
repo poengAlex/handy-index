@@ -8,6 +8,7 @@ import type { URL } from './URL';
 import type { VideoDescription } from './VideoDescription';
 import type { VideoFormat } from './VideoFormat';
 import type { VideoTitle } from './VideoTitle';
+import type { VideoType } from './VideoType';
 
 export type PartnerVideo = {
     partnerVideoId: ULID;
@@ -24,4 +25,5 @@ export type PartnerVideo = {
     tags?: Array<string>;
     images?: Array<string>;
     gifs?: Array<string>;
+    type?: VideoType;
 };
