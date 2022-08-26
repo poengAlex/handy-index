@@ -103,6 +103,16 @@
 						Open video on site
 					</q-chip>
 				</a>
+				<div v-if="settings.isFav(video)" class="col-auto" @click="settings.removeFromFav(video)">
+					<q-chip class="bg-grey-4 cursor-pointer" icon="favorite">
+						Remove from favorite
+					</q-chip>
+				</div>
+				<div v-else class="col-auto" @click="settings.addToFav(video)">
+					<q-chip class="bg-grey-4 cursor-pointer" icon="favorite_border">
+						Add to favorite
+					</q-chip>
+				</div>
 			</div>
 
 			<div class="col-12 row _q-pl-xs">

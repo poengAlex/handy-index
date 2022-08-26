@@ -102,7 +102,8 @@
 
 					<q-separator class="q-my-md" />
 
-					<q-item v-for="link in links3" :key="link.text" clickable class="GPL__drawer-item">
+					<q-item v-for="link in links3" :key="link.text" clickable class="GPL__drawer-item"
+						@click="link.route !== undefined ? router.push(link.route) : createNotifyWarning('Not implemented!')">
 						<q-item-section avatar>
 							<q-icon :name="link.icon" />
 						</q-item-section>
@@ -139,7 +140,7 @@
 							<q-item-label caption>{{ settings.connectionKey }}</q-item-label>
 						</q-item-section>
 					</q-item>
-					<q-item clickable class="GPL__drawer-item GPL__drawer-item--storage">
+					<q-item clickable class="GPL__drawer-item GPL__drawer-item--storage hidden">
 						<q-item-section avatar>
 							<q-icon name="cloud" />
 						</q-item-section>
@@ -193,7 +194,8 @@ const $q = useQuasar();
 const links3 = [
 	{ icon: 'settings', text: 'Settings' },
 	{ icon: 'help', text: 'Help & Feedback' },
-	{ icon: 'get_app', text: 'App Downloads' }
+	{ icon: 'get_app', text: 'App Downloads' },
+	{ icon: 'policy', text: 'Privacy information', route: "/privacy" }
 ]
 
 const links = ref<{ text: string, link: string, badge?: string, icon: string }[]>([

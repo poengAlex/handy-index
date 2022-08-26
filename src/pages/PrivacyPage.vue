@@ -1,9 +1,17 @@
 <template>
 	<div class="q-ma-lg q-pa-lg">
-		<div class="text-h3">Before you start using this site</div>
+		<div class="text-h3" v-if="settings.privacyAccepted">Privacy information</div>
+		<div class="text-h3" v-else>Before you start using this site</div>
 		<div class="text-h4">About the site</div>
 		<p>This site lists all the scripts the Handy team (Sweet Tech AS) has scripted. With our browser plugin, you can
-			play some videos in sync with Handy on the site.</p>
+			play some videos in sync with Handy on the site.
+		</p>
+		<p>
+			This site uses the index API. Feel free to use it for your projects, but remember that it will not be free
+			to use once out of BETA.
+			<a
+				href="https://scripts01.handyfeeling.com/api/script/index/v0/docs/">https://scripts01.handyfeeling.com/api/script/index/v0/docs/</a>
+		</p>
 
 		<div class="text-h4">What we track</div>
 		<div class="text-h5">This site</div>
@@ -69,7 +77,8 @@
 			<q-toggle v-model="settings.allowExternalVideo">Allow external videos</q-toggle>
 			<q-toggle v-model="settings.nsfw">Allow adult pictures and videos.</q-toggle>
 		</div>
-		<q-btn class="q-mt-sm" color="warning" text-color="black" @click="accept">I accept understand & accept - Enter
+		<q-btn v-if="!settings.privacyAccepted" class="q-mt-sm" color="warning" text-color="black" @click="accept">I
+			accept understand & accept - Enter
 			the site</q-btn>
 
 	</div>
