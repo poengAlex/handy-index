@@ -1,21 +1,19 @@
 <template>
-	<q-page class="q-pa-sm">
-		<q-banner class="bg-warning text-black">
-			<template v-slot:avatar>
-				<q-icon name="warning" color="black" />
-			</template>
-			This page is not completed. More detailes to come in future updates
-		</q-banner>
-		<template v-if="partner !== undefined">
-			<div class="text-h1">{{ partner.name }}</div>
-			<div class="text-subtitle1">{{ partner.description }}</div>
-			<q-btn color="accent" @click="goToVideos">Show videos</q-btn>
+	<q-banner class="bg-warning text-black">
+		<template v-slot:avatar>
+			<q-icon name="warning" color="black" />
 		</template>
-		<template v-else>
-			ERROR
-		</template>
+		This page is not completed. More detailes to come in future updates
+	</q-banner>
+	<template v-if="partner !== undefined">
+		<div class="text-h1">{{ partner.name }}</div>
+		<div class="text-subtitle1">{{ partner.description }}</div>
+		<q-btn color="accent" @click="goToVideos">Show videos</q-btn>
+	</template>
+	<template v-else>
+		ERROR
+	</template>
 
-	</q-page>
 </template>
 
 <script setup lang="ts">

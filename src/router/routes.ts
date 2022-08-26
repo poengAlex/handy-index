@@ -11,7 +11,7 @@ const routes: RouteRecordRaw[] = [
 			{ path: '/sites', component: () => import('pages/PartnersPage.vue') },
 			{ path: '/sites/:partnerId', component: () => import('pages/PartnerPage.vue') },
 			{ path: '/tags', component: () => import('pages/TagsPage.vue') },
-			{ path: '/favorites', component: () => import('pages/FavoritesPage.vue') }
+			{ path: '/playlists', component: () => import('pages/PlaylistPage.vue') }
 
 		]
 	},

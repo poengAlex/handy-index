@@ -1,128 +1,126 @@
 <template>
-	<q-page class="container q-pa-sm q-pt-lg">
-		<!-- {{ video }} -->
-		<div v-if="video !== undefined" class="row">
-			<div class="col-12 row">
-				<div class="col-12 col-md-6">
-					<q-carousel v-if="!externalVideo.active" class="rounded-borders" control-type="regular" arrows
-						control-color="accent" style="heigth: 400px;" swipeable animated v-model="slide" thumbnails>
-						<template v-if="video.images !== undefined">
-							<q-carousel-slide v-for="(img, index) in video?.images" :name="index" :key="index"
-								:img-src="settings.nsfw ? img : 'https://via.placeholder.com/315x300.png?text=NSFW'" />
-							<q-carousel-slide v-for="(gif, index) in video?.gifs" :name="video?.images.length + index"
-								:img-src="settings.nsfw ? gif : 'https://via.placeholder.com/315x300.png?text=NSFW'"
-								:key="index" />
+	<!-- {{ video }} -->
+	<div v-if="video !== undefined" class="row">
+		<div class="col-12 row">
+			<div class="col-12 col-md-6">
+				<q-carousel v-if="!externalVideo.active" class="rounded-borders" control-type="regular" arrows
+					control-color="accent" style="heigth: 400px;" swipeable animated v-model="slide" thumbnails>
+					<template v-if="video.images !== undefined">
+						<q-carousel-slide v-for="(img, index) in video?.images" :name="index" :key="index"
+							:img-src="settings.nsfw ? img : 'https://via.placeholder.com/315x300.png?text=NSFW'" />
+						<q-carousel-slide v-for="(gif, index) in video?.gifs" :name="video?.images.length + index"
+							:img-src="settings.nsfw ? gif : 'https://via.placeholder.com/315x300.png?text=NSFW'"
+							:key="index" />
+					</template>
+					<template v-else>
+						<q-carousel-slide name="no-image" img-src="315x300-no-image.png" />
+					</template>
+
+				</q-carousel>
+				<template v-if="externalVideo.active">
+					<q-banner v-if="!settings.allowExternalVideo" class="bg-warning text-black q-mt-sm">
+						<template v-slot:avatar>
+							<q-icon name="warning" color="black" />
 						</template>
-						<template v-else>
-							<q-carousel-slide name="no-image" img-src="315x300-no-image.png" />
-						</template>
-
-					</q-carousel>
-					<template v-if="externalVideo.active">
-						<q-banner v-if="!settings.allowExternalVideo" class="bg-warning text-black q-mt-sm">
-							<template v-slot:avatar>
-								<q-icon name="warning" color="black" />
-							</template>
-							It is possible to view the video here. We do not host any video content on our servers. The
-							video is played externally from an iFrame and
-							<b>{{ apiStore.partnerIdToPartnerName(video.partnerId) }}</b> might be gathering analytics
-							as if you where visiting their site directly.
-							<br>
-							<q-btn class="text-white q-mt-sm" color="black" @click="settings.allowExternalVideo = true">
-								Allow external videos
-							</q-btn>
-						</q-banner>
-						<template v-else>
-							<template v-if="settings.nsfw">
-								<q-video :ratio="16 / 9" :src="externalVideo.url" />
-								<q-banner v-if="bexDetected === false" class="bg-warning text-black">
-									<template v-slot:avatar>
-										<q-icon name="warning" color="black" />
-									</template>
-									<template v-if="true">
-										You will need the <b>Handy browser extension</b> to play this video with the
-										script
-										token. Please do the following:
-										<ul>
-											<li v-if="$q.platform.is.name !== 'chrome'">Download and install
-												Chrome web browser. <a href="https://www.google.com/chrome/"
-													target="_blank">https://www.google.com/chrome/</a>
-											</li>
-											<li>Download the Handy browser extension. <a
-													href="https://chrome.google.com/webstore/category/extensions"
-													target="_blank">Link</a></li>
-											<li>Connect to your Handy in the extension.</li>
-											<li>Refresh this page.</li>
-										</ul>
-									</template>
-
-								</q-banner>
-							</template>
-
-							<q-banner v-else class="bg-warning text-black">
+						It is possible to view the video here. We do not host any video content on our servers. The
+						video is played externally from an iFrame and
+						<b>{{ apiStore.partnerIdToPartnerName(video.partnerId) }}</b> might be gathering analytics
+						as if you where visiting their site directly.
+						<br>
+						<q-btn class="text-white q-mt-sm" color="black" @click="settings.allowExternalVideo = true">
+							Allow external videos
+						</q-btn>
+					</q-banner>
+					<template v-else>
+						<template v-if="settings.nsfw">
+							<q-video :ratio="16 / 9" :src="externalVideo.url" />
+							<q-banner v-if="bexDetected === false" class="bg-warning text-black">
 								<template v-slot:avatar>
 									<q-icon name="warning" color="black" />
 								</template>
-								An external video is found. NSFW is disabled in settings. Turn of to see the video
+								<template v-if="true">
+									You will need the <b>Handy browser extension</b> to play this video with the
+									script
+									token. Please do the following:
+									<ul>
+										<li v-if="$q.platform.is.name !== 'chrome'">Download and install
+											Chrome web browser. <a href="https://www.google.com/chrome/"
+												target="_blank">https://www.google.com/chrome/</a>
+										</li>
+										<li>Download the Handy browser extension. <a
+												href="https://chrome.google.com/webstore/category/extensions"
+												target="_blank">Link</a></li>
+										<li>Connect to your Handy in the extension.</li>
+										<li>Refresh this page.</li>
+									</ul>
+								</template>
+
 							</q-banner>
 						</template>
+
+						<q-banner v-else class="bg-warning text-black">
+							<template v-slot:avatar>
+								<q-icon name="warning" color="black" />
+							</template>
+							An external video is found. NSFW is disabled in settings. Turn of to see the video
+						</q-banner>
 					</template>
+				</template>
 
-				</div>
-
-			</div>
-			<div class=" col-12 row">
-				<div class="col-12 text-h4">{{ video?.title }}</div>
-				<div class="col-12 row">
-					<Partner class="col-auto" :partner-id="video?.partnerId"></Partner>
-
-				</div>
-
-				<div class="col-12 row q-gutter-xs q-mb-sm _q-pl-xs">
-
-					<div v-if="video.format?.format !== 'unknown'" class="col-auto">
-						<q-chip class="bg-grey-4">
-							{{ video?.format?.format }} <span v-if="video?.format?.format === 'vr'">-
-								{{ video.format.view }}</span>
-						</q-chip>
-					</div>
-					<div class="col-auto">
-						<q-chip class="bg-grey-4">
-							<Duration class="" :duration="video?.duration">
-							</Duration>
-						</q-chip>
-					</div>
-					<div v-for="(script, index) in scripts" :key="index" class="col-auto cursor-pointer"
-						@click="downloadToken(script)">
-						<q-chip class="bg-grey-4" icon="download">
-							Download script token (scripter: {{ script.scripter?.name }})
-						</q-chip>
-					</div>
-					<a class="col-auto _cursor-pointer" :href="video.videoUrl" target="_blank"
-						style="text-decoration: none;">
-						<q-chip class="bg-grey-4" icon="open_in_new">
-							Open video on site
-						</q-chip>
-					</a>
-				</div>
-
-				<div class="col-12 row _q-pl-xs">
-					<Tag v-for="tag in video?.tags" :key="tag" :tag="tag"></Tag>
-				</div>
-				<div class="col-12 _q-pa-sm q-pl-none q-pr-sm q-pt-sm">
-					<q-banner class="bg-grey-4 " rounded>
-						<template v-slot:avatar>
-							<q-icon name="description" color="black" />
-						</template>
-						{{ video?.description }}
-					</q-banner>
-
-				</div>
 			</div>
 
 		</div>
-		<!-- {{ video }} -->
-	</q-page>
+		<div class=" col-12 row">
+			<div class="col-12 text-h4">{{ video?.title }}</div>
+			<div class="col-12 row">
+				<Partner class="col-auto" :partner-id="video?.partnerId"></Partner>
+
+			</div>
+
+			<div class="col-12 row q-gutter-xs q-mb-sm _q-pl-xs">
+
+				<div v-if="video.format?.format !== 'unknown'" class="col-auto">
+					<q-chip class="bg-grey-4">
+						{{ video?.format?.format }} <span v-if="video?.format?.format === 'vr'">-
+							{{ video.format.view }}</span>
+					</q-chip>
+				</div>
+				<div class="col-auto">
+					<q-chip class="bg-grey-4">
+						<Duration class="" :duration="video?.duration">
+						</Duration>
+					</q-chip>
+				</div>
+				<div v-for="(script, index) in scripts" :key="index" class="col-auto cursor-pointer"
+					@click="downloadToken(script)">
+					<q-chip class="bg-grey-4" icon="download">
+						Download script token (scripter: {{ script.scripter?.name }})
+					</q-chip>
+				</div>
+				<a class="col-auto _cursor-pointer" :href="video.videoUrl" target="_blank"
+					style="text-decoration: none;">
+					<q-chip class="bg-grey-4" icon="open_in_new">
+						Open video on site
+					</q-chip>
+				</a>
+			</div>
+
+			<div class="col-12 row _q-pl-xs">
+				<Tag v-for="tag in video?.tags" :key="tag" :tag="tag"></Tag>
+			</div>
+			<div class="col-12 _q-pa-sm q-pl-none q-pr-sm q-pt-sm">
+				<q-banner class="bg-grey-4 " rounded>
+					<template v-slot:avatar>
+						<q-icon name="description" color="black" />
+					</template>
+					{{ video?.description }}
+				</q-banner>
+
+			</div>
+		</div>
+
+	</div>
+	<!-- {{ video }} -->
 </template>
 
 <script setup lang="ts">

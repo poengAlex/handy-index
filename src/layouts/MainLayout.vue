@@ -154,7 +154,9 @@
 		</q-drawer>
 
 		<q-page-container class="GPL__page-container ">
-			<router-view />
+			<q-page class="container q-pa-sm">
+				<router-view />
+			</q-page>
 
 			<q-page-sticky v-if="$q.screen.gt.sm" expand position="left">
 				<div class="fit q-pt-xl q-px-sm column">
@@ -220,7 +222,7 @@ const links = ref<{ text: string, link: string, badge?: string, icon: string }[]
 		text: "Playlists",
 		link: "/playlists",
 		icon: "collections_bookmark",
-		badge: "New"
+		badge: "Soon"
 	}
 ])
 
