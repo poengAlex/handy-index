@@ -178,9 +178,9 @@
 <script setup lang="ts">
 import { useQuasar } from 'quasar';
 import { initApi } from 'src/logic/api-wrapper';
-import { showConnectionKeyDialog } from 'src/logic/utils';
+import { createNotifyWarning, showConnectionKeyDialog } from 'src/logic/utils';
 // import { initHandy } from 'src/logic/handy';
-import { onMounted, ref } from 'vue'
+import { onBeforeMount, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router';
 import { useSettingsStore } from '../stores/settings'
 const settings = useSettingsStore()
@@ -229,6 +229,22 @@ const links = ref<{ text: string, link: string, badge?: string, icon: string }[]
 function toggleLeftDrawer() {
 	leftDrawerOpen.value = !leftDrawerOpen.value
 }
+
+router.beforeEach(async (to, from) => {
+	if (!settings.privacyAccepted && to.name !== "privacy") {
+		console.warn("privacy intro not seen");
+		router.push({ path: "/privacy" });
+		createNotifyWarning("Please accept our terms before using the site");
+	}
+})
+
+onBeforeMount(() => {
+	if (!settings.privacyAccepted) {
+		console.warn("privacy intro not seen");
+		router.push({ path: "/privacy" })
+	}
+})
+
 onMounted(() => {
 	// initHandy();
 })
