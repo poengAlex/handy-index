@@ -7,5 +7,11 @@ export const $Tag = {
     type: 'TagAttributes',
 }, {
     type: 'Entity',
+}, {
+    properties: {
+        count: {
+    type: 'number',
+},
+    },
 }],
 } as const;

@@ -2,20 +2,21 @@ import { defineStore } from 'pinia';
 import { useStorage } from '@vueuse/core'
 import { createNotify } from 'src/logic/utils';
 import { apiIndex, initApi } from 'src/logic/api-wrapper';
-import { Partner } from 'src/_SCRIPTAPIINDEX';
+import { Partner, PartnerVideo } from 'src/_SCRIPTAPIINDEX';
 
 export const useIndexStore = defineStore('index', {
 	state: () => ({
-		partners: useStorage("partners", [] as Partner[])
+		partners: [] as Partner[]
 	}),
 
+	persist: true,
 	getters: {
 
 	},
 
 	actions: {
-		async getPartners() {
-			if (this.partners === undefined) {
+		async getPartners(force = false) {
+			if (this.partners.length === 0 || force) {
 				initApi();
 				try {
 					this.partners = await apiIndex.index.getPartners();
@@ -26,9 +27,21 @@ export const useIndexStore = defineStore('index', {
 			}
 			return this.partners;
 		},
-		async getIndex() {
+		getIndex() {
 			initApi();
 			return apiIndex.index.getIndex()
+		},
+		getTags() {
+			initApi();
+			return apiIndex.index.getTags()
+		},
+		getScripts(partnerVideoId: string) {
+			initApi();
+			return apiIndex.index.getVideoScripts(partnerVideoId);
+		},
+		getVideo(partnerVideoId: string) {
+			initApi();
+			return apiIndex.index.getVideo(partnerVideoId);
 		},
 		partnerIdToPartnerName(partnerId: string) {
 			let partnerName = "Unknown partner";

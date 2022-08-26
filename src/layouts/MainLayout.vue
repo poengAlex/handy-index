@@ -16,7 +16,7 @@
 					</svg>
 
 					<span class="q-ml-xs headerName">Script
-						index</span>
+						Index</span>
 				</q-toolbar-title>
 
 				<q-space />
@@ -123,6 +123,24 @@
 					</q-item>
 					<q-item clickable class="GPL__drawer-item GPL__drawer-item--storage">
 						<q-item-section avatar>
+							<q-icon name="preview" />
+						</q-item-section>
+						<q-item-section top>
+							<q-toggle v-model="settings.allowExternalVideo">External videos</q-toggle>
+						</q-item-section>
+					</q-item>
+					<q-item clickable @click="showConnectionKeyDialog($q)"
+						class="GPL__drawer-item GPL__drawer-item--storage">
+						<q-item-section avatar>
+							<q-icon name="key" />
+						</q-item-section>
+						<q-item-section top>
+							<q-item-label>Connection key</q-item-label>
+							<q-item-label caption>{{ settings.connectionKey }}</q-item-label>
+						</q-item-section>
+					</q-item>
+					<q-item clickable class="GPL__drawer-item GPL__drawer-item--storage">
+						<q-item-section avatar>
 							<q-icon name="cloud" />
 						</q-item-section>
 						<q-item-section top>
@@ -156,8 +174,10 @@
 </template>
 
 <script setup lang="ts">
+import { useQuasar } from 'quasar';
 import { initApi } from 'src/logic/api-wrapper';
-import { initHandy } from 'src/logic/handy';
+import { showConnectionKeyDialog } from 'src/logic/utils';
+// import { initHandy } from 'src/logic/handy';
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router';
 import { useSettingsStore } from '../stores/settings'
@@ -166,6 +186,7 @@ const leftDrawerOpen = ref(false)
 const router = useRouter();
 const storage = ref(0.26)
 const search = ref('');
+const $q = useQuasar();
 
 const links3 = [
 	{ icon: 'settings', text: 'Settings' },
@@ -192,7 +213,7 @@ const links = ref<{ text: string, link: string, badge?: string, icon: string }[]
 	},
 	{
 		text: "Favorites",
-		link: "/favorites",
+		link: "/videos?fav=true",
 		icon: "favorite"
 	},
 	{
@@ -207,7 +228,7 @@ function toggleLeftDrawer() {
 	leftDrawerOpen.value = !leftDrawerOpen.value
 }
 onMounted(() => {
-	initHandy();
+	// initHandy();
 })
 </script>
 

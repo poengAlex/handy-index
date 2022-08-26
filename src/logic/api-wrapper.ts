@@ -25,31 +25,6 @@ const API_URL = {
     }
 }
 
-export async function downloadToken(video: PartnerVideo) {
-	const handyKey = handy.getStoredKey();
-	if (handyKey === undefined) {
-		createNotifyWarning("You need to be connected with your Handy to download script tokens.")
-	}
-	initApi(handyKey);
-	console.log('downloadToken', video);
-	try {
-		const scripts = await apiIndex.index.getVideoScripts(video.partnerVideoId);
-		console.log("scripts:", scripts);
-		if (scripts.length === 0) {
-			createNotifyWarning("No scripts found on this video");
-		} else if (scripts.length > 0) {
-			// TODO: Add logic to handle multiple scripts
-			const script = scripts[0];
-			const token = await apiIndex.index.getTokenUrl(video.partnerVideoId, script.scriptId);
-			console.log("token:", token);
-			createNotifySuccess(JSON.stringify(token), "Simulated token download")
-		}
-	} catch (err) {
-		console.error(err);
-		createNotify(err as string)
-	}
-}
-
 // TODO: Could this be called somewher global place?
 export function initApi(token = "") {
 	const settings = useSettingsStore()

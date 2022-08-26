@@ -1,24 +1,26 @@
 <template>
 	<div class="q-pa-sm">
-		<Tag v-for="tag in tags" :key="tag" :tag="tag" />
+		<TagVue v-for="tag in tags" :key="tag.tagId" :tag="tag.tagId" :count="tag.count" />
 	</div>
 </template>
 
 <script setup lang="ts">
-import { apiIndex, initApi } from "src/logic/api-wrapper";
+// import { apiIndex, initApi } from "src/logic/api-wrapper";
 // import { Tag } from "src/_SCRIPTAPIINDEX";
 import { onMounted, ref } from "vue";
-import Tag from "src/components/Tag.vue";
+import TagVue from "src/components/Tag.vue";
+import { useIndexStore } from 'src/stores/apiIndex';
+import { Tag } from "src/_SCRIPTAPIINDEX";
+const indexStore = useIndexStore();
 
-const tags = ref<string[]>([]);
+const tags = ref<Tag[]>([]);
 
 onMounted(async () => {
 	console.log('onMounted');
-	initApi();
-	const _tags = await apiIndex.index.getTags();
+	const _tags = await indexStore.getTags();
 	_tags.forEach(tag => {
 		if (tag.tagId.length < 20) {
-			tags.value.push(tag.tagId);
+			tags.value.push(tag);
 		}
 	});
 });

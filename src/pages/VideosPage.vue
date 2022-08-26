@@ -4,7 +4,9 @@
 			<q-spinner size="50px" color="black" />
 		</q-inner-loading>
 		<!-- <div v-if="videos.length > 0">{{ videos[0] }}</div> -->
-
+		<div class="text-h4" v-if="fav">
+			<q-icon name="favorites"></q-icon>Favorites
+		</div>
 		<!-- Search and filter -->
 		<div class="row full-width q-pt-lg q-pr-xs">
 			<q-expansion-item filled class="col-12"
@@ -98,7 +100,9 @@ const sortOrderDecending = ref(false);
 const videos = ref<PartnerVideo[]>([]);
 const videosFiltered = ref<PartnerVideo[]>([]);
 const $q = useQuasar()
+const fav = ref(false);
 
+// const partners = ref<Partner[]>([]);
 const partnersFiltered = ref<Partner[]>([]);
 const partnersSelected = ref<Partner[]>([]);
 
@@ -145,7 +149,7 @@ function filterFnPartners(val: any, update: any, abort: () => void) {
 		console.log('searching - partners');
 
 		const needle = val.toLowerCase()
-		partnersFiltered.value = (await apiIndex.getPartners()).filter(v => v.name.toLowerCase().indexOf(needle) > -1)
+		partnersFiltered.value = apiIndex.partners.filter(v => v.name.toLowerCase().indexOf(needle) > -1)
 	})
 }
 
@@ -316,34 +320,66 @@ function setTags() {
 	console.log("tagColors.value:", tagColors.value);
 }
 
-onMounted(async () => {
-	console.log('onMounted - videos');
+function parseQuaryParams() {
+	// tagsSelected.value.length = 0;
+	// partnersSelected.value.length = 0;
+	// filterExpanded.value = false;
 	if (route.query !== undefined) {
 		if (route.query.tag) {
 			console.log("route.query.tag:", route.query.tag);
 			filterExpanded.value = true;
 			tagsSelected.value.push(route.query.tag)
-		} else if (route.query.partner) {
+			filterAndSortVideos();
+		}
+		if (route.query.partner) {
 			filterExpanded.value = true;
 			const partner = JSON.parse(route.query.partner as string) as Partner;
 			partnersSelected.value.push(partner)
+			filterAndSortVideos();
 		}
 	}
+}
+
+async function setVideos() {
 	try {
-		apiIndex.getIndex().then(_videos => {
+		apiIndex.getPartners();
+		if (route.query.fav) {
 			loading.value = false;
-			videos.value = _videos
-			// videos.value.reverse();
-			// videos.value = await apiIndex.index.getVideos(undefined, undefined, undefined, 100);
+			fav.value = true;
+			videos.value = settings.favorites;
 			setTags();
 			console.log("videos.value:", videos.value);
 			filterAndSortVideos();
-			// qtableref.value?.sort()
-		}).catch((err: any) => {
-			console.error(err);
-			createNotify(err as string)
-		});
+		} else {
+			fav.value = false;
+			apiIndex.getIndex().then(_videos => {
+				loading.value = false;
+				videos.value = _videos
+				// videos.value.reverse();
+				// videos.value = await apiIndex.index.getVideos(undefined, undefined, undefined, 100);
+				setTags();
+				console.log("videos.value:", videos.value);
+				filterAndSortVideos();
+				// qtableref.value?.sort()
+			}).catch((err: any) => {
+				console.error(err);
+				createNotify(err as string)
+			});
+		}
 	} catch (err) { console.error(err); createNotify(err as string) }
+}
+
+router.afterEach(async (to, from) => {
+	console.log('ROUTING');
+	await setVideos()
+	parseQuaryParams()
+})
+
+onMounted(async () => {
+	console.log('onMounted - videos');
+
+	await setVideos()
+	parseQuaryParams()
 });
 </script>
 

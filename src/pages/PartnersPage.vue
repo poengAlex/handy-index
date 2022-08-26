@@ -18,11 +18,15 @@
 </template>
 
 <script setup lang="ts">
-import { apiIndex, initApi } from "src/logic/api-wrapper";
+// import { apiIndex, initApi } from "src/logic/api-wrapper";
 import { createNotify } from "src/logic/utils";
 import { Partner } from "src/_SCRIPTAPIINDEX";
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
+import { useIndexStore } from "src/stores/apiIndex";
+import { useSettingsStore } from "src/stores/settings";
+const settings = useSettingsStore();
+const apiIndex = useIndexStore();
 
 const router = useRouter();
 const partners = ref<Partner[]>([]);
@@ -34,9 +38,8 @@ function goToPartnerVideos(partner: Partner) {
 
 onMounted(async () => {
 	console.log('onMounted - partners');
-	initApi();
 	try {
-		partners.value = await apiIndex.index.getPartners();
+		partners.value = await apiIndex.getPartners(true);
 		console.log("partners.value[0]:", partners.value[0]);
 	} catch (err) { console.error(err); createNotify(err as string) }
 });

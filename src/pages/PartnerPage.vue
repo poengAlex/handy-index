@@ -44,7 +44,7 @@ onMounted(async () => {
 	const partnerId = route.params.partnerId;
 	console.log("partnerId:", partnerId);
 
-	const partners = await apiIndex.getPartners();
+	const partners = await apiIndex.getPartners(true);
 	partners.forEach(_partner => {
 		if (_partner.partnerId === partnerId) {
 			partner.value = _partner;

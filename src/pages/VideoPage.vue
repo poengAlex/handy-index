@@ -4,8 +4,8 @@
 		<div v-if="video !== undefined" class="row">
 			<div class="col-12 row">
 				<div class="col-12 col-md-6">
-					<q-carousel class="rounded-borders" control-type="regular" arrows control-color="accent"
-						style="heigth: 400px;" swipeable animated v-model="slide" thumbnails>
+					<q-carousel v-if="!externalVideo.active" class="rounded-borders" control-type="regular" arrows
+						control-color="accent" style="heigth: 400px;" swipeable animated v-model="slide" thumbnails>
 						<template v-if="video.images !== undefined">
 							<q-carousel-slide v-for="(img, index) in video?.images" :name="index" :key="index"
 								:img-src="settings.nsfw ? img : 'https://via.placeholder.com/315x300.png?text=NSFW'" />
@@ -18,13 +18,63 @@
 						</template>
 
 					</q-carousel>
+					<template v-if="externalVideo.active">
+						<q-banner v-if="!settings.allowExternalVideo" class="bg-warning text-black q-mt-sm">
+							<template v-slot:avatar>
+								<q-icon name="warning" color="black" />
+							</template>
+							It is possible to view the video here. We do not host any video content on our servers. The
+							video is played externally from an iFrame and
+							<b>{{ apiStore.partnerIdToPartnerName(video.partnerId) }}</b> might be gathering analytics
+							as if you where visiting their site directly.
+							<br>
+							<q-btn class="text-white q-mt-sm" color="black" @click="settings.allowExternalVideo = true">
+								Allow external videos
+							</q-btn>
+						</q-banner>
+						<template v-else>
+							<template v-if="settings.nsfw">
+								<q-video :ratio="16 / 9" :src="externalVideo.url" />
+								<q-banner v-if="bexDetected === false" class="bg-warning text-black">
+									<template v-slot:avatar>
+										<q-icon name="warning" color="black" />
+									</template>
+									<template v-if="true">
+										You will need the <b>Handy browser extension</b> to play this video with the
+										script
+										token. Please do the following:
+										<ul>
+											<li v-if="$q.platform.is.name !== 'chrome'">Download and install
+												Chrome web browser. <a href="https://www.google.com/chrome/"
+													target="_blank">https://www.google.com/chrome/</a>
+											</li>
+											<li>Download the Handy browser extension. <a
+													href="https://chrome.google.com/webstore/category/extensions"
+													target="_blank">Link</a></li>
+											<li>Connect to your Handy in the extension.</li>
+											<li>Refresh this page.</li>
+										</ul>
+									</template>
+
+								</q-banner>
+							</template>
+
+							<q-banner v-else class="bg-warning text-black">
+								<template v-slot:avatar>
+									<q-icon name="warning" color="black" />
+								</template>
+								An external video is found. NSFW is disabled in settings. Turn of to see the video
+							</q-banner>
+						</template>
+					</template>
+
 				</div>
 
 			</div>
 			<div class=" col-12 row">
 				<div class="col-12 text-h4">{{ video?.title }}</div>
-				<div class="col-12">
-					<Partner class="col-3" :partner-id="video?.partnerId"></Partner>
+				<div class="col-12 row">
+					<Partner class="col-auto" :partner-id="video?.partnerId"></Partner>
 
 				</div>
 
@@ -42,9 +92,10 @@
 							</Duration>
 						</q-chip>
 					</div>
-					<div class="col-auto cursor-pointer" @click="downloadToken(video as PartnerVideo)">
+					<div v-for="(script, index) in scripts" :key="index" class="col-auto cursor-pointer"
+						@click="downloadToken(script)">
 						<q-chip class="bg-grey-4" icon="download">
-							Download script token
+							Download script token (scripter: {{ script.scripter?.name }})
 						</q-chip>
 					</div>
 					<a class="col-auto _cursor-pointer" :href="video.videoUrl" target="_blank"
@@ -70,34 +121,78 @@
 			</div>
 
 		</div>
-
+		<!-- {{ video }} -->
 	</q-page>
 </template>
 
 <script setup lang="ts">
-import { apiIndex, downloadToken, initApi, partnerIdToPartnerName } from "src/logic/api-wrapper";
-import { createNotify } from "src/logic/utils";
-import { PartnerVideo } from "src/_SCRIPTAPIINDEX";
+import { apiIndex, initApi } from "src/logic/api-wrapper";
+import { createNotify, createNotifySuccess, createNotifyWarning, showConnectionKeyDialog } from "src/logic/utils";
+import { PartnerVideo, Script } from "src/_SCRIPTAPIINDEX";
 import { onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
 import { useSettingsStore } from '../stores/settings'
+import { useIndexStore } from '../stores/apiIndex'
 import Partner from "src/components/Partner.vue";
 import Tag from "src/components/Tag.vue";
 import Duration from "src/components/Duration.vue";
+// import { handy } from "src/logic/handy";
+import { useQuasar } from 'quasar'
 const settings = useSettingsStore()
+const apiStore = useIndexStore();
 const route = useRoute();
 const video = ref<PartnerVideo>();
-const slide = ref(0)
+const slide = ref(0);
+const scripts = ref<Script[]>([]);
+const externalVideo = ref({
+	active: false,
+	partner: "",
+	url: ""
+});
+const bexDetected = ref(true);
+const $q = useQuasar();
+
+async function downloadToken(script: Script) {
+	// const handyKey = handy.getStoredKey();
+	// if (handyKey === undefined) {
+	// 	createNotifyWarning("You need to be connected with your Handy to download script tokens.")
+	// }
+	if (settings.connectionKey === "") {
+		showConnectionKeyDialog($q, (key: string) => {
+			console.log("key:", key);
+			downloadToken(script);
+		});
+		return;
+	}
+	initApi(settings.connectionKey);
+	console.log('downloadToken', video);
+	try {
+		const script = scripts.value[0];
+		const token = await apiIndex.index.getTokenUrl((video.value as PartnerVideo).partnerVideoId, script.scriptId);
+		console.log("token:", token);
+		window.open(token.url, "_blank");
+		createNotifySuccess("Downloading token")
+	} catch (err) {
+		console.error(err);
+		createNotify(err as string)
+	}
+}
 
 onMounted(async () => {
 	console.log('onMounted - video');
 	console.log("route:", route, route.query);
-	initApi();
-	const partnerVideoId = route.params.partnerVideoId;
+	const partnerVideoId = route.params.partnerVideoId as string;
 	console.log("partnerVideoId:", partnerVideoId);
 
 	try {
-		video.value = await apiIndex.index.getVideo(partnerVideoId as string);
+		video.value = await apiStore.getVideo(partnerVideoId);
+
+		if (video.value.partnerId === "01GA3NMS2VGZM7C61T88D5K53X") { // pornhubs ID
+			externalVideo.value.partner = "Pornhub";
+			externalVideo.value.url = 'https://www.pornhub.com/embed/' + video.value.externalRef;
+			externalVideo.value.active = true;
+		}
+		scripts.value = await apiStore.getScripts(partnerVideoId);
 	} catch (err) {
 		console.error(err);
 		createNotify(err as string)
@@ -114,6 +209,23 @@ onMounted(async () => {
 			}
 		}
 	}, 1); // The images are not drawn yet. This might not work very good on all browsers. Backend should do something smarter.
+
+	// SEARCH for bex plugin
+	setTimeout(() => {
+		const bexIdentifier = document.getElementById("bex-identifier");
+		if (bexIdentifier !== null) {
+			console.log("bexIdentifier:", bexIdentifier);
+			bexDetected.value = true;
+			const key = bexIdentifier.getAttribute("data-key");
+			console.log("key (from BEX):", key);
+			if (key !== null && key !== "") {
+				settings.connectionKey = key;
+			}
+		} else {
+			bexDetected.value = false;
+			console.log('BEX not detected');
+		}
+	}, 1000);
 });
 </script>
 

@@ -78,11 +78,18 @@
 								</q-item-section>
 								<q-item-section>Add to playlist</q-item-section>
 							</q-item>
-							<q-item clickable v-close-popup @click="createNotifyWarning('not implemented')">
+							<q-item v-if="!settings.isFav(video)" clickable v-close-popup
+								@click="settings.addToFav(video)">
+								<q-item-section avatar>
+									<q-icon color="primary" name="favorite_border" />
+								</q-item-section>
+								<q-item-section>Favorite</q-item-section>
+							</q-item>
+							<q-item v-else clickable v-close-popup @click="settings.removeFromFav(video)">
 								<q-item-section avatar>
 									<q-icon color="primary" name="favorite" />
 								</q-item-section>
-								<q-item-section>Favorite</q-item-section>
+								<q-item-section>Ufavorite</q-item-section>
 							</q-item>
 							<q-separator />
 							<q-item clickable v-close-popup @click="createNotifyWarning('not implemented')">
