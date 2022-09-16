@@ -82,6 +82,7 @@
 			</div>
 
 			<div class="col-12 row q-gutter-xs q-mb-sm _q-pl-xs">
+
 				<div v-if="video.createdAt !== undefined" class="col-auto">
 					<q-chip class="bg-grey-4">
 						Created {{ dayjs(video.createdAt).fromNow() }}
@@ -126,6 +127,12 @@
 			<div class="col-12 row _q-pl-xs">
 				<Tag v-for="tag in video?.tags" :key="tag" :tag="tag"></Tag>
 			</div>
+			<div class="col-12 q-mt-sm q-mb-sm">
+				<p>Rate the script:
+					<q-rating v-model="ratingModel" size="2em" :max="11" color="primary"
+						@update:model-value="rateScript(scripts[0])" />
+				</p>
+			</div>
 			<div class="col-12 _q-pa-sm q-pl-none q-pr-sm q-pt-sm">
 				<q-banner class="bg-grey-4 " rounded>
 					<template v-slot:avatar>
@@ -143,7 +150,7 @@
 
 <script setup lang="ts">
 import { apiIndex, downloadToken, initApi } from "src/logic/api-wrapper";
-import { createNotify, createNotifySuccess, createNotifyWarning, showConnectionKeyDialog } from "src/logic/utils";
+import { createNotify, createNotifySuccess, createNotifyWarning, showConnectionKeyDialog, isVideoVoted } from "src/logic/utils";
 import { PartnerVideo, Script } from "src/_SCRIPTAPIINDEX";
 import { onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
@@ -165,6 +172,7 @@ const video = ref<PartnerVideo>();
 const slide = ref(0);
 const scripts = ref<Script[]>([]);
 const imgError = ref(false);
+const ratingModel = ref<number>(0);
 const externalVideo = ref({
 	active: false,
 	partner: "",
@@ -176,6 +184,33 @@ const $q = useQuasar();
 function setImgError() {
 	console.warn("image error");
 	imgError.value = true;
+}
+
+async function rateScript(script: Script) {
+	console.log('Rating script', ratingModel.value);
+	const value = (ratingModel.value - 1) * 10;
+	console.log("value:", value);
+	const voted = isVideoVoted(video.value as PartnerVideo);
+	const partnerVideoId = video.value?.partnerVideoId as string;
+	try {
+		const res = await apiStore.getApi().index.createScriptRating(partnerVideoId, script.scriptId, { value });
+		console.log("res:", res);
+		if (voted) {
+			settings.videoVotes.forEach(vote => {
+				if (vote.scriptId === script.scriptId) {
+					vote.value = value;
+				}
+			});
+		} else {
+			settings.videoVotes.push({
+				value,
+				scriptId: script.scriptId
+			});
+		}
+	} catch (err) {
+		console.error(err);
+		createNotify(err as string)
+	}
 }
 
 onMounted(async () => {
@@ -194,6 +229,12 @@ onMounted(async () => {
 			externalVideo.value.active = true;
 		}
 		scripts.value = await apiStore.getScripts(partnerVideoId);
+
+		settings.videoVotes.forEach(vote => {
+			if (vote.scriptId === scripts.value[0].scriptId) {
+				ratingModel.value = (vote.value / 10) + 1
+			}
+		});
 	} catch (err) {
 		console.error(err);
 		createNotify(err as string)

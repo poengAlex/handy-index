@@ -5,6 +5,10 @@ import { createNotify, createNotifyWarning } from 'src/logic/utils';
 import { apiIndex, initApi } from 'src/logic/api-wrapper';
 
 export type Server = "production" | "staging" | "dev";
+export type Rating = {
+	value: number, // 0-100
+	scriptId: string
+}
 
 export const useSettingsStore = defineStore('settings', {
 	state: () => ({
@@ -14,7 +18,8 @@ export const useSettingsStore = defineStore('settings', {
 		allowExternalVideo: false,
 		favorites: [] as PartnerVideo[],
 		privacyAccepted: false,
-		requestUpvotes: [] as string[]
+		requestUpvotes: [] as string[],
+		videoVotes: [] as Rating[]
 	}),
 	persist: true,
 	getters: {

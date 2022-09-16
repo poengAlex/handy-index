@@ -1,6 +1,7 @@
 import { settings } from 'cluster';
 import { Notify, QVueGlobals } from 'quasar'
 import { useSettingsStore } from 'src/stores/settings';
+import { PartnerVideo } from 'src/_SCRIPTAPIINDEX';
 
 export function showConnectionKeyDialog($q: QVueGlobals, cb: (((key: string) => void) | undefined) = undefined) {
 	$q.dialog({
@@ -26,6 +27,17 @@ export function showConnectionKeyDialog($q: QVueGlobals, cb: (((key: string) => 
 			}
 		}
 	})
+}
+
+export function isVideoVoted(video: PartnerVideo) {
+	const settings = useSettingsStore();
+	const isFound = settings.videoVotes.some(vote => {
+		if (vote.partnerVideoId === video.partnerVideoId) {
+			return true;
+		}
+		return false;
+	});
+	return isFound;
 }
 
 // Remove padding on parent element
