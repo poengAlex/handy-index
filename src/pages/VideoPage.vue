@@ -3,8 +3,10 @@
 	<div v-if="video !== undefined" class="row">
 		<div class="col-12 row">
 			<div class="col-12 col-md-6">
-				<q-carousel v-if="!externalVideo.active" class="rounded-borders" control-type="regular" arrows
-					control-color="accent" style="heigth: 400px;" swipeable animated v-model="slide" thumbnails>
+
+				<q-carousel v-if="!imgError && (!externalVideo.active || !settings.allowExternalVideo)"
+					class="rounded-borders" control-type="regular" arrows control-color="accent" style="heigth: 400px;"
+					swipeable animated v-model="slide" thumbnails>
 					<template v-if="video.images !== undefined">
 						<q-carousel-slide v-for="(img, index) in video?.images" :name="index" :key="index"
 							:img-src="settings.nsfw ? img : 'https://via.placeholder.com/315x300.png?text=NSFW'" />
@@ -17,7 +19,9 @@
 					</template>
 
 				</q-carousel>
-				<template v-if="externalVideo.active">
+				<q-img v-show="imgError" :src="imgError?'315x300-no-image.png' : video.images![0]"
+					@error="setImgError()" style="width: 100%;" />
+				<template v-if=" externalVideo.active">
 					<q-banner v-if="!settings.allowExternalVideo" class="bg-warning text-black q-mt-sm">
 						<template v-slot:avatar>
 							<q-icon name="warning" color="black" />
@@ -73,7 +77,7 @@
 		<div class=" col-12 row">
 			<div class="col-12 text-h4">{{ video?.title }}</div>
 			<div class="col-12 row">
-				<Partner class="col-auto" :partner-id="video?.partnerId"></Partner>
+				<Partner class="col-auto" :partner-id="video?.partnerId" :partner="video.partnerName"></Partner>
 
 			</div>
 
@@ -92,7 +96,7 @@
 					</q-chip>
 				</div>
 				<div v-for="(script, index) in scripts" :key="index" class="col-auto cursor-pointer"
-					@click="downloadToken(script)">
+					@click="downloadToken(video!)">
 					<q-chip class="bg-grey-4" icon="download">
 						Download script token (scripter: {{ script.scripter?.name }})
 					</q-chip>
@@ -134,7 +138,7 @@
 </template>
 
 <script setup lang="ts">
-import { apiIndex, initApi } from "src/logic/api-wrapper";
+import { apiIndex, downloadToken, initApi } from "src/logic/api-wrapper";
 import { createNotify, createNotifySuccess, createNotifyWarning, showConnectionKeyDialog } from "src/logic/utils";
 import { PartnerVideo, Script } from "src/_SCRIPTAPIINDEX";
 import { onMounted, ref } from "vue";
@@ -152,6 +156,7 @@ const route = useRoute();
 const video = ref<PartnerVideo>();
 const slide = ref(0);
 const scripts = ref<Script[]>([]);
+const imgError = ref(false);
 const externalVideo = ref({
 	active: false,
 	partner: "",
@@ -160,30 +165,9 @@ const externalVideo = ref({
 const bexDetected = ref(true);
 const $q = useQuasar();
 
-async function downloadToken(script: Script) {
-	// const handyKey = handy.getStoredKey();
-	// if (handyKey === undefined) {
-	// 	createNotifyWarning("You need to be connected with your Handy to download script tokens.")
-	// }
-	if (settings.connectionKey === "") {
-		showConnectionKeyDialog($q, (key: string) => {
-			console.log("key:", key);
-			downloadToken(script);
-		});
-		return;
-	}
-	initApi(settings.connectionKey);
-	console.log('downloadToken', video);
-	try {
-		const script = scripts.value[0];
-		const token = await apiIndex.index.getTokenUrl((video.value as PartnerVideo).partnerVideoId, script.scriptId);
-		console.log("token:", token);
-		window.open(token.url, "_blank");
-		createNotifySuccess("Downloading token")
-	} catch (err) {
-		console.error(err);
-		createNotify(err as string)
-	}
+function setImgError() {
+	console.warn("image error");
+	imgError.value = true;
 }
 
 onMounted(async () => {
@@ -194,6 +178,7 @@ onMounted(async () => {
 
 	try {
 		video.value = await apiStore.getVideo(partnerVideoId);
+		console.log("video.value:", JSON.parse(JSON.stringify(video.value)));
 
 		if (video.value.partnerId === "01GA3NMS2VGZM7C61T88D5K53X") { // pornhubs ID
 			externalVideo.value.partner = "Pornhub";

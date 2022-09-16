@@ -29,10 +29,10 @@
 
 							{{
 
-									dayjs.duration(video.duration *
-										1000).format('HH') === '00' ? dayjs.duration(video.duration *
-											1000).format('mm:ss') : dayjs.duration(video.duration *
-												1000).format('HH:mm:ss')
+							dayjs.duration(video.duration *
+							1000).format('HH') === '00' ? dayjs.duration(video.duration *
+							1000).format('mm:ss') : dayjs.duration(video.duration *
+							1000).format('HH:mm:ss')
 							}}
 						</div>
 					</div>
@@ -58,15 +58,15 @@
 
 		<q-card-section class="q-pa-xs q-pb-sm">
 			<div class="row">
-				<partner class="q-pl-sm" :partner-id="video.partnerId"></partner>
+				<partner class="q-pl-sm" :partner-id="video.partnerId" :partner="video.partnerName"></partner>
 				<div class="col-auto text-overline  _bg-green" v-if="video.duration">
 
 					{{
 
-							dayjs.duration(video.duration *
-								1000).format('HH') === '00' ? dayjs.duration(video.duration *
-									1000).format('mm:ss') : dayjs.duration(video.duration *
-										1000).format('HH:mm:ss')
+					dayjs.duration(video.duration *
+					1000).format('HH') === '00' ? dayjs.duration(video.duration *
+					1000).format('mm:ss') : dayjs.duration(video.duration *
+					1000).format('HH:mm:ss')
 					}}
 				</div>
 				<q-btn dense class="col-auto" flat icon="more_vert" @click.stop="">
@@ -92,7 +92,7 @@
 								<q-item-section>Ufavorite</q-item-section>
 							</q-item>
 							<q-separator />
-							<q-item clickable v-close-popup @click="createNotifyWarning('not implemented')">
+							<q-item clickable v-close-popup @click="downloadToken(video)">
 								<q-item-section avatar>
 									<q-icon color="secondary" name="file_download" />
 								</q-item-section>
@@ -115,7 +115,8 @@
 					<tag v-for="(tag, index) in video.tags" :key="index" :tag="tag"></tag> -->
 				<q-item-label class="col-12" style="min-height: 48px;" lines="2">
 					<tag v-for="(tag, index) in video.tags" :key="index" :tag="tag"></tag>
-					<q-tooltip max-width="300px" anchor="center middle" self="center middle">
+					<q-tooltip v-if="video.tags !== undefined && video.tags?.length > 0" max-width="300px"
+						anchor="center middle" self="center middle">
 						<div class="row">
 							<tag v-for="(tag, index) in video.tags" :key="index" :tag="tag"></tag>
 						</div>
@@ -136,6 +137,7 @@ import { PartnerVideo } from "src/_SCRIPTAPIINDEX";
 import { useSettingsStore } from '../stores/settings'
 import Partner from "./Partner.vue";
 import Tag from "./Tag.vue";
+import { downloadToken } from "src/logic/api-wrapper";
 const settings = useSettingsStore()
 dayjs.extend(relativeTime);
 dayjs.extend(duration);
@@ -147,7 +149,8 @@ const emit = defineEmits<{ (e: 'click', video: PartnerVideo): void }>();
 
 onMounted(() => {
 	// console.log('onMounted');
-	video.value = propsIn.tableValue.row;
+	// video.value = propsIn.tableValue.row;
+	video.value = propsIn.tableValue;
 });
 </script>
 
