@@ -4,6 +4,7 @@
 
 import type { Rating } from './Rating';
 import type { Scripter } from './Scripter';
+import type { ScriptMetadata } from './ScriptMetadata';
 import type { ULID } from './ULID';
 
 export type Script = {
@@ -11,4 +12,5 @@ export type Script = {
     scripter?: Scripter;
     tags?: Array<string>;
     rating?: Rating;
+    metadata?: ScriptMetadata;
 };

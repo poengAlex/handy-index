@@ -19,5 +19,8 @@ export const $Script = {
         rating: {
     type: 'Rating',
 },
+        metadata: {
+    type: 'ScriptMetadata',
+},
     },
 } as const;

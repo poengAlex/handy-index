@@ -10,7 +10,8 @@
 	<!-- Search and filter -->
 	<div class="row full-width q-pt-sm q-pr-xs">
 		<q-expansion-item filled class="col-12" :class="{ 'col-sm-12': filterExpanded, 'col-sm-8': !filterExpanded }"
-			expand-separator icon="filter_alt" label="Advanced filter" v-model="filterExpanded">
+			expand-separator icon="filter_alt" :label="'Advanced filter - ' + videosFiltered.length + ' videos'"
+			v-model="filterExpanded">
 			<q-card>
 				<q-card-section>
 					<q-input class="" filled dense debounce="250" v-model="filter" placeholder="Search"
@@ -48,6 +49,8 @@
 							@update:model-value="filterAndSortVideos" />
 						<q-radio v-model="sortBy" val="title" label="Video name"
 							@update:model-value="filterAndSortVideos" />
+						<q-toggle v-model="paidFilter" @update:model-value="filterAndSortVideos">Show videos that are
+							behind a paywall</q-toggle>
 					</div>
 				</q-card-section>
 			</q-card>
@@ -82,7 +85,7 @@ import { QTable, useQuasar } from 'quasar';
 import { PartnerVideo, Partner } from 'src/_SCRIPTAPIINDEX';
 import { computed, onMounted, ref, watch } from 'vue';
 // import { initApi, apiIndex } from '../logic/api-wrapper'
-import { createNotify } from '../logic/utils'
+import { createNotify, nonReactiveObject } from '../logic/utils'
 import VideoElement from 'src/components/VideoElement.vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useSettingsStore } from '../stores/settings'
@@ -96,8 +99,8 @@ const route = useRoute();
 const router = useRouter();
 const loading = ref(true);
 const qtableref = ref<QTable>();
-const sortBy = ref<'createdAt' | 'updatedAt' | 'title' | 'duration'>('title');
-const sortOrderDecending = ref(false);
+const sortBy = ref<'createdAt' | 'updatedAt' | 'title' | 'duration'>('createdAt');
+const sortOrderDecending = ref(true);
 const videos = ref<PartnerVideo[]>([]);
 const videosFiltered = ref<PartnerVideo[]>([]);
 const $q = useQuasar()
@@ -116,6 +119,8 @@ const tagColors = ref<any>({});
 const tags = ref<string[]>([]);
 const tagsFiltered = ref<string[]>([]);
 const tagsSelected = ref<any[]>([]);
+
+const paidFilter = ref(false);
 
 const filterExpanded = ref(false);
 const rowsPerPageOptions = computed(() => {
@@ -222,6 +227,16 @@ function filterAndSortVideos() {
 				}
 			});
 			if (partnerMatch) {
+				tempVideosNested.push(video);
+			}
+		});
+		tempVideos = tempVideosNested;
+	}
+
+	if (!paidFilter.value) {
+		const tempVideosNested: PartnerVideo[] = []
+		tempVideos.forEach(video => {
+			if (video.type === "public") {
 				tempVideosNested.push(video);
 			}
 		});
@@ -357,6 +372,8 @@ async function setVideos() {
 				setTags();
 				console.log("videos.value:", videos.value);
 				filterAndSortVideos();
+				console.log("video:", nonReactiveObject(videos.value[0]));
+
 				// qtableref.value?.sort()
 			}).catch((err: any) => {
 				console.error(err);

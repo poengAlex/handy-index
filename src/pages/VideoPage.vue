@@ -82,6 +82,11 @@
 			</div>
 
 			<div class="col-12 row q-gutter-xs q-mb-sm _q-pl-xs">
+				<div v-if="video.createdAt !== undefined" class="col-auto">
+					<q-chip class="bg-grey-4">
+						Created {{ dayjs(video.createdAt).fromNow() }}
+					</q-chip>
+				</div>
 				<div v-if="video.format?.format !== 'unknown'" class="col-auto">
 					<q-chip class="bg-grey-4">
 						{{ video?.format?.format }} <span v-if="video?.format?.format === 'vr'">-

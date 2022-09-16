@@ -2,6 +2,10 @@
 /* tslint:disable */
 /* eslint-disable */
 export const $VideoRequestVote = {
+    type: 'all-of',
+    contains: [{
+    type: 'Entity',
+}, {
     properties: {
         voteId: {
     type: 'ULID',
@@ -16,4 +20,5 @@ export const $VideoRequestVote = {
     isRequired: true,
 },
     },
+}],
 } as const;

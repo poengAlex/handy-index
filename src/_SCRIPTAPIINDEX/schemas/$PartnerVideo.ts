@@ -2,6 +2,10 @@
 /* tslint:disable */
 /* eslint-disable */
 export const $PartnerVideo = {
+    type: 'all-of',
+    contains: [{
+    type: 'Entity',
+}, {
     properties: {
         partnerVideoId: {
     type: 'ULID',
@@ -55,4 +59,5 @@ export const $PartnerVideo = {
     type: 'VideoType',
 },
     },
+}],
 } as const;

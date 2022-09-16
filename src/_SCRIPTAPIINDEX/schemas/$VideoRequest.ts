@@ -2,6 +2,10 @@
 /* tslint:disable */
 /* eslint-disable */
 export const $VideoRequest = {
+    type: 'all-of',
+    contains: [{
+    type: 'Entity',
+}, {
     properties: {
         requestId: {
     type: 'ULID',
@@ -27,4 +31,5 @@ export const $VideoRequest = {
     isRequired: true,
 },
     },
+}],
 } as const;
