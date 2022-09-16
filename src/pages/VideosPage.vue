@@ -4,11 +4,11 @@
 		<q-spinner size="50px" color="black" />
 	</q-inner-loading>
 	<!-- <div v-if="videos.length > 0">{{ videos[0] }}</div> -->
-	<div class="text-h4" v-if="fav">
+	<div v-if="fav" class="text-h4">
 		<q-icon name="favorites"></q-icon>Favorites
 	</div>
 	<!-- Search and filter -->
-	<div class="row full-width q-pt-lg q-pr-xs">
+	<div class="row full-width q-pt-sm q-pr-xs">
 		<q-expansion-item filled class="col-12" :class="{ 'col-sm-12': filterExpanded, 'col-sm-8': !filterExpanded }"
 			expand-separator icon="filter_alt" label="Advanced filter" v-model="filterExpanded">
 			<q-card>
@@ -60,10 +60,11 @@
 		</q-input>
 	</div>
 	<!-- END Search and filter -->
-
+	<!-- {{arrivedState}} -->
 	<q-table v-if="true" id="qtable" ref="qtableref" class="" grid :rows="videosFiltered" row-key="name" hide-header
 		v-model:pagination="pagination" :rows-per-page-options="rowsPerPageOptions" virtual-scroll
-		@update:pagination="paginationUpdated" :loading="loading" style="max-height: 50vh;overflow: auto;">
+		@update:pagination="paginationUpdated" :loading="loading" style="max-height: 100vh;overflow: auto;"
+		v-scroll="onScroll">
 
 		<template v-slot:item="props">
 			<div class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 col-xl-3">
@@ -86,6 +87,8 @@ import VideoElement from 'src/components/VideoElement.vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useSettingsStore } from '../stores/settings'
 import { useIndexStore } from 'src/stores/apiIndex';
+import { useScroll } from '@vueuse/core'
+import { vScroll } from '@vueuse/components'
 const settings = useSettingsStore()
 const apiIndex = useIndexStore();
 
@@ -99,6 +102,11 @@ const videos = ref<PartnerVideo[]>([]);
 const videosFiltered = ref<PartnerVideo[]>([]);
 const $q = useQuasar()
 const fav = ref(false);
+
+// const el = ref<HTMLElement | null>(null)
+const { x, y, isScrolling, arrivedState, directions } = useScroll(qtableref as unknown as HTMLElement, {
+	offset: { top: 0, bottom: 800, right: 0, left: 0 }
+})
 
 // const partners = ref<Partner[]>([]);
 const partnersFiltered = ref<Partner[]>([]);
@@ -134,6 +142,13 @@ const pagination = ref({
 	rowsPerPage: rowsPerPageOptions.value[0]
 })
 
+function onScroll() {
+	// console.log('onscroll', arrivedState.bottom);
+	if (arrivedState.bottom) {
+		pagination.value.rowsPerPage += 24;
+	}
+}
+
 function filterFnTags(val: any, update: any, abort: () => void) {
 	update(() => {
 		console.log('searching - tags');
@@ -158,25 +173,9 @@ function videoClick(video: PartnerVideo) {
 	})
 }
 
-// function getItemsPerPage() {
-// 	const initalVideos = rowsPerPageOptions.value[0];
-// 	if ($q.screen.lg || $q.screen.xl) {
-// 		return initalVideos - initalVideos % 4;
-// 	} else if ($q.screen.md) {
-// 		return initalVideos - initalVideos % 3;
-// 	} else if ($q.screen.sm) {
-// 		return initalVideos - initalVideos % 2;
-// 	} else if ($q.screen.xs) {
-// 		return initalVideos
-// 	} else {
-// 		console.error("Cannot detect screen width");
-// 		return initalVideos;
-// 	}
-// }
-
 function filterAndSortVideos() {
 	console.log('filterAndSortVideos');
-
+	pagination.value.rowsPerPage = 24;
 	let tempVideos: PartnerVideo[] = [];
 	// videos.value.forEach(video => {
 	// 	tempVideos.push(video);

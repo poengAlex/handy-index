@@ -116,7 +116,7 @@
 				<q-item-label class="col-12" style="min-height: 48px;" lines="2">
 					<tag v-for="(tag, index) in video.tags" :key="index" :tag="tag"></tag>
 					<q-tooltip v-if="video.tags !== undefined && video.tags?.length > 0" max-width="300px"
-						anchor="center middle" self="center middle">
+						anchor="center middle" self="center middle" :delay="300">
 						<div class="row">
 							<tag v-for="(tag, index) in video.tags" :key="index" :tag="tag"></tag>
 						</div>

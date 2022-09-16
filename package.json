@@ -16,6 +16,7 @@
   "dependencies": {
     "@ohdoki/handy-sdk": "^2.1.15",
     "@quasar/extras": "^1.0.0",
+    "@vueuse/components": "^9.2.0",
     "@vueuse/core": "^9.1.0",
     "connect-history-api-fallback": "^2.0.0",
     "dayjs": "^1.11.4",
