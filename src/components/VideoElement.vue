@@ -149,8 +149,7 @@ const emit = defineEmits<{ (e: 'click', video: PartnerVideo): void }>();
 
 onMounted(() => {
 	// console.log('onMounted');
-	// video.value = propsIn.tableValue.row;
-	video.value = propsIn.tableValue;
+	video.value = propsIn.tableValue.row;
 });
 </script>
 

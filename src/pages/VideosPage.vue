@@ -63,7 +63,7 @@
 
 	<q-table v-if="true" id="qtable" ref="qtableref" class="" grid :rows="videosFiltered" row-key="name" hide-header
 		v-model:pagination="pagination" :rows-per-page-options="rowsPerPageOptions" virtual-scroll
-		@update:pagination="paginationUpdated" :loading="loading">
+		@update:pagination="paginationUpdated" :loading="loading" style="max-height: 50vh;overflow: auto;">
 
 		<template v-slot:item="props">
 			<div class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 col-xl-3">

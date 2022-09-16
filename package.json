@@ -6,7 +6,8 @@
   "author": "handyAlexander <alexander@sweettech.no>",
   "private": true,
   "scripts": {
-	"build": "quasar build",
+    "build": "quasar build",
+    "dev": "quasar dev",
     "start": "node server.js",
     "lint": "eslint --ext .js,.ts,.vue ./",
     "test": "echo \"No test specified\" && exit 0",
