@@ -11,6 +11,9 @@ export const $PartnerVideo = {
     type: 'ULID',
     isRequired: true,
 },
+        partnerName: {
+    type: 'string',
+},
         title: {
     type: 'VideoTitle',
 },

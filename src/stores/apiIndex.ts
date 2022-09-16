@@ -3,6 +3,7 @@ import { useStorage } from '@vueuse/core'
 import { createNotify } from 'src/logic/utils';
 import { apiIndex, initApi } from 'src/logic/api-wrapper';
 import { Partner, PartnerVideo } from 'src/_SCRIPTAPIINDEX';
+import { useSettingsStore } from './settings';
 
 export const useIndexStore = defineStore('index', {
 	state: () => ({
@@ -15,6 +16,11 @@ export const useIndexStore = defineStore('index', {
 	},
 
 	actions: {
+		getApi() {
+			const settings = useSettingsStore();
+			initApi(settings.connectionKey);
+			return apiIndex
+		},
 		async getPartners(force = false) {
 			if (this.partners.length === 0 || force) {
 				initApi();

@@ -37,6 +37,10 @@
 			various
 			analytics. To prevent this VPN is your only real protection.
 		</p>
+		<p>
+			This site is open source to give full transparency of whats happening on this site.
+			<a href="">LINK TO GITLAB INDEX - TBD</a>
+		</p>
 
 		<div class="text-h5">The browser plugin</div>
 		<p>
@@ -46,20 +50,21 @@
 			if we have a script to match. This query is INTRUSIVE! To give you insights on the query:
 		<ul>
 			<li>
-				The record of the query is not stored in persistent memory. Meaning we will not record the query in our
+				The record of the query, to check if we have a matching script, is not stored in persistent memory.
+				Meaning we will not record the query in our
 				databases. Logs might be stored for seven days for development purposes. In our logs, we strive to
-				scramble
-				any
+				scramble any
 				sensitive user data (IP, in this case). Since the backend code is not open source, you have to take our
-				word
-				for
-				it.
+				word for it.
 			</li>
 			<li>The browser plugin is open source to fully transparent what's happening behind the scenes.</li>
+			<a href="">LINK TO GITLAB BEX - TBD</a>
+
 			<li>We do not care what you are watching since this data would not give us much value and would increase our
-				risk if
-				we have a security breach.</li>
+				risk if we have a security breach.</li>
 			<li>We only send a query on the supported sites, not every page you visit.</li>
+			<li>We also use the url if you request us to script the website you are visiting. This request is stored in
+				a permant database.</li>
 		</ul>
 
 		</p>
@@ -102,4 +107,5 @@ onMounted(() => {
 </script>
 
 <style scoped>
+
 </style>

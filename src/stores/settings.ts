@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import { useStorage } from '@vueuse/core'
-import { Partner, PartnerVideo } from 'src/_SCRIPTAPIINDEX';
+import { Partner, PartnerVideo, VideoRequest } from 'src/_SCRIPTAPIINDEX';
 import { createNotify, createNotifyWarning } from 'src/logic/utils';
 import { apiIndex, initApi } from 'src/logic/api-wrapper';
 
@@ -13,7 +13,8 @@ export const useSettingsStore = defineStore('settings', {
 		connectionKey: "",
 		allowExternalVideo: false,
 		favorites: [] as PartnerVideo[],
-		privacyAccepted: false
+		privacyAccepted: false,
+		requestUpvotes: [] as string[]
 	}),
 	persist: true,
 	getters: {
@@ -22,7 +23,7 @@ export const useSettingsStore = defineStore('settings', {
 
 	actions: {
 		isFav(video: PartnerVideo) {
-			console.log('is match?', video);
+			// console.log('is match?', video);
 
 			let match = false;
 			this.favorites.forEach(_video => {

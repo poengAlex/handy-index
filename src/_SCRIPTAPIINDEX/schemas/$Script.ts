@@ -16,5 +16,8 @@ export const $Script = {
     type: 'string',
 },
 },
+        rating: {
+    type: 'Rating',
+},
     },
 } as const;

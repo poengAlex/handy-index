@@ -111,6 +111,14 @@
 							<q-item-label>{{ link.text }}</q-item-label>
 						</q-item-section>
 					</q-item>
+					<q-item clickable class="GPL__drawer-item" @click="clearAllData">
+						<q-item-section avatar>
+							<q-icon name="delete" />
+						</q-item-section>
+						<q-item-section>
+							<q-item-label>Clear all data</q-item-label>
+						</q-item-section>
+					</q-item>
 
 					<q-separator class="q-my-md" />
 					<q-item clickable class="GPL__drawer-item GPL__drawer-item--storage">
@@ -179,7 +187,7 @@
 <script setup lang="ts">
 import { useQuasar } from 'quasar';
 import { initApi } from 'src/logic/api-wrapper';
-import { createNotifyWarning, showConnectionKeyDialog } from 'src/logic/utils';
+import { createNotifySuccess, createNotifyWarning, showConnectionKeyDialog } from 'src/logic/utils';
 // import { initHandy } from 'src/logic/handy';
 import { onBeforeMount, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router';
@@ -221,12 +229,23 @@ const links = ref<{ text: string, link: string, badge?: string, icon: string }[]
 		icon: "favorite"
 	},
 	{
+		text: "Requests",
+		link: "/request",
+		icon: "poll"
+	},
+	{
 		text: "Playlists",
 		link: "/playlists",
 		icon: "collections_bookmark",
 		badge: "Soon"
 	}
 ])
+
+function clearAllData() {
+	localStorage.clear();
+	createNotifySuccess("Data cleared");
+	location.reload();
+}
 
 function toggleLeftDrawer() {
 	leftDrawerOpen.value = !leftDrawerOpen.value

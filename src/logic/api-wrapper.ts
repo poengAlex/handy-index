@@ -7,6 +7,8 @@ import { handy } from "./handy";
 import { createNotify, createNotifySuccess, createNotifyWarning, showConnectionKeyDialog } from "./utils";
 
 export let apiIndex: ScriptApiIndex;
+let isInited = false;
+let token = "";
 const TUBE_SITES_PARTNERS = ["pornhub.com"];
 
 const API_URL = {
@@ -28,15 +30,21 @@ const API_URL = {
 }
 
 // TODO: Could this be called somewher global place?
-export function initApi(token = "") {
-	const settings = useSettingsStore()
-	const config: Partial<OpenAPIConfig> = {
-		HEADERS: {
-			Authorization: "Bearer " + token
-		},
-		BASE: (API_URL.index as any)[settings.server]
+export function initApi(_token = "") {
+	if (!isInited || token !== _token) {
+		console.log('initApi');
+
+		token = _token;
+		const settings = useSettingsStore()
+		const config: Partial<OpenAPIConfig> = {
+			HEADERS: {
+				Authorization: "Bearer " + token
+			},
+			BASE: (API_URL.index as any)[settings.server]
+		}
+		apiIndex = new ScriptApiIndex(config);
+		isInited = true;
 	}
-	apiIndex = new ScriptApiIndex(config);
 }
 
 export async function downloadToken(video: PartnerVideo) {
@@ -48,7 +56,7 @@ export async function downloadToken(video: PartnerVideo) {
 	const apiStore = useIndexStore();
 	const $q = useQuasar();
 	const scripts = await apiStore.getScripts(video.partnerVideoId);
-	if (settings.connectionKey === "") {
+	if (settings.connectionKey === "" || settings.connectionKey === undefined) {
 		showConnectionKeyDialog($q, (key: string) => {
 			console.log("key:", key);
 			downloadToken(video);

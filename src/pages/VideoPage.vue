@@ -82,7 +82,6 @@
 			</div>
 
 			<div class="col-12 row q-gutter-xs q-mb-sm _q-pl-xs">
-
 				<div v-if="video.format?.format !== 'unknown'" class="col-auto">
 					<q-chip class="bg-grey-4">
 						{{ video?.format?.format }} <span v-if="video?.format?.format === 'vr'">-
@@ -150,6 +149,10 @@ import Tag from "src/components/Tag.vue";
 import Duration from "src/components/Duration.vue";
 // import { handy } from "src/logic/handy";
 import { useQuasar } from 'quasar'
+import dayjs from 'dayjs';
+import relativeTime from "dayjs/plugin/relativeTime";
+dayjs.extend(relativeTime);
+// TODO: add created at chip when returned from DB
 const settings = useSettingsStore()
 const apiStore = useIndexStore();
 const route = useRoute();

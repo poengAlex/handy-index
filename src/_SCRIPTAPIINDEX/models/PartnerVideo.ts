@@ -13,6 +13,7 @@ import type { VideoType } from './VideoType';
 export type PartnerVideo = {
     partnerVideoId: ULID;
     partnerId: ULID;
+    partnerName?: string;
     title?: VideoTitle;
     description?: VideoDescription;
     externalRef?: ExternalId;

@@ -2,7 +2,7 @@
   "name": "index-test",
   "version": "0.0.1",
   "description": "A index of video scripts.",
-  "productName": "Index test",
+  "productName": "Script index",
   "author": "handyAlexander <alexander@sweettech.no>",
   "private": true,
   "scripts": {
