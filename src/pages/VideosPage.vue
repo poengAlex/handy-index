@@ -1,83 +1,92 @@
 <template>
-
-	<q-inner-loading :showing="loading">
-		<q-spinner size="50px" color="black" />
-	</q-inner-loading>
-	<!-- <div v-if="videos.length > 0">{{ videos[0] }}</div> -->
-	<div v-if="fav" class="text-h4">
-		<q-icon name="favorites"></q-icon>Favorites
-	</div>
-	<!-- Search and filter -->
-	<div class="row full-width q-pt-sm q-pr-xs">
-		<q-expansion-item filled class="col-12" :class="{ 'col-sm-12': filterExpanded, 'col-sm-8': !filterExpanded }"
-			expand-separator icon="filter_alt" :label="'Advanced filter - ' + videosFiltered.length + ' videos'"
-			v-model="filterExpanded">
-			<q-card>
-				<q-card-section>
-					<q-input class="" filled dense debounce="250" v-model="filter" placeholder="Search"
-						@update:model-value="filterAndSortVideos" clearable>
-						<template v-slot:append>
-							<q-icon name="search" />
-						</template>
-					</q-input>
-					<q-select v-model="tagsSelected" :options="tagsFiltered" use-chips stack-label
-						label="Filter by tags" multiple use-input @update:model-value="filterAndSortVideos"
-						@filter="filterFnTags">
-						<template v-if="tagsSelected.length !== 0" v-slot:append>
-							<q-icon name="cancel" @click.stop.prevent="tagsSelected = []; filterAndSortVideos()"
-								class="cursor-pointer" />
-						</template>
-					</q-select>
-					<q-select v-model="partnersSelected" :options="partnersFiltered" option-label="name" use-chips
-						stack-label label="Filter by sites" multiple use-input @update:model-value="filterAndSortVideos"
-						@filter="filterFnPartners">
-						<template v-if="partnersSelected.length !== 0" v-slot:append>
-							<q-icon name="cancel" @click.stop.prevent="partnersSelected = []; filterAndSortVideos()"
-								class="cursor-pointer" />
-						</template>
-					</q-select>
-					<div class="q-gutter-sm">
-						<q-icon name="sort"></q-icon>
-						<q-btn flat dense :icon="sortOrderDecending ? 'arrow_downward' : 'arrow_upward'"
-							@click="sortOrderDecending = !sortOrderDecending; filterAndSortVideos()">
-						</q-btn>
-						<q-radio v-model="sortBy" val="createdAt" label="Added time"
-							@update:model-value="filterAndSortVideos" />
-						<q-radio v-model="sortBy" val="updatedAt" label="Updated time"
-							@update:model-value="filterAndSortVideos" />
-						<q-radio v-model="sortBy" val="duration" label="Duration"
-							@update:model-value="filterAndSortVideos" />
-						<q-radio v-model="sortBy" val="title" label="Video name"
-							@update:model-value="filterAndSortVideos" />
-						<q-toggle v-model="paidFilter" @update:model-value="filterAndSortVideos">Show videos that are
-							behind a paywall</q-toggle>
-					</div>
-				</q-card-section>
-			</q-card>
-		</q-expansion-item>
-		<q-input class="col-4 gt-xs" v-if="!filterExpanded" filled dense debounce="250" v-model="filter"
-			placeholder="Search" v-on:update:model-value="filterAndSortVideos">
-			<template v-slot:append>
-				<q-icon name="search" />
-			</template>
-		</q-input>
-	</div>
-	<!-- END Search and filter -->
-	<!-- {{arrivedState}} -->
-	<q-table v-if="true" id="qtable" ref="qtableref" class="" grid :rows="videosFiltered" row-key="name" hide-header
-		v-model:pagination="pagination" :rows-per-page-options="rowsPerPageOptions" virtual-scroll
-		@update:pagination="paginationUpdated" :loading="loading" style="max-height: 100vh;overflow: auto;"
-		v-scroll="onScroll">
-
-		<template v-slot:item="props">
-			<div class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 col-xl-3">
-				<!-- Vue elements need a unique key to trigger a rerender -->
-				<video-element @click="videoClick" :table-value="props"
-					:key="(props.row as PartnerVideo).partnerVideoId">
-				</video-element>
+	<div id="topVideosContainer" class="column" style="height: 80vh">
+		<q-inner-loading :showing="loading">
+			<q-spinner size="50px" color="black" />
+		</q-inner-loading>
+		<div class="col-auto">
+			<!-- <div v-if="videos.length > 0">{{ videos[0] }}</div> -->
+			<div v-if="fav" class="text-h4">
+				<q-icon name="favorites"></q-icon>Favorites
 			</div>
-		</template>
-	</q-table>
+			<!-- Search and filter -->
+			<div class="row full-width q-pt-sm q-pr-xs">
+				<q-expansion-item filled class="col-12"
+					:class="{ 'col-sm-12': filterExpanded, 'col-sm-8': !filterExpanded }" expand-separator
+					icon="filter_alt" :label="'Advanced filter - ' + videosFiltered.length + ' videos'"
+					v-model="filterExpanded">
+					<q-card>
+						<q-card-section>
+							<q-input class="" filled dense debounce="250" v-model="filter" placeholder="Search"
+								@update:model-value="filterAndSortVideos" clearable>
+								<template v-slot:append>
+									<q-icon name="search" />
+								</template>
+							</q-input>
+							<q-select v-model="tagsSelected" :options="tagsFiltered" use-chips stack-label
+								label="Filter by tags" multiple use-input @update:model-value="filterAndSortVideos"
+								@filter="filterFnTags">
+								<template v-if="tagsSelected.length !== 0" v-slot:append>
+									<q-icon name="cancel" @click.stop.prevent="tagsSelected = []; filterAndSortVideos()"
+										class="cursor-pointer" />
+								</template>
+							</q-select>
+							<q-select v-model="partnersSelected" :options="partnersFiltered" option-label="name"
+								use-chips stack-label label="Filter by sites" multiple use-input
+								@update:model-value="filterAndSortVideos" @filter="filterFnPartners">
+								<template v-if="partnersSelected.length !== 0" v-slot:append>
+									<q-icon name="cancel"
+										@click.stop.prevent="partnersSelected = []; filterAndSortVideos()"
+										class="cursor-pointer" />
+								</template>
+							</q-select>
+							<div class="q-gutter-sm">
+								<q-icon name="sort"></q-icon>
+								<q-btn flat dense :icon="sortOrderDecending ? 'arrow_downward' : 'arrow_upward'"
+									@click="sortOrderDecending = !sortOrderDecending; filterAndSortVideos()">
+								</q-btn>
+								<q-radio v-model="sortBy" val="createdAt" label="Added time"
+									@update:model-value="filterAndSortVideos" />
+								<q-radio v-model="sortBy" val="updatedAt" label="Updated time"
+									@update:model-value="filterAndSortVideos" />
+								<q-radio v-model="sortBy" val="duration" label="Duration"
+									@update:model-value="filterAndSortVideos" />
+								<q-radio v-model="sortBy" val="title" label="Video name"
+									@update:model-value="filterAndSortVideos" />
+								<q-toggle v-model="paidFilter" @update:model-value="filterAndSortVideos">Show videos
+									that are
+									behind a paywall</q-toggle>
+							</div>
+						</q-card-section>
+					</q-card>
+				</q-expansion-item>
+				<q-input class="col-4 gt-xs" v-if="!filterExpanded" filled dense debounce="250" v-model="filter"
+					placeholder="Search" v-on:update:model-value="filterAndSortVideos">
+					<template v-slot:append>
+						<q-icon name="search" />
+					</template>
+				</q-input>
+			</div>
+			<!-- END Search and filter -->
+		</div>
+		<div class="col" style="max-height: 100%;overflow: auto;">
+			<!-- {{arrivedState}} -->
+			<q-table v-if="true" id="qtable" ref="qtableref" class="" grid :rows="videosFiltered" row-key="name"
+				hide-header v-model:pagination="pagination" :rows-per-page-options="rowsPerPageOptions" virtual-scroll
+				@update:pagination="paginationUpdated" :loading="loading" v-scroll="onScroll"
+				style="max-height: 100%;overflow: auto;">
+
+				<template v-slot:item="props">
+					<div class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 col-xl-3">
+						<!-- Vue elements need a unique key to trigger a rerender -->
+						<video-element @click="videoClick" :table-value="props"
+							:key="(props.row as PartnerVideo).partnerVideoId">
+						</video-element>
+					</div>
+				</template>
+			</q-table>
+		</div>
+	</div>
+
 </template>
 
 <script setup lang="ts">
@@ -389,9 +398,22 @@ router.afterEach(async (to, from) => {
 	parseQuaryParams()
 })
 
+// Container hight must match the parent to make the scroll look good.
+function setHeightOfContainter() {
+	const topVideosContainer = document.getElementById("topVideosContainer") as HTMLDivElement;
+	if (topVideosContainer === null) {
+		createNotify("Could not find top container");
+		return;
+	}
+	const height = topVideosContainer.parentElement?.offsetHeight as number;
+	console.log("height:", height);
+	topVideosContainer.style.height = (height - 16) + "px"; // +16px to adjust for the paddings and margin
+}
+
 onMounted(async () => {
 	console.log('onMounted - videos');
-
+	window.addEventListener('resize', setHeightOfContainter);
+	setHeightOfContainter();
 	await setVideos()
 	parseQuaryParams()
 });
