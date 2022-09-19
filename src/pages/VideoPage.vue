@@ -128,10 +128,10 @@
 				<Tag v-for="tag in video?.tags" :key="tag" :tag="tag"></Tag>
 			</div>
 			<div class="col-12 q-mt-sm q-mb-sm">
-				<p>Rate the script:
-					<q-rating v-model="ratingModel" size="2em" :max="11" color="primary"
-						@update:model-value="rateScript(scripts[0])" />
-				</p>
+				<!-- Rate the script: -->
+				<q-rating v-model="ratingModel" size="2em" :max="RATING_STEPS" color="primary"
+					@update:model-value="rateScript(scripts[0])">
+				</q-rating>
 			</div>
 			<div class="col-12 _q-pa-sm q-pl-none q-pr-sm q-pt-sm">
 				<q-banner class="bg-grey-4 " rounded>
@@ -173,6 +173,7 @@ const slide = ref(0);
 const scripts = ref<Script[]>([]);
 const imgError = ref(false);
 const ratingModel = ref<number>(0);
+const RATING_STEPS = 5;
 const externalVideo = ref({
 	active: false,
 	partner: "",
@@ -188,7 +189,7 @@ function setImgError() {
 
 async function rateScript(script: Script) {
 	console.log('Rating script', ratingModel.value);
-	const value = (ratingModel.value - 1) * 10;
+	const value = (ratingModel.value - 1) * (100 / (RATING_STEPS - 1));
 	console.log("value:", value);
 	const voted = isVideoVoted(video.value as PartnerVideo);
 	const partnerVideoId = video.value?.partnerVideoId as string;
@@ -207,6 +208,7 @@ async function rateScript(script: Script) {
 				scriptId: script.scriptId
 			});
 		}
+		createNotifySuccess("Rating submitted")
 	} catch (err) {
 		console.error(err);
 		createNotify(err as string)
