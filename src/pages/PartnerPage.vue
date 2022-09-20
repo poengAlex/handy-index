@@ -32,7 +32,7 @@ function goToVideos() {
 	router.push({
 		path: "/videos",
 		query: {
-			partner: JSON.stringify(partner.value)
+			partnerId: partner.value?.partnerId
 		}
 	})
 }
@@ -52,4 +52,5 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+
 </style>

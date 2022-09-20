@@ -356,18 +356,25 @@ function parseQuaryParams() {
 			tagsSelected.value.push(route.query.tag)
 			filterAndSortVideos();
 		}
-		if (route.query.partner) {
+		if (route.query.partnerId) {
 			filterExpanded.value = true;
-			const partner = JSON.parse(route.query.partner as string) as Partner;
-			partnersSelected.value.push(partner)
-			filterAndSortVideos();
+			const partnerId = route.query.partnerId as string;
+			console.log("partnerId from route.query.partnerId:", partnerId);
+
+			// const partner = JSON.parse(route.query.partner as string) as Partner;
+			apiIndex.partners.forEach(partner => {
+				if (partner.partnerId === partnerId) {
+					partnersSelected.value.push(partner)
+					paidFilter.value = true;
+					filterAndSortVideos();
+				}
+			});
 		}
 	}
 }
 
 async function setVideos() {
 	try {
-		apiIndex.getPartners();
 		if (route.meta.fav) {
 			loading.value = false;
 			fav.value = true;
@@ -457,6 +464,13 @@ onMounted(async () => {
 	if (innerTable === null) {
 		createNotify("Could not find inner table")
 	}
+	try {
+		apiIndex.getPartners();
+	} catch (err) {
+		console.error(err);
+		createNotify(err as string)
+	}
+
 	// const topVideosContainer = document.getElementById("topVideosContainer") as HTMLDivElement;
 	// document.addEventListener('scroll', onDocumentScroll)
 	// document.addEventListener('wheel', onDocumentWheel)
