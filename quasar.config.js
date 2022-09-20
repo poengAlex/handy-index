@@ -99,7 +99,7 @@ module.exports = configure(function (/* ctx */) {
       // you can manually specify Quasar components/directives to be available everywhere:
       //
       // components: [],
-      // directives: [],
+      directives: ["Scroll", "ScrollFire"],
 
       // Quasar plugins
       plugins: ["Notify", "Dialog"]

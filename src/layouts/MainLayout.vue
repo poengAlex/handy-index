@@ -1,5 +1,5 @@
 <template>
-	<q-layout view="lHh Lpr fff" class="bg-grey-1">
+	<q-layout view="lHh Lpr fff" class="bg-grey-1 ">
 		<q-header elevated class="bg-white text-grey-8" height-hint="64">
 			<q-toolbar class="GPL__toolbar" style="height: 64px">
 				<q-btn flat dense round @click="toggleLeftDrawer" aria-label="Menu" icon="menu" class="q-mx-md" />
@@ -163,7 +163,7 @@
 		</q-drawer>
 
 		<q-page-container class="GPL__page-container ">
-			<q-page class="container q-pa-sm">
+			<q-page class="_container q-pa-sm ">
 				<router-view />
 			</q-page>
 

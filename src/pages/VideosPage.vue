@@ -1,5 +1,5 @@
 <template>
-	<div id="topVideosContainer" class="column" style="height: 80vh">
+	<div id="topVideosContainer" class="column _hide-scrollbar" style="">
 		<q-inner-loading :showing="loading">
 			<q-spinner size="50px" color="black" />
 		</q-inner-loading>
@@ -68,15 +68,15 @@
 			</div>
 			<!-- END Search and filter -->
 		</div>
-		<div class="col" style="max-height: 100%;overflow: auto;">
+		<div class="col _hide-scrollbar" style="max-height: 100%;overflow: auto;">
 			<!-- {{arrivedState}} -->
-			<q-table v-if="true" id="qtable" ref="qtableref" class="" grid :rows="videosFiltered" row-key="name"
-				hide-header v-model:pagination="pagination" :rows-per-page-options="rowsPerPageOptions" virtual-scroll
-				@update:pagination="paginationUpdated" :loading="loading" v-scroll="onScroll"
+			<q-table v-if="true" id="qtable" ref="qtableref" class="hide-scrollbar" grid :rows="videosFiltered"
+				row-key="name" hide-header v-model:pagination="pagination" :rows-per-page-options="rowsPerPageOptions"
+				virtual-scroll @update:pagination="paginationUpdated" :loading="loading" v-scroll="onScroll"
 				style="max-height: 100%;overflow: auto;">
 
 				<template v-slot:item="props">
-					<div class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 col-xl-3">
+					<div class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 col-xl-2">
 						<!-- Vue elements need a unique key to trigger a rerender -->
 						<video-element @click="videoClick" :table-value="props"
 							:key="(props.row as PartnerVideo).partnerVideoId">
@@ -92,7 +92,7 @@
 <script setup lang="ts">
 import { QTable, useQuasar } from 'quasar';
 import { PartnerVideo, Partner } from 'src/_SCRIPTAPIINDEX';
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, onBeforeUnmount, onMounted, Ref, ref, watch } from 'vue';
 // import { initApi, apiIndex } from '../logic/api-wrapper'
 import { createNotify, nonReactiveObject } from '../logic/utils'
 import VideoElement from 'src/components/VideoElement.vue';
@@ -114,7 +114,7 @@ const videos = ref<PartnerVideo[]>([]);
 const videosFiltered = ref<PartnerVideo[]>([]);
 const $q = useQuasar()
 const fav = ref(false);
-
+let innerTable: HTMLDivElement;
 // const el = ref<HTMLElement | null>(null)
 const { x, y, isScrolling, arrivedState, directions } = useScroll(qtableref as unknown as HTMLElement, {
 	offset: { top: 0, bottom: 800, right: 0, left: 0 }
@@ -162,6 +162,9 @@ function onScroll() {
 		pagination.value.rowsPerPage += 24;
 	}
 }
+// function onScrollTop() {
+// 	console.log('onScrollTop', arrivedState.bottom);
+// }
 
 function filterFnTags(val: any, update: any, abort: () => void) {
 	update(() => {
@@ -392,10 +395,12 @@ async function setVideos() {
 	} catch (err) { console.error(err); createNotify(err as string) }
 }
 
-router.afterEach(async (to, from) => {
-	console.log('ROUTING');
+const guardAfterEach = router.afterEach(async (to, from) => {
+	console.log('ROUTING', to.path);
+	// if (to.path === "/videos") {
 	await setVideos()
 	parseQuaryParams()
+	// }
 })
 
 // Container hight must match the parent to make the scroll look good.
@@ -410,9 +415,51 @@ function setHeightOfContainter() {
 	topVideosContainer.style.height = (height - 16) + "px"; // +16px to adjust for the paddings and margin
 }
 
+// const scrollY = 0;
+function onDocumentScroll(e: Event) {
+	// console.log(e);
+	// // const scrollTop = window.pageYOffset || (document.documentElement || document.body.parentNode || document.body).scrollTop
+	// const scrollTop = document.documentElement.scrollTop;
+	// const scrollHeight = document.documentElement.scrollHeight;
+	// console.log("scrollTop:", scrollTop, scrollHeight);
+	// if (scrollTop > scrollY) {
+	// 	scrollY++;
+	// 	innerTable!.scrollTop += scrollTop;
+	// } else {
+	// 	scrollY--
+	// 	innerTable!.scrollTop -= scrollTop;
+	// }
+	// if (scrollY < 50) scrollY = 50;
+	// if (scrollY > 100) scrollY = 50;
+	window.scroll(0, 0);
+}
+
+function onDocumentWheel(e: WheelEvent) {
+	// console.log(e, isScrolling);
+	const scrollingOnContainer = (e.target as any).classList.contains("q-page-container");
+	// if (!isScrolling) innerTable!.scrollTop += e.deltaY
+	if (scrollingOnContainer) innerTable!.scrollTop += e.deltaY; // TODO: This only scrolls on the sides
+}
+
+onBeforeUnmount(() => {
+	console.log('Removing scroll listner');
+
+	document.removeEventListener("scroll", onDocumentScroll)
+	document.removeEventListener("wheel", onDocumentWheel)
+	guardAfterEach(); // Remove guard listner
+})
+
 onMounted(async () => {
 	console.log('onMounted - videos');
 	window.addEventListener('resize', setHeightOfContainter);
+	innerTable = document.getElementById("qtable") as HTMLDivElement;
+	if (innerTable === null) {
+		createNotify("Could not find inner table")
+	}
+	// const topVideosContainer = document.getElementById("topVideosContainer") as HTMLDivElement;
+	// document.addEventListener('scroll', onDocumentScroll)
+	// document.addEventListener('wheel', onDocumentWheel)
+	// topScroll = useScroll(topVideosContainer)
 	setHeightOfContainter();
 	await setVideos()
 	parseQuaryParams()
