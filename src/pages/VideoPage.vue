@@ -132,6 +132,7 @@
 				<q-rating v-model="ratingModel" size="2em" :max="RATING_STEPS" color="primary"
 					@update:model-value="rateScript(scripts[0])">
 				</q-rating>
+				<small v-if="ratingUser !== undefined"><br>Your rating: {{ratingUser}} stars</small>
 			</div>
 			<div class="col-12 _q-pa-sm q-pl-none q-pr-sm q-pt-sm">
 				<q-banner class="bg-grey-4 " rounded>
@@ -150,7 +151,7 @@
 
 <script setup lang="ts">
 import { apiIndex, downloadToken, initApi } from "src/logic/api-wrapper";
-import { createNotify, createNotifySuccess, createNotifyWarning, showConnectionKeyDialog, isVideoVoted } from "src/logic/utils";
+import { createNotify, createNotifySuccess, createNotifyWarning, showConnectionKeyDialog, isVideoVoted, RATING_STEPS, valueToRating } from "src/logic/utils";
 import { PartnerVideo, Script } from "src/_SCRIPTAPIINDEX";
 import { onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
@@ -173,7 +174,8 @@ const slide = ref(0);
 const scripts = ref<Script[]>([]);
 const imgError = ref(false);
 const ratingModel = ref<number>(0);
-const RATING_STEPS = 5;
+const ratingUser = ref<number>();
+
 const externalVideo = ref({
 	active: false,
 	partner: "",
@@ -189,13 +191,15 @@ function setImgError() {
 
 async function rateScript(script: Script) {
 	console.log('Rating script', ratingModel.value);
-	const value = (ratingModel.value - 1) * (100 / (RATING_STEPS - 1));
-	console.log("value:", value);
-	const voted = isVideoVoted(video.value as PartnerVideo);
+	// const value = (ratingModel.value - 1) * (100 / (RATING_STEPS - 1));
+	const value = valueToRating(ratingModel.value, true)
+	console.log("value:", value, ratingModel.value);
+	const voted = isVideoVoted(script);
 	const partnerVideoId = video.value?.partnerVideoId as string;
 	try {
 		const res = await apiStore.getApi().index.createScriptRating(partnerVideoId, script.scriptId, { value });
 		console.log("res:", res);
+		ratingUser.value = ratingModel.value;
 		if (voted) {
 			settings.videoVotes.forEach(vote => {
 				if (vote.scriptId === script.scriptId) {
@@ -231,10 +235,15 @@ onMounted(async () => {
 			externalVideo.value.active = true;
 		}
 		scripts.value = await apiStore.getScripts(partnerVideoId);
+		console.log("scripts.value:", scripts.value);
+		if (scripts.value.length > 0 && scripts.value[0].rating !== null && scripts.value[0].rating !== undefined) {
+			ratingModel.value = valueToRating(scripts.value[0].rating)
+		}
 
 		settings.videoVotes.forEach(vote => {
 			if (vote.scriptId === scripts.value[0].scriptId) {
-				ratingModel.value = (vote.value / 10) + 1
+				// ratingModel.value = (vote.value / 10) + 1
+				ratingUser.value = valueToRating(vote.value);
 			}
 		});
 	} catch (err) {

@@ -5,8 +5,9 @@
 		</q-inner-loading>
 		<div class="col-auto">
 			<!-- <div v-if="videos.length > 0">{{ videos[0] }}</div> -->
-			<div v-if="fav" class="text-h4">
-				<q-icon name="favorites"></q-icon>Favorites
+			<div v-if="fav" class="text-h4 row">
+				<q-icon class="col-auto" name="favorites"></q-icon>
+				<div class="col-auto">Favorites</div>
 			</div>
 			<!-- Search and filter -->
 			<div class="row full-width q-pt-sm q-pr-xs">
@@ -367,7 +368,7 @@ function parseQuaryParams() {
 async function setVideos() {
 	try {
 		apiIndex.getPartners();
-		if (route.query.fav) {
+		if (route.meta.fav) {
 			loading.value = false;
 			fav.value = true;
 			videos.value = settings.favorites;

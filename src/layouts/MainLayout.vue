@@ -225,7 +225,7 @@ const links = ref<{ text: string, link: string, badge?: string, icon: string }[]
 	},
 	{
 		text: "Favorites",
-		link: "/videos?fav=true",
+		link: "/favorites",
 		icon: "favorite"
 	},
 	{

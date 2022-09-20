@@ -1,7 +1,15 @@
 import { settings } from 'cluster';
 import { Notify, QVueGlobals } from 'quasar'
 import { useSettingsStore } from 'src/stores/settings';
-import { PartnerVideo } from 'src/_SCRIPTAPIINDEX';
+import { PartnerVideo, Script } from 'src/_SCRIPTAPIINDEX';
+export const RATING_STEPS = 5;
+export function valueToRating(value: number, reverse = false) {
+	if (reverse) {
+		return Math.round((100 / (RATING_STEPS - 1)) * (value - 1))
+	} else {
+		return Math.round(((value * (RATING_STEPS - 1)) / 100) + 1);
+	}
+}
 
 export function showConnectionKeyDialog($q: QVueGlobals, cb: (((key: string) => void) | undefined) = undefined) {
 	$q.dialog({
@@ -29,10 +37,10 @@ export function showConnectionKeyDialog($q: QVueGlobals, cb: (((key: string) => 
 	})
 }
 
-export function isVideoVoted(video: PartnerVideo) {
+export function isVideoVoted(script: Script) {
 	const settings = useSettingsStore();
 	const isFound = settings.videoVotes.some(vote => {
-		if (vote.partnerVideoId === video.partnerVideoId) {
+		if (vote.scriptId === script.scriptId) {
 			return true;
 		}
 		return false;
