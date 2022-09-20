@@ -349,29 +349,36 @@ function parseQuaryParams() {
 	// tagsSelected.value.length = 0;
 	// partnersSelected.value.length = 0;
 	// filterExpanded.value = false;
+	let filter = false;
 	if (route.query !== undefined) {
 		if (route.query.tag) {
 			console.log("route.query.tag:", route.query.tag);
-			filterExpanded.value = true;
-			paidFilter.value = true; // Disable all filtering to show all possible videos
 			tagsSelected.value.push(route.query.tag)
-			filterAndSortVideos();
+			filter = true;
+		} else {
+			tagsSelected.value.length = 0;
 		}
 		if (route.query.partnerId) {
-			filterExpanded.value = true;
 			const partnerId = route.query.partnerId as string;
 			console.log("partnerId from route.query.partnerId:", partnerId);
-
 			// const partner = JSON.parse(route.query.partner as string) as Partner;
 			apiIndex.partners.forEach(partner => {
 				if (partner.partnerId === partnerId) {
 					partnersSelected.value.push(partner)
-					paidFilter.value = true; // Disable all filtering to show all possible videos
-					filterAndSortVideos();
+					filter = true;
 				}
 			});
+		} else {
+			partnersSelected.value.length = 0;
 		}
 	}
+	if (filter) {
+		paidFilter.value = true; // Disable all filtering to show all possible videos
+		filterExpanded.value = true;
+	} else {
+		filterExpanded.value = false;
+	}
+	filterAndSortVideos();
 }
 
 async function setVideos() {
@@ -382,7 +389,7 @@ async function setVideos() {
 			videos.value = settings.favorites;
 			setTags();
 			console.log("videos.value:", videos.value);
-			filterAndSortVideos();
+			// filterAndSortVideos();
 		} else {
 			fav.value = false;
 			apiIndex.getIndex().then(_videos => {
