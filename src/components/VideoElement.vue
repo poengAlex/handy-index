@@ -92,7 +92,7 @@
 								<q-item-section>Ufavorite</q-item-section>
 							</q-item>
 							<q-separator />
-							<q-item clickable v-close-popup @click="downloadToken(video)">
+							<q-item clickable v-close-popup @click="downloadToken(video,$q)">
 								<q-item-section avatar>
 									<q-icon color="secondary" name="file_download" />
 								</q-item-section>
@@ -138,18 +138,24 @@ import { useSettingsStore } from '../stores/settings'
 import Partner from "./Partner.vue";
 import Tag from "./Tag.vue";
 import { downloadToken } from "src/logic/api-wrapper";
+import { useQuasar } from "quasar";
 const settings = useSettingsStore()
 dayjs.extend(relativeTime);
 dayjs.extend(duration);
 const propsIn = defineProps(['tableValue']);
 const video = ref<PartnerVideo>();
+const $q = useQuasar();
 
 // eslint-disable-next-line func-call-spacing
 const emit = defineEmits<{ (e: 'click', video: PartnerVideo): void }>();
 
 onMounted(() => {
 	// console.log('onMounted');
-	video.value = propsIn.tableValue.row;
+	if (propsIn.tableValue.row !== undefined) {
+		video.value = propsIn.tableValue.row;
+	} else {
+		video.value = propsIn.tableValue;
+	}
 });
 </script>
 

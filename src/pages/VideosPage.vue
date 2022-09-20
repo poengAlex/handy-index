@@ -353,6 +353,7 @@ function parseQuaryParams() {
 		if (route.query.tag) {
 			console.log("route.query.tag:", route.query.tag);
 			filterExpanded.value = true;
+			paidFilter.value = true; // Disable all filtering to show all possible videos
 			tagsSelected.value.push(route.query.tag)
 			filterAndSortVideos();
 		}
@@ -365,7 +366,7 @@ function parseQuaryParams() {
 			apiIndex.partners.forEach(partner => {
 				if (partner.partnerId === partnerId) {
 					partnersSelected.value.push(partner)
-					paidFilter.value = true;
+					paidFilter.value = true; // Disable all filtering to show all possible videos
 					filterAndSortVideos();
 				}
 			});

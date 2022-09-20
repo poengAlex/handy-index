@@ -1,4 +1,5 @@
-import { useQuasar } from "quasar";
+import { Store } from "pinia";
+import { QVueGlobals, useQuasar } from "quasar";
 import { useIndexStore } from "src/stores/apiIndex";
 import { OpenAPIConfig, Partner, PartnerVideo, Script, ScriptApiIndex } from "src/_SCRIPTAPIINDEX";
 import { ref } from "vue";
@@ -47,19 +48,23 @@ export function initApi(_token = "") {
 	}
 }
 
-export async function downloadToken(video: PartnerVideo) {
+export async function downloadToken(video: PartnerVideo | undefined, $q: QVueGlobals) {
 	// const handyKey = handy.getStoredKey();
 	// if (handyKey === undefined) {
 	// 	createNotifyWarning("You need to be connected with your Handy to download script tokens.")
 	// }
+	if (video === undefined) {
+		createNotify("Video not defined");
+		return;
+	}
 	const settings = useSettingsStore()
 	const apiStore = useIndexStore();
-	const $q = useQuasar();
+	// const $q = useQuasar();
 	const scripts = await apiStore.getScripts(video.partnerVideoId);
 	if (settings.connectionKey === "" || settings.connectionKey === undefined) {
 		showConnectionKeyDialog($q, (key: string) => {
 			console.log("key:", key);
-			downloadToken(video);
+			downloadToken(video, $q);
 		});
 		return;
 	}

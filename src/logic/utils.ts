@@ -7,8 +7,12 @@ export function valueToRating(value: number, reverse = false) {
 	if (reverse) {
 		return Math.round((100 / (RATING_STEPS - 1)) * (value - 1))
 	} else {
-		return Math.round(((value * (RATING_STEPS - 1)) / 100) + 1);
+		return Math.round(((value * (RATING_STEPS - 1)) / 100) + 1); // TODO: remove rounding?
 	}
+}
+
+export function randomIntFromInterval(min: number, max: number) { // min and max included
+	return Math.floor(Math.random() * (max - min + 1) + min)
 }
 
 export function showConnectionKeyDialog($q: QVueGlobals, cb: (((key: string) => void) | undefined) = undefined) {
