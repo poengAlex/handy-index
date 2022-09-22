@@ -49,14 +49,20 @@ export const $PartnerVideo = {
     type: 'string',
 },
 },
+        thumbnail: {
+    type: 'string',
+},
         gifs: {
     type: 'array',
     contains: {
     type: 'string',
 },
 },
-        type: {
-    type: 'VideoType',
+        videoAccess: {
+    type: 'PartnerVideoAccessType',
+},
+        scriptAccess: {
+    type: 'PartnerVideoScriptAccessIndicator',
 },
     },
 }],
