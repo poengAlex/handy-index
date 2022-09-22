@@ -413,10 +413,10 @@ async function setVideos() {
 
 const guardAfterEach = router.afterEach(async (to, from) => {
 	console.log('ROUTING', to.path);
-	// if (to.path === "/videos") {
-	await setVideos()
-	parseQuaryParams()
-	// }
+	if (to.path === "/videos") { // Will be called after router.afterEach. So router.afterEach will trigger once
+		await setVideos()
+		parseQuaryParams()
+	}
 })
 
 // Container hight must match the parent to make the scroll look good.

@@ -242,6 +242,8 @@ function videoClick(video: PartnerVideo) {
 }
 
 async function setVideo() {
+	console.log('setVideo');
+
 	const partnerVideoId = route.params.partnerVideoId as string;
 	console.log("partnerVideoId:", partnerVideoId);
 
@@ -287,13 +289,13 @@ async function setVideo() {
 
 const guardAfterEach = router.afterEach(async (to, from) => {
 	console.log('ROUTING', to.path);
-	// if (to.path === "/videos") {
-	setVideo()
-	// }
+	if (to.path.includes("/videos/")) {
+		setVideo()
+	}
 })
 
-onBeforeUnmount(() => {
-	console.log('Removing scroll listner');
+onBeforeUnmount(() => { // Will be called after router.afterEach. So router.afterEach will trigger once
+	console.log('Removing listners');
 
 	guardAfterEach(); // Remove guard listner
 })
