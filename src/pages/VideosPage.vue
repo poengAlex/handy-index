@@ -52,9 +52,19 @@
 									@update:model-value="filterAndSortVideos" />
 								<q-radio v-model="sortBy" val="title" label="Video name"
 									@update:model-value="filterAndSortVideos" />
-								<q-toggle v-model="paidFilter" @update:model-value="filterAndSortVideos">Show videos
-									that are
-									behind a paywall</q-toggle>
+								<q-toggle v-model="premiumVideoFilter" @update:model-value="filterAndSortVideos">Premium
+									videos
+									<q-tooltip>
+										Videos that are behind a paywall
+									</q-tooltip>
+								</q-toggle>
+								<q-toggle v-model="premiumScriptFilter" @update:model-value="filterAndSortVideos">
+									Premium
+									scripts
+									<q-tooltip>
+										Scripts that are behind a paywall
+									</q-tooltip>
+								</q-toggle>
 							</div>
 						</q-card-section>
 					</q-card>
@@ -129,7 +139,8 @@ const tags = ref<string[]>([]);
 const tagsFiltered = ref<string[]>([]);
 const tagsSelected = ref<any[]>([]);
 
-const paidFilter = ref(false);
+const premiumVideoFilter = ref(false);
+const premiumScriptFilter = ref(false);
 
 const filterExpanded = ref(false);
 const rowsPerPageOptions = computed(() => {
@@ -242,10 +253,20 @@ function filterAndSortVideos() {
 		tempVideos = tempVideosNested;
 	}
 
-	if (!paidFilter.value) {
+	if (!premiumVideoFilter.value) {
 		const tempVideosNested: PartnerVideo[] = []
 		tempVideos.forEach(video => {
-			if (video.type === "public") {
+			if (video.videoAccess === "public") {
+				tempVideosNested.push(video);
+			}
+		});
+		tempVideos = tempVideosNested;
+	}
+
+	if (!premiumScriptFilter.value) {
+		const tempVideosNested: PartnerVideo[] = []
+		tempVideos.forEach(video => {
+			if (video.scriptAccess === "public") {
 				tempVideosNested.push(video);
 			}
 		});

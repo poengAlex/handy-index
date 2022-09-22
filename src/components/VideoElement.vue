@@ -1,7 +1,22 @@
 <template>
 	<q-card class="cursor-pointer" v-if="video !== undefined" @click="$emit('click', video)">
 		<q-responsive :ratio="16 / 9">
-			<q-img v-if="video.images !== undefined"
+			<q-img v-if="video.thumbnail !== null"
+				:src="settings.nsfw ? video.thumbnail : 'https://via.placeholder.com/315x300.png?text=NSFW'" fit="fill"
+				@error="video!.thumbnail = '315x300-no-image.png'">
+				<div class="absolute-bottom" style="height: 40%;padding: 0px;">
+					<div class="row items-center justify-evenly full-height full-width">
+						<div class="ellipsis-2-lines text-picture text-subtitle1 q-pl-lg q-pr-lg">
+							{{ video.title }}
+						</div>
+					</div>
+
+					<!-- <q-tooltip>
+						{{ video.title }}
+					</q-tooltip> -->
+				</div>
+			</q-img>
+			<q-img v-else-if="video.images !== undefined"
 				:src="settings.nsfw ? video.images[0] : 'https://via.placeholder.com/315x300.png?text=NSFW'" fit="fill"
 				@error="(video?.images as string[])[0] = '315x300-no-image.png'">
 				<div class="absolute-bottom" style="height: 40%;padding: 0px;">
