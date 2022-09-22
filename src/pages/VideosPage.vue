@@ -435,6 +435,11 @@ async function setVideos() {
 const guardAfterEach = router.afterEach(async (to, from) => {
 	console.log('ROUTING', to.path);
 	if (to.path === "/videos") { // Will be called after router.afterEach. So router.afterEach will trigger once
+		pagination.value.rowsPerPage = 24;
+		// Scroll to top
+		const qtable = document.getElementById('qtable');
+		qtable!.scrollTop = 0;
+
 		await setVideos()
 		parseQuaryParams()
 	}
