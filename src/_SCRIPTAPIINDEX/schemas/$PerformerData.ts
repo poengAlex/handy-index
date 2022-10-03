@@ -11,6 +11,11 @@ export const $PerformerData = {
 },
         url: {
     type: 'string',
+    description: `A url to a performer page within the partner site.`,
+},
+        imageUrl: {
+    type: 'string',
+    description: `A url to a performer image within the partner site.`,
 },
     },
 } as const;

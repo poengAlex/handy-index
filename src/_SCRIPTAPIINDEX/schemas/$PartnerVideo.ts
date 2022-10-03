@@ -64,6 +64,34 @@ export const $PartnerVideo = {
         scriptAccess: {
     type: 'PartnerVideoScriptAccessIndicator',
 },
+        views: {
+    type: 'number',
+    description: `Video views information from/within the partner video site.`,
+},
+        rating: {
+    type: 'Rating',
+    description: `Video rating information from/within the partner video site.`,
+},
+        upVotes: {
+    type: 'number',
+    description: `Video upVotes/likes information from/within the partner video site.`,
+},
+        downVotes: {
+    type: 'number',
+    description: `Video downVotes/dislikes information from/within the partner video site.`,
+},
+        performers: {
+    type: 'array',
+    contains: {
+        type: 'Performer',
+    },
+},
+        partnerPerformers: {
+    type: 'array',
+    contains: {
+        type: 'PerformerData',
+    },
+},
     },
 }],
 } as const;

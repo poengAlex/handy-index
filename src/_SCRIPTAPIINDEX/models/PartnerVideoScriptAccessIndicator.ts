@@ -8,7 +8,7 @@ export enum PartnerVideoScriptAccessIndicator {
      */
     PUBLIC = 'public',
     /**
-     * There is no public script available for the video.
+     * There is no public scripts available for the video.
      */
     NON_PUBLIC = 'non-public',
 }

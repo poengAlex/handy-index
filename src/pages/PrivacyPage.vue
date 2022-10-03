@@ -35,7 +35,9 @@
 		<p>
 			When allowing external videos to be played on the site, you will be tracked by the external site through
 			various
-			analytics. To prevent this VPN is your only real protection.
+			analytics. When enabling NSFW, images are loaded from the different supported sites. These sites might track
+			you based on the images loaded, but the tracking is less specific since it will load a lot of images at
+			once. To prevent this VPN is your only real protection.
 		</p>
 		<p>
 			This site is open source to give full transparency of whats happening on this site.
