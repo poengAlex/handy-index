@@ -1,5 +1,6 @@
 <template>
-	<q-card class="cursor-pointer" v-if="video !== undefined" @click="$emit('click', video)">
+	<q-card class="cursor-pointer" v-if="video !== undefined" @click.left="$emit('click', video)"
+		@click.right.prevent="$emit('clickRight', video)">
 		<q-responsive :ratio="16 / 9">
 			<q-img v-if="video.thumbnail !== null"
 				:src="settings.nsfw ? video.thumbnail : 'https://via.placeholder.com/315x300.png?text=NSFW'" fit="fill"
@@ -162,7 +163,10 @@ const video = ref<PartnerVideo>();
 const $q = useQuasar();
 
 // eslint-disable-next-line func-call-spacing
-const emit = defineEmits<{ (e: 'click', video: PartnerVideo): void }>();
+const emit = defineEmits<{
+	(e: 'click', video: PartnerVideo): void
+	(e: 'clickRight', video: PartnerVideo): void
+}>();
 
 onMounted(() => {
 	// console.log('onMounted');

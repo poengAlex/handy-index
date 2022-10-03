@@ -13,7 +13,8 @@
 			<div class="row full-width q-pt-sm q-pr-xs">
 				<q-expansion-item filled class="col-12"
 					:class="{ 'col-sm-12': filterExpanded, 'col-sm-8': !filterExpanded }" expand-separator
-					icon="filter_alt" :label="'Advanced filter - ' + videosFiltered.length + ' videos'"
+					icon="filter_alt"
+					:label="'Advanced filter - showing ' + videosFiltered.length + ' of ' + videos.length + ' videos'"
 					v-model="filterExpanded">
 					<q-card>
 						<q-card-section>
@@ -89,7 +90,8 @@
 				<template v-slot:item="props">
 					<div class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 col-xl-2">
 						<!-- Vue elements need a unique key to trigger a rerender -->
-						<video-element @click="videoClick" :table-value="props"
+						<video-element @click="videoClick((props.row as PartnerVideo),true)"
+							@click-right="videoClick((props.row as PartnerVideo),true)" :table-value="props"
 							:key="(props.row as PartnerVideo).partnerVideoId">
 						</video-element>
 					</div>
@@ -195,11 +197,16 @@ function filterFnPartners(val: any, update: any, abort: () => void) {
 	})
 }
 
-function videoClick(video: PartnerVideo) {
-	console.log('videoClick', video);
-	router.push({
-		path: "/videos/" + video.partnerVideoId
-	})
+function videoClick(video: PartnerVideo, newWindow: boolean) {
+	console.log('videoClick', video, newWindow);
+	if (newWindow) {
+		const routeData = router.resolve({ path: "/videos/" + video.partnerVideoId });
+		window.open(routeData.href, '_blank');
+	} else {
+		router.push({
+			path: "/videos/" + video.partnerVideoId
+		})
+	}
 }
 
 function filterAndSortVideos() {
