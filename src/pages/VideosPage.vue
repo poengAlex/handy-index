@@ -401,7 +401,8 @@ function parseQuaryParams() {
 		}
 	}
 	if (filter) {
-		paidFilter.value = true; // Disable all filtering to show all possible videos
+		premiumVideoFilter.value = true; // Disable all filtering to show all possible videos
+		premiumScriptFilter.value = true; // Disable all filtering to show all possible videos
 		filterExpanded.value = true;
 	} else {
 		filterExpanded.value = false;
