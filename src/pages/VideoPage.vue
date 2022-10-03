@@ -7,7 +7,8 @@
 
 					<q-carousel v-if="!imgError && (!externalVideo.active || !settings.allowExternalVideo)"
 						class="rounded-borders" control-type="regular" arrows control-color="accent"
-						style="heigth: 400px;" swipeable animated v-model="slide" thumbnails>
+						style="heigth: 400px;" swipeable animated v-model="slide" thumbnails
+						referrerpolicy="no-referrer">
 						<template v-if="video.images !== undefined">
 							<q-carousel-slide v-for="(img, index) in video?.images" :name="index" :key="index"
 								:img-src="settings.nsfw ? img : 'https://via.placeholder.com/315x300.png?text=NSFW'" />
