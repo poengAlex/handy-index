@@ -272,14 +272,15 @@ async function setVideo() {
 		console.log("scripts.value:", scripts.value);
 		if (scripts.value.length > 0 && scripts.value[0].rating !== null && scripts.value[0].rating !== undefined) {
 			ratingModel.value = valueToRating(scripts.value[0].rating)
+			console.log("ratingModel.value:", ratingModel.value);
 		}
 
-		// settings.videoVotes.forEach(vote => {
-		// 	if (vote.scriptId === scripts.value[0].scriptId) {
-		// 		// ratingModel.value = (vote.value / 10) + 1
-		// 		ratingUser.value = valueToRating(vote.value);
-		// 	}
-		// });
+		settings.videoVotes.forEach(vote => {
+			if (vote.scriptId === scripts.value[0].scriptId) {
+				// ratingModel.value = (vote.value / 10) + 1
+				ratingUser.value = valueToRating(vote.value);
+			}
+		});
 		let start = 100;
 		otherVideos.value.length = 0;
 		while (start >= 0 && otherVideos.value.length === 0) {
