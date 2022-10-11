@@ -32,7 +32,13 @@ const partners = ref<Partner[]>([]);
 
 function goToPartnerVideos(partner: Partner) {
 	console.log('goToPartnerVideos', partner);
-	router.push("/sites/" + partner.partnerId);
+	// router.push("/sites/" + partner.partnerId); //TODO: Add this when the partner have more info on them
+	router.push({
+		path: "/videos",
+		query: {
+			partnerId: partner.partnerId
+		}
+	})
 }
 
 onMounted(async () => {
@@ -45,4 +51,5 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+
 </style>
