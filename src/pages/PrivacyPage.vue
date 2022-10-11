@@ -41,7 +41,7 @@
 		</p>
 		<p>
 			This site is open source to give full transparency of whats happening on this site.
-			<a href="">LINK TO GITLAB INDEX - TBD</a>
+			<a href="https://github.com/poengAlex/handy-index" target="_blank">Github repo of the index site</a>
 		</p>
 
 		<div class="text-h5">The browser plugin</div>
@@ -60,7 +60,8 @@
 				word for it.
 			</li>
 			<li>The browser plugin is open source to fully transparent what's happening behind the scenes.</li>
-			<a href="">LINK TO GITLAB BEX - TBD</a>
+			<a href="https://github.com/poengAlex/handy-browser-extension" target="_blank">Github repo of the browser
+				extension</a>
 
 			<li>We do not care what you are watching since this data would not give us much value and would increase our
 				risk if we have a security breach.</li>
