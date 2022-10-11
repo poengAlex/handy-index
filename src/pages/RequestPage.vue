@@ -47,11 +47,12 @@
 
 				<q-item>
 					<q-item-section top thumbnail class="q-ml-none">
-						<img :src="request.thumbnail">
+						<img
+							:src="settings.nsfw ? request.thumbnail : 'https://via.placeholder.com/315x300.png?text=NSFW'">
 					</q-item-section>
 					<q-item-section>
 						<q-item-label>{{request.domain}}</q-item-label>
-						<q-item-label caption lines="2">{{request.title}}
+						<q-item-label caption lines=" 2">{{request.title}}
 						</q-item-label>
 						<q-item-label>
 							<q-btn :href="request.videoUrl" target="_blank" size="xs">Go to video</q-btn>
