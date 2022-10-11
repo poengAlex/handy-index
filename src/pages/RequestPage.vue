@@ -44,22 +44,40 @@
 		<div class="text-h3">Pending requests</div>
 		<q-list separator style="max-width: 500px;">
 			<template v-for="(request,index) in requests" :key="request.requestId">
+
 				<q-item>
+					<q-item-section top thumbnail class="q-ml-none">
+						<img :src="request.thumbnail">
+					</q-item-section>
 					<q-item-section>
 						<q-item-label>{{request.domain}}</q-item-label>
-						<q-item-label caption lines="2"><a :href="request.url" target="_blank">{{request.url}}</a>
+						<q-item-label caption lines="2">{{request.title}}
+						</q-item-label>
+						<q-item-label>
+							<q-btn :href="request.videoUrl" target="_blank" size="xs">Go to video</q-btn>
 						</q-item-label>
 					</q-item-section>
 
 					<q-item-section side top>
-						<q-item-label caption>{{dayjs((request as any).createdAt).fromNow()}}</q-item-label>
-						<q-icon name="thumb_up_alt" :color="isUpvoted(request)? 'primary' : 'black'"
-							class="cursor-pointer" @click="upvote(request)">
+						<q-item-label caption>
+							{{dayjs((request as any).createdAt).fromNow()}}
 							<q-tooltip>
-								Upvote this request
+								Video request was added {{request.createdAt}}
 							</q-tooltip>
-						</q-icon>
-						<q-item-label>{{request.votes}}</q-item-label>
+						</q-item-label>
+
+						<q-item-label>
+							<q-icon name="thumb_up_alt" :color="isUpvoted(request)? 'primary' : 'black'"
+								class="cursor-pointer" @click="upvote(request)" size="sm">
+								<q-tooltip>
+									Upvote this request
+								</q-tooltip>
+							</q-icon>
+							{{request.votes}}
+							<q-tooltip>
+								Number of upvotes
+							</q-tooltip>
+						</q-item-label>
 					</q-item-section>
 				</q-item>
 
@@ -95,6 +113,7 @@ async function getData() {
 	try {
 		requests.value = await api.getApi().videoRequests.getRegisteredVideoRequests(100);
 		console.log("requests.value:", requests.value);
+		console.log("request:", JSON.parse(JSON.stringify(requests.value[0])));
 	} catch (err) {
 		console.error(err);
 		createNotify(err as string)
