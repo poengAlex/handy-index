@@ -90,7 +90,7 @@
 				<template v-slot:item="props">
 					<div class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 col-xl-2">
 						<!-- Vue elements need a unique key to trigger a rerender -->
-						<video-element @click="videoClick((props.row as PartnerVideo),true)"
+						<video-element @click="videoClick((props.row as PartnerVideo),false)"
 							@click-right="videoClick((props.row as PartnerVideo),true)" :table-value="props"
 							:key="(props.row as PartnerVideo).partnerVideoId">
 						</video-element>

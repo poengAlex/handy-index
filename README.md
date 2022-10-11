@@ -6,3 +6,7 @@
 - Pause videos on leave page
 - Support multiple scripts
 - Allow for script feedback
+
+
+- Request list in a Prettier way
+- Download script

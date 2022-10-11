@@ -116,11 +116,15 @@
 								<q-item-section>Download token</q-item-section>
 							</q-item>
 							<q-separator />
-							<q-item clickable v-close-popup @click="createNotifyWarning('not implemented')">
+							<q-item clickable v-close-popup>
 								<q-item-section avatar>
 									<q-icon color="warning" name="warning" />
 								</q-item-section>
-								<q-item-section>Report</q-item-section>
+								<q-item-section>
+									<a
+										:href="'mailto:alexander@sweettech.no?subject=I want to report a video&body=Hi%0D%0A%0D%0AI would like you to report a video on the index site.%0D%0A%0D%0A partnerVideoId: ' + video.partnerVideoId">Report</a>
+									<!-- <a href="mailto:alexander@sweettech.no?subject=I want to report a video&body=Hi%0D%0A%0D%0AI would like you to report this.%0D%0A%0D%0A Video:%0D%0A%0D%0A">Report</a> -->
+								</q-item-section>
 							</q-item>
 						</q-list>
 					</q-menu>
@@ -132,7 +136,7 @@
 					<tag v-for="(tag, index) in video.tags" :key="index" :tag="tag"></tag> -->
 				<q-item-label class="col-12" style="min-height: 48px;" lines="2">
 					<tag v-for="(tag, index) in video.tags" :key="index" :tag="tag"></tag>
-					<q-tooltip v-if="video.tags !== undefined && video.tags?.length > 0" max-width="300px"
+					<q-tooltip v-if="false && video.tags !== undefined && video.tags?.length > 0" max-width="300px"
 						anchor="center middle" self="center middle" :delay="300">
 						<div class="row">
 							<tag v-for="(tag, index) in video.tags" :key="index" :tag="tag"></tag>
