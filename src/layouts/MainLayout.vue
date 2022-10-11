@@ -111,6 +111,16 @@
 							<q-item-label>{{ link.text }}</q-item-label>
 						</q-item-section>
 					</q-item>
+					<q-item clickable class="GPL__drawer-item"
+						href="https://chrome.google.com/webstore/detail/handy-browser-extension/jejnmoojnkkflpjalciaadbidbdfinko"
+						target="_BLANK">
+						<q-item-section avatar>
+							<q-icon name="download" />
+						</q-item-section>
+						<q-item-section>
+							<q-item-label>Browser plugin</q-item-label>
+						</q-item-section>
+					</q-item>
 					<q-item clickable class="GPL__drawer-item" @click="clearAllData">
 						<q-item-section avatar>
 							<q-icon name="delete" />
@@ -202,7 +212,6 @@ const $q = useQuasar();
 const links3 = [
 	{ icon: 'settings', text: 'Settings' },
 	{ icon: 'help', text: 'Help & Feedback' },
-	{ icon: 'get_app', text: 'App Downloads' },
 	{ icon: 'policy', text: 'Privacy information', route: "/privacy" }
 ]
 
