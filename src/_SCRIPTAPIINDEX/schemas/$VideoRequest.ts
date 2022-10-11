@@ -30,8 +30,63 @@ export const $VideoRequest = {
     type: 'number',
     isRequired: true,
 },
-        metadata: {
-    type: 'VideoRequestMetadata',
+        partnerId: {
+    type: 'ULID',
+},
+        partnerName: {
+    type: 'string',
+},
+        title: {
+    type: 'VideoTitle',
+},
+        description: {
+    type: 'VideoDescription',
+},
+        duration: {
+    type: 'number',
+},
+        tags: {
+    type: 'array',
+    contains: {
+    type: 'string',
+},
+},
+        images: {
+    type: 'array',
+    contains: {
+    type: 'string',
+},
+},
+        thumbnail: {
+    type: 'string',
+},
+        views: {
+    type: 'number',
+    description: `Video views information from/within the partner video site.`,
+},
+        rating: {
+    type: 'Rating',
+    description: `Video rating information from/within the partner video site.`,
+},
+        upVotes: {
+    type: 'number',
+    description: `Video upVotes/likes information from/within the partner video site.`,
+},
+        downVotes: {
+    type: 'number',
+    description: `Video downVotes/dislikes information from/within the partner video site.`,
+},
+        partnerPerformers: {
+    type: 'array',
+    contains: {
+        type: 'PerformerData',
+    },
+},
+        performers: {
+    type: 'array',
+    contains: {
+        type: 'Performer',
+    },
 },
     },
 }],
