@@ -55,7 +55,7 @@
 													target="_blank">https://www.google.com/chrome/</a>
 											</li>
 											<li>Download the Handy browser extension. <a
-													href="https://chrome.google.com/webstore/category/extensions"
+													href="https://chrome.google.com/webstore/detail/handy-browser-extension/jejnmoojnkkflpjalciaadbidbdfinko"
 													target="_blank">Link</a></li>
 											<li>Connect to your Handy in the extension.</li>
 											<li>Refresh this page.</li>
@@ -108,13 +108,20 @@
 								</q-chip>
 							</div>
 						</template>
-
+						<a class="col-auto _cursor-pointer"
+							:href="'mailto:alexander@sweettech.no?subject=I want to report a video&body=Hi%0D%0A%0D%0AI would like you to report a video on the index site.%0D%0A%0D%0A partnerVideoId: ' + video.partnerVideoId"
+							target="_blank" style="text-decoration: none;">
+							<q-chip class="bg-grey-4" icon="warning">
+								Report
+							</q-chip>
+						</a>
 						<a class="col-auto _cursor-pointer" :href="video.videoUrl" target="_blank"
 							style="text-decoration: none;">
 							<q-chip class="bg-grey-4" icon="open_in_new">
 								Open video on site
 							</q-chip>
 						</a>
+
 						<div v-if="settings.isFav(video)" class="col-auto" @click="settings.removeFromFav(video)">
 							<q-chip class="bg-grey-4 cursor-pointer" icon="favorite">
 								Remove from favorite
@@ -130,11 +137,15 @@
 					<div class="col-12 row _q-pl-xs">
 						<Tag v-for="tag in video?.tags" :key="tag" :tag="tag"></Tag>
 					</div>
-					<div class="col-12 q-mt-sm q-mb-sm">
+					<div class="col-auto q-mt-sm q-mb-sm">
 						<!-- Rate the script: -->
 						<q-rating v-model="ratingModel" size="2em" :max="RATING_STEPS" color="primary"
 							@update:model-value="rateScript(scripts[0])">
+
 						</q-rating>
+						<q-tooltip>
+							Rate the script
+						</q-tooltip>
 						<small v-if="ratingUser !== undefined"><br>Your rating: {{ratingUser}} stars</small>
 					</div>
 					<div class="col-12 _q-pa-sm q-pl-none q-pr-sm q-pt-sm">
@@ -257,11 +268,11 @@ async function setVideo() {
 			externalVideo.value.url = 'https://www.pornhub.com/embed/' + video.value.externalRef;
 			externalVideo.value.active = true;
 		}
-		// scripts.value = await apiStore.getScripts(partnerVideoId);
-		// console.log("scripts.value:", scripts.value);
-		// if (scripts.value.length > 0 && scripts.value[0].rating !== null && scripts.value[0].rating !== undefined) {
-		// 	ratingModel.value = valueToRating(scripts.value[0].rating)
-		// }
+		scripts.value = await apiStore.getScripts(partnerVideoId);
+		console.log("scripts.value:", scripts.value);
+		if (scripts.value.length > 0 && scripts.value[0].rating !== null && scripts.value[0].rating !== undefined) {
+			ratingModel.value = valueToRating(scripts.value[0].rating)
+		}
 
 		// settings.videoVotes.forEach(vote => {
 		// 	if (vote.scriptId === scripts.value[0].scriptId) {
@@ -275,7 +286,7 @@ async function setVideo() {
 			const skip = randomIntFromInterval(0, start);
 			console.log("skip:", skip);
 
-			otherVideos.value = await apiIndex.index.getVideos(undefined, undefined, [video.value.partnerId], 4, skip);
+			otherVideos.value = await apiIndex.index.getVideos(undefined, undefined, undefined, [video.value.partnerId], 4, skip);
 			start -= 25;
 		}
 
@@ -305,11 +316,13 @@ onMounted(async () => {
 	console.log('onMounted - video');
 	console.log("route:", route, route.query);
 	await setVideo();
+
 	setTimeout(() => {
 		const images = document.getElementsByTagName("img");
 		// console.log("images:", images, images.length);
 		for (let index = 0; index < images.length; index++) {
 			const image = images[index];
+			image.referrerPolicy = "no-referrer"; // Do not send referer
 			// console.log("image:", image);
 			image.onerror = function () {
 				image.src = '315x300-no-image.png'
