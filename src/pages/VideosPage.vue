@@ -215,7 +215,17 @@ function filterFnPerformers(val: any, update: any, abort: () => void) {
 		console.log('searching - performers');
 
 		const needle = val.toLowerCase()
-		performersFiltered.value = performers.value.filter(v => v.name.toLowerCase().indexOf(needle) > -1)
+		try {
+			if (needle === "") {
+				performers.value = await apiIndex.getApi().index.getPerformers()
+			} else {
+				performers.value = await apiIndex.getApi().index.getPerformers(needle)
+			}
+			performersFiltered.value = performers.value.filter(v => v.name.toLowerCase().indexOf(needle) > -1)
+		} catch (err) {
+			console.error(err);
+			createNotify(err as string)
+		}
 	})
 }
 
@@ -291,11 +301,13 @@ function filterAndSortVideos() {
 		tempVideos.forEach(video => {
 			let performerMatch = false;
 			performersSelected.value.forEach(performerSelected => {
-				video.partnerPerformers!.forEach(performer => {
-					if (performerSelected.name === performer.name) {
-						performerMatch = true;
-					}
-				});
+				if (video.performers !== undefined) {
+					video.performers.forEach(performer => {
+						if (performerSelected.name === performer.name) {
+							performerMatch = true;
+						}
+					});
+				}
 			});
 			if (performerMatch) {
 				tempVideosNested.push(video);
@@ -413,12 +425,27 @@ function setTags() {
 	console.log("tagColors.value:", tagColors.value);
 }
 
-function parseQuaryParams() {
+async function parseQuaryParams() {
 	// tagsSelected.value.length = 0;
 	// partnersSelected.value.length = 0;
 	// filterExpanded.value = false;
 	let filter = false;
 	if (route.query !== undefined) {
+		if (route.query.performerId && route.query.performerName) {
+			console.log("route.query.performerId:", route.query.performerId);
+			try {
+				performers.value = await apiIndex.getApi().index.getPerformers(route.query.performerName as string)
+				performers.value.forEach(performer => {
+					if (performer.performerId === route.query.performerId) {
+						performersSelected.value.push(performer);
+					}
+				});
+				filter = true;
+			} catch (err) {
+				console.error(err);
+				createNotify(err as string)
+			}
+		}
 		if (route.query.tag) {
 			console.log("route.query.tag:", route.query.tag);
 			tagsSelected.value.push(route.query.tag)
@@ -461,7 +488,7 @@ async function setVideos() {
 			// filterAndSortVideos();
 		} else {
 			fav.value = false;
-			// performers.value = await apiIndex.getApi().index.getPerformers();
+			performers.value = await apiIndex.getApi().index.getPerformers();
 			apiIndex.getIndex().then(_videos => {
 				loading.value = false;
 				videos.value = _videos
@@ -564,7 +591,7 @@ onMounted(async () => {
 	// topScroll = useScroll(topVideosContainer)
 	setHeightOfContainter();
 	await setVideos()
-	parseQuaryParams()
+	await parseQuaryParams()
 });
 </script>
 
