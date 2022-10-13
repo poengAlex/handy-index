@@ -95,17 +95,23 @@
 <script setup lang="ts">
 import { useSettingsStore } from "src/stores/settings";
 import { onMounted, ref } from "vue";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 const settings = useSettingsStore();
 const router = useRouter();
+const route = useRoute();
 
 function accept() {
 	settings.privacyAccepted = true;
-	router.push("/");
+	if (route.query.redirect) {
+		router.push(route.query.redirect as string);
+	} else {
+		router.push("/");
+	}
 }
 
 onMounted(() => {
 	console.log('onMounted - privacy');
+	console.log("route.query.redirect:", route.query.redirect);
 });
 </script>
 

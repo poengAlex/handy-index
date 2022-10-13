@@ -457,7 +457,9 @@ const guardAfterEach = router.afterEach(async (to, from) => {
 function setHeightOfContainter() {
 	const topVideosContainer = document.getElementById("topVideosContainer") as HTMLDivElement;
 	if (topVideosContainer === null) {
-		createNotify("Could not find top container");
+		console.error("Could not find top container");
+
+		// createNotify("Could not find top container");
 		return;
 	}
 	const height = topVideosContainer.parentElement?.offsetHeight as number;
@@ -496,6 +498,7 @@ onBeforeUnmount(() => {
 
 	document.removeEventListener("scroll", onDocumentScroll)
 	document.removeEventListener("wheel", onDocumentWheel)
+	document.removeEventListener("resize", setHeightOfContainter)
 	guardAfterEach(); // Remove guard listner
 })
 

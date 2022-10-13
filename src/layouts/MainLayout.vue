@@ -200,11 +200,12 @@ import { initApi } from 'src/logic/api-wrapper';
 import { createNotifySuccess, createNotifyWarning, showConnectionKeyDialog } from 'src/logic/utils';
 // import { initHandy } from 'src/logic/handy';
 import { onBeforeMount, onMounted, ref } from 'vue'
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { useSettingsStore } from '../stores/settings'
 const settings = useSettingsStore()
 const leftDrawerOpen = ref(false)
 const router = useRouter();
+const route = useRoute();
 const storage = ref(0.26)
 const search = ref('');
 const $q = useQuasar();
@@ -262,8 +263,8 @@ function toggleLeftDrawer() {
 
 router.beforeEach(async (to, from) => {
 	if (!settings.privacyAccepted && to.name !== "privacy") {
-		console.warn("privacy intro not seen");
-		router.push({ path: "/privacy" });
+		console.warn("privacy intro not seen", from);
+		router.push({ path: "/privacy", query: { redirect: from.fullPath } });
 		createNotifyWarning("Please accept our terms before using the site");
 	}
 })
@@ -271,7 +272,7 @@ router.beforeEach(async (to, from) => {
 onBeforeMount(() => {
 	if (!settings.privacyAccepted) {
 		console.warn("privacy intro not seen");
-		router.push({ path: "/privacy" })
+		router.push({ path: "/privacy", query: { redirect: route.fullPath } })
 	}
 })
 
