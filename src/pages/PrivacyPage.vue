@@ -46,7 +46,9 @@
 
 		<div class="text-h5">The browser plugin</div>
 		<p>
-			The browser uses regular Handy integration. Read more about our Handy privacy here. In addition, the browser
+			The browser uses regular Handy integration. Read more about our Handy privacy <a
+				href="https://www.thehandy.com/company/blog/online-connection-privacy-concerns-and-the-handy"
+				target="_blank">here</a>. In addition, the browser
 			plugin can read the URL of the active tab. If the tab is one of the supported sites, we check with our
 			database
 			if we have a script to match. This query is INTRUSIVE! To give you insights on the query:
@@ -86,7 +88,7 @@
 			<q-toggle v-model="settings.nsfw">Allow adult pictures and videos.</q-toggle>
 		</div>
 		<q-btn v-if="!settings.privacyAccepted" class="q-mt-sm" color="warning" text-color="black" @click="accept">I
-			accept understand & accept - Enter
+			understand & accept - Enter
 			the site</q-btn>
 
 	</div>
