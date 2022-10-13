@@ -76,8 +76,15 @@ export async function downloadToken(video: PartnerVideo | undefined, $q: QVueGlo
 		console.log("token:", token);
 		window.open(token.url, "_blank");
 		createNotifySuccess("Downloading token")
-	} catch (err) {
+	} catch (err: any) {
 		console.error(err);
-		createNotify(err as string)
+		console.error(JSON.stringify(err));
+		console.log('err.name:', err.name);
+
+		if (err.body && err.body.error && err.body.error.name === "UNAUTHORIZED") {
+			createNotify("Your Handy needs to be connected to download a token. Is the key input correct?", "UNAUTHORIZED")
+		} else {
+			createNotify(err as string)
+		}
 	}
 }
