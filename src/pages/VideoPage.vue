@@ -341,6 +341,10 @@ onMounted(async () => {
 			console.log("key (from BEX):", key);
 			if (key !== null && key !== "") {
 				settings.connectionKey = key;
+			} else if (key !== "") {
+				if (key !== settings.connectionKey) {
+					createNotifyWarning("Connection key is differnet in plugin and on the index site!")
+				}
 			}
 		} else {
 			bexDetected.value = false;
