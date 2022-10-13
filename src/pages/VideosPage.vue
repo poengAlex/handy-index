@@ -41,6 +41,15 @@
 										class="cursor-pointer" />
 								</template>
 							</q-select>
+							<q-select v-model="performersSelected" :options="performersFiltered" option-label="name"
+								use-chips stack-label label="Filter by performers" multiple use-input
+								@update:model-value="filterAndSortVideos" @filter="filterFnPerformers">
+								<template v-if="performersSelected.length !== 0" v-slot:append>
+									<q-icon name="cancel"
+										@click.stop.prevent="performersSelected = []; filterAndSortVideos()"
+										class="cursor-pointer" />
+								</template>
+							</q-select>
 							<div class="q-gutter-sm">
 								<q-icon name="sort"></q-icon>
 								<q-btn flat dense :icon="sortOrderDecending ? 'arrow_downward' : 'arrow_upward'"
@@ -104,7 +113,7 @@
 
 <script setup lang="ts">
 import { QTable, useQuasar } from 'quasar';
-import { PartnerVideo, Partner } from 'src/_SCRIPTAPIINDEX';
+import { PartnerVideo, Partner, Performer } from 'src/_SCRIPTAPIINDEX';
 import { computed, onBeforeUnmount, onMounted, Ref, ref, watch } from 'vue';
 // import { initApi, apiIndex } from '../logic/api-wrapper'
 import { createNotify, nonReactiveObject } from '../logic/utils'
@@ -136,6 +145,10 @@ const { x, y, isScrolling, arrivedState, directions } = useScroll(qtableref as u
 // const partners = ref<Partner[]>([]);
 const partnersFiltered = ref<Partner[]>([]);
 const partnersSelected = ref<Partner[]>([]);
+
+const performers = ref<Performer[]>([]);
+const performersFiltered = ref<Performer[]>([]);
+const performersSelected = ref<Performer[]>([]);
 
 const tagColors = ref<any>({});
 const tags = ref<string[]>([]);
@@ -194,6 +207,15 @@ function filterFnPartners(val: any, update: any, abort: () => void) {
 
 		const needle = val.toLowerCase()
 		partnersFiltered.value = apiIndex.partners.filter(v => v.name.toLowerCase().indexOf(needle) > -1)
+	})
+}
+
+function filterFnPerformers(val: any, update: any, abort: () => void) {
+	update(async () => {
+		console.log('searching - performers');
+
+		const needle = val.toLowerCase()
+		performersFiltered.value = performers.value.filter(v => v.name.toLowerCase().indexOf(needle) > -1)
 	})
 }
 
@@ -258,6 +280,24 @@ function filterAndSortVideos() {
 				}
 			});
 			if (partnerMatch) {
+				tempVideosNested.push(video);
+			}
+		});
+		tempVideos = tempVideosNested;
+	}
+
+	if (performersSelected.value.length > 0) {
+		const tempVideosNested: PartnerVideo[] = []
+		tempVideos.forEach(video => {
+			let performerMatch = false;
+			performersSelected.value.forEach(performerSelected => {
+				video.partnerPerformers!.forEach(performer => {
+					if (performerSelected.name === performer.name) {
+						performerMatch = true;
+					}
+				});
+			});
+			if (performerMatch) {
 				tempVideosNested.push(video);
 			}
 		});
@@ -421,9 +461,11 @@ async function setVideos() {
 			// filterAndSortVideos();
 		} else {
 			fav.value = false;
+			// performers.value = await apiIndex.getApi().index.getPerformers();
 			apiIndex.getIndex().then(_videos => {
 				loading.value = false;
 				videos.value = _videos
+
 				// videos.value.reverse();
 				// videos.value = await apiIndex.index.getVideos(undefined, undefined, undefined, 100);
 				setTags();
