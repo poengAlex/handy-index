@@ -9,31 +9,37 @@
 			</q-input>
 			<!-- <small>Showing {{performers.length}} of 1300</small> -->
 		</div>
-		<template v-for="perfomer in performers" :key="perfomer.performerId">
+		<template v-for="(perfomer,index) in performers" :key="perfomer.performerId">
 			<div class="col-12 col-sm-6 col-md-4 col-lg-2 q-pa-xs cursor-pointer" @click="goToPerformer(perfomer)">
-				<q-img :src="'https://via.placeholder.com/315x300.png?text=NSFW'" fit="fill">
-					<div class="absolute-bottom" style="height: 40%;padding: 0px;">
-						<div class="row items-center justify-evenly full-height full-width">
-							<div class="ellipsis-2-lines text-picture text-subtitle1 q-pl-lg q-pr-lg">
-								{{ perfomer.name }}
+				<q-responsive :ratio="4/3">
+					<q-img :src="perfomer.avatar" fit="contain"
+						@error="performer.avatar = 'https://via.placeholder.com/315x300.png?text=No image'"
+						referrerpolicy="no-referrer">
+						<div class="absolute-bottom" style="height: 40%;padding: 0px;">
+							<div class="row items-center justify-evenly full-height full-width">
+								<div class="ellipsis-2-lines text-picture text-subtitle1 q-pl-lg q-pr-lg">
+									{{ perfomer.name }}
+								</div>
 							</div>
-						</div>
 
-						<!-- <q-tooltip>
+							<!-- <q-tooltip>
 						{{ video.title }}
 					</q-tooltip> -->
-					</div>
-				</q-img>
+						</div>
+					</q-img>
+				</q-responsive>
+
 			</div>
 		</template>
-		<div class="col-12 q-pa-xs q-gutter-xs row">
+		<div v-if="!(page === 0 && performers.length !== MAX_TAKE)" class="col-12 q-pa-xs q-gutter-xs row">
 			<div class="col-auto">
 				Page {{page+1}}
 			</div>
 			<div class="col text-right">
 
-				<q-btn :disable="page===0" @click="page--;getData()">Back</q-btn>
-				<q-btn :disable="MAX_TAKE !== performers.length" @click="page++;getData()">Next</q-btn>
+				<q-btn :disable="page===0" @click="page--;getData()" :loading="loading">Back</q-btn>
+				<q-btn :disable="MAX_TAKE !== performers.length" @click="page++;getData()" :loading="loading">Next
+				</q-btn>
 			</div>
 		</div>
 		<q-inner-loading :showing="loading">
@@ -86,10 +92,15 @@ function goToPerformer(performer: Performer) {
 async function getData() {
 	loading.value = true;
 	try {
-		if (filter.value === "") {
+		if (filter.value === "" || filter.value === null) {
+			console.log('empty filter - getting random performers');
+
 			performers.value = await apiIndex.getApi().index.getPerformers(undefined, undefined, undefined, 24, randomIntFromInterval(0, NR_OF_PERFORMERS))
 		} else {
 			performers.value = await apiIndex.getApi().index.getPerformers(filter.value, undefined, undefined, MAX_TAKE, page.value * MAX_TAKE)
+		}
+		if (performers.value.length > 0) {
+			console.log('Perfomer:', JSON.parse(JSON.stringify(performers.value[0])));
 		}
 	} catch (err) {
 		console.error(err);
@@ -100,20 +111,7 @@ async function getData() {
 
 onMounted(async () => {
 	console.log('onMounted');
-	try {
-		performers.value = await apiIndex.getApi().index.getPerformers(undefined, undefined, undefined, 24, randomIntFromInterval(0, NR_OF_PERFORMERS))
-		console.log("performers.value:", performers.value);
-
-		if (performers.value.length > 1) {
-			console.log('Perfomer:', JSON.parse(JSON.stringify(performers.value[1])));
-		}
-		// filterAndSortPerformers();
-	} catch (err) {
-		console.error(err);
-		createNotify(err as string)
-	}
-
-	loading.value = false;
+	getData();
 });
 </script>
 

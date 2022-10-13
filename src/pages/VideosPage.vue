@@ -139,7 +139,7 @@ const fav = ref(false);
 let innerTable: HTMLDivElement;
 // const el = ref<HTMLElement | null>(null)
 const { x, y, isScrolling, arrivedState, directions } = useScroll(qtableref as unknown as HTMLElement, {
-	offset: { top: 0, bottom: 800, right: 0, left: 0 }
+	offset: { top: 0, bottom: 400, right: 0, left: 0 }
 })
 
 // const partners = ref<Partner[]>([]);
@@ -185,7 +185,7 @@ const pagination = ref({
 
 function onScroll() {
 	// console.log('onscroll', arrivedState.bottom);
-	if (arrivedState.bottom) {
+	if (arrivedState.bottom && videosFiltered.value.length >= 24) {
 		pagination.value.rowsPerPage += 24;
 	}
 }
@@ -216,7 +216,7 @@ function filterFnPerformers(val: any, update: any, abort: () => void) {
 
 		const needle = val.toLowerCase()
 		try {
-			if (needle === "") {
+			if (needle === "" || needle === null) {
 				performers.value = await apiIndex.getApi().index.getPerformers()
 			} else {
 				performers.value = await apiIndex.getApi().index.getPerformers(needle)
