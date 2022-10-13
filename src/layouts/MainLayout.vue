@@ -178,7 +178,7 @@
 			</q-page>
 
 			<q-page-sticky v-if="$q.screen.gt.sm" expand position="left">
-				<div class="fit q-pt-xl q-px-sm column">
+				<div class="fit q-pt-xl q-px-sm column" style="overflow:hidden;">
 					<q-btn v-for="(link, index) in links" :key="index" round flat color="grey-8" stack no-caps
 						size="26px" class="GPL__side-btn" :to="link.link">
 						<q-icon size="22px" :name="link.icon" />
@@ -242,6 +242,11 @@ const links = ref<{ text: string, link: string, badge?: string, icon: string }[]
 		text: "Requests",
 		link: "/request",
 		icon: "poll"
+	},
+	{
+		text: "Performers",
+		link: "/performers",
+		icon: "people_alt"
 	},
 	{
 		text: "Playlists",
