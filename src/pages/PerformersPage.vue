@@ -12,7 +12,8 @@
 		<template v-for="(perfomer,index) in performers" :key="perfomer.performerId">
 			<div class="col-12 col-sm-6 col-md-4 col-lg-2 q-pa-xs cursor-pointer" @click="goToPerformer(perfomer)">
 				<q-responsive :ratio="4/3">
-					<q-img :src="perfomer.avatar" fit="contain"
+					<q-img :src="settings.nsfw ? perfomer.avatar : 'https://via.placeholder.com/315x300.png?text=NSFW'"
+						fit="contain"
 						@error="performer.avatar = 'https://via.placeholder.com/315x300.png?text=No image'"
 						referrerpolicy="no-referrer">
 						<div class="absolute-bottom" style="height: 40%;padding: 0px;">
@@ -94,8 +95,8 @@ async function getData() {
 	try {
 		if (filter.value === "" || filter.value === null) {
 			console.log('empty filter - getting random performers');
-
-			performers.value = await apiIndex.getApi().index.getPerformers(undefined, undefined, undefined, 24, randomIntFromInterval(0, NR_OF_PERFORMERS))
+			const maxNrOFBlocks = Math.floor(NR_OF_PERFORMERS / MAX_TAKE);
+			performers.value = await apiIndex.getApi().index.getPerformers(undefined, undefined, undefined, MAX_TAKE, randomIntFromInterval(0, maxNrOFBlocks) * MAX_TAKE)
 		} else {
 			performers.value = await apiIndex.getApi().index.getPerformers(filter.value, undefined, undefined, MAX_TAKE, page.value * MAX_TAKE)
 		}
