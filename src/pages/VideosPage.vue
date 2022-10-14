@@ -474,7 +474,7 @@ async function parseQuaryParams() {
 	} else {
 		filterExpanded.value = false;
 	}
-	filterAndSortVideos();
+	// filterAndSortVideos();
 }
 
 async function setVideos() {
@@ -590,8 +590,9 @@ onMounted(async () => {
 	// document.addEventListener('wheel', onDocumentWheel)
 	// topScroll = useScroll(topVideosContainer)
 	setHeightOfContainter();
-	await setVideos()
+
 	await parseQuaryParams()
+	await setVideos()
 });
 </script>
 
