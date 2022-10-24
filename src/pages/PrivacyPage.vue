@@ -69,7 +69,7 @@
 				risk if we have a security breach.</li>
 			<li>We only send a query on the supported sites, not every page you visit.</li>
 			<li>We also use the url if you request us to script the website you are visiting. This request is stored in
-				a permant database.</li>
+				a permanent database.</li>
 		</ul>
 
 		</p>
