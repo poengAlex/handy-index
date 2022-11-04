@@ -4,11 +4,12 @@
 		<div class="text-h3" v-else>Before you start using this site</div>
 		<div class="text-h4">About the site</div>
 		<p>This site lists all the scripts the Handy team (Sweet Tech AS) has scripted. With our browser plugin, you can
-			play some videos in sync with Handy on the site.
+			play some videos in sync with Handy on the site. The site and public tokens are free for Handy users to use
+			for the time being. We do not expect this to change in a year or two. But we want to give a heads up that we
+			might put a small fee on it way into the future.
 		</p>
 		<p>
-			This site uses the index API. Feel free to use it for your projects, but remember that it will not be free
-			to use once out of BETA.
+			This site uses the index API. Feel free to use it for your projects:
 			<a
 				href="https://scripts01.handyfeeling.com/api/script/index/v0/docs/">https://scripts01.handyfeeling.com/api/script/index/v0/docs/</a>
 		</p>
