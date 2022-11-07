@@ -53,6 +53,12 @@
 			plugin can read the URL of the active tab. If the tab is one of the supported sites, we check with our
 			database
 			if we have a script to match. This query is INTRUSIVE! To give you insights on the query:
+			<br><br><b>NB! We removed the ability to read a URL for now. You must go to the index site and manually
+				request
+				the
+				URL. We might change it back to be able to read the URL, but it felt wrong to read the URLs even if we
+				did
+				not use it.</b>
 		<ul>
 			<li>
 				The record of the query, to check if we have a matching script, is not stored in persistent memory.
