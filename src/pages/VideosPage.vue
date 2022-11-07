@@ -480,12 +480,14 @@ async function parseQuaryParams() {
 async function setVideos() {
 	try {
 		if (route.meta.fav) {
+			console.log('Favorites');
+
 			loading.value = false;
 			fav.value = true;
 			videos.value = settings.favorites;
 			setTags();
 			console.log("videos.value:", videos.value);
-			// filterAndSortVideos();
+			filterAndSortVideos();
 		} else {
 			fav.value = false;
 			performers.value = await apiIndex.getApi().index.getPerformers();
@@ -509,16 +511,23 @@ async function setVideos() {
 	} catch (err) { console.error(err); createNotify(err as string) }
 }
 
-const guardAfterEach = router.afterEach(async (to, from) => {
-	console.log('ROUTING', to.path);
-	if (to.path === "/videos" || to.path === "/favorites") { // Will be called after router.afterEach. So router.afterEach will trigger once
-		pagination.value.rowsPerPage = 24;
-		// Scroll to top
-		const qtable = document.getElementById('qtable');
-		qtable!.scrollTop = 0;
+async function resetView() {
+	pagination.value.rowsPerPage = 24;
+	// Scroll to top
+	const qtable = document.getElementById('qtable');
+	qtable!.scrollTop = 0;
 
-		await setVideos()
-		parseQuaryParams()
+	await setVideos()
+	parseQuaryParams()
+}
+
+const guardAfterEach = router.afterEach(async (to, from) => {
+	console.log('ROUTING', to.path, from.path);
+
+	if (to.path === "/videos") { // Will be called after router.afterEach. So router.afterEach will trigger once
+		resetView()
+	} else if (to.path === "/favorites") {
+		resetView()
 	}
 })
 
