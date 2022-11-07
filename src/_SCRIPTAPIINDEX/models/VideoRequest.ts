@@ -3,7 +3,6 @@
 /* eslint-disable */
 
 import type { Entity } from './Entity';
-import type { Performer } from './Performer';
 import type { PerformerData } from './PerformerData';
 import type { Rating } from './Rating';
 import type { ULID } from './ULID';
@@ -44,11 +43,8 @@ upVotes?: number;
  */
 downVotes?: number;
 /**
- * Performer information from/within the partner video site.
+ * Performer information from the video page.
  */
-partnerPerformers?: Array<PerformerData>;
-/**
- * Performer information from/within the index service.
- */
-performers?: Array<Performer>;
+performers?: Array<PerformerData>;
+preview?: string;
 });

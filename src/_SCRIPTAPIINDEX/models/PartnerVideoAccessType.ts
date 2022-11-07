@@ -4,19 +4,23 @@
 
 export enum PartnerVideoAccessType {
     /**
-     * Video access requires some form of subscription.
+     * A premium subscription is required to view the video.
      */
     PREMIUM = 'premium',
     /**
-     * Video access is private. Special permission needed.
+     * Special permission needed to view the video.
      */
     PRIVATE = 'private',
     /**
-     * Video access is public. Free to use.
+     * Anyone can watch the video. No additional actions are required.
      */
     PUBLIC = 'public',
     /**
-     * Video access is open. Free to use. Video content is downloadable.
+     * Only people who know the URL to the video can access it.
      */
-    OPEN = 'open',
+    UNLISTED = 'ùnlisted',
+    /**
+     * Only members can watch the video. Signup/membership required.
+     */
+    MEMBER = 'member',
 }

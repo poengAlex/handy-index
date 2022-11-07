@@ -2,6 +2,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
+import type { DateTime } from './DateTime';
 import type { Rating } from './Rating';
 import type { ScriptAccessType } from './ScriptAccessType';
 import type { Scripter } from './Scripter';
@@ -15,4 +16,7 @@ export type Script = {
     rating?: Rating;
     metadata?: ScriptMetadata;
     access?: ScriptAccessType;
+    plays?: number;
+    publishedAt?: DateTime;
+    updatedAt?: DateTime;
 };

@@ -20,5 +20,8 @@ export const $Partner = {
     type: 'string',
 },
 },
+        access: {
+    type: 'PartnerAccessType',
+},
     },
 } as const;

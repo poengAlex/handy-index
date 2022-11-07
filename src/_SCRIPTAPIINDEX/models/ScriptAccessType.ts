@@ -4,19 +4,19 @@
 
 export enum ScriptAccessType {
     /**
-     * Script access requires some form of subscription.
+     * A premium subscription is required to play the script/download token.
      */
     PREMIUM = 'premium',
     /**
-     * Script access is private. Special permission needed.
+     * Special permission needed to play the script/download token.
      */
     PRIVATE = 'private',
     /**
-     * Script access is public. Free to use. Script token is downloadable.
+     * Anyone can play the script/download token.
      */
     PUBLIC = 'public',
     /**
-     * Script access is open. Free to use. Script content is downloadable.
+     * Only members can play the script/download token. Signup/membership is required.
      */
-    OPEN = 'open',
+    MEMBER = 'member',
 }

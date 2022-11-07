@@ -76,17 +76,14 @@ export const $VideoRequest = {
     type: 'number',
     description: `Video downVotes/dislikes information from/within the partner video site.`,
 },
-        partnerPerformers: {
+        performers: {
     type: 'array',
     contains: {
         type: 'PerformerData',
     },
 },
-        performers: {
-    type: 'array',
-    contains: {
-        type: 'Performer',
-    },
+        preview: {
+    type: 'string',
 },
     },
 }],

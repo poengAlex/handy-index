@@ -25,5 +25,14 @@ export const $Script = {
         access: {
     type: 'ScriptAccessType',
 },
+        plays: {
+    type: 'number',
+},
+        publishedAt: {
+    type: 'DateTime',
+},
+        updatedAt: {
+    type: 'DateTime',
+},
     },
 } as const;

@@ -66,19 +66,19 @@ export const $PartnerVideo = {
 },
         views: {
     type: 'number',
-    description: `Video views information from/within the partner video site.`,
+    description: `Video views information from the partner video site.`,
 },
         rating: {
     type: 'Rating',
-    description: `Video rating information from/within the partner video site.`,
+    description: `Video rating information from the partner video site.`,
 },
         upVotes: {
     type: 'number',
-    description: `Video upVotes/likes information from/within the partner video site.`,
+    description: `Video upVotes/likes information from the partner video site.`,
 },
         downVotes: {
     type: 'number',
-    description: `Video downVotes/dislikes information from/within the partner video site.`,
+    description: `Video downVotes/dislikes information from the partner video site.`,
 },
         performers: {
     type: 'array',
@@ -86,11 +86,11 @@ export const $PartnerVideo = {
         type: 'Performer',
     },
 },
-        partnerPerformers: {
-    type: 'array',
-    contains: {
-        type: 'PerformerData',
-    },
+        preview: {
+    type: 'string',
+},
+        publishedAt: {
+    type: 'DateTime',
 },
     },
 }],

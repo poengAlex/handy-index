@@ -2,12 +2,12 @@
 /* tslint:disable */
 /* eslint-disable */
 
+import type { DateTime } from './DateTime';
 import type { Entity } from './Entity';
 import type { ExternalId } from './ExternalId';
 import type { PartnerVideoAccessType } from './PartnerVideoAccessType';
 import type { PartnerVideoScriptAccessIndicator } from './PartnerVideoScriptAccessIndicator';
 import type { Performer } from './Performer';
-import type { PerformerData } from './PerformerData';
 import type { Rating } from './Rating';
 import type { ULID } from './ULID';
 import type { URL } from './URL';
@@ -35,27 +35,25 @@ gifs?: Array<string>;
 videoAccess?: PartnerVideoAccessType;
 scriptAccess?: PartnerVideoScriptAccessIndicator;
 /**
- * Video views information from/within the partner video site.
+ * Video views information from the partner video site.
  */
 views?: number;
 /**
- * Video rating information from/within the partner video site.
+ * Video rating information from the partner video site.
  */
 rating?: Rating;
 /**
- * Video upVotes/likes information from/within the partner video site.
+ * Video upVotes/likes information from the partner video site.
  */
 upVotes?: number;
 /**
- * Video downVotes/dislikes information from/within the partner video site.
+ * Video downVotes/dislikes information from the partner video site.
  */
 downVotes?: number;
 /**
- * Performer information from/within the index service.
+ * Performer information.
  */
 performers?: Array<Performer>;
-/**
- * Performer information from/within the partner video site.
- */
-partnerPerformers?: Array<PerformerData>;
+preview?: string;
+publishedAt?: DateTime;
 });

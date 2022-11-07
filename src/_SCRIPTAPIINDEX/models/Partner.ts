@@ -2,6 +2,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
+import type { PartnerAccessType } from './PartnerAccessType';
 import type { ULID } from './ULID';
 
 export type Partner = {
@@ -9,4 +10,5 @@ export type Partner = {
     name: string;
     description?: string;
     tags?: Array<string>;
+    access?: PartnerAccessType;
 };
