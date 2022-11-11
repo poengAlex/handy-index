@@ -175,18 +175,9 @@
 
 		<q-page-container class="GPL__page-container ">
 			<q-page class="_container q-pa-sm ">
-				<router-view>
-
+				<router-view v-slot="{ Component }">
+					<component :key="router.currentRoute.value.path" :is="Component" />
 				</router-view>
-				<!-- <router-view v-slot="{ Component }">
-
-					<keep-alive>
-
-						<component :key="router.currentRoute.value.path" :is="Component" />
-
-					</keep-alive>
-
-				</router-view> -->
 
 			</q-page>
 
