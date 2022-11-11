@@ -1,8 +1,8 @@
 {
   "name": "index-test",
   "version": "0.0.1",
-  "description": "A index of video scripts.",
-  "productName": "Script index",
+  "description": "A database of interactive video scripts.",
+  "productName": "IVDB",
   "author": "handyAlexander <alexander@sweettech.no>",
   "private": true,
   "scripts": {
