@@ -20,7 +20,19 @@ export enum VideoRequestStatus {
      */
     ACCEPTED = 'accepted',
     /**
+     * The video request video have been downloaded.
+     */
+    DOWNLOADED = 'downloaded',
+    /**
      * The request have been rejected.
      */
     REJECTED = 'rejected',
+    /**
+     * The requested video have been scripted and published.
+     */
+    PUBLISHED = 'published',
+    /**
+     * The request video is pending download.
+     */
+    PENDING_DOWNLOAD = 'pending.download',
 }
