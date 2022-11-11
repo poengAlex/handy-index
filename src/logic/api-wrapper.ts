@@ -1,7 +1,7 @@
 import { Store } from "pinia";
 import { QVueGlobals, useQuasar } from "quasar";
 import { useIndexStore } from "src/stores/apiIndex";
-import { OpenAPIConfig, Partner, PartnerVideo, Script, ScriptApiIndex } from "src/_SCRIPTAPIINDEX";
+import { OpenAPIConfig, Partner, PartnerVideo, PartnerVideoScriptAccessIndicator, Script, ScriptApiIndex } from "src/_SCRIPTAPIINDEX";
 import { ref } from "vue";
 import { useSettingsStore } from '../stores/settings'
 import { handy } from "./handy";
@@ -55,6 +55,10 @@ export async function downloadToken(video: PartnerVideo | undefined, $q: QVueGlo
 	// }
 	if (video === undefined) {
 		createNotify("Video not defined");
+		return;
+	}
+	if (video.scriptAccess === PartnerVideoScriptAccessIndicator.NON_PUBLIC) {
+		createNotifyWarning("This is a premium script behind a paywall. Go to the site for access.");
 		return;
 	}
 	const settings = useSettingsStore()

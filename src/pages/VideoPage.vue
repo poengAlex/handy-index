@@ -21,9 +21,9 @@
 						</template>
 
 					</q-carousel>
-					<q-img v-show="imgError" :src="imgError?'315x300-no-image.png' : video.images![0]"
+					<q-img v-show="imgError" :src="imgError ? '315x300-no-image.png' : video.images![0]"
 						@error="setImgError()" style="width: 100%;" />
-					<template v-if=" externalVideo.active">
+					<template v-if="externalVideo.active">
 						<q-banner v-if="!settings.allowExternalVideo"
 							class="bg-warning text-black q-mt-sm rounded-borders">
 							<template v-slot:avatar>
@@ -101,13 +101,23 @@
 								</Duration>
 							</q-chip>
 						</div>
-						<template v-for="(script, index) in scripts" :key="index">
-							<div v-if="index===0" class="col-auto cursor-pointer" @click="downloadToken(video,$q)">
-								<q-chip class="bg-grey-4" icon="download">
-									Download script token (scripter: {{ script.scripter?.name }})
-								</q-chip>
-							</div>
+						<template v-if="video.scriptAccess === 'public'">
+							<template v-for="(script, index) in scripts" :key="index">
+								<div v-if="index === 0" class="col-auto cursor-pointer"
+									@click="downloadToken(video, $q)">
+									<q-chip class="bg-grey-4" icon="download">
+										Download script token (scripter: {{ script.scripter?.name }})
+									</q-chip>
+								</div>
+							</template>
 						</template>
+
+						<q-chip v-else class="bg-grey-4" icon="download">
+							Premium script
+							<q-tooltip>
+								This is a premium script. Visit the site to get access.
+							</q-tooltip>
+						</q-chip>
 						<a class="col-auto _cursor-pointer"
 							:href="'mailto:alexander@sweettech.no?subject=I want to report a video&body=Hi%0D%0A%0D%0AI would like you to report a video on the index site.%0D%0A%0D%0A partnerVideoId: ' + video.partnerVideoId"
 							target="_blank" style="text-decoration: none;">
@@ -146,7 +156,7 @@
 						<q-tooltip>
 							Rate the script
 						</q-tooltip>
-						<small v-if="ratingUser !== undefined"><br>Your rating: {{ratingUser}} stars</small>
+						<small v-if="ratingUser !== undefined"><br>Your rating: {{ ratingUser }} stars</small>
 					</div>
 					<div class="col-12 _q-pa-sm q-pl-none q-pr-sm q-pt-sm">
 						<q-banner class="bg-grey-4 " rounded>

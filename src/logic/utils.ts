@@ -18,7 +18,7 @@ export function randomIntFromInterval(min: number, max: number) { // min and max
 export function showConnectionKeyDialog($q: QVueGlobals, cb: (((key: string) => void) | undefined) = undefined) {
 	$q.dialog({
 		title: 'Type in your Handys connection key',
-		message: 'The script tokens and script requests are bound to a Handy, so in order to download script tokens you will need to tyoe in your Connection Key. NB! The Handy browser extension will override this value!',
+		message: 'The script tokens and script requests are bound to a Handy, so in order to download script tokens you will need to type in your Connection Key. NB! The Handy browser extension will override this value!',
 		prompt: {
 			model: useSettingsStore().connectionKey,
 			isValid: val => val.length > -1, // << Disabled length validation so the user can remove the key
