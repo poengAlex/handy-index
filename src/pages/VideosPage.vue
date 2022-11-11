@@ -126,6 +126,7 @@ import { vScroll } from '@vueuse/components'
 const settings = useSettingsStore()
 const apiIndex = useIndexStore();
 
+const DEFAULT_VIDEOS_PER_PAGE = 36;
 const route = useRoute();
 const router = useRouter();
 const loading = ref(true);
@@ -160,7 +161,7 @@ const premiumScriptFilter = ref(false);
 
 const filterExpanded = ref(false);
 const rowsPerPageOptions = computed(() => {
-	let initalVideos = 24;
+	let initalVideos = DEFAULT_VIDEOS_PER_PAGE;
 	if ($q.screen.lg || $q.screen.xl) {
 		initalVideos = initalVideos - initalVideos % 4;
 		return [initalVideos, 100, 0]
@@ -186,7 +187,7 @@ const pagination = ref({
 function onScroll() {
 	// console.log('onscroll', arrivedState.bottom);
 	if (arrivedState.bottom && videosFiltered.value.length >= 24) {
-		pagination.value.rowsPerPage += 24;
+		pagination.value.rowsPerPage += DEFAULT_VIDEOS_PER_PAGE;
 	}
 }
 // function onScrollTop() {
@@ -243,7 +244,7 @@ function videoClick(video: PartnerVideo, newWindow: boolean) {
 
 function filterAndSortVideos() {
 	console.log('filterAndSortVideos');
-	pagination.value.rowsPerPage = 24;
+	pagination.value.rowsPerPage = DEFAULT_VIDEOS_PER_PAGE;
 	let tempVideos: PartnerVideo[] = [];
 	// videos.value.forEach(video => {
 	// 	tempVideos.push(video);
@@ -512,7 +513,7 @@ async function setVideos() {
 }
 
 async function resetView() {
-	pagination.value.rowsPerPage = 24;
+	pagination.value.rowsPerPage = DEFAULT_VIDEOS_PER_PAGE;
 	// Scroll to top
 	const qtable = document.getElementById('qtable');
 	qtable!.scrollTop = 0;
