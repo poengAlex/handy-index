@@ -58,7 +58,11 @@
 													href="https://chrome.google.com/webstore/detail/handy-browser-extension/jejnmoojnkkflpjalciaadbidbdfinko"
 													target="_blank">Link</a></li>
 											<li>Connect your Handy in the extension.</li>
-											<li>Refresh this page.</li>
+											<li v-if="isIvdb">Please use this site
+												instead of ivdb.io for now. <a href="https://index.handyfeeling.com/"
+													target="_blank">index.handyfeeling.com</a>. We are waiting for
+												Google to update the browser extension to support ivdb.io.</li>
+											<li v-else>Refresh this page.</li>
 										</ul>
 									</template>
 
@@ -188,7 +192,7 @@
 import { apiIndex, downloadToken, initApi } from "src/logic/api-wrapper";
 import { createNotify, createNotifySuccess, createNotifyWarning, showConnectionKeyDialog, isVideoVoted, RATING_STEPS, valueToRating, randomIntFromInterval } from "src/logic/utils";
 import { PartnerVideo, Script } from "src/_SCRIPTAPIINDEX";
-import { onBeforeUnmount, onMounted, ref } from "vue";
+import { onBeforeUnmount, onMounted, ref, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useSettingsStore } from '../stores/settings'
 import { useIndexStore } from '../stores/apiIndex'
@@ -200,6 +204,7 @@ import { useQuasar } from 'quasar'
 import dayjs from 'dayjs';
 import relativeTime from "dayjs/plugin/relativeTime";
 import VideoElement from "src/components/VideoElement.vue";
+
 dayjs.extend(relativeTime);
 // TODO: add created at chip when returned from DB
 const settings = useSettingsStore()
@@ -213,6 +218,7 @@ const scripts = ref<Script[]>([]);
 const imgError = ref(false);
 const ratingModel = ref<number>(0);
 const ratingUser = ref<number>();
+const isIvdb = window.location.hostname === 'www.ivdb.io';
 
 const externalVideo = ref({
 	active: false,

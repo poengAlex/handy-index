@@ -5,4 +5,5 @@
 - Pause videos on leave page -> This will be harder. Need to add the API to the site.
 - Support multiple scripts
 - Allow for script feedback
-- Performers page
+- More tags
+- Search on tags page
