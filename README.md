@@ -6,4 +6,4 @@
 - Support multiple scripts
 - Allow for script feedback
 - More tags
-- Search on tags page
+- Search on tags page (see performers page)
