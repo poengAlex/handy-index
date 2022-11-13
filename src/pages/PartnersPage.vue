@@ -1,18 +1,20 @@
 <template>
-	<div class="text-h5">Sites</div>
-	<q-list separator>
-		<template v-for="(partner, index) in partners" :key="index">
-			<q-item clickable @click="goToPartnerVideos(partner)">
-				<q-item-section>
-					<q-item-label overline>{{ partner.name }}</q-item-label>
-					<q-item-label>{{ partner.description }}</q-item-label>
-					<q-item-label caption v-for="(tag, index) in partner.tags" :key="index">{{ tag }}</q-item-label>
-				</q-item-section>
-			</q-item>
-			<q-separator spaced inset />
-		</template>
+	<div class="container">
+		<div class="text-h4">Sites</div>
+		<q-list separator>
+			<template v-for="(partner, index) in partners" :key="index">
+				<q-item clickable @click="goToPartnerVideos(partner)">
+					<q-item-section>
+						<q-item-label class="text-h5">{{ partner.name }}</q-item-label>
+						<q-item-label>{{ partner.description }}</q-item-label>
+						<q-item-label caption v-for="(tag, index) in partner.tags" :key="index">{{ tag }}</q-item-label>
+					</q-item-section>
+				</q-item>
+				<q-separator spaced inset />
+			</template>
 
-	</q-list>
+		</q-list>
+	</div>
 
 </template>
 
