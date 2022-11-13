@@ -1,6 +1,6 @@
 <template>
-	<q-layout view="lHh Lpr fff" class="bg-grey-1 ">
-		<q-header elevated class="bg-white text-grey-8" height-hint="64">
+	<q-layout view="lHh Lpr fff" class="">
+		<q-header elevated class="topHeaderBar" height-hint="64">
 			<q-toolbar class="GPL__toolbar" style="height: 64px">
 				<q-btn flat dense round @click="toggleLeftDrawer" aria-label="Menu" icon="menu" class="q-mx-md" />
 
@@ -156,12 +156,22 @@
 							<q-toggle v-model="settings.nsfw">NSFW</q-toggle>
 						</q-item-section>
 					</q-item>
+
 					<q-item clickable class="GPL__drawer-item GPL__drawer-item--storage">
 						<q-item-section avatar>
 							<q-icon name="preview" />
 						</q-item-section>
 						<q-item-section top>
 							<q-toggle v-model="settings.allowExternalVideo">External videos</q-toggle>
+						</q-item-section>
+					</q-item>
+					<q-item clickable class="GPL__drawer-item GPL__drawer-item--storage">
+						<q-item-section avatar>
+							<q-icon name="dark_mode" />
+						</q-item-section>
+						<q-item-section top>
+							<q-toggle v-model="settings.darkMode" @update:model-value="changeDarkMode">Dark mode
+							</q-toggle>
 						</q-item-section>
 					</q-item>
 					<q-item clickable @click="showConnectionKeyDialog($q)"
@@ -228,6 +238,25 @@ const route = useRoute();
 const storage = ref(0.26)
 const search = ref('');
 const $q = useQuasar();
+
+setDarkModeInit();
+
+function setDarkModeInit() {
+	// FOLLOW BROWSER
+	// const darkModeLS = localStorage.getItem("darkModeRead");
+	// if (darkModeLS === null) {
+	// 	$q.dark.set('auto');
+	// 	settings.darkMode = $q.dark.isActive;
+	// 	localStorage.setItem("darkModeRead", "ok");
+	// }
+
+	// MUST SET
+	$q.dark.set(settings.darkMode);
+}
+
+function changeDarkMode() {
+	$q.dark.set(settings.darkMode); // Do not set $q.dark.isActive directly
+}
 
 const links3 = [
 	{ icon: 'settings', text: 'Settings' },

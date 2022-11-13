@@ -16,6 +16,7 @@ export const useSettingsStore = defineStore('settings', {
 		nsfw: false,
 		connectionKey: "",
 		allowExternalVideo: false,
+		darkMode: false,
 		favorites: [] as PartnerVideo[],
 		privacyAccepted: false,
 		requestUpvotes: [] as string[],
