@@ -488,6 +488,8 @@ async function setVideos() {
 			videos.value = settings.favorites;
 			setTags();
 			console.log("videos.value:", videos.value);
+			premiumVideoFilter.value = true; // Disable all filtering to show all possible videos
+			premiumScriptFilter.value = true; // Disable all filtering to show all possible videos
 			filterAndSortVideos();
 		} else {
 			fav.value = false;
