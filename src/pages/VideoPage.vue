@@ -89,18 +89,18 @@
 					<div class="col-12 row q-gutter-xs q-mb-sm _q-pl-xs">
 
 						<div v-if="video.createdAt !== undefined" class="col-auto">
-							<q-chip class="bg-grey-4">
+							<q-chip class="infoChip">
 								Created {{ dayjs(video.createdAt).fromNow() }}
 							</q-chip>
 						</div>
 						<div v-if="video.format?.format !== 'unknown'" class="col-auto">
-							<q-chip class="bg-grey-4">
+							<q-chip class="infoChip">
 								{{ video?.format?.format }} <span v-if="video?.format?.format === 'vr'">-
 									{{ video.format.view }}</span>
 							</q-chip>
 						</div>
 						<div class="col-auto">
-							<q-chip class="bg-grey-4">
+							<q-chip class="infoChip">
 								<Duration class="" :duration="video?.duration">
 								</Duration>
 							</q-chip>
@@ -109,14 +109,14 @@
 							<template v-for="(script, index) in scripts" :key="index">
 								<div v-if="index === 0" class="col-auto cursor-pointer"
 									@click="downloadToken(video, $q)">
-									<q-chip class="bg-grey-4" icon="download">
+									<q-chip class="infoChip" icon="download">
 										Download script token (scripter: {{ script.scripter?.name }})
 									</q-chip>
 								</div>
 							</template>
 						</template>
 
-						<q-chip v-else class="bg-grey-4" icon="download">
+						<q-chip v-else class="infoChip" icon="download">
 							Premium script
 							<q-tooltip>
 								This is a premium script. Visit the site to get access.
@@ -125,24 +125,24 @@
 						<a class="col-auto _cursor-pointer"
 							:href="'mailto:alexander@sweettech.no?subject=I want to report a video&body=Hi%0D%0A%0D%0AI would like you to report a video on the index site.%0D%0A%0D%0A partnerVideoId: ' + video.partnerVideoId"
 							target="_blank" style="text-decoration: none;">
-							<q-chip class="bg-grey-4" icon="warning">
+							<q-chip class="infoChip" icon="warning">
 								Report
 							</q-chip>
 						</a>
 						<a class="col-auto _cursor-pointer" :href="video.videoUrl" target="_blank"
 							style="text-decoration: none;">
-							<q-chip class="bg-grey-4" icon="open_in_new">
+							<q-chip class="infoChip" icon="open_in_new">
 								Open video on site
 							</q-chip>
 						</a>
 
 						<div v-if="settings.isFav(video)" class="col-auto" @click="settings.removeFromFav(video)">
-							<q-chip class="bg-grey-4 cursor-pointer" icon="favorite">
+							<q-chip class="infoChip cursor-pointer" icon="favorite">
 								Remove from favorite
 							</q-chip>
 						</div>
 						<div v-else class="col-auto" @click="settings.addToFav(video)">
-							<q-chip class="bg-grey-4 cursor-pointer" icon="favorite_border">
+							<q-chip class="infoChip cursor-pointer" icon="favorite_border">
 								Add to favorite
 							</q-chip>
 						</div>
@@ -163,7 +163,7 @@
 						<small v-if="ratingUser !== undefined"><br>Your rating: {{ ratingUser }} stars</small>
 					</div>
 					<div class="col-12 _q-pa-sm q-pl-none q-pr-sm q-pt-sm">
-						<q-banner class="bg-grey-4 " rounded>
+						<q-banner class="infoChip " rounded>
 							<template v-slot:avatar>
 								<q-icon name="description" color="black" />
 							</template>

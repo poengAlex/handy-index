@@ -54,3 +54,39 @@ $lg-breakpoint: 1920px;
         max-width: 1440px;
     }
 }
+
+.body--light {
+	background-color: $grey-1;
+}
+
+//fix automatically
+// .body--dark {
+// 	background-color: bisque;
+// }
+
+.body--light .topHeaderBar{
+	background-color: $grey-1;
+	color: $grey-8
+}
+.body--dark .topHeaderBar{
+	background-color: $grey-10;
+	color: $grey-2
+}
+
+.body--light .tagChip{
+	background-color: $grey-10;
+	color: $grey-2
+}
+.body--dark .tagChip{
+	background-color: $grey-8;
+	color: $grey-4
+}
+
+.body--light .infoChip{
+	background-color: $grey-4;
+	color: $grey-10
+}
+.body--dark .infoChip{
+	background-color: $grey-8;
+	color: $grey-4
+}

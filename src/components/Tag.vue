@@ -1,6 +1,6 @@
 <template>
 	<span @click.stop="onTagClick" class=" cursor-pointer">
-		<q-chip class="q-ma-none q-ml-xs q-mb-xs" size="sm" color="black" text-color="white">
+		<q-chip class="q-ma-none q-ml-xs q-mb-xs tagChip" size="sm">
 			<q-avatar v-if="props.count !== 0 && props.count !== undefined" color="red" text-color="white">
 				{{ props.count }}</q-avatar>
 			{{ props.tag }}
