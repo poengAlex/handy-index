@@ -57,7 +57,7 @@
 											<li>Download the Handy browser extension. <a
 													href="https://chrome.google.com/webstore/detail/handy-browser-extension/jejnmoojnkkflpjalciaadbidbdfinko"
 													target="_blank">Link</a></li>
-											<li>Connect to your Handy in the extension.</li>
+											<li>Connect your Handy in the extension.</li>
 											<li>Refresh this page.</li>
 										</ul>
 									</template>
@@ -69,7 +69,7 @@
 								<template v-slot:avatar>
 									<q-icon name="warning" color="black" />
 								</template>
-								An external video is found. NSFW is disabled in settings. Turn of to see the video
+								An external video is found. NSFW is disabled in settings. Turn on NSFW to see the video.
 							</q-banner>
 						</template>
 					</template>
