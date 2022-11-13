@@ -294,6 +294,11 @@ router.beforeEach(async (to, from) => {
 })
 
 onBeforeMount(() => {
+	console.log("window.location:", window.location);
+
+	if (window.location.hostname === "ivdb") {
+		location.href = 'https://index.handyfeeling.com/' + window.location.hash;
+	}
 	if (!settings.privacyAccepted) {
 		console.warn("privacy intro not seen");
 		router.push({ path: "/privacy", query: { redirect: route.fullPath } })
