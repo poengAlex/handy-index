@@ -296,7 +296,7 @@ router.beforeEach(async (to, from) => {
 onBeforeMount(() => {
 	console.log("window.location:", window.location);
 
-	if (window.location.hostname === "ivdb") {
+	if (window.location.hostname === "www.ivdb.io") {
 		location.href = 'https://index.handyfeeling.com/' + window.location.hash;
 	}
 	if (!settings.privacyAccepted) {
