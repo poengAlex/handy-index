@@ -1,13 +1,13 @@
 <template>
 
-	<div class="row">
+	<div class="row container">
 		<div class="col-12 col-md-8 _shadow-1 rounded-borders q-pa-sm ">
 			<div v-if="video !== undefined" class="row">
 				<div class="col-12 _col-md-6">
 
 					<q-carousel v-if="!imgError && (!externalVideo.active || !settings.allowExternalVideo)"
 						class="rounded-borders" control-type="regular" arrows control-color="accent"
-						style="heigth: 400px;" swipeable animated v-model="slide" thumbnails
+						style="max-height: 600px;" swipeable animated v-model="slide" thumbnails
 						referrerpolicy="no-referrer">
 						<template v-if="video.images !== undefined">
 							<q-carousel-slide v-for="(img, index) in video?.images" :name="index" :key="index"
