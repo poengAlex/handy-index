@@ -1,7 +1,10 @@
 <template>
 	<q-page class="row items-center justify-evenly">
 		<div>
-			<div class="text-h1">
+			<div class="text-h1 gt-xs">
+				Interactive video database
+			</div>
+			<div class="text-h2 xs">
 				Interactive video database
 			</div>
 			<div class="text-caption q-mt-sm">
