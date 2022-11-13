@@ -573,12 +573,12 @@ function onDocumentWheel(e: WheelEvent) {
 }
 
 onBeforeUnmount(() => {
-	console.log('Removing scroll listner');
+	console.log('Removing listeners');
 
-	document.removeEventListener("scroll", onDocumentScroll)
-	document.removeEventListener("wheel", onDocumentWheel)
-	document.removeEventListener("resize", setHeightOfContainter)
-	guardAfterEach(); // Remove guard listner
+	// document.removeEventListener("scroll", onDocumentScroll)
+	// document.removeEventListener("wheel", onDocumentWheel)
+	window.removeEventListener("resize", setHeightOfContainter)
+	guardAfterEach(); // Remove guard listener
 })
 
 onMounted(async () => {
