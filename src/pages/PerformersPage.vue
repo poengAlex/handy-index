@@ -2,19 +2,19 @@
 	<div class="row">
 		<div class="col-12 q-pa-xs">
 			<q-input class="" filled dense debounce="500" v-model="filter" placeholder="Search"
-				@update:model-value="page = 0;getData()" clearable>
+				@update:model-value="page = 0; getData()" clearable>
 				<template v-slot:append>
 					<q-icon name="search" />
 				</template>
 			</q-input>
 			<!-- <small>Showing {{performers.length}} of 1300</small> -->
 		</div>
-		<template v-for="(perfomer,index) in performers" :key="perfomer.performerId">
+		<template v-for="(perfomer, index) in performers" :key="perfomer.performerId">
 			<div class="col-12 col-sm-6 col-md-4 col-lg-2 q-pa-xs cursor-pointer" @click="goToPerformer(perfomer)">
-				<q-responsive :ratio="4/3">
-					<q-img :src="settings.nsfw ? perfomer.avatar : 'https://via.placeholder.com/315x300.png?text=NSFW'"
+				<q-responsive :ratio="4 / 3">
+					<q-img :src="settings.nsfw ? perfomer.avatar : 'https://via.placeholder.com/300x155.png?text=NSFW'"
 						fit="contain"
-						@error="performer.avatar = 'https://via.placeholder.com/315x300.png?text=No image'"
+						@error="performer.avatar = 'https://via.placeholder.com/300x155.png?text=No image'"
 						referrerpolicy="no-referrer">
 						<div class="absolute-bottom" style="height: 40%;padding: 0px;">
 							<div class="row items-center justify-evenly full-height full-width">
@@ -34,17 +34,17 @@
 		</template>
 		<div v-if="!(page === 0 && performers.length !== MAX_TAKE)" class="col-12 q-pa-xs q-gutter-xs row">
 			<div class="col-auto">
-				Page {{page+1}}
+				Page {{ page + 1 }}
 			</div>
 			<div class="col text-right">
 
-				<q-btn :disable="page===0" @click="page--;getData()" :loading="loading">Back</q-btn>
-				<q-btn :disable="MAX_TAKE !== performers.length" @click="page++;getData()" :loading="loading">Next
+				<q-btn :disable="page === 0" @click="page--; getData()" :loading="loading">Back</q-btn>
+				<q-btn :disable="MAX_TAKE !== performers.length" @click="page++; getData()" :loading="loading">Next
 				</q-btn>
 			</div>
 		</div>
 		<q-inner-loading :showing="loading">
-			<q-spinner-gears size="50px" color="primary" />
+			<q-spinner-gears size="50px" :color="settings.darkMode ? 'grey-2' : 'black'" />
 		</q-inner-loading>
 	</div>
 </template>

@@ -20,6 +20,9 @@
 		<div class="q-pa-sm">
 			<TagVue v-for="tag in tagsFiltered" :key="tag.tagId" :tag="tag.tagId" :count="tag.count" />
 		</div>
+		<q-inner-loading :showing="loading">
+			<q-spinner-gears size="50px" :color="settings.darkMode ? 'grey-2' : 'black'" />
+		</q-inner-loading>
 	</div>
 
 </template>
@@ -30,13 +33,15 @@ import TagVue from "src/components/Tag.vue";
 import { useIndexStore } from 'src/stores/apiIndex';
 import { Tag } from "src/_SCRIPTAPIINDEX";
 import { randomIntFromInterval } from "src/logic/utils";
+import { useSettingsStore } from "src/stores/settings";
 const indexStore = useIndexStore();
 const filter = ref("");
 const sortOrderDescending = ref(true);
+const loading = ref(true);
 const sortBy = ref<"tagId" | "count">("count");
 const tags = ref<Tag[]>([]);
 const tagsFiltered = ref<Tag[]>([]);
-
+const settings = useSettingsStore();
 const MAX_COUNT_TO_SHOW = 300;
 
 function appendTags(_tags: Tag[]) {
@@ -47,20 +52,6 @@ function appendTags(_tags: Tag[]) {
 
 function filterTags() {
 	tagsFiltered.value.length = 0;
-	// if (filter.value === "" || filter.value === null) {
-	// 	// const start = randomIntFromInterval(0, tags.value.length - MAX_COUNT_TO_SHOW - 1);
-	// 	const start = 0;
-	// 	for (let index = start; index < (start + MAX_COUNT_TO_SHOW); index++) {
-	// 		const tag = tags.value[index];
-	// 		tagsFiltered.value.push(tag);
-	// 	}
-	// } else {
-	// 	tags.value.forEach(tag => {
-	// 		if (tag.tagId.includes(filter.value)) {
-	// 			tagsFiltered.value.push(tag);
-	// 		}
-	// 	});
-	// }
 	tags.value.forEach(tag => {
 		if (tag.tagId.includes(filter.value)) {
 			tagsFiltered.value.push(tag);
@@ -117,6 +108,7 @@ onMounted(async () => {
 	console.log("tags.value[0]:", tags.value[0]);
 
 	filterTags();
+	loading.value = false;
 });
 </script>
 
