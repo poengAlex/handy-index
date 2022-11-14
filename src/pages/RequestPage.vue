@@ -8,7 +8,7 @@
 				The request needs to be approved before it will show on this list.
 			</q-card-section>
 			<q-card-section class="q-pt-none">
-				<q-input v-model="requestUrl"></q-input>
+				<q-input v-model="requestUrl" placeholder="https://"></q-input>
 			</q-card-section>
 			<q-card-actions align="right">
 				<q-btn flat label="Cancel" color="warning" v-close-popup />
@@ -16,78 +16,133 @@
 			</q-card-actions>
 		</q-card>
 	</q-dialog>
-	<q-banner v-if="requests.length === 0 && !loading" class="bg-warning text-black" style="min-height:200px;">
-		<template v-slot:avatar>
-			<q-icon name="warning" color="black" />
-		</template>
-		Something went wrong and we could not retrive data. You need to be online with your Handy to see this list.
-		<br>
-		<q-btn class="q-mt-lg" icon="wifi" @click="connectDialogWitDataRefresh()" color="white" text-color="black">
-			Connect your Handy</q-btn>
-		<q-btn class="q-mt-lg q-ml-sm" icon="refresh" @click="getData" color="white" text-color="black">Refresh</q-btn>
-	</q-banner>
-	<div v-else>
-		<q-banner class="bg-info text-black rounded-borders q-mb-sm" style="max-width:500px;">
+	<div class="container">
+		<q-banner v-if="(requests.length === 0 && !loading)" class="bg-warning text-black" style="">
 			<template v-slot:avatar>
-				<q-icon name="info" color="black" />
+				<q-icon name="warning" color="black" />
 			</template>
-			You can request us to script a video. We will script the video with the highest votes at any given time.
-			Upvote your favorite video here.
-
+			Something went wrong and we could not retrieve data. You need to be online with your Handy to see this list.
 			<br>
-			Tip: You can also request a video using the Handy browser extension for Chrome.
-			<br>
-			<q-btn class="q-mt-lg" icon="post_add" @click="requestDialog=true">Add a new request</q-btn>
-
+			<q-btn class="q-mt-lg" icon="wifi" @click="connectDialogWitDataRefresh()" color="white" text-color="black">
+				Connect your Handy</q-btn>
+			<q-btn class="q-mt-lg q-ml-sm" icon="refresh" @click="getData" color="white" text-color="black">Refresh
+			</q-btn>
 		</q-banner>
+		<div v-else class="row">
+			<q-banner class="bg-info text-black rounded-borders q-mb-sm col-12" style="">
+				<template v-slot:avatar>
+					<q-icon name="info" color="black" />
+				</template>
+				You can request us to script a video. We will script the video with the highest votes at any given time.
+				Upvote your favorite video here.
 
-		<div class="text-h3">Pending requests</div>
-		<q-list separator style="max-width: 500px;">
-			<template v-for="(request,index) in requests" :key="request.requestId">
+				<br>
+				Tip: You can also request a video using the Handy browser extension for Chrome.
+				<br>
+				<q-btn class="q-mt-lg" icon="post_add" @click="requestDialog = true">Add a new script request</q-btn>
 
-				<q-item>
-					<q-item-section top thumbnail class="q-ml-none">
-						<img
-							:src="settings.nsfw ? request.thumbnail : 'https://via.placeholder.com/315x300.png?text=NSFW'">
-					</q-item-section>
-					<q-item-section>
-						<q-item-label>{{request.domain}}</q-item-label>
-						<q-item-label caption lines=" 2">{{request.title}}
-						</q-item-label>
-						<q-item-label>
-							<q-btn :href="request.videoUrl" target="_blank" size="xs">Go to video</q-btn>
-						</q-item-label>
-					</q-item-section>
+			</q-banner>
 
-					<q-item-section side top>
-						<q-item-label caption>
-							{{dayjs((request as any).createdAt).fromNow()}}
-							<q-tooltip>
-								Video request was added {{request.createdAt}}
-							</q-tooltip>
-						</q-item-label>
+			<div class="text-h3 col-12">Pending requests</div>
 
-						<q-item-label>
-							<q-icon name="thumb_up_alt" :color="isUpvoted(request)? 'primary' : 'black'"
-								class="cursor-pointer" @click="upvote(request)" size="sm">
-								<q-tooltip>
-									Upvote this request
-								</q-tooltip>
-							</q-icon>
-							{{request.votes}}
-							<q-tooltip>
-								Number of upvotes
-							</q-tooltip>
-						</q-item-label>
-					</q-item-section>
-				</q-item>
+			<template v-for="(request) in requests" :key="request.requestId">
+				<div class="col-12 col-sm-6 col-md-4 col-lg-3 q-pa-xs cursor-pointer">
+					<q-responsive :ratio="16 / 9" @click="goToRequest(request)">
+						<q-img
+							:src="settings.nsfw ? request.thumbnail : 'https://via.placeholder.com/300x155.png?text=NSFW'"
+							fit="contain"
+							@error="request.thumbnail = 'https://via.placeholder.com/300x155.png?text=No image'"
+							referrerpolicy="no-referrer">
+						</q-img>
+						<q-tooltip @before-show="setPreview(request)" anchor="center middle" self="center middle"
+							:delay="200">
+							<div style="width: 400px !important" @click="goToRequest(request)">
 
-				<q-separator v-if="index !== (requests.length - 1)" spaced inset />
+								<q-img
+									:src="settings.nsfw ? request.images[imagePreviewNr] : 'https://via.placeholder.com/300x155.png?text=NSFW'"
+									fit="contain"
+									@error="request.images[imagePreviewNr] = 'https://via.placeholder.com/300x155.png?text=No image'"
+									referrerpolicy="no-referrer">
+								</q-img>
+								<div class="text-h6 ">
+									{{ request.title }}
+								</div>
+								<div class="text-subtitle1 ">
+									{{ request.description }}
+								</div>
+								<div class="row">
+									<q-chip dense v-for="(tag, index) in request.tags" :key="index"
+										class="q-ma-none q-ml-xs q-mb-xs col-auto" color="black" text-color="white">
+										{{ tag }}</q-chip>
+								</div>
+							</div>
+
+						</q-tooltip>
+					</q-responsive>
+					<div class="requestSubField q-pb-sm">
+						<div class="ellipsis-2-lines text-picture text-subtitle1" style="height: 54px;">
+							{{ request.title }}
+						</div>
+						<div class="row">
+							<q-btn class="col" :href="request.videoUrl" target="_blank" size="xs"
+								:color="settings.darkMode ? 'grey-2' : 'black'"
+								:text-color="settings.darkMode ? 'black' : 'grey-2'">Go
+								to video
+							</q-btn>
+							<!-- <div class="col-auto q-pl-md q-pt-xs">
+								<Duration :duration="request.duration" />
+							</div> -->
+							<div class="col-auto q-pl-md">
+								<q-icon name="thumb_up_alt"
+									:color="isUpvoted(request) ? 'primary' : (settings.darkMode ? 'grey-2' : 'black')"
+									class="cursor-pointer q-pr-sm" @click="upvote(request)" size="sm">
+								</q-icon>
+								{{ request.votes }}
+							</div>
+						</div>
+
+					</div>
+
+				</div>
 			</template>
-		</q-list>
-		<q-inner-loading :showing="loading">
-			<q-spinner-gears size="50px" color="primary" />
-		</q-inner-loading>
+
+			<q-list separator class="" hidden>
+				<template v-for="(request, index) in requests" :key="request.requestId">
+					<q-item>
+						<q-item-section top thumbnail class="q-ml-none">
+							<img
+								:src="settings.nsfw ? request.thumbnail : 'https://via.placeholder.com/315x300.png?text=NSFW'">
+						</q-item-section>
+						<q-item-section>
+							<q-item-label>{{ request.domain }}</q-item-label>
+							<q-item-label caption lines=" 2">{{ request.title }}
+							</q-item-label>
+							<q-item-label>
+								<q-btn :href="request.videoUrl" target="_blank" size="xs" color="">Go to video</q-btn>
+							</q-item-label>
+						</q-item-section>
+
+						<q-item-section side top>
+							<q-item-label caption>
+								{{ dayjs((request as any).createdAt).fromNow() }}
+								<q-tooltip>
+									Video request was added {{ request.createdAt }}
+								</q-tooltip>
+							</q-item-label>
+
+							<q-item-label>
+
+							</q-item-label>
+						</q-item-section>
+					</q-item>
+
+					<q-separator v-if="index !== (requests.length - 1)" spaced inset />
+				</template>
+			</q-list>
+			<q-inner-loading :showing="loading">
+				<q-spinner-gears size="50px" :color="settings.darkMode ? 'grey-2' : 'black'" />
+			</q-inner-loading>
+		</div>
 	</div>
 </template>
 
@@ -100,6 +155,7 @@ import { VideoRequest } from "src/_SCRIPTAPIINDEX";
 import { onMounted, ref } from "vue";
 import dayjs from 'dayjs';
 import relativeTime from "dayjs/plugin/relativeTime";
+import Duration from "src/components/Duration.vue";
 dayjs.extend(relativeTime);
 
 const api = useIndexStore()
@@ -109,6 +165,31 @@ const requests = ref<VideoRequest[]>([])
 const loading = ref(false);
 const requestDialog = ref(false);
 const requestUrl = ref("");
+
+const imagePreviewNr = ref(0);
+const imagePreviewCount = ref(0);
+
+let previewInterval: number;
+
+function goToRequest(request: VideoRequest) {
+	console.log("goToRequest. request:", request);
+	window.open(request.videoUrl, '_blank');
+}
+
+function setPreview(request: VideoRequest) {
+	// console.log('setPreview', request);
+	clearInterval(previewInterval);
+	imagePreviewNr.value = 0;
+	imagePreviewCount.value = request.images?.length as number;
+	previewInterval = setInterval(() => {
+		if (imagePreviewNr.value < imagePreviewCount.value) {
+			imagePreviewNr.value++;
+		} else {
+			imagePreviewNr.value = 0;
+		}
+	}, 500) as unknown as number;
+}
+
 async function getData() {
 	loading.value = true;
 	try {
@@ -183,6 +264,13 @@ onMounted(async () => {
 });
 </script>
 
-<style scoped>
+<style lang="scss">
+//Request page
+.body--dark .requestSubField {
+	border-bottom: 2px solid $grey-2;
+}
 
+.body--light .requestSubField {
+	border-bottom: 2px solid $grey-10;
+}
 </style>
