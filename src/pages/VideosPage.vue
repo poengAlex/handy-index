@@ -55,7 +55,7 @@
 								<q-btn flat dense :icon="sortOrderDecending ? 'arrow_downward' : 'arrow_upward'"
 									@click="sortOrderDecending = !sortOrderDecending; filterAndSortVideos()">
 								</q-btn>
-								<q-radio v-model="sortBy" val="createdAt" label="Added time"
+								<q-radio v-model="sortBy" val="publishedAt" label="Published time"
 									@update:model-value="filterAndSortVideos" />
 								<q-radio v-model="sortBy" val="updatedAt" label="Updated time"
 									@update:model-value="filterAndSortVideos" />
@@ -131,7 +131,7 @@ const route = useRoute();
 const router = useRouter();
 const loading = ref(true);
 const qtableref = ref<QTable>();
-const sortBy = ref<'createdAt' | 'updatedAt' | 'title' | 'duration'>('createdAt');
+const sortBy = ref<'publishedAt' | 'updatedAt' | 'title' | 'duration'>('publishedAt');
 const sortOrderDecending = ref(true);
 const videos = ref<PartnerVideo[]>([]);
 const videosFiltered = ref<PartnerVideo[]>([]);
