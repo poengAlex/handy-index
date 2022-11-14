@@ -242,16 +242,26 @@ const $q = useQuasar();
 setDarkModeInit();
 
 function setDarkModeInit() {
-	// FOLLOW BROWSER
-	// const darkModeLS = localStorage.getItem("darkModeRead");
-	// if (darkModeLS === null) {
-	// 	$q.dark.set('auto');
-	// 	settings.darkMode = $q.dark.isActive;
-	// 	localStorage.setItem("darkModeRead", "ok");
-	// }
+	// FOLLOW BROWSER - Read once
+	const darkModeLS = localStorage.getItem("darkModeRead");
+	if (darkModeLS === null) {
+		$q.dark.set('auto');
+		settings.darkMode = $q.dark.isActive;
+		// if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+		// 	// dark mode
+		// 	settings.darkMode = true;
+		// } else {
+		// 	settings.darkMode = false;
+		// }
+		// $q.dark.set(settings.darkMode);
 
-	// MUST SET
-	$q.dark.set(settings.darkMode);
+		localStorage.setItem("darkModeRead", "ok");
+	} else { // Already set the dark mode in settings
+		$q.dark.set(settings.darkMode);
+	}
+
+	// // MUST SET
+	// $q.dark.set(settings.darkMode);
 }
 
 function changeDarkMode() {

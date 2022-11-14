@@ -9,3 +9,6 @@
 - Video page. More info:
  - Premium video
  - Premium script
+ - Request page:
+  - Add filtering
+  - Search
