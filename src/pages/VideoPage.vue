@@ -58,11 +58,7 @@
 													href="https://chrome.google.com/webstore/detail/handy-browser-extension/jejnmoojnkkflpjalciaadbidbdfinko"
 													target="_blank">Link</a></li>
 											<li>Connect your Handy in the extension.</li>
-											<li v-if="isIvdb">Please use this site
-												instead of ivdb.io for now. <a href="https://index.handyfeeling.com/"
-													target="_blank">index.handyfeeling.com</a>. We are waiting for
-												Google to update the browser extension to support ivdb.io.</li>
-											<li v-else>Refresh this page.</li>
+											<li>Refresh this page.</li>
 										</ul>
 									</template>
 
