@@ -70,6 +70,9 @@
 									<q-icon name="warning" color="black" />
 								</template>
 								An external video is found. NSFW is disabled in settings. Turn on NSFW to see the video.
+								<q-btn class="text-white q-mt-sm" color="black" @click="settings.nsfw = true">
+									Allow NSFW content
+								</q-btn>
 							</q-banner>
 						</template>
 					</template>
