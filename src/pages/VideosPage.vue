@@ -602,7 +602,7 @@ onMounted(async () => {
 	setHeightOfContainter();
 
 	await parseQuaryParams()
-	await setVideos()
+	setVideos()
 });
 </script>
 
