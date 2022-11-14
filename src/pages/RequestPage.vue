@@ -46,7 +46,7 @@
 			<div class="text-h3 col-12">Pending requests</div>
 
 			<template v-for="(request) in requests" :key="request.requestId">
-				<div class="col-12 col-sm-6 col-md-4 col-lg-3 q-pa-xs cursor-pointer">
+				<div class="col-12 col-sm-6 col-md-4 col-lg-4 q-pa-xs cursor-pointer">
 					<q-responsive :ratio="16 / 9" @click="goToRequest(request)">
 						<q-img
 							:src="settings.nsfw ? request.thumbnail : 'https://via.placeholder.com/300x155.png?text=NSFW'"
@@ -89,9 +89,9 @@
 								:text-color="settings.darkMode ? 'black' : 'grey-2'">Go
 								to video
 							</q-btn>
-							<!-- <div class="col-auto q-pl-md q-pt-xs">
+							<div class="col-auto q-pl-md q-pt-xs">
 								<Duration :duration="request.duration" />
-							</div> -->
+							</div>
 							<div class="col-auto q-pl-md">
 								<q-icon name="thumb_up_alt"
 									:color="isUpvoted(request) ? 'primary' : (settings.darkMode ? 'grey-2' : 'black')"
