@@ -105,40 +105,18 @@
 
 				</div>
 			</template>
+			<div class="col-12 row justify-end q-gutter-sm q-mt-lg">
+				<div class="col text-left">
+					Page {{ page }}
+				</div>
+				<q-btn :disable="page === 0" @click="page--; getData();" class="col-auto"
+					:color="settings.darkMode ? 'grey-2' : 'black'"
+					:text-color="!settings.darkMode ? 'grey-2' : 'black'">Previous</q-btn>
+				<q-btn :disable="requests.length !== REQUEST_PER_PAGE" @click="page++; getData();" class="col-auto"
+					:color="settings.darkMode ? 'grey-2' : 'black'"
+					:text-color="!settings.darkMode ? 'grey-2' : 'black'">Next</q-btn>
+			</div>
 
-			<q-list separator class="" hidden>
-				<template v-for="(request, index) in requests" :key="request.requestId">
-					<q-item>
-						<q-item-section top thumbnail class="q-ml-none">
-							<img
-								:src="settings.nsfw ? request.thumbnail : 'https://via.placeholder.com/315x300.png?text=NSFW'">
-						</q-item-section>
-						<q-item-section>
-							<q-item-label>{{ request.domain }}</q-item-label>
-							<q-item-label caption lines=" 2">{{ request.title }}
-							</q-item-label>
-							<q-item-label>
-								<q-btn :href="request.videoUrl" target="_blank" size="xs" color="">Go to video</q-btn>
-							</q-item-label>
-						</q-item-section>
-
-						<q-item-section side top>
-							<q-item-label caption>
-								{{ dayjs((request as any).createdAt).fromNow() }}
-								<q-tooltip>
-									Video request was added {{ request.createdAt }}
-								</q-tooltip>
-							</q-item-label>
-
-							<q-item-label>
-
-							</q-item-label>
-						</q-item-section>
-					</q-item>
-
-					<q-separator v-if="index !== (requests.length - 1)" spaced inset />
-				</template>
-			</q-list>
 			<q-inner-loading :showing="loading">
 				<q-spinner-gears size="50px" :color="settings.darkMode ? 'grey-2' : 'black'" />
 			</q-inner-loading>
@@ -157,7 +135,8 @@ import dayjs from 'dayjs';
 import relativeTime from "dayjs/plugin/relativeTime";
 import Duration from "src/components/Duration.vue";
 dayjs.extend(relativeTime);
-
+const REQUEST_PER_PAGE = 24;
+const page = ref(0);
 const api = useIndexStore()
 const $q = useQuasar();
 const settings = useSettingsStore();
@@ -193,7 +172,7 @@ function setPreview(request: VideoRequest) {
 async function getData() {
 	loading.value = true;
 	try {
-		requests.value = await api.getApi().videoRequests.getRegisteredVideoRequests(100);
+		requests.value = await api.getApi().videoRequests.getRegisteredVideoRequests(REQUEST_PER_PAGE, REQUEST_PER_PAGE * page.value);
 		console.log("requests.value:", requests.value);
 		console.log("request:", JSON.parse(JSON.stringify(requests.value[0])));
 	} catch (err) {
