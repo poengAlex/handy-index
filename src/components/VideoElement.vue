@@ -3,8 +3,8 @@
 		@click.right.prevent="$emit('clickRight', video)">
 		<q-responsive :ratio="16 / 9">
 			<q-img v-if="video.thumbnail !== null"
-				:src="settings.nsfw ? video.thumbnail : 'https://via.placeholder.com/315x300.png?text=NSFW'" fit="fill"
-				@error="video!.thumbnail = '315x300-no-image.png'" referrerpolicy="no-referrer">
+				:src="settings.nsfw ? video.thumbnail : 'https://via.placeholder.com/300x155.png?text=NSFW'" fit="fill"
+				@error="video!.thumbnail = '300x155-no-image.png'" referrerpolicy="no-referrer">
 				<div class="absolute-bottom" style="height: 40%;padding: 0px;">
 					<div class="row items-center justify-evenly full-height full-width">
 						<div class="ellipsis-2-lines text-picture text-subtitle1 q-pl-lg q-pr-lg">
@@ -18,8 +18,8 @@
 				</div>
 			</q-img>
 			<q-img v-else-if="video.images !== undefined"
-				:src="settings.nsfw ? video.images[0] : 'https://via.placeholder.com/315x300.png?text=NSFW'" fit="fill"
-				@error="(video?.images as string[])[0] = '315x300-no-image.png'" referrerpolicy="no-referrer">
+				:src="settings.nsfw ? video.images[0] : 'https://via.placeholder.com/300x155.png?text=NSFW'" fit="fill"
+				@error="(video?.images as string[])[0] = '300x155-no-image.png'" referrerpolicy="no-referrer">
 				<div class="absolute-bottom" style="height: 40%;padding: 0px;">
 					<div class="row items-center justify-evenly full-height full-width">
 						<div class="ellipsis-2-lines text-picture text-subtitle1 q-pl-lg q-pr-lg">
@@ -36,8 +36,8 @@
 			<q-tooltip anchor="center middle" self="center middle" :delay="1000">
 				<div style="width: 400px !important">
 					<q-img v-if="video.gifs !== undefined"
-						:src="settings.nsfw ? video.gifs[0] : 'https://via.placeholder.com/315x300.png?text=NSFW'"
-						fit="fill" width="100%" @error="(video?.gifs as string[])[0] = '315x300-no-image.png'"
+						:src="settings.nsfw ? video.gifs[0] : 'https://via.placeholder.com/300x155.png?text=NSFW'"
+						fit="fill" width="100%" @error="(video?.gifs as string[])[0] = '300x155-no-image.png'"
 						referrerpolicy="no-referrer">
 					</q-img>
 					<div class="row">
@@ -46,10 +46,10 @@
 
 							{{
 
-							dayjs.duration(video.duration *
-							1000).format('HH') === '00' ? dayjs.duration(video.duration *
-							1000).format('mm:ss') : dayjs.duration(video.duration *
-							1000).format('HH:mm:ss')
+									dayjs.duration(video.duration *
+										1000).format('HH') === '00' ? dayjs.duration(video.duration *
+											1000).format('mm:ss') : dayjs.duration(video.duration *
+												1000).format('HH:mm:ss')
 							}}
 						</div>
 					</div>
@@ -80,10 +80,10 @@
 
 					{{
 
-					dayjs.duration(video.duration *
-					1000).format('HH') === '00' ? dayjs.duration(video.duration *
-					1000).format('mm:ss') : dayjs.duration(video.duration *
-					1000).format('HH:mm:ss')
+							dayjs.duration(video.duration *
+								1000).format('HH') === '00' ? dayjs.duration(video.duration *
+									1000).format('mm:ss') : dayjs.duration(video.duration *
+										1000).format('HH:mm:ss')
 					}}
 				</div>
 				<q-btn dense class="col-auto" flat icon="more_vert" @click.stop="">
@@ -109,7 +109,7 @@
 								<q-item-section>Ufavorite</q-item-section>
 							</q-item>
 							<q-separator />
-							<q-item clickable v-close-popup @click="downloadToken(video,$q)">
+							<q-item clickable v-close-popup @click="downloadToken(video, $q)">
 								<q-item-section avatar>
 									<q-icon color="secondary" name="file_download" />
 								</q-item-section>
