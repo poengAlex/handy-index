@@ -1,18 +1,20 @@
 <template>
-	<q-banner class="bg-warning text-black">
-		<template v-slot:avatar>
-			<q-icon name="warning" color="black" />
+	<div class="container">
+		<q-banner class="bg-warning text-black">
+			<template v-slot:avatar>
+				<q-icon name="warning" color="black" />
+			</template>
+			This page is not completed. More details to come in future updates.
+		</q-banner>
+		<template v-if="partner !== undefined">
+			<div class="text-h1">{{ partner.name }}</div>
+			<div class="text-subtitle1">{{ partner.description }}</div>
+			<q-btn color="accent" @click="goToVideos">Show videos</q-btn>
 		</template>
-		This page is not completed. More detailes to come in future updates
-	</q-banner>
-	<template v-if="partner !== undefined">
-		<div class="text-h1">{{ partner.name }}</div>
-		<div class="text-subtitle1">{{ partner.description }}</div>
-		<q-btn color="accent" @click="goToVideos">Show videos</q-btn>
-	</template>
-	<template v-else>
-		ERROR
-	</template>
+		<template v-else>
+			ERROR
+		</template>
+	</div>
 
 </template>
 
