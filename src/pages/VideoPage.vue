@@ -1,5 +1,4 @@
 <template>
-
 	<div class="row container">
 		<div class="col-12 col-md-8 _shadow-1 rounded-borders q-pa-sm ">
 			<div v-if="video !== undefined" class="row">
@@ -173,7 +172,7 @@
 				</div>
 			</div>
 		</div>
-		<div class="col-12 col-md-4 q-pl-sm q-pt-sm gt-sm">
+		<div v-if="otherVideos.length > 0" class="col-12 col-md-4 q-pl-sm q-pt-sm gt-sm">
 			<div class="_shadow-1 _no-box-shadow rounded-borders q-pa-sm ">
 				<div class="text-h6 ">
 					Other videos from same site
@@ -217,11 +216,9 @@ const scripts = ref<Script[]>([]);
 const imgError = ref(false);
 const ratingModel = ref<number>(0);
 const ratingUser = ref<number>();
-const isIvdb = window.location.hostname === 'www.ivdb.io';
 
 const externalVideo = ref({
 	active: false,
-	partner: "",
 	url: ""
 });
 const bexDetected = ref(true);
@@ -279,8 +276,10 @@ async function setVideo() {
 		console.log("video.value:", JSON.parse(JSON.stringify(video.value)));
 
 		if (video.value.partnerId === "01GA3NMS2VGZM7C61T88D5K53X") { // pornhubs ID
-			externalVideo.value.partner = "Pornhub";
 			externalVideo.value.url = 'https://www.pornhub.com/embed/' + video.value.externalRef;
+			externalVideo.value.active = true;
+		} else if (video.value.partnerId === "01GHTRB0SDJG3CQJB9BG24XX20") { // youtube
+			externalVideo.value.url = 'https://www.youtube.com/embed/' + video.value.externalRef;
 			externalVideo.value.active = true;
 		}
 		scripts.value = await apiStore.getScripts(partnerVideoId);
@@ -296,13 +295,19 @@ async function setVideo() {
 				ratingUser.value = valueToRating(vote.value);
 			}
 		});
-		let start = 100;
+		let start = 100; // if start -= 25; => 5 runs max
 		otherVideos.value.length = 0;
+
 		while (start >= 0 && otherVideos.value.length === 0) {
 			const skip = randomIntFromInterval(0, start);
 			console.log("skip:", skip);
 
-			otherVideos.value = await apiIndex.index.getVideos(undefined, undefined, undefined, [video.value.partnerId], 4, skip);
+			const otherVideosTemp = await apiIndex.index.getVideos(undefined, undefined, undefined, [video.value.partnerId], 4, skip);
+			otherVideosTemp.forEach(otherVideo => {
+				if (otherVideo.partnerVideoId !== video.value?.partnerVideoId) {
+					otherVideos.value.push(otherVideo);
+				}
+			});
 			start -= 25;
 		}
 
