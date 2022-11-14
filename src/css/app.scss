@@ -94,3 +94,18 @@ $lg-breakpoint: 1920px;
 .body--dark a{
 	color: $blue-4
 }
+
+//Drawer links
+.body--dark a .q-item__label{
+	color: $grey-4
+}
+.body--dark a .q-icon{
+	color: $grey-4
+}
+// .body--light a .q-item__label{
+// 	color: $grey-10
+// }
+// .body--light a .q-icon{
+// 	color: $grey-10
+// }
+
