@@ -326,20 +326,26 @@ function toggleLeftDrawer() {
 
 router.beforeEach(async (to, from) => {
 	if (!settings.privacyAccepted && to.name !== "privacy") {
-		console.warn("privacy intro not seen", from);
-		router.push({ path: "/privacy", query: { redirect: from.fullPath } });
-		createNotifyWarning("Please accept our terms before using the site");
+		console.warn("router.beforeEach. privacy intro not seen", from);
+		if (from.name !== "privacy") {
+			createNotifyWarning("Please accept our terms before using the site");
+			router.push({ path: "/privacy", query: { redirect: from.fullPath } });
+		} else {
+			return false; // Stop routing
+		}
 	}
+	return true;
 })
 
 onBeforeMount(() => {
-	// console.log("window.location:", window.location);
-	// if (window.location.hostname === "www.ivdb.io") {
-	// 	location.href = 'https://index.handyfeeling.com/' + window.location.hash;
-	// }
 	if (!settings.privacyAccepted) {
-		console.warn("privacy intro not seen");
-		router.push({ path: "/privacy", query: { redirect: route.fullPath } })
+		console.warn("privacy intro not seen. Route:", route);
+		let redirectPath = route.fullPath;
+		if (route.name === "privacy") {
+			redirectPath = (route.query.redirect as string) || "/";
+		} else {
+			router.push({ path: "/privacy", query: { redirect: redirectPath } })
+		}
 	}
 })
 
