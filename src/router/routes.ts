@@ -15,7 +15,8 @@ const routes: RouteRecordRaw[] = [
 			{ path: '/playlists', component: () => import('pages/PlaylistPage.vue') },
 			{ path: '/privacy', name: "privacy", component: () => import('pages/PrivacyPage.vue') },
 			{ path: '/performers', name: "performers", component: () => import('pages/PerformersPage.vue') },
-			{ path: '/request', name: "request", component: () => import('pages/RequestPage.vue') }
+			{ path: '/request', name: "request", component: () => import('pages/RequestPage.vue') },
+			{ path: '/help', name: "help", component: () => import('pages/HelpPage.vue') }
 
 		]
 	},

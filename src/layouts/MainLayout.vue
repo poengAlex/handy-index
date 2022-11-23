@@ -270,7 +270,7 @@ function changeDarkMode() {
 
 const links3 = [
 	{ icon: 'settings', text: 'Settings' },
-	{ icon: 'help', text: 'Help & Feedback' },
+	{ icon: 'help', text: 'Help & Feedback', route: "/help" },
 	{ icon: 'policy', text: 'Privacy information', route: "/privacy" }
 ]
 
