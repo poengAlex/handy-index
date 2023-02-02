@@ -12,9 +12,15 @@
 		Known errors
 	</div>
 	<ul>
-		<li>IVDB.io does not work if you are translating the page! Turn off translation to get it working.</li>
+
 		<li>Older versions of the browser extension does not work correctly. Try to uninstall the extension and install
 			it again.</li>
+		<li>IVDB.io does not work if you are translating the page! Turn off translation to get it working. You might
+			need to set english as the preferred language as well. See image:
+			<br>
+			<q-img src="chrome_settings.jpg" alt="Chrome settings" style="max-width: 800px;" />
+		</li>
+
 	</ul>
 
 	<p>
