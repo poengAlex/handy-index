@@ -39,12 +39,14 @@
 						<template v-else>
 							<template v-if="settings.nsfw">
 								<q-video :ratio="16 / 9" :src="externalVideo.url" />
-								<q-banner v-if="bexDetected === false && false"
-									class="bg-warning text-black rounded-borders">
+								<q-banner v-if="bexDetected === false" class="bg-warning text-black rounded-borders">
 									<template v-slot:avatar>
 										<q-icon name="warning" color="black" />
 									</template>
-									<template>
+									<!-- BEX IS REMOVED! Show this instead of the normal warning. -->
+									Your Handy will not be in sync with this video! You will need to play the video and the
+									script in a script player like handyfeeeling.com. This is due to iFrame limitations.
+									<template v-if="false">
 										You will need the <b>Handy browser extension</b> to play this video with the
 										script
 										token. Please do the following:
