@@ -44,42 +44,43 @@
 			This site is open source to give full transparency of whats happening on this site.
 			<a href="https://github.com/poengAlex/handy-index" target="_blank">Github repo of the index site</a>
 		</p>
+		<template v-if="false">
+			<div class="text-h5">The browser plugin</div>
+			<p>
+				The browser uses regular Handy integration. Read more about our Handy privacy <a
+					href="https://www.thehandy.com/company/blog/online-connection-privacy-concerns-and-the-handy"
+					target="_blank">here</a>. In addition, the browser
+				plugin can read the URL of the active tab. If the tab is one of the supported sites, we check with our
+				database
+				if we have a script to match. This query is INTRUSIVE! To give you insights on the query:
+				<br><br><b>NB! We removed the ability to read a URL for now. You must go to the index site and manually
+					request
+					the
+					URL. We might change it back to be able to read the URL, but it felt wrong to read the URLs even if we
+					did
+					not use it.</b>
+			<ul>
+				<li>
+					The record of the query, to check if we have a matching script, is not stored in persistent memory.
+					Meaning we will not record the query in our
+					databases. Logs might be stored for seven days for development purposes. In our logs, we strive to
+					scramble any
+					sensitive user data (IP, in this case). Since the backend code is not open source, you have to take our
+					word for it.
+				</li>
+				<li>The browser plugin is open source to fully transparent what's happening behind the scenes.</li>
+				<a href="https://github.com/poengAlex/handy-browser-extension" target="_blank">Github repo of the browser
+					extension</a>
 
-		<div class="text-h5">The browser plugin</div>
-		<p>
-			The browser uses regular Handy integration. Read more about our Handy privacy <a
-				href="https://www.thehandy.com/company/blog/online-connection-privacy-concerns-and-the-handy"
-				target="_blank">here</a>. In addition, the browser
-			plugin can read the URL of the active tab. If the tab is one of the supported sites, we check with our
-			database
-			if we have a script to match. This query is INTRUSIVE! To give you insights on the query:
-			<br><br><b>NB! We removed the ability to read a URL for now. You must go to the index site and manually
-				request
-				the
-				URL. We might change it back to be able to read the URL, but it felt wrong to read the URLs even if we
-				did
-				not use it.</b>
-		<ul>
-			<li>
-				The record of the query, to check if we have a matching script, is not stored in persistent memory.
-				Meaning we will not record the query in our
-				databases. Logs might be stored for seven days for development purposes. In our logs, we strive to
-				scramble any
-				sensitive user data (IP, in this case). Since the backend code is not open source, you have to take our
-				word for it.
-			</li>
-			<li>The browser plugin is open source to fully transparent what's happening behind the scenes.</li>
-			<a href="https://github.com/poengAlex/handy-browser-extension" target="_blank">Github repo of the browser
-				extension</a>
+				<li>We do not care what you are watching since this data would not give us much value and would increase our
+					risk if we have a security breach.</li>
+				<li>We only send a query on the supported sites, not every page you visit.</li>
+				<li>We also use the url if you request us to script the website you are visiting. This request is stored in
+					a permanent database.</li>
+			</ul>
 
-			<li>We do not care what you are watching since this data would not give us much value and would increase our
-				risk if we have a security breach.</li>
-			<li>We only send a query on the supported sites, not every page you visit.</li>
-			<li>We also use the url if you request us to script the website you are visiting. This request is stored in
-				a permanent database.</li>
-		</ul>
-
-		</p>
+			</p>
+		</template>
 
 		<div class="text-h4">
 			Adult content
@@ -124,6 +125,4 @@ onMounted(() => {
 });
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

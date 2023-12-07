@@ -23,8 +23,7 @@
 					<q-img v-show="imgError" :src="imgError ? '315x300-no-image.png' : video.images![0]"
 						@error="setImgError()" style="width: 100%;" />
 					<template v-if="externalVideo.active">
-						<q-banner v-if="!settings.allowExternalVideo"
-							class="bg-warning text-black q-mt-sm rounded-borders">
+						<q-banner v-if="!settings.allowExternalVideo" class="bg-warning text-black q-mt-sm rounded-borders">
 							<template v-slot:avatar>
 								<q-icon name="warning" color="black" />
 							</template>
@@ -40,11 +39,12 @@
 						<template v-else>
 							<template v-if="settings.nsfw">
 								<q-video :ratio="16 / 9" :src="externalVideo.url" />
-								<q-banner v-if="bexDetected === false" class="bg-warning text-black rounded-borders">
+								<q-banner v-if="bexDetected === false && false"
+									class="bg-warning text-black rounded-borders">
 									<template v-slot:avatar>
 										<q-icon name="warning" color="black" />
 									</template>
-									<template v-if="true">
+									<template>
 										You will need the <b>Handy browser extension</b> to play this video with the
 										script
 										token. Please do the following:
@@ -105,8 +105,7 @@
 						</div>
 						<template v-if="video.scriptAccess === 'public'">
 							<template v-for="(script, index) in scripts" :key="index">
-								<div v-if="index === 0" class="col-auto cursor-pointer"
-									@click="downloadToken(video, $q)">
+								<div v-if="index === 0" class="col-auto cursor-pointer" @click="downloadToken(video, $q)">
 									<q-chip class="infoChip" icon="download">
 										Download script token (scripter: {{ script.scripter?.name }})
 									</q-chip>
@@ -178,8 +177,8 @@
 					Other videos from same site
 				</div>
 				<!-- <p v-for="video in otherVideos">{{video}}</p> -->
-				<VideoElement class="q-mb-sm" v-for="video in otherVideos" :key="video.partnerVideoId"
-					:table-value="video" @click="videoClick">
+				<VideoElement class="q-mb-sm" v-for="video in otherVideos" :key="video.partnerVideoId" :table-value="video"
+					@click="videoClick">
 				</VideoElement>
 			</div>
 		</div>
