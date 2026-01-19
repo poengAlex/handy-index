@@ -22,6 +22,7 @@
 		</div>
 		<q-inner-loading :showing="loading">
 			<q-spinner-gears size="50px" :color="settings.darkMode ? 'grey-2' : 'black'" />
+			<div class="text-center q-mt-md">{{ loadingText }}</div>
 		</q-inner-loading>
 	</div>
 
@@ -43,6 +44,7 @@ const tags = ref<Tag[]>([]);
 const tagsFiltered = ref<Tag[]>([]);
 const settings = useSettingsStore();
 const MAX_COUNT_TO_SHOW = 300;
+const loadingText = ref("Loading tags...");
 
 function appendTags(_tags: Tag[]) {
 	_tags.forEach(tag => {
@@ -95,6 +97,7 @@ onMounted(async () => {
 	let skip = 0;
 	while (!done) {
 		try {
+			loadingText.value = `Loading tags... (fetched ${tags.value.length} so far)`;
 			const _tags = await indexStore.getApi().index.getTags(TAKE, skip);
 			appendTags(_tags);
 			console.log("_tags.length:", _tags.length);
@@ -112,6 +115,4 @@ onMounted(async () => {
 });
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>
