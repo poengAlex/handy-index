@@ -42,7 +42,7 @@
 		</p>
 		<p>
 			This site is open source to give full transparency of whats happening on this site.
-			<a href="https://github.com/poengAlex/ivdb" target="_blank">Github repo of the index site</a>
+			<a href="https://github.com/poengAlex/handy-index" target="_blank">Github repo of the index site</a>
 		</p>
 		<template v-if="false">
 			<div class="text-h5">The browser plugin</div>
