@@ -19,7 +19,8 @@
 						Interactive video database
 					</span>
 				</q-toolbar-title>
-				<q-toolbar-title v-else shrink class="row items-center no-wrap cursor-pointer" @click="router.push('/')">
+				<q-toolbar-title v-else shrink class="row items-center no-wrap cursor-pointer"
+					@click="router.push('/')">
 					<svg width="15" height="29" viewBox="0 0 21 29" fill="none" xmlns="http://www.w3.org/2000/svg">
 						<path
 							d="M4.94359 29C3.63375 28.9958 2.37874 28.4626 1.45253 27.5169C0.526327 26.5712 0.00415282 25.2897 0 23.9523V5.04773C0.00415282 3.7103 0.526327 2.42885 1.45253 1.48313C2.37874 0.537416 3.63375 0.00424031 4.94359 0C6.25344 0.00424031 7.50845 0.537416 8.43465 1.48313C9.36086 2.42885 9.88303 3.7103 9.88719 5.04773V23.9523C9.89403 26.7278 7.66188 29 4.94359 29Z"
@@ -41,7 +42,7 @@
 						<q-icon v-if="search === ''" name="search" />
 						<q-icon v-else name="clear" class="cursor-pointer" @click="search = ''" />
 					</template>
-				</q-input> -->
+</q-input> -->
 
 				<!-- <q-btn v-if="$q.screen.gt.xs" flat dense no-wrap color="primary" icon="add" no-caps label="Create"
 					class="q-ml-sm q-px-md">
@@ -105,7 +106,8 @@
 				</q-toolbar>
 
 				<q-list padding>
-					<q-item v-for="(link, index) in links" :key="index" clickable class="GPL__drawer-item" :to="link.link">
+					<q-item v-for="(link, index) in links" :key="index" clickable class="GPL__drawer-item"
+						:to="link.link">
 						<q-item-section avatar>
 							<q-icon :name="link.icon" />
 						</q-item-section>
@@ -206,11 +208,12 @@
 
 			<q-page-sticky v-if="$q.screen.gt.sm" expand position="left">
 				<div class="fit q-pt-xl q-px-sm column" style="overflow:hidden;">
-					<q-btn v-for="(link, index) in links" :key="index" round flat color="grey-8" stack no-caps size="26px"
-						class="GPL__side-btn" :to="link.link">
+					<q-btn v-for="(link, index) in links" :key="index" round flat color="grey-8" stack no-caps
+						size="26px" class="GPL__side-btn" :to="link.link">
 						<q-icon size="22px" :name="link.icon" />
 						<div class="GPL__side-btn__label">{{ link.text }}</div>
-						<q-badge v-if="link.badge" floating color="red" text-color="white" style="top: 8px; right: 16px">
+						<q-badge v-if="link.badge" floating color="red" text-color="white"
+							style="top: 8px; right: 16px">
 							{{ link.badge }}
 						</q-badge>
 					</q-btn>
@@ -280,8 +283,8 @@ const links = ref<{ text: string, link: string, badge?: string, icon: string }[]
 	{
 		text: "Sites",
 		link: "/sites",
-		icon: "public",
-		badge: "1"
+		icon: "public"
+		// badge: "1"
 	},
 	{
 		text: "Tags",
@@ -302,13 +305,13 @@ const links = ref<{ text: string, link: string, badge?: string, icon: string }[]
 		text: "Performers",
 		link: "/performers",
 		icon: "people_alt"
-	},
-	{
-		text: "Playlists",
-		link: "/playlists",
-		icon: "collections_bookmark",
-		badge: "Soon"
 	}
+	// {
+	// 	text: "Playlists",
+	// 	link: "/playlists",
+	// 	icon: "collections_bookmark",
+	// 	badge: "Soon"
+	// }
 ])
 
 function clearAllData() {
