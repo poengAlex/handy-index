@@ -48,21 +48,26 @@
 			<template v-for="(request) in requests" :key="request.requestId">
 				<div class="col-12 col-sm-6 col-md-4 col-lg-4 q-pa-xs cursor-pointer">
 					<q-responsive :ratio="16 / 9" @click="goToRequest(request)">
-						<q-img
-							:src="settings.nsfw ? request.thumbnail : 'https://via.placeholder.com/300x155.png?text=NSFW'"
-							fit="contain"
-							@error="request.thumbnail = 'https://via.placeholder.com/300x155.png?text=No image'"
-							referrerpolicy="no-referrer">
+						<q-img :src="settings.nsfw ? request.thumbnail : 'nsfw.jpg'" fit="contain"
+							referrerpolicy="no-referrer" no-spinner>
+							<template v-slot:error>
+								<div class="absolute-full flex flex-center _bg-negative text-white">
+									Could not load image
+								</div>
+							</template>
 						</q-img>
 						<q-tooltip @before-show="setPreview(request)" anchor="center middle" self="center middle"
 							:delay="200">
 							<div style="width: 400px !important" @click="goToRequest(request)">
 
 								<q-img
-									:src="settings.nsfw ? request.images[imagePreviewNr] : 'https://via.placeholder.com/300x155.png?text=NSFW'"
-									fit="contain"
-									@error="request.images[imagePreviewNr] = 'https://via.placeholder.com/300x155.png?text=No image'"
-									referrerpolicy="no-referrer">
+									:src="settings.nsfw !== undefined ? (request.images?.[imagePreviewNr] ?? 'nsfw.jpg') : 'nsfw.jpg'"
+									fit="contain" referrerpolicy="no-referrer" no-spinner>
+									<template v-slot:error>
+										<div class="absolute-full flex flex-center _bg-negative text-white">
+											Could not load image
+										</div>
+									</template>
 								</q-img>
 								<div class="text-h6 ">
 									{{ request.title }}
@@ -84,7 +89,7 @@
 							{{ request.title }}
 						</div>
 						<div class="row">
-							<q-btn class="col" :href="request.videoUrl" target="_blank" size="xs"
+							<q-btn class="col" :href="(request as any).videoUrl" target="_blank" size="xs"
 								:color="settings.darkMode ? 'grey-2' : 'black'"
 								:text-color="settings.darkMode ? 'black' : 'grey-2'">Go
 								to video
@@ -152,7 +157,7 @@ let previewInterval: number;
 
 function goToRequest(request: VideoRequest) {
 	console.log("goToRequest. request:", request);
-	window.open(request.videoUrl, '_blank');
+	window.open((request as any).videoUrl, '_blank');
 }
 
 function setPreview(request: VideoRequest) {

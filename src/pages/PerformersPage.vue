@@ -9,13 +9,16 @@
 			</q-input>
 			<!-- <small>Showing {{performers.length}} of 1300</small> -->
 		</div>
-		<template v-for="(perfomer, index) in performers" :key="perfomer.performerId">
+		<template v-for="(perfomer) in performers" :key="perfomer.performerId">
 			<div class="col-12 col-sm-6 col-md-4 col-lg-2 q-pa-xs cursor-pointer" @click="goToPerformer(perfomer)">
 				<q-responsive :ratio="4 / 3">
-					<q-img :src="settings.nsfw ? perfomer.avatar : 'https://via.placeholder.com/300x155.png?text=NSFW'"
-						fit="contain"
-						@error="performer.avatar = 'https://via.placeholder.com/300x155.png?text=No image'"
-						referrerpolicy="no-referrer">
+					<q-img :src="settings.nsfw ? perfomer.avatar : 'nsfw.jpg'" fit="contain"
+						referrerpolicy="no-referrer" no-spinner>
+						<template v-slot:error>
+							<div class="absolute-full flex flex-center _bg-negative text-white">
+								Could not load image
+							</div>
+						</template>
 						<div class="absolute-bottom" style="height: 40%;padding: 0px;">
 							<div class="row items-center justify-evenly full-height full-width">
 								<div class="ellipsis-2-lines text-picture text-subtitle1 q-pl-lg q-pr-lg">
@@ -116,6 +119,4 @@ onMounted(async () => {
 });
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

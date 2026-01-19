@@ -137,6 +137,15 @@
 							<q-item-label>Browser plugin</q-item-label>
 						</q-item-section>
 					</q-item>
+					<q-item v-if="true" clickable class="GPL__drawer-item"
+						href="https://github.com/poengAlex/handy-browser-extension/releases/tag/1.0.0" target="_BLANK">
+						<q-item-section avatar>
+							<q-icon name="download" />
+						</q-item-section>
+						<q-item-section>
+							<q-item-label>Browser plugin</q-item-label>
+						</q-item-section>
+					</q-item>
 					<q-item clickable class="GPL__drawer-item" @click="clearAllData">
 						<q-item-section avatar>
 							<q-icon name="delete" />

@@ -2,9 +2,16 @@
 	<q-card class="cursor-pointer" v-if="video !== undefined" @click.left="$emit('click', video)"
 		@click.right.prevent="$emit('clickRight', video)">
 		<q-responsive :ratio="16 / 9">
-			<q-img v-if="video.thumbnail !== null"
-				:src="settings.nsfw ? video.thumbnail : 'https://via.placeholder.com/300x155.png?text=NSFW'" fit="fill"
-				@error="video!.thumbnail = '300x155-no-image.png'" referrerpolicy="no-referrer">
+			<div v-if="!settings.nsfw" class="row items-center justify-center full-height bg-grey-8">
+				<div class="text-h4 text-white">NSFW</div>
+			</div>
+			<q-img v-else-if="video.thumbnail !== null" :src="video.thumbnail" fit="fill" referrerpolicy="no-referrer"
+				no-spinner>
+				<template v-slot:error>
+					<div class="absolute-full flex flex-center _bg-negative text-white">
+						Could not load image
+					</div>
+				</template>
 				<div class="absolute-bottom" style="height: 40%;padding: 0px;">
 					<div class="row items-center justify-evenly full-height full-width">
 						<div class="ellipsis-2-lines text-picture text-subtitle1 q-pl-lg q-pr-lg">
@@ -17,9 +24,8 @@
 					</q-tooltip> -->
 				</div>
 			</q-img>
-			<q-img v-else-if="video.images !== undefined"
-				:src="settings.nsfw ? video.images[0] : 'https://via.placeholder.com/300x155.png?text=NSFW'" fit="fill"
-				@error="(video?.images as string[])[0] = '300x155-no-image.png'" referrerpolicy="no-referrer">
+			<q-img v-else-if="video.images !== undefined" :src="video.images[0]" fit="fill"
+				@error="(video?.images as string[])[0] = 'nsfw.jpg'" referrerpolicy="no-referrer">
 				<div class="absolute-bottom" style="height: 40%;padding: 0px;">
 					<div class="row items-center justify-evenly full-height full-width">
 						<div class="ellipsis-2-lines text-picture text-subtitle1 q-pl-lg q-pr-lg">
@@ -33,12 +39,10 @@
 				</div>
 			</q-img>
 
-			<q-tooltip anchor="center middle" self="center middle" :delay="1000">
+			<!-- <q-tooltip anchor="center middle" self="center middle" :delay="1000">
 				<div style="width: 400px !important">
-					<q-img v-if="video.gifs !== undefined"
-						:src="settings.nsfw ? video.gifs[0] : 'https://via.placeholder.com/300x155.png?text=NSFW'"
-						fit="fill" width="100%" @error="(video?.gifs as string[])[0] = '300x155-no-image.png'"
-						referrerpolicy="no-referrer">
+					<q-img v-if="video.gifs !== undefined" :src="video.gifs[0]" fit="fill" width="100%"
+						@error="(video?.gifs as string[])[0] = 'nsfw.jpg'" referrerpolicy="no-referrer">
 					</q-img>
 					<div class="row">
 						<partner :partner-id="video.partnerId"></partner>
@@ -46,10 +50,10 @@
 
 							{{
 
-									dayjs.duration(video.duration *
-										1000).format('HH') === '00' ? dayjs.duration(video.duration *
-											1000).format('mm:ss') : dayjs.duration(video.duration *
-												1000).format('HH:mm:ss')
+								dayjs.duration(video.duration *
+									1000).format('HH') === '00' ? dayjs.duration(video.duration *
+										1000).format('mm:ss') : dayjs.duration(video.duration *
+											1000).format('HH:mm:ss')
 							}}
 						</div>
 					</div>
@@ -59,10 +63,7 @@
 					<div class="text-subtitle1 ">
 						{{ video.description }}
 					</div>
-					<div class="text-subtitle1">
-						<!-- TODO: Add with dayjs when implemented -->
-						<!-- {{ video.createdAt }} -->
-					</div>
+
 					<div class="row">
 						<q-chip dense v-for="(tag, index) in video.tags" :key="index"
 							class="q-ma-none q-ml-xs q-mb-xs col-auto" color="black" text-color="white">
@@ -70,7 +71,7 @@
 					</div>
 
 				</div>
-			</q-tooltip>
+			</q-tooltip> -->
 		</q-responsive>
 
 		<q-card-section class="q-pa-xs q-pb-sm">
@@ -80,10 +81,10 @@
 
 					{{
 
-							dayjs.duration(video.duration *
-								1000).format('HH') === '00' ? dayjs.duration(video.duration *
-									1000).format('mm:ss') : dayjs.duration(video.duration *
-										1000).format('HH:mm:ss')
+						dayjs.duration(video.duration *
+							1000).format('HH') === '00' ? dayjs.duration(video.duration *
+								1000).format('mm:ss') : dayjs.duration(video.duration *
+									1000).format('HH:mm:ss')
 					}}
 				</div>
 				<q-btn dense class="col-auto" flat icon="more_vert" @click.stop="">

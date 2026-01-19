@@ -10,20 +10,20 @@
 						referrerpolicy="no-referrer">
 						<template v-if="video.images !== undefined">
 							<q-carousel-slide v-for="(img, index) in video?.images" :name="index" :key="index"
-								:img-src="settings.nsfw ? img : 'https://via.placeholder.com/315x300.png?text=NSFW'" />
+								:img-src="settings.nsfw ? img : 'nsfw.jpg'" />
 							<q-carousel-slide v-for="(gif, index) in video?.gifs" :name="video?.images.length + index"
-								:img-src="settings.nsfw ? gif : 'https://via.placeholder.com/315x300.png?text=NSFW'"
-								:key="index" />
+								:img-src="settings.nsfw ? gif : 'nsfw.jpg'" :key="index" />
 						</template>
 						<template v-else>
-							<q-carousel-slide name="no-image" img-src="315x300-no-image.png" />
+							<q-carousel-slide name="no-image" img-src="nsfw.jpg" />
 						</template>
 
 					</q-carousel>
-					<q-img v-show="imgError" :src="imgError ? '315x300-no-image.png' : video.images![0]"
-						@error="setImgError()" style="width: 100%;" />
+					<q-img v-show="imgError" :src="imgError ? 'nsfw.jpg' : video.images![0]" @error="setImgError()"
+						style="width: 100%;" />
 					<template v-if="externalVideo.active">
-						<q-banner v-if="!settings.allowExternalVideo" class="bg-warning text-black q-mt-sm rounded-borders">
+						<q-banner v-if="!settings.allowExternalVideo"
+							class="bg-warning text-black q-mt-sm rounded-borders">
 							<template v-slot:avatar>
 								<q-icon name="warning" color="black" />
 							</template>
@@ -44,7 +44,8 @@
 										<q-icon name="warning" color="black" />
 									</template>
 									<!-- BEX IS REMOVED! Show this instead of the normal warning. -->
-									Your Handy will not be in sync with this video! You will need to play the video and the
+									Your Handy will not be in sync with this video! You will need to play the video and
+									the
 									script in a script player like handyfeeeling.com. This is due to iFrame limitations.
 									<template v-if="false">
 										You will need the <b>Handy browser extension</b> to play this video with the
@@ -107,7 +108,8 @@
 						</div>
 						<template v-if="video.scriptAccess === 'public'">
 							<template v-for="(script, index) in scripts" :key="index">
-								<div v-if="index === 0" class="col-auto cursor-pointer" @click="downloadToken(video, $q)">
+								<div v-if="index === 0" class="col-auto cursor-pointer"
+									@click="downloadToken(video, $q)">
 									<q-chip class="infoChip" icon="download">
 										Download script token (scripter: {{ script.scripter?.name }})
 									</q-chip>
@@ -179,8 +181,8 @@
 					Other videos from same site
 				</div>
 				<!-- <p v-for="video in otherVideos">{{video}}</p> -->
-				<VideoElement class="q-mb-sm" v-for="video in otherVideos" :key="video.partnerVideoId" :table-value="video"
-					@click="videoClick">
+				<VideoElement class="q-mb-sm" v-for="video in otherVideos" :key="video.partnerVideoId"
+					:table-value="video" @click="videoClick">
 				</VideoElement>
 			</div>
 		</div>
@@ -347,7 +349,7 @@ onMounted(async () => {
 			image.referrerPolicy = "no-referrer"; // Do not send referer
 			// console.log("image:", image);
 			image.onerror = function () {
-				image.src = '315x300-no-image.png'
+				image.src = 'nsfw.jpg'
 			}
 		}
 	}, 1); // The images are not drawn yet. This might not work very good on all browsers. Backend should do something smarter.

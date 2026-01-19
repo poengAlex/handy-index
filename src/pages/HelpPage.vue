@@ -8,6 +8,20 @@
 		</template>
 		This page is not complete
 	</q-banner>
+	<div class="text-h4 q-mt-md">
+		Install the browser extension
+	</div>
+	<p>
+		Google blocked the extension from being available on the Chrome web store. You can still install it manually
+		by following these steps <a href="https://github.com/poengAlex/handy-browser-extension/releases/tag/1.0.0"
+			target="_BLANK">here</a>.
+	</p>
+	<div class="text-h4 q-mt-md">
+		Get your videos scripted
+	</div>
+	<p>
+		Add a request here on this page. The videos with the most requests will be scripted first.
+	</p>
 	<div class="text-h4">
 		Known errors
 	</div>
@@ -37,6 +51,4 @@ onMounted(() => {
 });
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>
