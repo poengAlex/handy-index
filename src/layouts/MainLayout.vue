@@ -183,6 +183,14 @@
 							</q-toggle>
 						</q-item-section>
 					</q-item>
+					<q-item clickable class="GPL__drawer-item GPL__drawer-item--storage" @click.stop>
+						<q-item-section avatar>
+							<q-icon name="diversity_3" />
+						</q-item-section>
+						<q-item-section top>
+							<q-select v-model="settings.orientation" :options="ORIENTATIONS" label="Orientation" dense options-dense />
+						</q-item-section>
+					</q-item>
 					<q-item clickable @click="showConnectionKeyDialog($q)"
 						class="GPL__drawer-item GPL__drawer-item--storage">
 						<q-item-section avatar>
@@ -239,7 +247,7 @@ import { createNotifySuccess, createNotifyWarning, showConnectionKeyDialog } fro
 // import { initHandy } from 'src/logic/handy';
 import { onBeforeMount, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router';
-import { useSettingsStore } from '../stores/settings'
+import { ORIENTATIONS, useSettingsStore } from '../stores/settings'
 const settings = useSettingsStore()
 const leftDrawerOpen = ref(false)
 const router = useRouter();

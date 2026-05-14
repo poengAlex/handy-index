@@ -5,6 +5,9 @@ import { createNotify, createNotifyWarning } from 'src/logic/utils';
 import { apiIndex, initApi } from 'src/logic/api-wrapper';
 
 export type Server = "production" | "staging" | "dev";
+
+export type Orientation = "straight" | "gay" | "trans" | "all";
+export const ORIENTATIONS: Orientation[] = ["straight", "gay", "trans", "all"];
 export type Rating = {
 	value: number, // 0-100
 	scriptId: string
@@ -20,7 +23,8 @@ export const useSettingsStore = defineStore('settings', {
 		favorites: [] as PartnerVideo[],
 		privacyAccepted: false,
 		requestUpvotes: [] as string[],
-		videoVotes: [] as Rating[]
+		videoVotes: [] as Rating[],
+		orientation: "all" as Orientation
 	}),
 	persist: true,
 	getters: {

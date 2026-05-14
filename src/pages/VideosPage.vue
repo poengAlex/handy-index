@@ -242,6 +242,23 @@ function videoClick(video: PartnerVideo, newWindow: boolean) {
 	}
 }
 
+function videoHasTagText(video: PartnerVideo, text: string) {
+	return video.tags?.some(tag => tag.toLowerCase().includes(text)) ?? false;
+}
+
+function videoMatchesOrientation(video: PartnerVideo) {
+	if (settings.orientation === "straight") {
+		return !videoHasTagText(video, "gay") && !videoHasTagText(video, "trans");
+	}
+	if (settings.orientation === "gay") {
+		return videoHasTagText(video, "gay");
+	}
+	if (settings.orientation === "trans") {
+		return videoHasTagText(video, "trans");
+	}
+	return true;
+}
+
 function filterAndSortVideos() {
 	console.log('filterAndSortVideos');
 	pagination.value.rowsPerPage = DEFAULT_VIDEOS_PER_PAGE;
@@ -259,6 +276,8 @@ function filterAndSortVideos() {
 			tempVideos.push(video)
 		}
 	});
+
+	tempVideos = tempVideos.filter(videoMatchesOrientation);
 
 	if (tagsSelected.value.length > 0) {
 		const tempVideosNested: PartnerVideo[] = []
@@ -374,6 +393,10 @@ function filterAndSortVideos() {
 
 watch(() => $q.screen.name, () => {
 	pagination.value.rowsPerPage = rowsPerPageOptions.value[0]
+})
+
+watch(() => settings.orientation, () => {
+	filterAndSortVideos();
 })
 
 // TODO: Scroll to top of table
