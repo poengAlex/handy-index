@@ -1,12 +1,11 @@
-import { route } from 'quasar/wrappers'
+import { defineRouter } from "#q-app";
+import { routes, handleHotUpdate } from "vue-router/auto-routes";
 import {
-	createMemoryHistory,
-	createRouter,
-	createWebHashHistory,
-	createWebHistory
-} from 'vue-router'
-
-import routes from './routes'
+  createMemoryHistory,
+  createRouter,
+  createWebHashHistory,
+  createWebHistory
+} from "vue-router";
 
 /*
  * If not building with SSR mode, you can
@@ -17,36 +16,27 @@ import routes from './routes'
  * with the Router instance.
  */
 
-export default route(function (/* { store, ssrContext } */) {
-	const createHistory = process.env.SERVER
-		? createMemoryHistory
-		: (process.env.VUE_ROUTER_MODE === 'history' ? createWebHistory : createWebHashHistory)
+export default defineRouter((/* { store, ssrContext } */) => {
+  const createHistory = import.meta.env.QUASAR_SERVER
+    ? createMemoryHistory
+    : import.meta.env.QUASAR_VUE_ROUTER_MODE === "history"
+      ? createWebHistory
+      : createWebHashHistory;
 
-	const Router = createRouter({
-		// scrollBehavior: () => ({ left: 0, top: 0 }),
+  const Router = createRouter({
+    scrollBehavior: () => ({ left: 0, top: 0 }),
+    routes,
 
-		// Does not work due to the scroll beeing on the qTable
-		// scrollBehavior(to, from, savedPosition) {
-		// 	return new Promise((resolve, reject) => {
-		// 		setTimeout(() => {
-		// 			// resolve({ left: 0, top: 0 })
-		// 			console.log("savedPosition:", savedPosition);
+    // Leave this as is and make changes in quasar.conf.js instead!
+    // quasar.conf.js -> build -> vueRouterMode
+    // quasar.conf.js -> build -> publicPath
+    history: createHistory(import.meta.env.QUASAR_VUE_ROUTER_BASE)
+  });
 
-		// 			if (savedPosition) {
-		// 				resolve(savedPosition)
-		// 			} else {
-		// 				return resolve({ top: 0 });
-		// 			}
-		// 		}, 2000)
-		// 	})
-		// },
-		routes,
+  // enable HMR for it
+  if (import.meta.hot) {
+    handleHotUpdate(Router);
+  }
 
-		// Leave this as is and make changes in quasar.conf.js instead!
-		// quasar.conf.js -> build -> vueRouterMode
-		// quasar.conf.js -> build -> publicPath
-		history: createHistory(process.env.VUE_ROUTER_BASE)
-	})
-
-	return Router
-})
+  return Router;
+});

@@ -1,52 +1,51 @@
 {
-  "name": "index-test",
-  "version": "0.0.1",
-  "description": "A database of interactive video scripts.",
-  "productName": "IVDB",
-  "author": "handyAlexander <alexander@sweettech.no>",
+  "name": "ivdb",
+  "version": "1.0.0",
   "private": true,
+  "description": "IVDB — Interactive Video Database",
+  "keywords": [
+    "quasar",
+    "quasar-app",
+    "quasar-app-vite",
+    "quasar-cli",
+    "vite",
+    "vue",
+    "vuejs"
+  ],
+  "author": "handyAlexander <bbgruppen@outlook.com>",
+  "type": "module",
   "scripts": {
-    "build": "quasar build",
+    "lint": "oxfmt && oxlint --fix",
+    "lint:check": "oxfmt --check && oxlint",
     "dev": "quasar dev",
+    "build": "quasar build",
+    "typecheck": "vue-tsc --noEmit",
     "start": "node server.js",
-    "lint": "eslint --ext .js,.ts,.vue ./",
-    "test": "echo \"No test specified\" && exit 0",
-    "importApiIndex": "rimraf src/_SCRIPTAPIINDEX && openapi --exportSchemas true --input https://scripts01.handyfeeling.com/api/script/index/v0/spec --output src/_SCRIPTAPIINDEX --name ScriptApiIndex --indent 4"
+    "postinstall": "quasar prepare --silent"
   },
   "dependencies": {
-    "@ohdoki/handy-sdk": "^2.1.15",
-    "@quasar/extras": "^1.0.0",
-    "@vueuse/components": "^9.2.0",
-    "@vueuse/core": "^9.1.0",
-    "connect-history-api-fallback": "^2.0.0",
-    "dayjs": "^1.11.4",
-    "express": "^4.18.1",
-    "pinia": "^2.0.18",
-    "pinia-plugin-persistedstate": "^2.1.1",
-    "quasar": "^2.6.0",
-    "serve-static": "^1.15.0",
-    "vue": "^3.0.0",
-    "vue-router": "^4.0.0"
+    "@fontsource-variable/figtree": "^5.3.0",
+    "@quasar/extras": "^2.0.0",
+    "express": "^5.2.1",
+    "pinia": "^3.0.1",
+    "pinia-plugin-persistedstate": "^4.7.1",
+    "quasar": "^2.21.1",
+    "vue": "^3.5.22",
+    "vue-router": "^5.0.6",
+    "vue3-carousel": "^0.17.0"
   },
   "devDependencies": {
-    "@quasar/app-vite": "^1.0.0",
-    "@types/node": "^12.20.21",
-    "@typescript-eslint/eslint-plugin": "^5.10.0",
-    "@typescript-eslint/parser": "^5.10.0",
-    "autoprefixer": "^10.4.2",
-    "eslint": "^8.10.0",
-    "eslint-config-standard": "^17.0.0",
-    "eslint-plugin-import": "^2.19.1",
-    "eslint-plugin-n": "^15.0.0",
-    "eslint-plugin-promise": "^6.0.0",
-    "eslint-plugin-vue": "^9.0.0",
-    "openapi-typescript-codegen": "^0.23.0",
-    "rimraf": "^3.0.2",
-    "typescript": "^4.5.4"
+    "@quasar/app-vite": "^3.0.0",
+    "@types/node": "^22.19.11",
+    "autoprefixer": "^10.4.27",
+    "oxfmt": "^0.x",
+    "oxlint": "^1.x",
+    "oxlint-tsgolint": "^0.x",
+    "typescript": "^6.0.0",
+    "vue-tsc": "^3.3.3"
   },
   "engines": {
-    "node": "^18 || ^16 || ^14.19",
-    "npm": ">= 6.13.4",
-    "yarn": ">= 1.21.1"
-  }
+    "node": ">= 26 || ^24 || ^22.12"
+  },
+  "productName": "IVDB"
 }

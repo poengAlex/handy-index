@@ -1,111 +1,801 @@
-// app global css in SCSS form
+// ============================================================
+// The Handy — global styles
+// Implements DESIGN.md: tokens (§3), typography (§4), spacing
+// & radius (§5), elevation (§6), component re-skins (§7),
+// motion (§9), accessibility (§11).
+// ============================================================
 
-//container
-$xs-breakpoint: 718px;
-$sm-breakpoint: 1024px;
-$md-breakpoint: 1439px;
-$lg-breakpoint: 1920px;
+@import "@fontsource-variable/figtree";
 
-.container,
-.container-sm,
-.container-md,
-.container-lg,
-.container-xl {
-    width: 100%;
-    margin-right: auto;
-    margin-left: auto;
+// ------------------------------------------------------------
+// Semantic tokens — light mode (default)  [DESIGN.md §3]
+// ------------------------------------------------------------
+:root {
+  /* Surfaces */
+  --color-bg-page: #ffffff;
+  --color-bg-page-alt: #f1f4f7;
+  --color-bg-card: #ffffff;
+  --color-bg-input: #ffffff;
+  --color-bg-overlay: rgba(0, 0, 0, 0.6);
+  --color-bg-hero-dark: #1c1e21;
+
+  /* Text */
+  --color-text-primary: #1c2b33;
+  --color-text-secondary: #5d6c7b;
+  --color-text-tertiary: #5d6c7b;
+  --color-text-inverse: #ffffff;
+  --color-text-link: #0064e0;
+  --color-text-error: #e41e3f;
+  --color-text-warning: #8a6f0e;
+  --color-text-success: #1f6b3a;
+
+  /* Borders */
+  --color-stroke-subtle: #dee3e9;
+  --color-stroke-default: #5d6c7b;
+  --color-stroke-strong: #1c2b33;
+  --color-stroke-focus: #0064e0;
+  --color-stroke-error: #e41e3f;
+
+  /* Action */
+  --color-action-primary: #0064e0;
+  --color-action-primary-hover: #0143b5;
+  --color-action-primary-label: #ffffff;
+  --color-action-secondary-stroke: #1c2b33;
+  --color-action-secondary-label: #1c2b33;
+  --color-action-tertiary-label: #1c2b33;
+  --color-action-tertiary-hover: #0064e0;
+
+  /* Row / list hover — a faint Brand Blue tint (interactive cue), kept
+     distinct from the neutral Soft Gray surfaces so a row never blends
+     into its background on hover */
+  --color-row-hover: rgba(0, 100, 224, 0.07);
+
+  /* Semantic feedback */
+  --color-feedback-positive: #31a24c;
+  --color-feedback-negative: #e41e3f;
+  --color-feedback-warning: #f7b928;
+  --color-feedback-info: #0064e0;
+
+  /* Accent — the one decorative accent AND the connected-state colour
+     (v16 §2.1: one purple, two roles, one token — the device LED purple).
+     Theme-independent. */
+  --color-accent: #a121ce;
+  /* the connected colour as TEXT — like --color-text-link it needs a
+     lighter tint on dark, where the raw purple fails contrast */
+  --color-text-connected: #a121ce;
+
+  /* Labels on saturated semantic fills — theme-independent (the fill stays
+     saturated in both themes). Amber is the exception: it needs dark ink. */
+  --color-text-on-fill: #ffffff;
+  --color-text-on-warning: #1c2b33;
+
+  /* Spacing — 8px base grid [§5] */
+  --space-xs: 8px;
+  --space-sm: 16px;
+  --space-md: 24px;
+  --space-lg: 32px;
+  --space-xl: 48px;
+  --space-2xl: 64px;
+  --space-3xl: 80px;
+  --space-4xl: 96px;
+
+  /* Radius [§5] */
+  --radius-none: 0px;
+  --radius-xs: 8px;
+  --radius-sm: 12px;
+  --radius-md: 16px;
+  --radius-lg: 20px;
+  --radius-xl: 32px;
+  --radius-full: 9999px;
+
+  /* Elevation [§6] — dual-layer (ambient + sharp) at every tier */
+  --shadow-none: none;
+  --shadow-sm:
+    0 4px 12px 0 rgba(0, 0, 0, 0.12), 0 1px 3px 0 rgba(0, 0, 0, 0.14);
+  --shadow-md: 0 4px 8px 0 rgba(0, 0, 0, 0.1), 0 2px 4px 0 rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 12px 28px 0 rgba(0, 0, 0, 0.2), 0 2px 4px 0 rgba(0, 0, 0, 0.1);
+  --shadow-xl:
+    0 16px 48px 0 rgba(0, 0, 0, 0.25), 0 4px 8px 0 rgba(0, 0, 0, 0.1);
+
+  /* Scrims [§6] */
+  --scrim-bottom-dark: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0.6) 100%
+  );
+  --scrim-top-dark: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.6) 0%,
+    rgba(0, 0, 0, 0) 100%
+  );
+
+  /* Font */
+  --font-brand:
+    "Figtree Variable", "Figtree", -apple-system, BlinkMacSystemFont, "Inter",
+    "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
-//This does not look good
-// @media (min-width: $xs-breakpoint) {
+// ------------------------------------------------------------
+// Dark mode  [DESIGN.md §3]
+// ------------------------------------------------------------
+[data-theme="dark"] {
+  /* Surfaces */
+  --color-bg-page: #1c1e21;
+  --color-bg-page-alt: #2a2d31;
+  --color-bg-card: #26282b; /* Elevated Dark — v2.1, 14th palette color */
+  --color-bg-input: #26282b;
+  --color-bg-overlay: rgba(0, 0, 0, 0.7);
+  --color-bg-hero-dark: #000000;
 
-//     .container,
-//     .container-sm {
-//         max-width: 540px;
-//     }
-// }
+  /* Text */
+  --color-text-primary: #ffffff;
+  --color-text-secondary: rgba(255, 255, 255, 0.72);
+  --color-text-tertiary: rgba(255, 255, 255, 0.56);
+  --color-text-inverse: #1c2b33;
+  --color-text-link: #47a5fa;
+  --color-text-connected: #c86ee8;
+  --color-text-error: #ff8a95;
+  --color-text-warning: #f7b928;
+  --color-text-success: #6fe0a0;
 
-@media (min-width: $sm-breakpoint) {
+  /* Borders */
+  --color-stroke-subtle: rgba(255, 255, 255, 0.08);
+  --color-stroke-default: rgba(255, 255, 255, 0.16);
+  --color-stroke-strong: #ffffff;
+  --color-stroke-focus: #47a5fa;
+  --color-stroke-error: #ff8a95;
 
-    .container,
-    .container-sm,
-    .container-md {
-        // max-width: 920px;
+  /* Action */
+  --color-action-primary: #0064e0;
+  --color-action-primary-hover: #47a5fa;
+  --color-action-primary-label: #ffffff;
+  --color-action-secondary-stroke: #ffffff;
+  --color-action-secondary-label: #ffffff;
+  --color-action-tertiary-label: #ffffff;
+  --color-action-tertiary-hover: #47a5fa;
+  --color-row-hover: rgba(71, 165, 250, 0.14);
+
+  /* Semantic feedback */
+  --color-feedback-info: #47a5fa;
+}
+
+// ------------------------------------------------------------
+// Hero invert — dark section embedded in a light page [§3, §12]
+// ------------------------------------------------------------
+.section-dark {
+  --color-bg-page: #1c1e21;
+  --color-bg-page-alt: #2a2d31;
+  --color-bg-card: #26282b;
+  --color-bg-input: #26282b;
+  --color-text-primary: #ffffff;
+  --color-text-secondary: rgba(255, 255, 255, 0.72);
+  --color-text-tertiary: rgba(255, 255, 255, 0.56);
+  --color-text-link: #47a5fa;
+  --color-text-connected: #c86ee8;
+  --color-stroke-subtle: rgba(255, 255, 255, 0.08);
+  --color-stroke-default: rgba(255, 255, 255, 0.16);
+  --color-stroke-strong: #ffffff;
+  --color-stroke-focus: #47a5fa;
+  --color-action-primary-hover: #47a5fa;
+  --color-action-secondary-stroke: #ffffff;
+  --color-action-secondary-label: #ffffff;
+  --color-action-tertiary-label: #ffffff;
+  --color-action-tertiary-hover: #47a5fa;
+  --color-row-hover: rgba(71, 165, 250, 0.14);
+  --color-feedback-info: #47a5fa;
+
+  background: var(--color-bg-page);
+  color: var(--color-text-primary);
+}
+
+// ------------------------------------------------------------
+// Light section — pinned light surface inside dark mode [§12]
+// (counterpart of .section-dark; Quasar components inside need an
+// explicit :dark="false")
+// ------------------------------------------------------------
+.section-light {
+  --color-bg-page: #ffffff;
+  --color-bg-page-alt: #f1f4f7;
+  --color-bg-card: #ffffff;
+  --color-bg-input: #ffffff;
+  --color-text-primary: #1c2b33;
+  --color-text-secondary: #5d6c7b;
+  --color-text-tertiary: #5d6c7b;
+  --color-text-link: #0064e0;
+  --color-text-connected: #a121ce;
+  --color-stroke-subtle: #dee3e9;
+  --color-stroke-default: #5d6c7b;
+  --color-stroke-strong: #1c2b33;
+  --color-stroke-focus: #0064e0;
+  --color-action-primary-hover: #0143b5;
+  --color-action-secondary-stroke: #1c2b33;
+  --color-action-secondary-label: #1c2b33;
+  --color-action-tertiary-label: #1c2b33;
+  --color-action-tertiary-hover: #0064e0;
+  --color-row-hover: rgba(0, 100, 224, 0.07);
+  --color-feedback-info: #0064e0;
+
+  background: var(--color-bg-page);
+  color: var(--color-text-primary);
+}
+
+// ------------------------------------------------------------
+// Base
+// ------------------------------------------------------------
+// The page is a rigid surface [DESIGN.md §10]: it never pans sideways and
+// never rubber-bands past its ends on touch.
+// - overflow-x: clip — full-bleed 100vw break-outs (carousels, dark bands)
+//   can overhang by a scrollbar width; clip removes the horizontal pan
+//   without creating a scroll container (unlike `hidden`).
+// - overscroll-behavior: none — kills the elastic bounce/glow at the scroll
+//   ends and scroll chaining. Deliberate side effect: Chrome Android's
+//   pull-to-refresh is off; the brand treats the page as a fixed surface.
+html,
+body {
+  overflow-x: clip;
+  overscroll-behavior: none;
+}
+
+body {
+  font-family: var(--font-brand);
+  background: var(--color-bg-page);
+  color: var(--color-text-primary);
+  font-size: 16px;
+  line-height: 144%;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--color-text-link);
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+// Visible focus ring on every interactive element [§11]
+:focus-visible {
+  outline: 2px solid var(--color-stroke-focus);
+  outline-offset: 2px;
+}
+
+// ------------------------------------------------------------
+// Typography  [DESIGN.md §4]
+// clamp() scales between 600px and 1440px viewports.
+// Overrides Quasar's .text-* classes so the same names work.
+// ------------------------------------------------------------
+@mixin display-features {
+  font-feature-settings:
+    "ss01" on,
+    "ss02" on,
+    "cv11" on;
+}
+
+.text-display {
+  font-size: clamp(40px, 17.1px + 3.81vw, 72px);
+  font-weight: 500;
+  line-height: 116%;
+  letter-spacing: 0;
+  @include display-features;
+}
+
+.text-h1 {
+  font-size: clamp(32px, 20.6px + 1.9vw, 48px);
+  font-weight: 500;
+  line-height: 116%;
+  letter-spacing: 0;
+  @include display-features;
+}
+
+.text-h2 {
+  font-size: clamp(26px, 18.9px + 1.19vw, 36px);
+  font-weight: 500;
+  line-height: 121%;
+  letter-spacing: 0;
+  @include display-features;
+}
+
+.text-h3 {
+  font-size: clamp(22px, 16.3px + 0.95vw, 30px);
+  font-weight: 700;
+  line-height: 128%;
+  letter-spacing: 0;
+  @include display-features;
+}
+
+.text-h4 {
+  font-size: clamp(20px, 17.1px + 0.48vw, 24px);
+  font-weight: 500;
+  line-height: 144%;
+  letter-spacing: 0;
+}
+
+.text-h5 {
+  font-size: clamp(16px, 14.6px + 0.24vw, 18px);
+  font-weight: 500;
+  line-height: 144%;
+  letter-spacing: 0;
+}
+
+.text-h6 {
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 144%;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.text-body-lg {
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 144%;
+}
+
+.text-body {
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 144%;
+}
+
+.text-body-compact {
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 150%;
+  letter-spacing: -0.16px;
+}
+
+.text-body-sm {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 143%;
+  letter-spacing: -0.14px;
+}
+
+.text-caption {
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 133%;
+  letter-spacing: 0;
+}
+
+.text-button {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 143%;
+  letter-spacing: -0.14px;
+}
+
+// Prose columns cap at 680px [§4]
+.prose {
+  max-width: 680px;
+}
+
+// Token-driven text colors
+.text-secondary-token {
+  color: var(--color-text-secondary);
+}
+
+.text-tertiary-token {
+  color: var(--color-text-tertiary);
+}
+
+// Shared page scaffolding (every showcase page)
+.page-head {
+  padding-bottom: var(--space-md);
+}
+
+.page-lead {
+  color: var(--color-text-secondary);
+  margin-top: var(--space-sm);
+}
+
+.full-width {
+  width: 100%;
+}
+
+// Realtime / frequently-updating numbers use tabular figures so digit
+// widths don't reflow as values change — Figtree's default numerals are
+// proportional. Apply to any live readout (speed, battery, temp, timers).
+// [DESIGN.md §4]
+.text-tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+// Annotation chip — a pill tag that never shares its background with the
+// surface behind it. Soft Gray on white surfaces, translucent white on
+// dark, and on a Soft Gray (page-alt) section it flips to card-white so it
+// stays visible. The flip rides --h-chip-bg, re-declared per surface scope
+// (a var() inside a custom property resolves where it's DECLARED, so each
+// scope needs its own). [DESIGN.md §7]
+:root {
+  --h-chip-bg: var(--color-bg-page-alt);
+}
+
+[data-theme="dark"],
+.section-dark {
+  --h-chip-bg: rgba(255, 255, 255, 0.1);
+}
+
+.h-section--alt {
+  --h-chip-bg: var(--color-bg-card);
+}
+
+// Toast skin [§7] — semantic left accent on the card surface; global (not
+// page-scoped) because q-notify renders in a portal. Fired via hToast().
+.h-toast {
+  border-left: 4px solid;
+  border-radius: var(--radius-md);
+  font-family: var(--font-brand);
+  background: var(--color-bg-card) !important;
+  color: var(--color-text-primary) !important;
+}
+
+.h-toast--positive {
+  border-color: var(--color-feedback-positive);
+}
+
+.h-toast--info {
+  border-color: var(--color-feedback-info);
+}
+
+.h-toast--warning {
+  border-color: var(--color-feedback-warning);
+}
+
+.h-toast--negative {
+  border-color: var(--color-feedback-negative);
+}
+
+// ------------------------------------------------------------
+// Layout  [DESIGN.md §5, §10]
+// ------------------------------------------------------------
+.h-container {
+  max-width: 1440px;
+  margin-inline: auto;
+  padding-inline: 24px;
+
+  @media (min-width: 600px) {
+    padding-inline: 32px;
+  }
+
+  @media (min-width: 1440px) {
+    padding-inline: 40px;
+  }
+}
+
+.h-section {
+  background: var(--color-bg-page);
+  padding-block: var(--space-xl);
+
+  @media (min-width: 600px) {
+    padding-block: var(--space-2xl);
+  }
+
+  @media (min-width: 1024px) {
+    padding-block: var(--space-3xl);
+  }
+}
+
+.h-section--alt {
+  background: var(--color-bg-page-alt);
+}
+
+// ------------------------------------------------------------
+// Glassmorphism  [DESIGN.md §6] — only over imagery / sticky nav
+// ------------------------------------------------------------
+.glass-light {
+  background: rgba(241, 244, 247, 0.8);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+}
+
+.glass-dark {
+  background: rgba(28, 30, 33, 0.7);
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+}
+
+// ------------------------------------------------------------
+// Quasar re-skins  [DESIGN.md §7]
+// ------------------------------------------------------------
+
+// Buttons — sentence case, pill, tight tracking
+.q-btn {
+  text-transform: none;
+  letter-spacing: -0.14px;
+  font-weight: 500;
+
+  // icon-to-label gap is --space-xs per §5; Quasar ships 6px
+  .on-left {
+    margin-right: var(--space-xs);
+  }
+
+  .on-right {
+    margin-left: var(--space-xs);
+  }
+}
+
+// Secondary (outlined) — MD2 default border is thicker
+.q-btn--outline:before {
+  border-width: 1px;
+}
+
+// Form fields — 8px radius all corners, full 2px focus border
+.q-field--filled,
+.q-field--outlined {
+  .q-field__control {
+    border-radius: var(--radius-xs);
+    background: var(--color-bg-input);
+  }
+}
+
+.q-field--filled {
+  .q-field__control {
+    box-shadow: inset 0 0 0 1px var(--color-stroke-subtle);
+    transition: box-shadow 180ms ease;
+
+    &:before,
+    &:after {
+      display: none; // kill MD2's bottom-border-grows pattern
     }
+  }
+
+  &.q-field--focused .q-field__control {
+    box-shadow: inset 0 0 0 2px var(--color-stroke-focus);
+  }
+
+  &.q-field--error .q-field__control {
+    box-shadow: inset 0 0 0 2px var(--color-stroke-error);
+  }
 }
 
-@media (min-width: $md-breakpoint) {
-
-    .container,
-    .container-sm,
-    .container-md,
-    .container-lg {
-        max-width: 1140px;
-    }
+.q-field--disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
-@media (min-width: $lg-breakpoint) {
+// Number inputs — hide native spin buttons; steppers and inline ±
+// buttons provide the affordance
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
 
-    .container,
-    .container-sm,
-    .container-md,
-    .container-lg,
-    .container-xl {
-        max-width: 1440px;
-    }
-}
-
-.body--light {
-	background-color: $grey-1;
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
 }
 
-//fix automatically
-// .body--dark {
-// 	background-color: bisque;
-// }
-
-.body--light .topHeaderBar{
-	background-color: $grey-1;
-	color: $grey-8
-}
-.body--dark .topHeaderBar{
-	background-color: $grey-10;
-	color: $grey-2
+// Cards — 20px radius is set via $generic-border-radius; keep them flat
+.q-card {
+  background: var(--color-bg-card);
+  color: var(--color-text-primary);
 }
 
-.body--light .tagChip{
-	background-color: $grey-10;
-	color: $grey-2
-}
-.body--dark .tagChip{
-	background-color: $grey-8;
-	color: $grey-4
+// Tabs — active underline, brand blue [§7]
+.q-tab {
+  text-transform: none;
+  letter-spacing: -0.14px;
 }
 
-.body--light .infoChip{
-	background-color: $grey-4;
-	color: $grey-10
-}
-.body--dark .infoChip{
-	background-color: $grey-8;
-	color: $grey-4
-}
-
-.body--dark a{
-	color: $blue-4
+// Brand Blue as *text* is forbidden on dark surfaces (changes.md, Color):
+// active tab labels lighten to the link token. The 2px underline is a
+// non-text accent and stays Brand Blue.
+[data-theme="dark"] .q-tab.text-primary,
+.section-dark .q-tab.text-primary {
+  color: var(--color-text-link) !important;
 }
 
-//Drawer links
-.body--dark a .q-item__label{
-	color: $grey-4
+.q-tabs .q-tab__indicator {
+  height: 2px;
+  transition: transform 180ms ease;
 }
-.body--dark a .q-icon{
-	color: $grey-4
-}
-// .body--light a .q-item__label{
-// 	color: $grey-10
-// }
-// .body--light a .q-icon{
-// 	color: $grey-10
-// }
 
+// Active tab is bold; resting tabs stay regular weight. With the Brand Blue
+// label + 2px underline, weight is the third signal that sets active apart.
+.q-tab .q-tab__label {
+  font-weight: 400;
+}
+
+.q-tab--active .q-tab__label {
+  font-weight: 700;
+}
+
+// Chips
+.q-chip {
+  border-radius: var(--radius-full);
+}
+
+// $generic-border-radius is 20px for cards/dialogs (§5), but Quasar also
+// feeds it to small components where 20px breaks geometry. Scope them back:
+// slider/range value balloon — 20px on a 25px-tall bubble curves away the
+// flat bottom edge its arrow docks against.
+.q-slider__text-container {
+  border-radius: var(--radius-xs);
+}
+
+// M3 sliders: thick rounded track, skinny handle bar (path set in
+// boot/quasar-defaults.ts) separated from the track by a gap. The "gap"
+// is a stroke painted under the handle fill in the host surface's color
+// — surfaces that aren't the page background must set --h-slider-gap to
+// their own color. Declared per scope (not just :root) because var()
+// inside a custom property resolves where it's DECLARED, not used —
+// a single :root declaration would bake in the light page color and
+// leak a white halo onto dark sections.
+:root,
+[data-theme="dark"],
+.section-dark,
+.section-light {
+  --h-slider-gap: var(--color-bg-page);
+}
+
+// Mobile drag fix. Quasar's slider (use-slider.js) binds TouchPan with
+// `prevent: true` and relies on preventDefault-ing the FIRST touchmove to
+// win the gesture — but ships no touch-action, so the browser usually
+// claims the swipe for page scroll before the slider ever sees it (desktop
+// is unaffected: mousedown has no such race). Declare the intent up front:
+// keep the page-scroll axis native, hand the slider's own axis to the drag
+// handler. Editable only — disabled/readonly sliders shouldn't eat swipes.
+// QRange carries the same q-slider--h/--v classes, so ranges are covered.
+.q-slider--h.q-slider--editable {
+  touch-action: pan-y;
+}
+
+.q-slider--v.q-slider--editable {
+  touch-action: pan-x;
+}
+
+// long-pressing a slider on iOS otherwise starts text selection on the
+// value balloon / marker labels mid-drag
+.q-slider--editable {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.q-slider__thumb-shape {
+  stroke-width: 0;
+
+  path {
+    fill: currentColor;
+    // 6-unit stroke, half under the fill → a 3-unit (≈6px at the 40px
+    // thumb) surface-colored gap either side of the bar
+    stroke: var(--h-slider-gap);
+    stroke-width: 6;
+    paint-order: stroke;
+    transform-box: fill-box;
+    transform-origin: center;
+    transition: transform 120ms ease;
+  }
+}
+
+// M3 press state: the handle bar slims while dragging — thickness only,
+// never its length. scaleX fits every vertical bar; sliders whose bar is
+// horizontal (the vertical fat variant) override the axis to scaleY.
+.q-slider--active .q-slider__thumb-shape path {
+  transform: scaleX(0.55);
+}
+
+// Range: slim ONLY the touched handle. Quasar suppresses the focus class
+// during a pointer drag (`preventFocus`), so we can't key on it — instead
+// it puts an inline `z-index: 2` on the dragged thumb. The other knob has
+// no z-index, so restore its resting width.
+.q-range.q-slider--active
+  .q-slider__thumb:not([style*="z-index"])
+  .q-slider__thumb-shape
+  path {
+  transform: none;
+}
+
+// Quasar scales the whole thumb svg 1.5× while dragging — and hides it
+// entirely (scale 0) on labeled sliders. M3 does neither: pin the svg
+// and let the path-level slim above be the only press response.
+.q-slider--active .q-slider__thumb-shape,
+.q-slider--active.q-slider--label .q-slider__thumb-shape {
+  transform: scale(1) !important;
+}
+
+// M3: the active fill is flat-cut (2px) where it meets the handle; only
+// its outer end keeps the pill radius. The handle's surface-colored gap
+// masks the flat corners near the track's rounded caps. Vertical sliders
+// are always used `reverse` (fill from the bottom → flat edge on top).
+// outer corners use the track's own radius ($generic-border-radius, 20px)
+// — anything rounder under-shoots the cap and lets the track peek out
+// around the fill at the end
+.q-slider__track-container--h .q-slider__selection {
+  border-radius: var(--radius-lg) 2px 2px var(--radius-lg);
+}
+
+.q-slider__track-container--v .q-slider__selection {
+  border-radius: 2px 2px var(--radius-lg) var(--radius-lg);
+}
+
+// ranges: both fill edges meet a handle
+.q-range .q-slider__selection {
+  border-radius: 2px;
+}
+
+// Dropdowns are --radius-md (16px) per §7, not the 20px card radius
+.q-menu {
+  border-radius: var(--radius-md);
+}
+
+// Dialogs — overlay token + 4px blur (overrides design.md v2's no-blur rule)
+.q-dialog__backdrop {
+  background: var(--color-bg-overlay);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+// Notify toasts — card bg, semantic border-left accent [§7]
+.q-notification {
+  border-radius: var(--radius-md);
+  font-family: var(--font-brand);
+}
+
+// ------------------------------------------------------------
+// Motion  [DESIGN.md §9]
+// ------------------------------------------------------------
+
+// Directional page transitions (250ms, ease-out in / ease-in out)
+.route-forward-enter-active,
+.route-back-enter-active {
+  transition:
+    transform 250ms ease-out,
+    opacity 250ms ease-out;
+}
+
+.route-forward-leave-active,
+.route-back-leave-active {
+  transition:
+    transform 250ms ease-in,
+    opacity 250ms ease-in;
+}
+
+.route-forward-enter-from {
+  transform: translateX(24px);
+  opacity: 0;
+}
+
+.route-forward-leave-to {
+  transform: translateX(-24px);
+  opacity: 0;
+}
+
+.route-back-enter-from {
+  transform: translateX(-24px);
+  opacity: 0;
+}
+
+.route-back-leave-to {
+  transform: translateX(24px);
+  opacity: 0;
+}
+
+.route-fade-enter-active,
+.route-fade-leave-active {
+  transition: opacity 180ms ease;
+}
+
+.route-fade-enter-from,
+.route-fade-leave-to {
+  opacity: 0;
+}
+
+// Reduced motion, per-class (§5.8): decorative motion off, essential
+// indicators keep working — never a blanket duration clamp.
+@media (prefers-reduced-motion: reduce) {
+  .route-fade-enter-active,
+  .route-fade-leave-active,
+  .route-forward-enter-active,
+  .route-forward-leave-active,
+  .route-back-enter-active,
+  .route-back-leave-active {
+    transition: none;
+  }
+
+  html {
+    scroll-behavior: auto;
+  }
+}

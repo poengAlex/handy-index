@@ -1,25 +1,45 @@
-// Quasar SCSS (& Sass) Variables
-// --------------------------------------------------
-// To customize the look and feel of this app, you can override
-// the Sass/SCSS variables found in Quasar's source Sass/SCSS files.
+// Quasar SCSS overrides — DESIGN.md §7
+// "Quasar is the engine. The brand is the skin."
 
-// Check documentation for full list of Quasar variables
+// Brand colors
+$primary: #0064e0;
+$secondary: #1c2b33;
+$accent: #a121ce;
+$dark: #1c1e21;
+$dark-page: #1c1e21;
+$positive: #31a24c;
+$negative: #e41e3f;
+$warning: #f7b928;
+$info: #0064e0;
 
-// Your own variables (that are declared here) and Quasar's own
-// ones will be available out of the box in your .vue/.scss/.sass files
+// Typography
+$typography-font-family:
+  "Figtree Variable",
+  "Figtree",
+  -apple-system,
+  BlinkMacSystemFont,
+  "Inter",
+  "Helvetica Neue",
+  Helvetica,
+  Arial,
+  sans-serif;
+$button-font-weight: 500;
+$button-font-size: 14px;
+$button-line-height: 20px;
 
-// It's highly recommended to change the default colors
-// to match your app's branding.
-// Tip: Use the "Theme Builder" on Quasar's documentation website.
+// Component shapes
+$button-border-radius: 9999px;
+$generic-border-radius: 20px;
+$button-padding: 12px 24px;
 
-$primary   : #1976D2;
-$secondary : #26A69A;
-$accent    : #5c5c5c;
-
-$dark      : #1D1D1D;
-$dark-page : #121212;
-
-$positive  : #21BA45;
-$negative  : #C10015;
-$info      : #31CCEC;
-$warning   : #F2C037;
+// Elevation — dual-shadow values from DESIGN.md §6
+$shadow-1: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
+$shadow-2:
+  0 4px 8px 0 rgba(0, 0, 0, 0.1),
+  0 2px 4px 0 rgba(0, 0, 0, 0.06);
+$shadow-3:
+  0 12px 28px 0 rgba(0, 0, 0, 0.2),
+  0 2px 4px 0 rgba(0, 0, 0, 0.1);
+$shadow-4:
+  0 16px 48px 0 rgba(0, 0, 0, 0.25),
+  0 4px 8px 0 rgba(0, 0, 0, 0.1);

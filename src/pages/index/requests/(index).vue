@@ -1,0 +1,376 @@
+<template>
+  <q-page class="requests-page">
+    <div class="h-section">
+      <div class="h-container">
+        <header class="requests-page__header">
+          <div class="requests-page__header-row">
+            <h1 class="text-h2 requests-page__title">Script requests</h1>
+            <HBtn
+              variant="tertiary"
+              label="View queue"
+              icon="pending_actions"
+              to="/requests/queue"
+            />
+          </div>
+          <p class="text-body requests-page__lead">
+            Vote on which videos get scripted next — the top-voted request goes
+            first.
+          </p>
+        </header>
+
+        <!-- The whole board is bound to a Handy connection key -->
+        <div v-if="!hasKey" class="requests-page__center">
+          <HEmptyState
+            icon="key"
+            title="Connection key needed"
+            body="The request board is tied to your Handy. Add the connection key from the Handy app to see, submit and vote on requests."
+            action-label="Add connection key"
+            @action="keyDialog = true"
+          />
+        </div>
+
+        <template v-else>
+          <!-- Submit a new request -->
+          <section class="requests-page__submit">
+            <h2 class="text-h5 requests-page__submit-title">
+              Request a video
+            </h2>
+            <p class="text-body-sm requests-page__submit-hint">
+              Paste a link to a video you'd like scripted. It goes through
+              verification before it shows up for voting.
+            </p>
+            <div class="requests-page__submit-row">
+              <q-input
+                :model-value="url"
+                filled
+                dense
+                clearable
+                label="Video URL"
+                placeholder="https://…"
+                class="requests-page__url-input"
+                @update:model-value="url = String($event ?? '')"
+                @keyup.enter="submit"
+              />
+              <HBtn
+                label="Request video"
+                :loading="submitting"
+                :disable="!validUrl"
+                @click="submit"
+              />
+            </div>
+          </section>
+
+          <!-- The voting list -->
+          <div v-if="listState === 'loading'" class="requests-page__loading">
+            <HandyLoader />
+          </div>
+
+          <div v-else-if="listState === 'error'" class="requests-page__center">
+            <HEmptyState
+              icon="cloud_off"
+              title="Couldn't load requests"
+              body="The script index didn't answer. Check your connection key and try again."
+              action-label="Try again"
+              @action="loadFirst"
+            />
+          </div>
+
+          <div v-else-if="!requests.length" class="requests-page__center">
+            <HEmptyState
+              icon="how_to_vote"
+              title="No requests waiting"
+              body="Nothing is up for a vote right now. Request a video above to get things moving."
+            />
+          </div>
+
+          <template v-else>
+            <div class="requests-page__list">
+              <RequestCard
+                v-for="request in requests"
+                :key="request.requestId"
+                :request="request"
+              >
+                <div class="requests-page__tally">
+                  <span class="text-h5 requests-page__tally-count">
+                    {{ request.votes ?? 0 }}
+                  </span>
+                  <span class="text-caption requests-page__tally-label">
+                    votes
+                  </span>
+                </div>
+                <HBtn
+                  size="sm"
+                  icon="thumb_up"
+                  :variant="
+                    settings.hasUpvoted(request.requestId)
+                      ? 'tertiary'
+                      : 'secondary'
+                  "
+                  :label="
+                    settings.hasUpvoted(request.requestId) ? 'Voted' : 'Vote'
+                  "
+                  :disable="settings.hasUpvoted(request.requestId)"
+                  :loading="votingId === request.requestId"
+                  @click="vote(request)"
+                />
+              </RequestCard>
+            </div>
+
+            <div v-if="hasMore" class="requests-page__more">
+              <HBtn
+                variant="secondary"
+                label="Load more"
+                :loading="loadingMore"
+                @click="loadMore"
+              />
+            </div>
+          </template>
+        </template>
+      </div>
+    </div>
+
+    <ConnectionKeyDialog v-model="keyDialog" @saved="onKeySaved">
+      The request board is bound to your Handy. Enter the connection key from
+      the Handy app to continue.
+    </ConnectionKeyDialog>
+  </q-page>
+</template>
+
+<script setup lang="ts">
+// The community voting board: submit a video URL, then upvote what should
+// get scripted next. Every API call here needs the Handy connection key.
+import { computed, onMounted, ref } from "vue";
+import { HBtn, HEmptyState, HandyLoader, hToast } from "@/components/handy";
+import ConnectionKeyDialog from "@/components/ConnectionKeyDialog.vue";
+import RequestCard from "@/components/RequestCard.vue";
+import {
+  createVideoRequest,
+  getVotableRequests,
+  isAuthError,
+  voteForRequest
+} from "@/services/script-index/client";
+import type { VideoRequest } from "@/services/script-index/types";
+import { useSettingsStore } from "@/stores/settings";
+
+const PAGE_SIZE = 24;
+
+const settings = useSettingsStore();
+
+const requests = ref<VideoRequest[]>([]);
+const listState = ref<"idle" | "loading" | "ready" | "error">("idle");
+const loadingMore = ref(false);
+/** a full page arrived, so the next skip is worth fetching */
+const hasMore = ref(false);
+const keyDialog = ref(false);
+
+const url = ref("");
+const submitting = ref(false);
+const votingId = ref("");
+
+const hasKey = computed(() => settings.connectionKey.trim().length > 0);
+
+const validUrl = computed(() => {
+  const raw = url.value.trim();
+  if (!raw) return false;
+  try {
+    const parsed = new URL(raw);
+    return parsed.protocol === "http:" || parsed.protocol === "https:";
+  } catch {
+    return false;
+  }
+});
+
+async function loadFirst() {
+  const key = settings.connectionKey.trim();
+  if (!key) return;
+  listState.value = "loading";
+  try {
+    const page = await getVotableRequests(key, PAGE_SIZE, 0);
+    requests.value = page;
+    hasMore.value = page.length === PAGE_SIZE;
+    listState.value = "ready";
+  } catch {
+    listState.value = "error";
+  }
+}
+
+async function loadMore() {
+  const key = settings.connectionKey.trim();
+  if (!key || loadingMore.value) return;
+  loadingMore.value = true;
+  try {
+    const page = await getVotableRequests(
+      key,
+      PAGE_SIZE,
+      requests.value.length
+    );
+    requests.value = [...requests.value, ...page];
+    hasMore.value = page.length === PAGE_SIZE;
+  } catch {
+    hToast("negative", "Couldn't load more requests", "Try again in a moment.");
+  } finally {
+    loadingMore.value = false;
+  }
+}
+
+async function vote(request: VideoRequest) {
+  if (settings.hasUpvoted(request.requestId) || votingId.value) return;
+  const key = settings.connectionKey.trim();
+  if (!key) {
+    keyDialog.value = true;
+    return;
+  }
+  votingId.value = request.requestId;
+  try {
+    await voteForRequest(request.requestId, key);
+    settings.markUpvoted(request.requestId);
+    request.votes = (request.votes ?? 0) + 1;
+    hToast(
+      "positive",
+      "Vote counted",
+      "Top-voted requests get scripted first."
+    );
+  } catch (error) {
+    if (isAuthError(error)) {
+      keyDialog.value = true;
+      hToast(
+        "negative",
+        "Vote failed",
+        "Your connection key was rejected — enter it again."
+      );
+    } else {
+      hToast(
+        "negative",
+        "Vote failed",
+        "The script index didn't accept the vote. Try again."
+      );
+    }
+  } finally {
+    votingId.value = "";
+  }
+}
+
+async function submit() {
+  if (!validUrl.value || submitting.value) return;
+  const key = settings.connectionKey.trim();
+  if (!key) {
+    keyDialog.value = true;
+    return;
+  }
+  submitting.value = true;
+  try {
+    await createVideoRequest(url.value.trim(), key);
+    url.value = "";
+    hToast(
+      "positive",
+      "Request sent",
+      "It goes through verification before it shows up for voting."
+    );
+  } catch {
+    hToast(
+      "negative",
+      "Request failed",
+      "The script index didn't accept the URL. Try again."
+    );
+  } finally {
+    submitting.value = false;
+  }
+}
+
+function onKeySaved() {
+  if (listState.value !== "ready") void loadFirst();
+}
+
+onMounted(() => {
+  if (hasKey.value) void loadFirst();
+});
+</script>
+
+<style scoped lang="scss">
+.requests-page {
+  padding-bottom: var(--space-3xl);
+}
+
+.requests-page__header {
+  margin-bottom: var(--space-lg);
+}
+
+.requests-page__header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+}
+
+.requests-page__title {
+  margin: 0 0 var(--space-xs);
+}
+
+.requests-page__lead {
+  margin: 0;
+  color: var(--color-text-secondary);
+  max-width: 56ch;
+}
+
+.requests-page__center {
+  display: flex;
+  justify-content: center;
+}
+
+.requests-page__loading {
+  min-height: 40vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// card contract: card surface, lg radius, md padding, flat
+.requests-page__submit {
+  background: var(--color-bg-card);
+  border-radius: var(--radius-lg);
+  padding: var(--space-md);
+  margin-bottom: var(--space-lg);
+}
+
+.requests-page__submit-title {
+  margin: 0 0 var(--space-xs);
+}
+
+.requests-page__submit-hint {
+  margin: 0 0 var(--space-sm);
+  color: var(--color-text-tertiary);
+}
+
+.requests-page__submit-row {
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+
+.requests-page__url-input {
+  flex: 1;
+  min-width: 220px;
+}
+
+.requests-page__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.requests-page__tally {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-xs);
+}
+
+.requests-page__tally-count {
+  font-variant-numeric: tabular-nums;
+}
+
+.requests-page__tally-label {
+  color: var(--color-text-tertiary);
+}
+</style>
