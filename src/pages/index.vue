@@ -42,6 +42,7 @@
           class="app-toolbar__btn"
           to="/favorites"
         />
+        <OrientationMenu />
         <q-btn
           flat
           round
@@ -116,6 +117,7 @@ import {
   useHandyTheme
 } from "@/components/handy";
 import ConsentDialog from "@/components/ConsentDialog.vue";
+import OrientationMenu from "@/components/OrientationMenu.vue";
 import SettingsDialog from "@/components/SettingsDialog.vue";
 import { useCatalogStore } from "@/stores/catalog";
 
@@ -190,6 +192,8 @@ onMounted(() => {
 
 .app-toolbar__btn {
   color: var(--color-text-primary);
+  // icon buttons with a `to` render as <a>; kill the global anchor underline
+  text-decoration: none !important;
 }
 
 .app-nav {

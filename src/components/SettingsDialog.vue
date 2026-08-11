@@ -111,20 +111,15 @@ import {
 import ClearDataDialog from "@/components/ClearDataDialog.vue";
 import MutedTagsDialog from "@/components/MutedTagsDialog.vue";
 import { sanitizeConnectionKey } from "@/services/format";
-import { ORIENTATIONS } from "@/services/script-index/queries";
-import type { Orientation } from "@/services/script-index/queries";
+import {
+  ORIENTATIONS,
+  ORIENTATION_LABELS
+} from "@/services/script-index/queries";
 import { useSettingsStore } from "@/stores/settings";
 
 defineProps<{ modelValue: boolean }>();
 
 const emit = defineEmits<{ "update:modelValue": [value: boolean] }>();
-
-const ORIENTATION_LABELS: Record<Orientation, string> = {
-  straight: "Straight",
-  gay: "Gay",
-  trans: "Trans",
-  all: "Everything"
-};
 
 const settings = useSettingsStore();
 

@@ -7,6 +7,22 @@ export type Orientation = "straight" | "gay" | "trans" | "all";
 
 export const ORIENTATIONS: Orientation[] = ["straight", "gay", "trans", "all"];
 
+/** Shared vocabulary for every orientation control (settings, browse filters,
+ * the header switcher) so the four options can't drift apart. */
+export const ORIENTATION_LABELS: Record<Orientation, string> = {
+  straight: "Straight",
+  gay: "Gay",
+  trans: "Trans",
+  all: "Everything"
+};
+
+export const ORIENTATION_ICONS: Record<Orientation, string> = {
+  straight: "woman",
+  gay: "man",
+  trans: "transgender",
+  all: "all_inclusive"
+};
+
 export function matchesOrientation(
   video: PartnerVideo,
   orientation: Orientation

@@ -270,6 +270,7 @@ import type { HLabeledSliderRange } from "@/components/handy/HLabeledSlider.vue"
 import VideoGrid from "@/components/VideoGrid.vue";
 import {
   ORIENTATIONS,
+  ORIENTATION_LABELS,
   alphabetical,
   byDurationRange,
   byPartner,
@@ -284,8 +285,7 @@ import {
   searchTitle,
   tagsOf,
   topRated,
-  vrOnly,
-  type Orientation
+  vrOnly
 } from "@/services/script-index/queries";
 import type { PartnerVideo } from "@/services/script-index/types";
 import { useCatalogStore } from "@/stores/catalog";
@@ -353,13 +353,6 @@ interface FilterChip {
   icon: string;
   remove: () => void;
 }
-
-const ORIENTATION_LABELS: Record<Orientation, string> = {
-  straight: "Straight",
-  gay: "Gay",
-  trans: "Trans",
-  all: "Everything"
-};
 
 const route = useRoute();
 const router = useRouter();
