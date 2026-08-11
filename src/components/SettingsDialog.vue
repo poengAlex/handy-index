@@ -18,6 +18,27 @@
             label="Premium videos"
             caption="Include videos without a free script"
           />
+          <HToggleRow
+            v-model="settings.inlinePlayers"
+            icon="play_circle"
+            label="Embedded players"
+            caption="Play Pornhub and xHamster videos right on the video page"
+          />
+          <HListRow
+            icon="block"
+            label="Muted tags"
+            :caption="mutedCaption"
+            :clickable="false"
+          >
+            <template #trailing>
+              <HBtn
+                variant="tertiary"
+                size="sm"
+                label="Manage"
+                @click="mutedTagsOpen = true"
+              />
+            </template>
+          </HListRow>
         </HList>
 
         <HList title="Orientation">
@@ -47,26 +68,48 @@
             Your Handy connection key, used when downloading scripts.
           </div>
         </div>
+
+        <HNavCard
+          v-close-popup
+          icon="help"
+          label="Help & features"
+          caption="Everything you can do on this site"
+          to="/help"
+        />
       </div>
 
       <template #actions>
-        <HBtn variant="tertiary" label="Clear all data" @click="clearAll" />
+        <HBtn
+          variant="tertiary"
+          label="Clear data…"
+          @click="clearDataOpen = true"
+        />
         <HBtn v-close-popup label="Done" />
       </template>
     </HModal>
   </q-dialog>
+
+  <ClearDataDialog
+    v-model="clearDataOpen"
+    @cleared-all="emit('update:modelValue', false)"
+  />
+
+  <MutedTagsDialog v-model="mutedTagsOpen" />
 </template>
 
 <script setup lang="ts">
-import { nextTick } from "vue";
+import { computed, nextTick, ref } from "vue";
 import {
   HBtn,
   HList,
+  HListRow,
+  HNavCard,
   HRadioRow,
   HToggleRow,
-  HModal,
-  hToast
+  HModal
 } from "@/components/handy";
+import ClearDataDialog from "@/components/ClearDataDialog.vue";
+import MutedTagsDialog from "@/components/MutedTagsDialog.vue";
 import { sanitizeConnectionKey } from "@/services/format";
 import { ORIENTATIONS } from "@/services/script-index/queries";
 import type { Orientation } from "@/services/script-index/queries";
@@ -85,6 +128,16 @@ const ORIENTATION_LABELS: Record<Orientation, string> = {
 
 const settings = useSettingsStore();
 
+const clearDataOpen = ref(false);
+const mutedTagsOpen = ref(false);
+
+const mutedCaption = computed(() => {
+  const count = settings.mutedTags.length;
+  return count
+    ? `${count} tag${count === 1 ? "" : "s"} muted`
+    : "Nothing muted";
+});
+
 // force a change cycle when sanitizing strips the typed char back to the
 // stored value — otherwise the controlled q-input keeps showing the bad char
 async function onKeyInput(raw: string) {
@@ -94,12 +147,6 @@ async function onKeyInput(raw: string) {
     await nextTick();
   }
   settings.connectionKey = clean;
-}
-
-function clearAll() {
-  settings.clearAll();
-  emit("update:modelValue", false);
-  hToast("info", "All local data cleared");
 }
 </script>
 

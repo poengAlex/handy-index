@@ -41,6 +41,15 @@
             <q-icon name="sort" />
           </template>
         </q-select>
+        <q-btn
+          flat
+          round
+          :icon="sortDir === 'desc' ? 'arrow_downward' : 'arrow_upward'"
+          :aria-label="`Sorted ${sortDir === 'desc' ? 'descending' : 'ascending'} — reverse`"
+          :title="`Sorted ${sortDir === 'desc' ? 'descending' : 'ascending'} — click to reverse`"
+          class="videos-page__dir"
+          @click="flipDir"
+        />
         <HBtn
           variant="secondary"
           icon="tune"
@@ -86,7 +95,18 @@
           class="videos-page__grid"
         />
         <div v-else class="videos-page__state">
+          <!-- A muted tag arriving via ?tag= (bookmark, shared link) empties
+               the grid, and "Clear all filters" provably cannot fix it -->
           <HEmptyState
+            v-if="mutedActiveTags.length"
+            icon="volume_off"
+            :title="mutedTitle"
+            :body="mutedBody"
+            :action-label="mutedAction"
+            @action="unmuteActive"
+          />
+          <HEmptyState
+            v-else
             icon="search_off"
             title="No videos match"
             body="Every video got filtered out. Loosen the search or remove some filters."
@@ -180,6 +200,24 @@
               caption="Only virtual-reality videos"
               @update:model-value="setVr"
             />
+            <HToggleRow
+              v-model="settings.showPremium"
+              icon="workspace_premium"
+              label="Premium videos"
+              caption="Include videos without a free script — applies everywhere"
+            />
+          </HList>
+
+          <!-- Mirrors of the global settings gates (not URL filters): they
+               don't count toward the badge and Clear filters leaves them -->
+          <HList title="Orientation">
+            <HRadioRow
+              v-for="option in ORIENTATIONS"
+              :key="option"
+              v-model="settings.orientation"
+              :val="option"
+              :label="ORIENTATION_LABELS[option]"
+            />
           </HList>
 
           <HLabeledSlider
@@ -224,12 +262,14 @@ import {
   HLabeledSlider,
   HList,
   HModal,
+  HRadioRow,
   HToggleRow,
   HandyLoader
 } from "@/components/handy";
 import type { HLabeledSliderRange } from "@/components/handy/HLabeledSlider.vue";
 import VideoGrid from "@/components/VideoGrid.vue";
 import {
+  ORIENTATIONS,
   alphabetical,
   byDurationRange,
   byPartner,
@@ -244,10 +284,12 @@ import {
   searchTitle,
   tagsOf,
   topRated,
-  vrOnly
+  vrOnly,
+  type Orientation
 } from "@/services/script-index/queries";
 import type { PartnerVideo } from "@/services/script-index/types";
 import { useCatalogStore } from "@/stores/catalog";
+import { useSettingsStore } from "@/stores/settings";
 
 const SEARCH_DEBOUNCE_MS = 300;
 
@@ -287,6 +329,20 @@ const SORT_OPTIONS: { label: string; value: SortKey }[] = [
   { label: "A–Z", value: "title" }
 ];
 
+type SortDir = "asc" | "desc";
+
+// the direction each sorter naturally produces; `dir` in the URL is only
+// written when it differs, and flipping away from natural reverses the list
+const NATURAL_DIR: Record<SortKey, SortDir> = {
+  recent: "desc",
+  updated: "desc",
+  top: "desc",
+  plays: "desc",
+  views: "desc",
+  longest: "desc",
+  title: "asc"
+};
+
 function isSortKey(value: string): value is SortKey {
   return value in SORTERS;
 }
@@ -298,9 +354,17 @@ interface FilterChip {
   remove: () => void;
 }
 
+const ORIENTATION_LABELS: Record<Orientation, string> = {
+  straight: "Straight",
+  gay: "Gay",
+  trans: "Trans",
+  all: "Everything"
+};
+
 const route = useRoute();
 const router = useRouter();
 const catalog = useCatalogStore();
+const settings = useSettingsStore();
 
 // --- query param normalization (values are string | string[] | null) ---
 
@@ -330,6 +394,11 @@ const sortKey = computed<SortKey>(() => {
   return isSortKey(raw) ? raw : "recent";
 });
 
+const sortDir = computed<SortDir>(() => {
+  const raw = firstParam(route.query.dir);
+  return raw === "asc" || raw === "desc" ? raw : NATURAL_DIR[sortKey.value];
+});
+
 // dmin/dmax are integer MINUTES; both optional and omitted at defaults
 const durationMin = computed(() => {
   const raw = Number.parseInt(firstParam(route.query.dmin), 10);
@@ -355,6 +424,7 @@ interface Filters {
   performerId: string;
   performerName: string;
   sort: SortKey;
+  dir: SortDir;
   vr: boolean;
   /** minutes; 0 = no lower bound */
   dmin: number;
@@ -370,6 +440,7 @@ function currentFilters(): Filters {
     performerId: performerId.value,
     performerName: performerName.value,
     sort: sortKey.value,
+    dir: sortDir.value,
     vr: vr.value,
     dmin: durationMin.value,
     dmax: durationMax.value
@@ -388,14 +459,23 @@ function apply(filters: Filters) {
     if (filters.performerName) query.performerName = filters.performerName;
   }
   if (filters.sort !== "recent") query.sort = filters.sort;
+  if (filters.dir !== NATURAL_DIR[filters.sort]) query.dir = filters.dir;
   if (filters.vr) query.vr = "1";
   if (filters.dmin > 0) query.dmin = String(filters.dmin);
   if (filters.dmax < DURATION_MAX) query.dmax = String(filters.dmax);
   void router.replace({ query });
 }
 
+// picking a new sort resets to that sort's natural direction
 function setSort(value: SortKey) {
-  apply({ ...currentFilters(), sort: value });
+  apply({ ...currentFilters(), sort: value, dir: NATURAL_DIR[value] });
+}
+
+function flipDir() {
+  apply({
+    ...currentFilters(),
+    dir: sortDir.value === "desc" ? "asc" : "desc"
+  });
 }
 
 function setVr(value: boolean) {
@@ -595,7 +675,8 @@ const chips = computed<FilterChip[]>(() => {
   const list: FilterChip[] = tags.value.map(tag => ({
     key: `tag-${tag}`,
     label: tag,
-    icon: "sell",
+    // marks a filter that can never match while the tag stays muted
+    icon: settings.mutedSet.has(tag) ? "volume_off" : "sell",
     remove: () => removeTag(tag)
   }));
   if (partnerId.value) {
@@ -632,13 +713,47 @@ const results = computed<PartnerVideo[]>(() => {
     durationMax.value >= DURATION_MAX ? Infinity : durationMax.value * 60
   );
   pool = searchTitle(pool, q.value);
-  return SORTERS[sortKey.value](pool);
+  const sorted = SORTERS[sortKey.value](pool);
+  // sorters return fresh arrays, so in-place reverse is safe
+  return sortDir.value === NATURAL_DIR[sortKey.value]
+    ? sorted
+    : sorted.reverse();
 });
 
 const countLabel = computed(() => {
   const count = results.value.length;
   return `${count.toLocaleString()} ${count === 1 ? "video" : "videos"}`;
 });
+
+// --- muted tags sitting in the URL filter ---
+
+// the URL is never silently rewritten: that would rewrite a shared link and
+// hide the very cause the empty state is trying to explain
+const mutedActiveTags = computed(() =>
+  tags.value.filter(tag => settings.mutedSet.has(tag))
+);
+
+const mutedTitle = computed(() =>
+  mutedActiveTags.value.length === 1
+    ? `“${mutedActiveTags.value[0]}” is muted`
+    : "Some of these tags are muted"
+);
+
+const mutedBody = computed(() =>
+  mutedActiveTags.value.length === 1
+    ? "Videos with this tag are hidden everywhere. Unmute it to see these results."
+    : "Videos with these tags are hidden everywhere. Unmute them to see these results."
+);
+
+const mutedAction = computed(() =>
+  mutedActiveTags.value.length === 1
+    ? `Unmute “${mutedActiveTags.value[0]}”`
+    : "Unmute them"
+);
+
+function unmuteActive() {
+  for (const tag of mutedActiveTags.value) settings.unmuteTag(tag);
+}
 </script>
 
 <style scoped lang="scss">
@@ -677,6 +792,10 @@ const countLabel = computed(() => {
 
 .videos-page__sort {
   min-width: 210px;
+}
+
+.videos-page__dir {
+  color: var(--color-text-secondary);
 }
 
 .videos-page__filters {

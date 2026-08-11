@@ -48,6 +48,21 @@ export function useIncrementalReveal<T>(
       },
       { immediate: true }
     );
+    // The observer only notifies on intersection *changes*, so when a reveal
+    // is too short to push the sentinel out of the rootMargin zone it would
+    // never fire again. Re-observing queues a fresh notification, so the
+    // reveal keeps going until the sentinel actually leaves the zone.
+    watch(
+      limit,
+      () => {
+        const el = sentinel.value;
+        if (el && observer) {
+          observer.unobserve(el);
+          observer.observe(el);
+        }
+      },
+      { flush: "post" }
+    );
   });
 
   onBeforeUnmount(() => {

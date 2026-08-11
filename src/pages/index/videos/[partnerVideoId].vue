@@ -37,6 +37,11 @@
             icon="calendar_today"
             :label="relativeTime(video.publishedAt)"
           />
+          <HChip
+            v-if="!expectFree"
+            icon="workspace_premium"
+            label="Premium script"
+          />
         </div>
       </MediaHero>
 
@@ -96,6 +101,28 @@
           partner site.
         </p>
 
+        <!-- Embedded partner player — opt-in via settings, default off -->
+        <section
+          v-if="settings.inlinePlayers && embedUrl"
+          class="video-page__player"
+        >
+          <div class="video-page__player-frame">
+            <iframe
+              :src="embedUrl"
+              :title="video.title ?? 'Video player'"
+              allow="autoplay; fullscreen; picture-in-picture"
+              allowfullscreen
+              class="video-page__player-iframe"
+            />
+          </div>
+          <p class="text-body-sm video-page__player-note">
+            <q-icon name="info" size="16px" />
+            The Handy doesn't sync with playback here on IVDB — this player is
+            video-only. Download the script and play it through your Handy setup
+            for synced strokes.
+          </p>
+        </section>
+
         <div class="video-page__columns">
           <div>
             <div v-if="video.performers?.length" class="video-page__performers">
@@ -124,15 +151,49 @@
             >
               {{ video.description }}
             </p>
+            <!-- A muted tag's browse link is a guaranteed zero-result page,
+                 so it renders as an unmute button instead of a link. The word
+                 stays visible: hiding it would hide the explanation. -->
             <div v-if="video.tags?.length" class="video-page__tags">
-              <router-link
-                v-for="tag in video.tags"
-                :key="tag"
-                :to="`/videos?tag=${encodeURIComponent(tag)}`"
-                class="video-page__tag-link"
-              >
-                <HChip :label="tag" />
-              </router-link>
+              <template v-for="tag in video.tags" :key="tag">
+                <button
+                  v-if="settings.isMuted(tag)"
+                  type="button"
+                  class="video-page__tag-muted"
+                  :aria-label="`Unmute tag: ${tag}`"
+                  :title="`“${tag}” is muted — click to unmute`"
+                  @click="unmute(tag)"
+                >
+                  <HChip icon="volume_off" :label="tag" />
+                </button>
+                <router-link
+                  v-else
+                  :to="`/videos?tag=${encodeURIComponent(tag)}`"
+                  class="video-page__tag-link"
+                >
+                  <HChip :label="tag" />
+                  <q-menu context-menu touch-position>
+                    <q-list dense class="video-page__tag-menu">
+                      <q-item
+                        v-close-popup
+                        clickable
+                        :to="`/videos?tag=${encodeURIComponent(tag)}`"
+                      >
+                        <q-item-section side>
+                          <q-icon name="sell" size="20px" />
+                        </q-item-section>
+                        <q-item-section>Browse this tag</q-item-section>
+                      </q-item>
+                      <q-item v-close-popup clickable @click="mute(tag)">
+                        <q-item-section side>
+                          <q-icon name="block" size="20px" />
+                        </q-item-section>
+                        <q-item-section>Mute this tag</q-item-section>
+                      </q-item>
+                    </q-list>
+                  </q-menu>
+                </router-link>
+              </template>
             </div>
           </div>
           <div class="video-page__side">
@@ -366,6 +427,7 @@ import {
 import {
   artworkOf,
   byPartner,
+  embedUrlOf,
   recentFirst,
   relatedTo
 } from "@/services/script-index/queries";
@@ -424,6 +486,10 @@ const favorite = computed(() =>
   video.value ? settings.isFavorite(video.value.partnerVideoId) : false
 );
 
+const embedUrl = computed(() =>
+  video.value ? embedUrlOf(video.value) : undefined
+);
+
 const formatLabel = computed(() => {
   const format = video.value?.format;
   if (format?.format !== "vr") return "";
@@ -469,6 +535,15 @@ const details = computed<InfoItem[]>(() => {
   }
   if (current.scripterName) {
     items.push({ label: "Script by", value: current.scripterName });
+  }
+  if (current.rating) {
+    const votes = (current.upVotes ?? 0) + (current.downVotes ?? 0);
+    items.push({
+      label: "Rating",
+      value: votes
+        ? `${Math.round(current.rating)}% · ${votes.toLocaleString()} vote${votes === 1 ? "" : "s"}`
+        : `${Math.round(current.rating)}%`
+    });
   }
   if (current.scriptPlays) {
     items.push({
@@ -594,6 +669,29 @@ async function getScript() {
   } finally {
     gettingScript.value = false;
   }
+}
+
+function mute(tag: string) {
+  // a refusal is always an orientation tag here: a muted tag already renders
+  // as an unmute button, so the mute item isn't offered for it
+  if (!settings.muteTag(tag)) {
+    hToast(
+      "info",
+      `“${tag}” can't be muted`,
+      "Orientation tags decide which catalog you see — change that in settings."
+    );
+    return;
+  }
+  hToast(
+    "info",
+    `Muted “${tag}”`,
+    "It's in your muted list — unmute any time."
+  );
+}
+
+function unmute(tag: string) {
+  settings.unmuteTag(tag);
+  hToast("info", `Unmuted “${tag}”`);
 }
 
 function performerLink(performer: Performer): string {
@@ -798,6 +896,33 @@ async function submitComment() {
   margin: var(--space-xs) 0 0;
 }
 
+.video-page__player {
+  margin-top: var(--space-lg);
+  max-width: 960px;
+}
+
+.video-page__player-frame {
+  aspect-ratio: 16 / 9;
+  background: var(--color-bg-page-alt);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.video-page__player-iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.video-page__player-note {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  color: var(--color-text-tertiary);
+  margin: var(--space-xs) 0 0;
+}
+
 .video-page__performers {
   display: flex;
   flex-wrap: wrap;
@@ -869,6 +994,21 @@ async function submitComment() {
 
 .video-page__tag-link {
   text-decoration: none !important;
+}
+
+// naked button around the chip, same recipe as the browse filter chips
+.video-page__tag-muted {
+  border: 0;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  border-radius: var(--radius-full);
+  opacity: 0.6;
+  transition: opacity 180ms ease;
+
+  &:hover {
+    opacity: 1;
+  }
 }
 
 .video-page__side {
@@ -1039,5 +1179,11 @@ async function submitComment() {
 [data-theme="dark"] .video-page__gallery-tile:hover,
 .section-dark .video-page__gallery-tile:hover {
   box-shadow: 0 0 0 1px var(--color-stroke-default);
+}
+
+// unscoped — the menu teleports to the body, outside this page's scope
+.video-page__tag-menu {
+  min-width: 200px;
+  font-family: var(--font-brand);
 }
 </style>

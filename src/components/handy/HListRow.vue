@@ -79,6 +79,8 @@ function onClick() {
   min-height: 52px;
   padding: var(--space-sm) var(--space-md);
   color: var(--color-text-primary);
+  // rows with `to` render as anchors — no link underline (same as HNavCard)
+  text-decoration: none !important;
 }
 
 // keep the leading icon / control tight rather than the 56px avatar gutter

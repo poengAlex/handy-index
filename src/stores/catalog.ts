@@ -15,12 +15,14 @@ export const useCatalogStore = defineStore("catalog", () => {
   const videos = shallowRef<readonly PartnerVideo[]>([]);
   const status = ref<CatalogStatus>("idle");
 
-  /** Catalog with the user's orientation + premium gate already applied. */
+  /** Catalog with the user's orientation + premium + muted-tag gate applied.
+   * Every discovery surface derives from this, so the gate lives here only. */
   const visible = computed(() => {
     const settings = useSettingsStore();
     return visibleVideos(videos.value, {
       orientation: settings.orientation,
-      premium: settings.showPremium
+      premium: settings.showPremium,
+      mutedTags: settings.mutedSet
     });
   });
 

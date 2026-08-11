@@ -28,6 +28,13 @@
           :disable="!newName.trim()"
           @click="create"
         />
+        <HBtn
+          variant="tertiary"
+          icon="upload"
+          label="Import"
+          title="Import a playlist exported from this site"
+          @click="importOpen = true"
+        />
       </div>
 
       <div v-if="settings.playlists.length" class="playlists-page__grid">
@@ -48,6 +55,42 @@
         />
       </div>
     </div>
+
+    <!-- Import: paste an export (or share link), or pick the .json file -->
+    <q-dialog v-model="importOpen">
+      <HModal title="Import playlist" closable class="playlists-page__import">
+        <q-input
+          v-model="importText"
+          type="textarea"
+          filled
+          placeholder="Paste a playlist export (JSON) or a pastes.dev link"
+          aria-label="Playlist export text or share link"
+          :input-style="{ minHeight: '140px', fontFamily: 'monospace' }"
+        />
+        <template #actions>
+          <HBtn
+            variant="tertiary"
+            label="Choose file…"
+            @click="importInput?.click()"
+          />
+          <HBtn
+            label="Import"
+            :loading="importing"
+            :disable="!importText.trim()"
+            @click="importFromText"
+          />
+        </template>
+      </HModal>
+    </q-dialog>
+    <input
+      ref="importInput"
+      type="file"
+      accept=".json,application/json"
+      class="playlists-page__file"
+      aria-hidden="true"
+      tabindex="-1"
+      @change="onImportFile"
+    />
   </q-page>
 </template>
 
@@ -55,12 +98,75 @@
 // Playlist overview: everything lives in the settings store, so the page is
 // fully synchronous — no catalog dependency, no loading state.
 import { computed, ref } from "vue";
-import { HBtn, HEmptyState, HNavCard } from "@/components/handy";
+import {
+  HBtn,
+  HEmptyState,
+  HModal,
+  HNavCard,
+  hToast
+} from "@/components/handy";
+import {
+  PlaylistImportError,
+  parsePlaylistExport,
+  resolveImportText,
+  type ImportedPlaylist
+} from "@/services/playlist-transfer";
 import { useSettingsStore, type Playlist } from "@/stores/settings";
 
 const settings = useSettingsStore();
 
 const newName = ref("");
+const importInput = ref<HTMLInputElement>();
+const importOpen = ref(false);
+const importText = ref("");
+const importing = ref(false);
+
+function finishImport(parsed: ImportedPlaylist): void {
+  const playlist = settings.importPlaylist(parsed.name, parsed.videoIds);
+  const count = playlist.videoIds.length;
+  importOpen.value = false;
+  importText.value = "";
+  hToast(
+    "positive",
+    "Playlist imported",
+    `'${playlist.name}' — ${count.toLocaleString()} video${count === 1 ? "" : "s"}.`
+  );
+}
+
+function toastImportError(error: unknown): void {
+  hToast(
+    "negative",
+    "Couldn't import that",
+    error instanceof PlaylistImportError
+      ? error.message
+      : "Something went wrong reading the export."
+  );
+}
+
+async function importFromText() {
+  if (importing.value) return;
+  importing.value = true;
+  try {
+    finishImport(await resolveImportText(importText.value));
+  } catch (error) {
+    toastImportError(error);
+  } finally {
+    importing.value = false;
+  }
+}
+
+async function onImportFile(event: Event) {
+  const input = event.target as HTMLInputElement;
+  const file = input.files?.[0];
+  // reset so picking the same file again re-fires change
+  input.value = "";
+  if (!file) return;
+  try {
+    finishImport(parsePlaylistExport(await file.text()));
+  } catch (error) {
+    toastImportError(error);
+  }
+}
 
 const countLabel = computed(() => {
   const count = settings.playlists.length;
@@ -111,6 +217,14 @@ function create() {
 .playlists-page__input {
   flex: 1 1 260px;
   max-width: 420px;
+}
+
+.playlists-page__file {
+  display: none;
+}
+
+.playlists-page__import {
+  width: min(480px, 100%);
 }
 
 .playlists-page__grid {

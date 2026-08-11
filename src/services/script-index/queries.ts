@@ -20,21 +20,52 @@ export function matchesOrientation(
   return !gay && !trans;
 }
 
+/** Orientation is derived from tags (see matchesOrientation), so muting one
+ * of these would fight the orientation gate and collapse the catalog toward
+ * empty. Never offered in the mute picker, refused by the store action. */
+export const UNMUTABLE_TAGS: ReadonlySet<string> = new Set([
+  "straight",
+  "gay",
+  "trans"
+]);
+
 export interface CatalogFilter {
   orientation: Orientation;
   /** include videos whose script is not free */
   premium: boolean;
+  /** tags the user muted. A Set, built once by the caller — passing an array
+   * would make the 15k pass O(videos × tags × muted) string compares. */
+  mutedTags: ReadonlySet<string>;
 }
 
-/** Baseline gate applied before any row query. */
+/** True when the video carries at least one muted tag. Exported for the
+ * deliberately ungated surfaces that filter (or mark) on their own. */
+export function hasMutedTag(
+  video: PartnerVideo,
+  muted: ReadonlySet<string>
+): boolean {
+  if (!muted.size) return false;
+  const tags = video.tags;
+  if (!tags) return false;
+  for (const tag of tags) {
+    if (muted.has(tag)) return true;
+  }
+  return false;
+}
+
+/** Baseline gate applied before any row query: orientation + premium + mutes.
+ * Matching is exact — a substring rule would make "teen" mute "eighteen". */
 export function visibleVideos(
   videos: readonly PartnerVideo[],
   filter: CatalogFilter
 ): PartnerVideo[] {
+  const base = (video: PartnerVideo) =>
+    matchesOrientation(video, filter.orientation) &&
+    (filter.premium || video.scriptAccess === "public");
+  // nothing muted (the common case) skips the per-video tag loop entirely
+  if (!filter.mutedTags.size) return videos.filter(base);
   return videos.filter(
-    video =>
-      matchesOrientation(video, filter.orientation) &&
-      (filter.premium || video.scriptAccess === "public")
+    video => base(video) && !hasMutedTag(video, filter.mutedTags)
   );
 }
 
@@ -62,16 +93,26 @@ export function recentlyUpdatedFirst(
   return [...videos].sort((a, b) => time(b.updatedAt) - time(a.updatedAt));
 }
 
-/** Rating (0–100) damped by vote count so lone 5-star votes don't dominate. */
-function ratingScore(video: PartnerVideo): number {
-  const votes = (video.upVotes ?? 0) + (video.downVotes ?? 0);
-  return (video.rating ?? 0) * Math.log10(votes + 2);
+/** Votes a rating needs before it ranks purely on its percentage — anything
+ * below the floor sorts after every established rating, so a lone 5-star
+ * vote can't top the list. */
+const RATING_VOTE_FLOOR = 10;
+
+function voteCount(video: PartnerVideo): number {
+  return (video.upVotes ?? 0) + (video.downVotes ?? 0);
 }
 
+/** Exact rating order (matches the % shown on cards), established ratings
+ * first, ties broken by vote count. */
 export function topRated(videos: readonly PartnerVideo[]): PartnerVideo[] {
   return [...videos]
     .filter(video => (video.rating ?? 0) > 0)
-    .sort((a, b) => ratingScore(b) - ratingScore(a));
+    .sort((a, b) => {
+      const aEstablished = voteCount(a) >= RATING_VOTE_FLOOR;
+      const bEstablished = voteCount(b) >= RATING_VOTE_FLOOR;
+      if (aEstablished !== bEstablished) return aEstablished ? -1 : 1;
+      return (b.rating ?? 0) - (a.rating ?? 0) || voteCount(b) - voteCount(a);
+    });
 }
 
 export function mostPlayed(videos: readonly PartnerVideo[]): PartnerVideo[] {
@@ -205,6 +246,32 @@ export function artworkOf(video: PartnerVideo): string | undefined {
   return video.thumbnail ?? video.images?.[0];
 }
 
+/** Inline-player embed URL for partners with a public embed endpoint
+ * (Pornhub, xHamster) — derived from videoUrl; undefined for everyone else.
+ * Both hosts must stay in index.html's frame-src for the iframe to load. */
+export function embedUrlOf(video: PartnerVideo): string | undefined {
+  if (!video.videoUrl) return undefined;
+  let url: URL;
+  try {
+    url = new URL(video.videoUrl);
+  } catch {
+    return undefined;
+  }
+  const host = url.hostname.replace(/^www\./, "");
+  if (host === "pornhub.com") {
+    const viewkey = url.searchParams.get("viewkey");
+    return viewkey
+      ? `https://www.pornhub.com/embed/${encodeURIComponent(viewkey)}`
+      : undefined;
+  }
+  if (host === "xhamster.com") {
+    // /videos/<slug>-<id> where the id is numeric (legacy) or xh-prefixed
+    const id = /-((?:\d+)|(?:xh[A-Za-z0-9]+))\/?$/.exec(url.pathname)?.[1];
+    return id ? `https://xhamster.com/xembed.php?video=${id}` : undefined;
+  }
+  return undefined;
+}
+
 export function withThumbnail(videos: readonly PartnerVideo[]): PartnerVideo[] {
   return videos.filter(video => Boolean(artworkOf(video)));
 }
@@ -241,20 +308,25 @@ export interface PartnerSummary {
   partnerId: string;
   name: string;
   count: number;
+  /** videos whose script is not free */
+  premiumCount: number;
 }
 
 /** Every site in the catalog with its video count, biggest first. */
 export function partnersOf(videos: readonly PartnerVideo[]): PartnerSummary[] {
   const partners = new Map<string, PartnerSummary>();
   for (const video of videos) {
+    const premium = video.scriptAccess !== "public" ? 1 : 0;
     const existing = partners.get(video.partnerId);
     if (existing) {
       existing.count += 1;
+      existing.premiumCount += premium;
     } else {
       partners.set(video.partnerId, {
         partnerId: video.partnerId,
         name: video.partnerName ?? video.partnerId,
-        count: 1
+        count: 1,
+        premiumCount: premium
       });
     }
   }
@@ -266,31 +338,51 @@ export interface PerformerSummary {
   name: string;
   avatar?: string | undefined;
   count: number;
+  /** mean rating (0–100) across their rated videos; 0 when none are rated */
+  avgRating: number;
+  /** how many of their videos carry a rating */
+  ratedCount: number;
 }
 
 /** Every performer in the catalog with their video count, biggest first. */
 export function performersOf(
   videos: readonly PartnerVideo[]
 ): PerformerSummary[] {
-  const performers = new Map<string, PerformerSummary>();
+  interface Accumulator extends PerformerSummary {
+    ratingSum: number;
+  }
+  const performers = new Map<string, Accumulator>();
   for (const video of videos) {
+    const rating = video.rating ?? 0;
     for (const performer of video.performers ?? []) {
       if (!performer.name?.trim()) continue;
-      const existing = performers.get(performer.performerId);
-      if (existing) {
-        existing.count += 1;
-        existing.avatar ??= performer.avatar;
-      } else {
-        performers.set(performer.performerId, {
+      let entry = performers.get(performer.performerId);
+      if (!entry) {
+        entry = {
           performerId: performer.performerId,
           name: performer.name,
           avatar: performer.avatar,
-          count: 1
-        });
+          count: 0,
+          avgRating: 0,
+          ratedCount: 0,
+          ratingSum: 0
+        };
+        performers.set(performer.performerId, entry);
+      }
+      entry.count += 1;
+      entry.avatar ??= performer.avatar;
+      if (rating > 0) {
+        entry.ratingSum += rating;
+        entry.ratedCount += 1;
       }
     }
   }
-  return [...performers.values()].sort((a, b) => b.count - a.count);
+  return [...performers.values()]
+    .map(({ ratingSum, ...summary }) => ({
+      ...summary,
+      avgRating: summary.ratedCount ? ratingSum / summary.ratedCount : 0
+    }))
+    .sort((a, b) => b.count - a.count);
 }
 
 /** Hero candidate: fresh, decently rated and has artwork. */

@@ -22,7 +22,7 @@
         :alt="featured.title ?? 'Featured video'"
       >
         <p class="text-h6 home-hero__kicker">Featured</p>
-        <h1 class="text-h1 home-hero__title">{{ featured.title }}</h1>
+        <h1 class="text-h2 home-hero__title">{{ featured.title }}</h1>
         <div class="home-hero__chips">
           <HChip v-if="featured.partnerName" :label="featured.partnerName" />
           <HChip
@@ -47,6 +47,17 @@
       <section v-else-if="catalog.status !== 'ready'" class="home-hero-loading">
         <HandyLoader />
       </section>
+      <!-- ready but nothing to feature (filters/mutes emptied the pool):
+           without this the page opens with neither hero nor loader -->
+      <section v-else class="h-section home-hero-empty">
+        <div class="h-container">
+          <h1 class="text-h2 home-hero__title">Nothing to feature</h1>
+          <p class="text-body-sm home-hero-empty__body">
+            Your filters and muted tags hide the whole catalog. Loosen them in
+            settings.
+          </p>
+        </div>
+      </section>
 
       <!-- The shelves -->
       <div class="home-rows">
@@ -62,7 +73,7 @@
             <HEmptyState
               icon="filter_alt_off"
               title="Nothing to show"
-              body="Your orientation and premium filters hide the whole catalog. Loosen them in settings."
+              body="Your filters and muted tags hide the whole catalog. Loosen them in settings."
             />
           </div>
         </template>
@@ -84,6 +95,7 @@ import {
   artworkOf,
   byTag,
   featuredPick,
+  hasMutedTag,
   inOrder,
   mostPlayed,
   recentFirst,
@@ -158,7 +170,11 @@ const rows = computed<Row[]>(() => {
       summary =>
         summary.count >= 2 &&
         !EXCLUDED_ROW_TAGS.has(summary.tag) &&
-        !usedTags.has(summary.tag)
+        !usedTags.has(summary.tag) &&
+        // favorites are ungated, so a muted tag can reach here; dropping it
+        // before the slice keeps the shelf rather than wasting the slot on a
+        // row that would come back empty
+        !settings.mutedSet.has(summary.tag)
     )
     .slice(0, 2)
     .map(({ tag }) => ({
@@ -182,14 +198,16 @@ const rows = computed<Row[]>(() => {
       to: "/favorites"
     },
     {
-      // full catalog on purpose: you should always see what you just
-      // viewed, even when filters would hide it
+      // full catalog on purpose: you should always see what you just viewed,
+      // even when the orientation/premium filters would hide it. Muted tags
+      // are the exception — a mute is aversion rather than narrowing, and
+      // home is the one surface you can't avoid. recordView keeps recording,
+      // so unmuting restores the row intact.
       key: "recently-viewed",
       title: "Recently viewed",
-      videos: inOrder(catalog.videos, settings.recentlyViewed).slice(
-        0,
-        ROW_SIZE
-      ),
+      videos: inOrder(catalog.videos, settings.recentlyViewed)
+        .filter(video => !hasMutedTag(video, settings.mutedSet))
+        .slice(0, ROW_SIZE),
       to: ""
     },
     ...likeRows,
@@ -263,6 +281,11 @@ const rows = computed<Row[]>(() => {
 
 .home-hero__ctas {
   margin-top: var(--space-md);
+}
+
+.home-hero-empty__body {
+  color: var(--color-text-tertiary);
+  margin: var(--space-xs) 0 0;
 }
 
 .home-hero-loading {

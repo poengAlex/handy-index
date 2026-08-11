@@ -18,10 +18,31 @@
         </div>
         <div class="playlist-page__actions">
           <HBtn
+            v-if="freeCount"
+            variant="secondary"
+            icon="download"
+            :label="
+              bulkBusy
+                ? `Getting ${bulkDone}/${freeCount}…`
+                : `Get all scripts (${freeCount})`
+            "
+            :disable="bulkBusy"
+            @click="downloadAllScripts"
+          />
+          <HBtn
             v-if="videos.length"
             variant="tertiary"
             :label="editing ? 'Done' : 'Edit'"
             @click="editing = !editing"
+          />
+          <q-btn
+            flat
+            round
+            icon="ios_share"
+            aria-label="Share playlist"
+            title="Share or export this playlist"
+            class="playlist-page__icon-btn"
+            @click="shareOpen = true"
           />
           <q-btn
             flat
@@ -119,6 +140,65 @@
       </HModal>
     </q-dialog>
 
+    <!-- Share: the export JSON as text, a file, or a temporary paste link -->
+    <q-dialog v-model="shareOpen">
+      <HModal title="Share playlist" closable class="playlist-page__share">
+        <div class="playlist-page__share-stack">
+          <q-input
+            :model-value="exportText"
+            type="textarea"
+            filled
+            readonly
+            aria-label="Playlist export JSON"
+            :input-style="{
+              minHeight: '160px',
+              fontFamily: 'monospace',
+              fontSize: '12px'
+            }"
+          />
+          <template v-if="shareUrl">
+            <q-input
+              :model-value="shareUrl"
+              filled
+              dense
+              readonly
+              aria-label="Share link"
+            >
+              <template #append>
+                <q-btn
+                  flat
+                  round
+                  dense
+                  icon="content_copy"
+                  aria-label="Copy share link"
+                  @click="copyShareUrl"
+                />
+              </template>
+            </q-input>
+            <p class="text-caption playlist-page__share-hint">
+              Anyone with the link can import this playlist. The paste is
+              temporary — it expires after about 90 days.
+            </p>
+          </template>
+        </div>
+        <template #actions>
+          <HBtn variant="tertiary" label="Copy JSON" @click="copyExportText" />
+          <HBtn variant="tertiary" label="Save file" @click="exportThis" />
+          <HBtn
+            :label="shareUrl ? 'New share link' : 'Create share link'"
+            :loading="sharing"
+            @click="createShareLink"
+          />
+        </template>
+      </HModal>
+    </q-dialog>
+
+    <!-- Connection key prompt for the bulk script download -->
+    <ConnectionKeyDialog v-model="keyDialog" @saved="downloadAllScripts">
+      Scripts are bound to your Handy. Enter the connection key from the Handy
+      app to continue.
+    </ConnectionKeyDialog>
+
     <!-- Delete confirm -->
     <q-dialog v-model="deleteOpen">
       <HModal :title="`Delete '${playlist?.name ?? ''}'?`">
@@ -140,7 +220,7 @@
 // One playlist as a page: the videos in the order they were added, with
 // rename/delete and an edit mode for pulling videos out. Playlists are
 // intentionally ungated, like favorites — you curated them yourself.
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import {
   HBtn,
@@ -149,8 +229,15 @@ import {
   HandyLoader,
   hToast
 } from "@/components/handy";
+import ConnectionKeyDialog from "@/components/ConnectionKeyDialog.vue";
 import VideoCard from "@/components/VideoCard.vue";
 import VideoGrid from "@/components/VideoGrid.vue";
+import {
+  exportPlaylist,
+  playlistExportText,
+  uploadPlaylistPaste
+} from "@/services/playlist-transfer";
+import { downloadFreeScript } from "@/services/script-download";
 import { inOrder } from "@/services/script-index/queries";
 import { useCatalogStore } from "@/stores/catalog";
 import { useSettingsStore } from "@/stores/settings";
@@ -181,6 +268,124 @@ const countLabel = computed(() => {
 // --- edit mode (remove videos) ---
 
 const editing = ref(false);
+
+// --- share / export ---
+
+const shareOpen = ref(false);
+const shareUrl = ref("");
+const sharing = ref(false);
+
+// stale links shouldn't linger into the next open — the list may have changed
+watch(shareOpen, open => {
+  if (!open) shareUrl.value = "";
+});
+
+const exportText = computed(() =>
+  playlist.value ? playlistExportText(playlist.value) : ""
+);
+
+function exportThis() {
+  if (playlist.value) exportPlaylist(playlist.value);
+}
+
+async function copyExportText() {
+  try {
+    await navigator.clipboard.writeText(exportText.value);
+    hToast("positive", "JSON copied");
+  } catch {
+    hToast("negative", "Couldn't copy the JSON");
+  }
+}
+
+async function copyShareUrl() {
+  try {
+    await navigator.clipboard.writeText(shareUrl.value);
+    hToast("positive", "Share link copied");
+  } catch {
+    hToast("negative", "Couldn't copy the link");
+  }
+}
+
+async function createShareLink() {
+  const current = playlist.value;
+  if (!current || sharing.value) return;
+  sharing.value = true;
+  try {
+    shareUrl.value = await uploadPlaylistPaste(current);
+    try {
+      await navigator.clipboard.writeText(shareUrl.value);
+      hToast(
+        "positive",
+        "Share link copied",
+        "Anyone with the link can import this playlist."
+      );
+    } catch {
+      hToast("positive", "Share link created");
+    }
+  } catch {
+    hToast(
+      "negative",
+      "Couldn't create a share link",
+      "The paste service didn't answer. Copy the JSON instead."
+    );
+  } finally {
+    sharing.value = false;
+  }
+}
+
+// --- bulk script download ---
+
+const keyDialog = ref(false);
+const bulkBusy = ref(false);
+const bulkDone = ref(0);
+
+/** videos the index marks as having a free script — the only downloadables */
+const freeVideos = computed(() =>
+  videos.value.filter(video => video.scriptAccess === "public")
+);
+
+const freeCount = computed(() => freeVideos.value.length);
+
+async function downloadAllScripts() {
+  if (bulkBusy.value || !freeCount.value) return;
+  const key = settings.connectionKey.trim();
+  if (!key) {
+    keyDialog.value = true;
+    return;
+  }
+  bulkBusy.value = true;
+  bulkDone.value = 0;
+  let failed = 0;
+  for (const video of freeVideos.value) {
+    try {
+      await downloadFreeScript(video, key);
+    } catch {
+      failed += 1;
+    }
+    bulkDone.value += 1;
+  }
+  bulkBusy.value = false;
+  const saved = freeCount.value - failed;
+  if (!saved) {
+    hToast(
+      "negative",
+      "Couldn't get the scripts",
+      "Check your connection key and try again."
+    );
+  } else if (failed) {
+    hToast(
+      "info",
+      "Scripts downloaded",
+      `${saved.toLocaleString()} saved, ${failed.toLocaleString()} failed.`
+    );
+  } else {
+    hToast(
+      "positive",
+      "Scripts downloaded",
+      `${saved.toLocaleString()} script${saved === 1 ? "" : "s"} saved.`
+    );
+  }
+}
 
 // --- rename ---
 
@@ -263,6 +468,21 @@ function confirmDelete() {
 
 .playlist-page__icon-btn {
   color: var(--color-text-secondary);
+}
+
+.playlist-page__share {
+  width: min(520px, 100%);
+}
+
+.playlist-page__share-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.playlist-page__share-hint {
+  color: var(--color-text-tertiary);
+  margin: 0;
 }
 
 // same responsive contract as VideoGrid — owned here so cells can layer a

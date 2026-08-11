@@ -42,7 +42,7 @@
           <HEmptyState
             icon="filter_alt_off"
             title="Nothing to show"
-            body="Your orientation and premium filters hide the whole catalog. Loosen them in settings."
+            body="Your filters and muted tags hide the whole catalog. Loosen them in settings."
           />
         </div>
         <div v-else-if="!filtered.length" class="sites-page__center">
@@ -58,7 +58,7 @@
             :key="partner.partnerId"
             icon="language"
             :label="partner.name"
-            :caption="videoCountLabel(partner.count)"
+            :caption="videoCountLabel(partner)"
             :to="`/videos?partnerId=${encodeURIComponent(partner.partnerId)}`"
           />
         </div>
@@ -72,7 +72,10 @@
 // count-sorted by partnersOf, with a client-side name filter on top.
 import { computed, ref } from "vue";
 import { HEmptyState, HNavCard, HandyLoader } from "@/components/handy";
-import { partnersOf } from "@/services/script-index/queries";
+import {
+  partnersOf,
+  type PartnerSummary
+} from "@/services/script-index/queries";
 import { useCatalogStore } from "@/stores/catalog";
 
 const catalog = useCatalogStore();
@@ -95,8 +98,11 @@ const countLabel = computed(() => {
   return `${total.toLocaleString()} ${noun} in the index`;
 });
 
-function videoCountLabel(count: number): string {
-  return `${count.toLocaleString()} ${count === 1 ? "video" : "videos"}`;
+function videoCountLabel(partner: PartnerSummary): string {
+  const videos = `${partner.count.toLocaleString()} ${partner.count === 1 ? "video" : "videos"}`;
+  return partner.premiumCount
+    ? `${videos} · ${partner.premiumCount.toLocaleString()} premium`
+    : videos;
 }
 </script>
 
