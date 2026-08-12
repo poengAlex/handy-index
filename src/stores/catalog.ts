@@ -26,6 +26,20 @@ export const useCatalogStore = defineStore("catalog", () => {
     });
   });
 
+  /** Same gate minus orientation. The performer and site directories list who
+   * exists in the index, not who matches your preference — dropping them would
+   * read as missing data — and picking one of them from that list is an
+   * explicit choice that outranks the ambient filter. Premium + mutes still
+   * apply, so this is never a way around them. */
+  const anyOrientation = computed(() => {
+    const settings = useSettingsStore();
+    return visibleVideos(videos.value, {
+      orientation: "all",
+      premium: settings.showPremium,
+      mutedTags: settings.mutedSet
+    });
+  });
+
   /** The user's favorited videos — never gated, favorites always show. */
   const favorites = computed(() => {
     const settings = useSettingsStore();
@@ -48,7 +62,7 @@ export const useCatalogStore = defineStore("catalog", () => {
     await load();
   }
 
-  return { videos, status, visible, favorites, load, retry };
+  return { videos, status, visible, anyOrientation, favorites, load, retry };
 });
 
 if (import.meta.hot) {

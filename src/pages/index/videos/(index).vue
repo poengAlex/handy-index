@@ -56,6 +56,13 @@
           :label="filtersLabel"
           @click="filtersOpen = true"
         />
+        <HBtn
+          variant="tertiary"
+          icon="share"
+          label="Share"
+          aria-label="Share these results — the link carries every filter"
+          @click="shareResults"
+        />
       </div>
 
       <div v-if="chips.length" class="videos-page__chips">
@@ -208,8 +215,10 @@
             />
           </HList>
 
-          <!-- Mirrors of the global settings gates (not URL filters): they
-               don't count toward the badge and Clear filters leaves them -->
+          <!-- The global settings gates. They ride in the URL so a shared
+               link reproduces this grid, but they stay preferences rather
+               than page filters: they don't count toward the badge, and
+               Clear filters leaves them alone. -->
           <HList title="Orientation">
             <HRadioRow
               v-for="option in ORIENTATIONS"
@@ -219,6 +228,11 @@
               :label="ORIENTATION_LABELS[option]"
             />
           </HList>
+          <p v-if="scopedPick" class="text-caption videos-page__note">
+            Not applied here — you're browsing a
+            {{ partnerId ? "site" : "performer" }} you picked, so their full
+            catalog shows.
+          </p>
 
           <HLabeledSlider
             :model-value="durationInput"
@@ -251,8 +265,11 @@
 
 <script setup lang="ts">
 // The browse + search surface: every filter lives in the URL query so any
-// combination is shareable and back-button friendly. Filtering is a straight
-// composition of the queries.ts selectors over the gated catalog.
+// combination is shareable and back-button friendly — including the two
+// global gates (orientation, premium), without which a shared link would
+// render against the recipient's catalog instead of the sender's. Filtering
+// is a straight composition of the queries.ts selectors over the gated
+// catalog.
 import { computed, onBeforeUnmount, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import {
@@ -264,10 +281,12 @@ import {
   HModal,
   HRadioRow,
   HToggleRow,
-  HandyLoader
+  HandyLoader,
+  hToast
 } from "@/components/handy";
 import type { HLabeledSliderRange } from "@/components/handy/HLabeledSlider.vue";
 import VideoGrid from "@/components/VideoGrid.vue";
+import type { Orientation } from "@/services/script-index/queries";
 import {
   ORIENTATIONS,
   ORIENTATION_LABELS,
@@ -392,6 +411,24 @@ const sortDir = computed<SortDir>(() => {
   return raw === "asc" || raw === "desc" ? raw : NATURAL_DIR[sortKey.value];
 });
 
+// The two global gates (orientation, premium) also ride in the URL — they
+// silently decide what the grid can contain, so a link without them
+// reproduces the recipient's catalog rather than the sender's. They stay
+// owned by the settings store: the URL is an inbound setter plus a
+// projection (see the sync watcher), never a second source of truth.
+// null = absent or unparseable, which means "the URL has nothing to say".
+const orientationParam = computed<Orientation | null>(() => {
+  const raw = firstParam(route.query.orientation);
+  return (ORIENTATIONS as string[]).includes(raw) ? (raw as Orientation) : null;
+});
+
+const premiumParam = computed<boolean | null>(() => {
+  const raw = firstParam(route.query.premium);
+  if (raw === "1") return true;
+  if (raw === "0") return false;
+  return null;
+});
+
 // dmin/dmax are integer MINUTES; both optional and omitted at defaults
 const durationMin = computed(() => {
   const raw = Number.parseInt(firstParam(route.query.dmin), 10);
@@ -423,6 +460,10 @@ interface Filters {
   dmin: number;
   /** minutes; DURATION_MAX = no cap */
   dmax: number;
+  /** global gate — read from the store, not the URL (see currentFilters) */
+  orientation: Orientation;
+  /** global gate — read from the store, not the URL */
+  premium: boolean;
 }
 
 function currentFilters(): Filters {
@@ -436,7 +477,11 @@ function currentFilters(): Filters {
     dir: sortDir.value,
     vr: vr.value,
     dmin: durationMin.value,
-    dmax: durationMax.value
+    dmax: durationMax.value,
+    // the store is the truth for both gates: every write goes through it
+    // first, so what lands in the URL is what the app is actually using
+    orientation: settings.orientation,
+    premium: settings.showPremium
   };
 }
 
@@ -456,6 +501,12 @@ function apply(filters: Filters) {
   if (filters.vr) query.vr = "1";
   if (filters.dmin > 0) query.dmin = String(filters.dmin);
   if (filters.dmax < DURATION_MAX) query.dmax = String(filters.dmax);
+  // written unconditionally, unlike every filter above: their "default" is
+  // whatever this user saved, not a constant, so omitting them at a default
+  // would export nothing on the most common visit — the one where you never
+  // touched the gates and copied the URL from the address bar
+  query.orientation = filters.orientation;
+  query.premium = filters.premium ? "1" : "0";
   void router.replace({ query });
 }
 
@@ -490,9 +541,59 @@ function removePerformer() {
   apply({ ...currentFilters(), performerId: "", performerName: "" });
 }
 
+// through apply, not a bare empty query: the gates are the user's standing
+// preference, not a page filter, so clearing the page keeps them (and keeps
+// the URL shareable)
 function clearAll() {
-  void router.replace({ query: {} });
+  apply({
+    ...currentFilters(),
+    q: "",
+    tags: [],
+    partnerId: "",
+    performerId: "",
+    performerName: "",
+    sort: "recent",
+    dir: NATURAL_DIR.recent,
+    vr: false,
+    dmin: 0,
+    dmax: DURATION_MAX
+  });
 }
+
+// --- global gates ⇄ URL ---
+
+// One watcher, both directions, with a single precedence rule: if the URL's
+// gate values moved (opened link, back button, first render) the URL is the
+// intent and is adopted into the store; otherwise the store moved (header
+// switcher, settings dialog, filters modal) and the URL is what needs to
+// catch up. Both branches converge on params === store, so the re-run each
+// one triggers settles immediately instead of ping-ponging.
+watch(
+  [
+    orientationParam,
+    premiumParam,
+    () => settings.orientation,
+    () => settings.showPremium
+  ],
+  ([orientation, premium], before) => {
+    // no `before` = the immediate first run, where the URL always leads
+    const urlLed =
+      !before || orientation !== before[0] || premium !== before[1];
+    if (urlLed) {
+      if (orientation) settings.orientation = orientation;
+      if (premium !== null) settings.showPremium = premium;
+    }
+    // fills a bare /videos, an inbound link that carried only one gate, and
+    // any unparseable value — the URL always ends up stating both
+    if (
+      orientation !== settings.orientation ||
+      premium !== settings.showPremium
+    ) {
+      apply(currentFilters());
+    }
+  },
+  { immediate: true }
+);
 
 // --- the advanced-filters modal ---
 
@@ -606,8 +707,10 @@ const allTags = computed(() =>
   catalog.status === "ready" ? tagsOf(catalog.visible) : []
 );
 
+// the site picker offers every partner, matching the /sites directory — the
+// pick itself lifts the orientation gate (see results)
 const allSites = computed(() =>
-  catalog.status === "ready" ? partnersOf(catalog.visible) : []
+  catalog.status === "ready" ? partnersOf(catalog.anyOrientation) : []
 );
 
 const tagOptions = computed<PickOption[]>(() =>
@@ -694,9 +797,20 @@ const chips = computed<FilterChip[]>(() => {
 // --- results:
 // byTags → byPartner → byPerformer → vrOnly → duration → search → sort ---
 
+// naming a site or a performer is a deliberate pick, so it outranks the
+// ambient orientation filter — otherwise every card in the /sites and
+// /performers directories could open onto an empty page. Premium + mutes still
+// apply either way.
+const scopedPick = computed(() =>
+  Boolean(partnerId.value || performerId.value)
+);
+
 const results = computed<PartnerVideo[]>(() => {
   if (catalog.status !== "ready") return [];
-  let pool = byTags(catalog.visible, tags.value);
+  let pool = byTags(
+    scopedPick.value ? catalog.anyOrientation : catalog.visible,
+    tags.value
+  );
   if (partnerId.value) pool = byPartner(pool, partnerId.value);
   if (performerId.value) pool = byPerformer(pool, performerId.value);
   if (vr.value) pool = vrOnly(pool);
@@ -747,6 +861,31 @@ const mutedAction = computed(() =>
 function unmuteActive() {
   for (const tag of mutedActiveTags.value) settings.unmuteTag(tag);
 }
+
+// --- sharing the current view ---
+
+// Nothing to assemble: every filter, sort and gate is already in the URL, so
+// the shareable link IS the current location. Same ladder as the video detail
+// page — the platform share sheet where there is one, clipboard otherwise.
+async function shareResults() {
+  const url = window.location.href;
+  const title =
+    catalog.status === "ready" ? `IVDB — ${countLabel.value}` : "IVDB videos";
+  if (navigator.share) {
+    try {
+      await navigator.share({ title, url });
+    } catch {
+      // user dismissed the sheet — not an error
+    }
+    return;
+  }
+  try {
+    await navigator.clipboard.writeText(url);
+    hToast("positive", "Link copied", "It carries every filter you set.");
+  } catch {
+    hToast("negative", "Couldn't copy the link");
+  }
+}
 </script>
 
 <style scoped lang="scss">
@@ -767,6 +906,12 @@ function unmuteActive() {
 
 .videos-page__count {
   margin: 0;
+  color: var(--color-text-tertiary);
+}
+
+// sits under the orientation group in the filter sheet, aligned to its inset
+.videos-page__note {
+  margin: calc(-1 * var(--space-xs)) var(--space-md) 0;
   color: var(--color-text-tertiary);
 }
 

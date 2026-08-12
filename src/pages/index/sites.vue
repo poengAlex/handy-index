@@ -21,6 +21,9 @@
         <header class="sites-page__header">
           <h1 class="text-h2 sites-page__title">Sites</h1>
           <p class="text-body-sm sites-page__count">{{ countLabel }}</p>
+          <p v-if="hiddenLabel" class="text-caption sites-page__hidden">
+            {{ hiddenLabel }}
+          </p>
         </header>
 
         <q-input
@@ -42,7 +45,7 @@
           <HEmptyState
             icon="filter_alt_off"
             title="Nothing to show"
-            body="Your filters and muted tags hide the whole catalog. Loosen them in settings."
+            body="Your premium filter and muted tags hide the whole catalog. Loosen them in settings."
           />
         </div>
         <div v-else-if="!filtered.length" class="sites-page__center">
@@ -68,21 +71,39 @@
 </template>
 
 <script setup lang="ts">
-// The site directory: every partner in the visible catalog as a nav card,
+// The site directory: every partner in the catalog as a nav card,
 // count-sorted by partnersOf, with a client-side name filter on top.
 import { computed, ref } from "vue";
 import { HEmptyState, HNavCard, HandyLoader } from "@/components/handy";
 import {
+  ORIENTATION_LABELS,
   partnersOf,
   type PartnerSummary
 } from "@/services/script-index/queries";
 import { useCatalogStore } from "@/stores/catalog";
+import { useSettingsStore } from "@/stores/settings";
 
 const catalog = useCatalogStore();
+const settings = useSettingsStore();
 
 const query = ref("");
 
-const partners = computed(() => partnersOf(catalog.visible));
+// every site in the index, orientation gate lifted (catalog.anyOrientation) —
+// a directory that hid sites would read as an incomplete index
+const partners = computed(() => partnersOf(catalog.anyOrientation));
+
+// how many of each site's videos the orientation gate lets through, so the
+// caption can move when you switch orientation without dropping the site.
+// null on "Everything": nothing is being narrowed, so there is no second
+// number to show and the second pass isn't worth taking.
+const matching = computed(() => {
+  if (settings.orientation === "all") return null;
+  const counts = new Map<string, number>();
+  for (const summary of partnersOf(catalog.visible)) {
+    counts.set(summary.partnerId, summary.count);
+  }
+  return counts;
+});
 
 const filtered = computed(() => {
   const needle = query.value.trim().toLowerCase();
@@ -92,14 +113,35 @@ const filtered = computed(() => {
   );
 });
 
+// the two totals the per-site captions add up to, so the header explains the
+// arithmetic instead of leaving "38 of 300" to be inferred
+const totalVideos = computed(() => catalog.anyOrientation.length);
+
+const hiddenVideos = computed(() => totalVideos.value - catalog.visible.length);
+
 const countLabel = computed(() => {
-  const total = partners.value.length;
-  const noun = total === 1 ? "site" : "sites";
-  return `${total.toLocaleString()} ${noun} in the index`;
+  const sites = partners.value.length;
+  const siteNoun = sites === 1 ? "site" : "sites";
+  const videos = totalVideos.value;
+  const videoNoun = videos === 1 ? "video" : "videos";
+  return `${sites.toLocaleString()} ${siteNoun} · ${videos.toLocaleString()} ${videoNoun} in the index`;
+});
+
+const hiddenLabel = computed(() => {
+  if (settings.orientation === "all" || !hiddenVideos.value) return "";
+  const label = ORIENTATION_LABELS[settings.orientation];
+  const noun = hiddenVideos.value === 1 ? "video" : "videos";
+  return `${hiddenVideos.value.toLocaleString()} ${noun} hidden by the ${label} filter — that's the gap in each “X of Y” below.`;
 });
 
 function videoCountLabel(partner: PartnerSummary): string {
-  const videos = `${partner.count.toLocaleString()} ${partner.count === 1 ? "video" : "videos"}`;
+  const total = `${partner.count.toLocaleString()} ${partner.count === 1 ? "video" : "videos"}`;
+  const counts = matching.value;
+  // "38 of 300 videos" — the total stays the headline because that is what
+  // opening the site actually shows
+  const videos = counts
+    ? `${(counts.get(partner.partnerId) ?? 0).toLocaleString()} of ${total}`
+    : total;
   return partner.premiumCount
     ? `${videos} · ${partner.premiumCount.toLocaleString()} premium`
     : videos;
@@ -134,6 +176,14 @@ function videoCountLabel(partner: PartnerSummary): string {
 .sites-page__count {
   color: var(--color-text-tertiary);
   margin: var(--space-xs) 0 0;
+}
+
+// the footnote that decodes the "X of Y" captions — half a step quieter than
+// the count line it explains
+.sites-page__hidden {
+  color: var(--color-text-tertiary);
+  margin: calc(var(--space-xs) / 2) 0 0;
+  max-width: 60ch;
 }
 
 .sites-page__search {

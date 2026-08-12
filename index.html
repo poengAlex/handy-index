@@ -5,6 +5,16 @@
 
     <meta charset="utf-8" />
     <meta name="description" content="<%= productDescription %>" />
+    <!-- social link previews; scrapers need og:image absolute, so server.js
+         rewrites /og-image.png to the request's own origin at serve time -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="<%= productName %>" />
+    <meta property="og:title" content="<%= productName %>" />
+    <meta property="og:description" content="<%= productDescription %>" />
+    <meta property="og:image" content="/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
     <!-- never leak page URLs to partner CDNs / external sites -->
     <meta name="referrer" content="no-referrer" />
     <meta name="format-detection" content="telephone=no" />

@@ -563,7 +563,10 @@ const related = computed(() => {
 const moreFromPartner = computed(() => {
   const current = video.value;
   if (!current || catalog.status !== "ready") return [];
-  return recentFirst(byPartner(catalog.visible, current.partnerId))
+  // partner-scoped like /videos?partnerId=, so the same rule applies: the site
+  // you're already looking at outranks the orientation filter. `related` above
+  // stays gated — that's a recommendation, not a site you asked for.
+  return recentFirst(byPartner(catalog.anyOrientation, current.partnerId))
     .filter(item => item.partnerVideoId !== current.partnerVideoId)
     .slice(0, 20);
 });

@@ -84,7 +84,7 @@
                 v-else
                 icon="filter_alt_off"
                 title="Nothing to show"
-                body="Your filters and muted tags hide every performer. Loosen them in settings."
+                body="Your premium filter and muted tags hide every performer. Loosen them in settings."
               />
             </div>
 
@@ -112,7 +112,7 @@
                     {{ performer.name }}
                   </div>
                   <div class="text-caption performer-card__videos">
-                    <span>{{ videoLabel(performer.count) }}</span>
+                    <span>{{ videoLabel(performer) }}</span>
                     <span
                       v-if="performer.avgRating"
                       class="performer-card__rating"
@@ -137,7 +137,7 @@
 </template>
 
 <script setup lang="ts">
-// Every performer in the visible catalog as a square avatar card, biggest
+// Every performer in the catalog as a square avatar card, biggest
 // filmography first. Name search narrows the list; cards reveal 48 at a time
 // via endless scroll. Cards link into /videos pre-filtered on the performer.
 import { computed, ref, watch } from "vue";
@@ -191,9 +191,24 @@ function flipDir() {
   sortDir.value = sortDir.value === "desc" ? "asc" : "desc";
 }
 
+// the whole roster, orientation gate lifted (catalog.anyOrientation): a
+// performer is a person in the index, not a preference
 const all = computed(() =>
-  catalog.status === "ready" ? performersOf(catalog.visible) : []
+  catalog.status === "ready" ? performersOf(catalog.anyOrientation) : []
 );
+
+// how many of each performer's videos the orientation gate lets through, so
+// the card can move when you switch orientation without dropping the person.
+// null on "Everything": nothing is being narrowed, so there is no second
+// number to show and the second pass isn't worth taking.
+const matching = computed(() => {
+  if (settings.orientation === "all" || catalog.status !== "ready") return null;
+  const counts = new Map<string, number>();
+  for (const summary of performersOf(catalog.visible)) {
+    counts.set(summary.performerId, summary.count);
+  }
+  return counts;
+});
 
 const needle = computed(() => (query.value ?? "").trim());
 
@@ -232,8 +247,14 @@ const countLabel = computed(() => {
     : totalLabel;
 });
 
-function videoLabel(count: number): string {
-  return `${count.toLocaleString()} video${count === 1 ? "" : "s"}`;
+function videoLabel(performer: PerformerSummary): string {
+  const total = `${performer.count.toLocaleString()} video${performer.count === 1 ? "" : "s"}`;
+  const counts = matching.value;
+  // "38 of 300 videos" — the total stays the headline because that is what
+  // opening the performer actually shows
+  return counts
+    ? `${(counts.get(performer.performerId) ?? 0).toLocaleString()} of ${total}`
+    : total;
 }
 
 function performerTo(performer: PerformerSummary): string {
@@ -313,6 +334,9 @@ function performerTo(performer: PerformerSummary): string {
   align-items: baseline;
   justify-content: space-between;
   gap: var(--space-xs);
+  // "38 of 300 videos" and a rating don't share a 160px tile — let the rating
+  // drop to its own line rather than push the count out of the card
+  flex-wrap: wrap;
 }
 
 .performer-card__rating {
