@@ -18,17 +18,17 @@ those becomes exactly one primitive.
 
 ## Layers and dependency rules
 
-| Layer | Contents | Rule |
-|---|---|---|
-| `services/` | `script-index/{client,types,queries}.ts`, `format.ts` | Framework-free pure TS. Imports nothing above it. New selectors go in `queries.ts`; new formatters in `format.ts`. |
-| `stores/` | `catalog`, `prefs`, `auth`, `library`, `activity` | Durable state only. Imports services only. UI flow state (dialog open, drafts, pending actions) is **banned** from stores — it belongs to composables. |
-| `composables/` | behavior/state machines, renderless | May import stores + services. Never components/pages. |
-| `components/handy/` | the brand kit, verbatim | **Never forked.** Re-copy from brand-ux when it evolves. |
-| `components/` | app primitives + domain components | Compose kit + composables. Props in, events out; no route access. |
-| `pages/` | filename routes, unchanged | The only layer touching route/router. Composition roots. **A page hand-rolling a ladder, header, count label, key gate, paging loop, or query parsing is a review defect.** |
+| Layer               | Contents                                              | Rule                                                                                                                                                                        |
+| ------------------- | ----------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `services/`         | `script-index/{client,types,queries}.ts`, `format.ts` | Framework-free pure TS. Imports nothing above it. New selectors go in `queries.ts`; new formatters in `format.ts`.                                                          |
+| `stores/`           | `catalog`, `prefs`, `auth`, `library`, `activity`     | Durable state only. Imports services only. UI flow state (dialog open, drafts, pending actions) is **banned** from stores — it belongs to composables.                      |
+| `composables/`      | behavior/state machines, renderless                   | May import stores + services. Never components/pages.                                                                                                                       |
+| `components/handy/` | the brand kit, verbatim                               | **Never forked.** Re-copy from brand-ux when it evolves.                                                                                                                    |
+| `components/`       | app primitives + domain components                    | Compose kit + composables. Props in, events out; no route access.                                                                                                           |
+| `pages/`            | filename routes, unchanged                            | The only layer touching route/router. Composition roots. **A page hand-rolling a ladder, header, count label, key gate, paging loop, or query parsing is a review defect.** |
 
 **Admission rule:** a primitive is only promoted to shared when a second
-consumer *or a shipped bug* exists. Inline first; extract on the second use.
+consumer _or a shipped bug_ exists. Inline first; extract on the second use.
 
 ## The primitives menu
 
@@ -59,7 +59,7 @@ Composables:
   concern** — the detail page keeps separate gates for download vs
   rate/comment; sharing one instance is how the original bug happened.
 - **`usePagedList<T>`** — offset paging: `items/status/hasMore/loadingMore/
-  capped`, `loadFirst/loadMore/loadAll(max)`, plus **`mutate(fn)`** for
+capped`, `loadFirst/loadMore/loadAll(max)`, plus **`mutate(fn)`** for
   optimistic updates (the vote-count bump). Replaces the requests board and
   queue machines.
 - **`useUrlFilters(schema)`** — URL-as-source-of-truth filters via codecs

@@ -69,6 +69,8 @@
             :videos="row.videos"
             :to="row.to"
             :hint="row.hint"
+            :clear-label="row.clearLabel"
+            @clear="clearHistoryOpen = true"
           />
           <div v-if="!rows.length" class="h-container home-empty">
             <HEmptyState
@@ -82,13 +84,40 @@
           <CarouselRow v-for="n in 4" :key="`skeleton-${n}`" loading />
         </template>
       </div>
+
+      <!-- Clearing viewing history is one click from the shelf, so it asks -->
+      <q-dialog v-model="clearHistoryOpen">
+        <HModal title="Clear recently viewed?">
+          The videos stay in the catalog — only this browser's list of what
+          you've opened goes away.
+          <template #actions>
+            <HBtn
+              variant="tertiary"
+              label="Cancel"
+              @click="clearHistoryOpen = false"
+            />
+            <HBtn
+              variant="danger"
+              label="Clear history"
+              @click="clearHistory"
+            />
+          </template>
+        </HModal>
+      </q-dialog>
     </template>
   </q-page>
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
-import { HBtn, HChip, HEmptyState, HandyLoader } from "@/components/handy";
+import { computed, ref } from "vue";
+import {
+  HBtn,
+  HChip,
+  HEmptyState,
+  HModal,
+  HandyLoader,
+  hToast
+} from "@/components/handy";
 import CarouselRow from "@/components/CarouselRow.vue";
 import MediaHero from "@/components/MediaHero.vue";
 import { formatDuration } from "@/services/format";
@@ -139,10 +168,22 @@ interface Row {
   to: string;
   /** help-icon tooltip after the title (privacy notes and the like) */
   hint?: string;
+  /** delete-icon tooltip after the title; the icon clears the shelf */
+  clearLabel?: string;
 }
 
 const catalog = useCatalogStore();
 const settings = useSettingsStore();
+
+// only the recently-viewed shelf carries a clear icon, so the row event
+// needs no key check
+const clearHistoryOpen = ref(false);
+
+function clearHistory(): void {
+  clearHistoryOpen.value = false;
+  settings.clearRecentlyViewed();
+  hToast("info", "Recently viewed cleared");
+}
 
 const featured = computed(() =>
   catalog.status === "ready"
@@ -220,7 +261,8 @@ const rows = computed<Row[]>(() => {
         .filter(video => !hasMutedTag(video, settings.mutedSet))
         .slice(0, ROW_SIZE),
       to: "/history",
-      hint: "Only stored in this browser — your viewing history is never tracked or sent anywhere."
+      hint: "Only stored in this browser — your viewing history is never tracked or sent anywhere.",
+      clearLabel: "Clear recently viewed"
     },
     ...likeRows,
     {

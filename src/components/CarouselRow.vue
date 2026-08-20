@@ -24,6 +24,18 @@
         >
           <q-tooltip max-width="280px">{{ hint }}</q-tooltip>
         </q-icon>
+        <!-- likewise a sibling: a destructive action must never sit inside
+             the see-all link's hit area -->
+        <button
+          v-if="clearLabel"
+          type="button"
+          class="carousel-row__clear"
+          :aria-label="clearLabel"
+          @click="emit('clear')"
+        >
+          <q-icon name="delete_outline" />
+          <q-tooltip>{{ clearLabel }}</q-tooltip>
+        </button>
       </h2>
     </div>
     <HPeekCarousel
@@ -58,9 +70,24 @@ withDefaults(
      * `| undefined` keeps callers free to pass optional row fields straight
      * through under exactOptionalPropertyTypes */
     hint?: string | undefined;
+    /** shows a small delete icon after the title carrying this tooltip;
+     * pressing it emits `clear` for the parent to confirm and act on */
+    clearLabel?: string | undefined;
   }>(),
-  { title: "", videos: () => [], loading: false, to: "", hint: "" }
+  {
+    title: "",
+    videos: () => [],
+    loading: false,
+    to: "",
+    hint: "",
+    clearLabel: ""
+  }
 );
+
+const emit = defineEmits<{
+  /** the row's delete icon was pressed */
+  clear: [];
+}>();
 </script>
 
 <style scoped lang="scss">
@@ -111,6 +138,31 @@ withDefaults(
 
   &:focus-visible {
     color: var(--color-text-link);
+  }
+}
+
+// same tertiary weight as the hint — an affordance for the row, not a
+// primary action; the danger colour only shows on hover/focus
+.carousel-row__clear {
+  display: inline-flex;
+  align-items: center;
+  // q-icon aligns itself `middle`; a bare inline-flex button would align on
+  // its own baseline instead and sit a couple of pixels off the hint
+  vertical-align: middle;
+  line-height: 1;
+  font-size: 18px;
+  color: var(--color-text-tertiary);
+  margin-left: var(--space-xs);
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  outline: none;
+  transition: color 180ms ease;
+
+  &:hover,
+  &:focus-visible {
+    color: var(--color-feedback-negative);
   }
 }
 
