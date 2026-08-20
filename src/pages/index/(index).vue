@@ -68,6 +68,7 @@
             :title="row.title"
             :videos="row.videos"
             :to="row.to"
+            :hint="row.hint"
           />
           <div v-if="!rows.length" class="h-container home-empty">
             <HEmptyState
@@ -103,7 +104,8 @@ import {
   tagsOf,
   topRated,
   topTags,
-  vrOnly
+  vrOnly,
+  withThumbnail
 } from "@/services/script-index/queries";
 import type { PartnerVideo } from "@/services/script-index/types";
 import { useCatalogStore } from "@/stores/catalog";
@@ -135,13 +137,17 @@ interface Row {
   videos: PartnerVideo[];
   /** see-all destination for the clickable shelf header; empty = plain title */
   to: string;
+  /** help-icon tooltip after the title (privacy notes and the like) */
+  hint?: string;
 }
 
 const catalog = useCatalogStore();
 const settings = useSettingsStore();
 
 const featured = computed(() =>
-  catalog.status === "ready" ? featuredPick(catalog.visible) : undefined
+  catalog.status === "ready"
+    ? featuredPick(catalog.visible, catalog.brokenArtwork)
+    : undefined
 );
 
 function titleCase(tag: string): string {
@@ -149,7 +155,12 @@ function titleCase(tag: string): string {
 }
 
 const rows = computed<Row[]>(() => {
-  const pool = catalog.visible;
+  // home is a visual browse surface: a card without artwork — no link at
+  // all, or a link the broken-artwork registry knows is dead — is just a
+  // grey tile, so the catalog shelves only draw from illustrated videos.
+  // Personal shelves (favorites, recently viewed) stay complete — hiding
+  // something the user saved would read as data loss.
+  const pool = withThumbnail(catalog.visible, catalog.brokenArtwork);
 
   const rowTags = topTags(pool, 12)
     .filter(tag => !EXCLUDED_ROW_TAGS.has(tag))
@@ -208,7 +219,8 @@ const rows = computed<Row[]>(() => {
       videos: inOrder(catalog.videos, settings.recentlyViewed)
         .filter(video => !hasMutedTag(video, settings.mutedSet))
         .slice(0, ROW_SIZE),
-      to: ""
+      to: "/history",
+      hint: "Only stored in this browser — your viewing history is never tracked or sent anywhere."
     },
     ...likeRows,
     {

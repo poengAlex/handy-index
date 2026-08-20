@@ -116,8 +116,8 @@
           />
           <HListRow
             icon="filter_alt"
-            label="Orientation & premium filters"
-            caption="Control which parts of the catalog you see — in settings, or right in the browse filters"
+            label="Orientation, script & video filters"
+            caption="Free or premium scripts, free or paid videos, and who's in them — in settings, or right in the browse filters"
           />
           <HListRow
             icon="block"

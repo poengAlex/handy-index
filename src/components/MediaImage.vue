@@ -7,6 +7,7 @@
     loading="lazy"
     :draggable="false"
     class="media-image"
+    @error="onError"
   >
     <template #error>
       <div class="media-image__error">
@@ -22,7 +23,11 @@
 // @error bookkeeping. Dead partner CDNs are common in the index, so every
 // image needs this. Pass errorIcon="" for a plain-surface error (heroes).
 // NSFW gating stays with the consumer — this only handles load failures.
-withDefaults(
+// Failures also feed the catalog's broken-artwork registry, so discovery
+// surfaces can stop offering cards that would render as this error state.
+import { useCatalogStore } from "@/stores/catalog";
+
+const props = withDefaults(
   defineProps<{
     src: string;
     alt?: string;
@@ -31,6 +36,10 @@ withDefaults(
   }>(),
   { alt: "", errorIcon: "broken_image", iconSize: "32px" }
 );
+
+function onError() {
+  useCatalogStore().markArtworkBroken(props.src);
+}
 </script>
 
 <style scoped lang="scss">

@@ -61,9 +61,64 @@ async function request<T>(
   return (text ? JSON.parse(text) : undefined) as T;
 }
 
-/** The full catalog snapshot (~15k videos, tens of MB — fetch once). */
-export function getIndex(): Promise<PartnerVideo[]> {
-  return request<PartnerVideo[]>("/index");
+/** How far the index fetch has got. The endpoint answers chunked + gzipped
+ * and exposes no Content-Length to CORS, so there is no total to divide by —
+ * only decoded bytes so far, plus the moment the (blocking) parse starts. */
+export interface IndexProgress {
+  /** decoded JSON bytes read from the stream so far */
+  received: number;
+  /** true once every byte is in and JSON.parse is about to run */
+  parsing: boolean;
+}
+
+/** The full catalog snapshot (~15k videos, ~40 MB of JSON — fetch once).
+ * Pass `onProgress` to read the body as a stream and get byte counts as they
+ * land; without it this is a plain one-shot request. */
+export async function getIndex(
+  onProgress?: (progress: IndexProgress) => void
+): Promise<PartnerVideo[]> {
+  if (!onProgress) return request<PartnerVideo[]>("/index");
+
+  const response = await fetch(`${BASE_URL}/index`);
+  if (!response.ok) throw new ScriptIndexError(response.status, "/index");
+  // no streams (old browser, or a body-less mock) — fall back to one shot
+  if (!response.body) return (await response.json()) as PartnerVideo[];
+
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+  // chunks joined once at the end: 40 MB of `+=` is the one thing that would
+  // cost more than the download itself
+  const chunks: string[] = [];
+  let received = 0;
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    received += value.byteLength;
+    chunks.push(decoder.decode(value, { stream: true }));
+    onProgress({ received, parsing: false });
+  }
+  chunks.push(decoder.decode());
+
+  onProgress({ received, parsing: true });
+  // JSON.parse on 40 MB freezes the main thread for a beat, and a frame that
+  // only renders after the freeze never says "parsing" — yield past one paint
+  // so the message the user waits on is the one on screen
+  await nextPaint();
+  return JSON.parse(chunks.join("")) as PartnerVideo[];
+}
+
+/** Resolves after the next frame has been painted; off-DOM (tests) it is just
+ * a macrotask. */
+function nextPaint(): Promise<void> {
+  return new Promise(resolve => {
+    if (typeof requestAnimationFrame !== "function") {
+      setTimeout(resolve, 0);
+      return;
+    }
+    // the timeout lands after the frame rAF is queued in — rAF alone still
+    // runs before the paint it precedes
+    requestAnimationFrame(() => setTimeout(resolve, 0));
+  });
 }
 
 export function getVideo(partnerVideoId: string): Promise<PartnerVideo> {

@@ -9,6 +9,10 @@
         >
           {{ countLabel }}
         </p>
+        <GateNotice
+          v-if="catalog.status === 'ready'"
+          class="videos-page__gate"
+        />
       </header>
 
       <div class="videos-page__controls">
@@ -128,126 +132,144 @@
          apply is a router.replace, so the dialog must survive route changes -->
     <q-dialog v-model="filtersOpen" no-route-dismiss>
       <HModal title="Filters" closable class="videos-page__filters">
-        <div class="videos-page__filters-stack">
-          <q-select
-            :model-value="null"
-            :options="tagOptions"
-            emit-value
-            map-options
-            use-input
-            input-debounce="150"
-            filled
-            dense
-            label="Add tag"
-            @filter="filterTags"
-            @update:model-value="addTag"
-          >
-            <template #prepend>
-              <q-icon name="sell" />
-            </template>
-            <template #no-option>
-              <q-item>
-                <q-item-section class="text-body-sm">
-                  No matching tags
-                </q-item-section>
-              </q-item>
-            </template>
-          </q-select>
-
-          <q-select
-            :model-value="partnerId || null"
-            :options="siteOptions"
-            emit-value
-            map-options
-            use-input
-            input-debounce="150"
-            filled
-            dense
-            label="Site"
-            @filter="filterSites"
-            @update:model-value="setPartner"
-          >
-            <template #prepend>
-              <q-icon name="language" />
-            </template>
-            <template #no-option>
-              <q-item>
-                <q-item-section class="text-body-sm">
-                  No matching sites
-                </q-item-section>
-              </q-item>
-            </template>
-          </q-select>
-
-          <div v-if="chips.length" class="videos-page__chips">
-            <button
-              v-for="chip in chips"
-              :key="chip.key"
-              type="button"
-              class="videos-page__chip"
-              :aria-label="`Remove filter: ${chip.label}`"
-              @click="chip.remove()"
+        <ModalScroll>
+          <div class="videos-page__filters-stack">
+            <q-select
+              :model-value="null"
+              :options="tagOptions"
+              emit-value
+              map-options
+              use-input
+              input-debounce="150"
+              filled
+              dense
+              label="Add tag"
+              @filter="filterTags"
+              @update:model-value="addTag"
             >
-              <HChip :icon="chip.icon">
-                {{ chip.label }}
-                <q-icon
-                  name="close"
-                  size="16px"
-                  class="videos-page__chip-close"
-                />
-              </HChip>
-            </button>
+              <template #prepend>
+                <q-icon name="sell" />
+              </template>
+              <template #no-option>
+                <q-item>
+                  <q-item-section class="text-body-sm">
+                    No matching tags
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
+
+            <q-select
+              :model-value="partnerId || null"
+              :options="siteOptions"
+              emit-value
+              map-options
+              use-input
+              input-debounce="150"
+              filled
+              dense
+              label="Site"
+              @filter="filterSites"
+              @update:model-value="setPartner"
+            >
+              <template #prepend>
+                <q-icon name="language" />
+              </template>
+              <template #no-option>
+                <q-item>
+                  <q-item-section class="text-body-sm">
+                    No matching sites
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
+
+            <div v-if="chips.length" class="videos-page__chips">
+              <button
+                v-for="chip in chips"
+                :key="chip.key"
+                type="button"
+                class="videos-page__chip"
+                :aria-label="`Remove filter: ${chip.label}`"
+                @click="chip.remove()"
+              >
+                <HChip :icon="chip.icon">
+                  {{ chip.label }}
+                  <q-icon
+                    name="close"
+                    size="16px"
+                    class="videos-page__chip-close"
+                  />
+                </HChip>
+              </button>
+            </div>
+
+            <HList>
+              <HToggleRow
+                :model-value="vr"
+                icon="view_in_ar"
+                label="VR only"
+                caption="Only virtual-reality videos"
+                @update:model-value="setVr"
+              />
+            </HList>
+
+            <!-- The global settings gates. They ride in the URL so a shared
+                 link reproduces this grid, but they stay preferences rather
+                 than page filters: they don't count toward the badge, and
+                 Clear filters leaves them alone. -->
+            <HList title="Orientation">
+              <HRadioRow
+                v-for="option in ORIENTATIONS"
+                :key="option"
+                v-model="settings.orientation"
+                :val="option"
+                :label="ORIENTATION_LABELS[option]"
+              />
+            </HList>
+            <p v-if="scopedPick" class="text-caption videos-page__note">
+              Not applied here — you're browsing a
+              {{ partnerId ? "site" : "performer" }} you picked, so their full
+              catalog shows.
+            </p>
+
+            <HList title="Script access">
+              <HRadioRow
+                v-for="option in ACCESS_FILTERS"
+                :key="option"
+                v-model="settings.scriptFilter"
+                :val="option"
+                :icon="ACCESS_FILTER_ICONS[option]"
+                :label="SCRIPT_FILTER_LABELS[option]"
+              />
+            </HList>
+
+            <HList title="Video access">
+              <HRadioRow
+                v-for="option in ACCESS_FILTERS"
+                :key="option"
+                v-model="settings.videoFilter"
+                :val="option"
+                :icon="ACCESS_FILTER_ICONS[option]"
+                :label="VIDEO_FILTER_LABELS[option]"
+              />
+            </HList>
+
+            <HLabeledSlider
+              :model-value="durationInput"
+              label="Duration"
+              unit="min"
+              :min="0"
+              :max="DURATION_MAX"
+              :step="1"
+              :editable="false"
+              @update:model-value="onDurationInput"
+              @change="commitDuration"
+            >
+              <template #value>{{ durationLabel }}</template>
+            </HLabeledSlider>
           </div>
-
-          <HList>
-            <HToggleRow
-              :model-value="vr"
-              icon="view_in_ar"
-              label="VR only"
-              caption="Only virtual-reality videos"
-              @update:model-value="setVr"
-            />
-            <HToggleRow
-              v-model="settings.showPremium"
-              icon="workspace_premium"
-              label="Premium videos"
-              caption="Include videos without a free script — applies everywhere"
-            />
-          </HList>
-
-          <!-- The global settings gates. They ride in the URL so a shared
-               link reproduces this grid, but they stay preferences rather
-               than page filters: they don't count toward the badge, and
-               Clear filters leaves them alone. -->
-          <HList title="Orientation">
-            <HRadioRow
-              v-for="option in ORIENTATIONS"
-              :key="option"
-              v-model="settings.orientation"
-              :val="option"
-              :label="ORIENTATION_LABELS[option]"
-            />
-          </HList>
-          <p v-if="scopedPick" class="text-caption videos-page__note">
-            Not applied here — you're browsing a
-            {{ partnerId ? "site" : "performer" }} you picked, so their full
-            catalog shows.
-          </p>
-
-          <HLabeledSlider
-            :model-value="durationInput"
-            label="Duration"
-            unit="min"
-            :min="0"
-            :max="DURATION_MAX"
-            :step="1"
-            :editable="false"
-            @update:model-value="onDurationInput"
-            @change="commitDuration"
-          >
-            <template #value>{{ durationLabel }}</template>
-          </HLabeledSlider>
-        </div>
+        </ModalScroll>
 
         <template #actions>
           <HBtn
@@ -266,7 +288,7 @@
 <script setup lang="ts">
 // The browse + search surface: every filter lives in the URL query so any
 // combination is shareable and back-button friendly — including the two
-// global gates (orientation, premium), without which a shared link would
+// global gates (orientation, script/video access), without which a link would
 // render against the recipient's catalog instead of the sender's. Filtering
 // is a straight composition of the queries.ts selectors over the gated
 // catalog.
@@ -285,11 +307,20 @@ import {
   hToast
 } from "@/components/handy";
 import type { HLabeledSliderRange } from "@/components/handy/HLabeledSlider.vue";
+import GateNotice from "@/components/GateNotice.vue";
+import ModalScroll from "@/components/ModalScroll.vue";
 import VideoGrid from "@/components/VideoGrid.vue";
-import type { Orientation } from "@/services/script-index/queries";
+import type {
+  AccessFilter,
+  Orientation
+} from "@/services/script-index/queries";
 import {
+  ACCESS_FILTERS,
+  ACCESS_FILTER_ICONS,
   ORIENTATIONS,
   ORIENTATION_LABELS,
+  SCRIPT_FILTER_LABELS,
+  VIDEO_FILTER_LABELS,
   alphabetical,
   byDurationRange,
   byPartner,
@@ -411,7 +442,8 @@ const sortDir = computed<SortDir>(() => {
   return raw === "asc" || raw === "desc" ? raw : NATURAL_DIR[sortKey.value];
 });
 
-// The two global gates (orientation, premium) also ride in the URL — they
+// The three global gates (orientation + the two paywalls) also ride in the
+// URL — they
 // silently decide what the grid can contain, so a link without them
 // reproduces the recipient's catalog rather than the sender's. They stay
 // owned by the settings store: the URL is an inbound setter plus a
@@ -422,12 +454,26 @@ const orientationParam = computed<Orientation | null>(() => {
   return (ORIENTATIONS as string[]).includes(raw) ? (raw as Orientation) : null;
 });
 
-const premiumParam = computed<boolean | null>(() => {
-  const raw = firstParam(route.query.premium);
-  if (raw === "1") return true;
-  if (raw === "0") return false;
-  return null;
+function accessParam(raw: string): AccessFilter | null {
+  return (ACCESS_FILTERS as string[]).includes(raw)
+    ? (raw as AccessFilter)
+    : null;
+}
+
+const scriptParam = computed<AccessFilter | null>(() => {
+  const own = accessParam(firstParam(route.query.script));
+  if (own) return own;
+  // links shared while the two paywalls were one boolean gate — it was the
+  // script one all along (1 meant premium scripts included)
+  const legacy = firstParam(route.query.premium);
+  if (legacy === "1") return "all";
+  if (legacy === "0") return "free";
+  return accessParam(legacy);
 });
+
+const videoParam = computed<AccessFilter | null>(() =>
+  accessParam(firstParam(route.query.video))
+);
 
 // dmin/dmax are integer MINUTES; both optional and omitted at defaults
 const durationMin = computed(() => {
@@ -463,7 +509,9 @@ interface Filters {
   /** global gate — read from the store, not the URL (see currentFilters) */
   orientation: Orientation;
   /** global gate — read from the store, not the URL */
-  premium: boolean;
+  script: AccessFilter;
+  /** global gate — read from the store, not the URL */
+  video: AccessFilter;
 }
 
 function currentFilters(): Filters {
@@ -481,7 +529,8 @@ function currentFilters(): Filters {
     // the store is the truth for both gates: every write goes through it
     // first, so what lands in the URL is what the app is actually using
     orientation: settings.orientation,
-    premium: settings.showPremium
+    script: settings.scriptFilter,
+    video: settings.videoFilter
   };
 }
 
@@ -506,7 +555,8 @@ function apply(filters: Filters) {
   // would export nothing on the most common visit — the one where you never
   // touched the gates and copied the URL from the address bar
   query.orientation = filters.orientation;
-  query.premium = filters.premium ? "1" : "0";
+  query.script = filters.script;
+  query.video = filters.video;
   void router.replace({ query });
 }
 
@@ -571,23 +621,30 @@ function clearAll() {
 watch(
   [
     orientationParam,
-    premiumParam,
+    scriptParam,
+    videoParam,
     () => settings.orientation,
-    () => settings.showPremium
+    () => settings.scriptFilter,
+    () => settings.videoFilter
   ],
-  ([orientation, premium], before) => {
+  ([orientation, script, video], before) => {
     // no `before` = the immediate first run, where the URL always leads
     const urlLed =
-      !before || orientation !== before[0] || premium !== before[1];
+      !before ||
+      orientation !== before[0] ||
+      script !== before[1] ||
+      video !== before[2];
     if (urlLed) {
       if (orientation) settings.orientation = orientation;
-      if (premium !== null) settings.showPremium = premium;
+      if (script) settings.scriptFilter = script;
+      if (video) settings.videoFilter = video;
     }
-    // fills a bare /videos, an inbound link that carried only one gate, and
-    // any unparseable value — the URL always ends up stating both
+    // fills a bare /videos, an inbound link that carried only some of the
+    // gates, and any unparseable value — the URL always ends up stating all
     if (
       orientation !== settings.orientation ||
-      premium !== settings.showPremium
+      script !== settings.scriptFilter ||
+      video !== settings.videoFilter
     ) {
       apply(currentFilters());
     }
@@ -799,8 +856,8 @@ const chips = computed<FilterChip[]>(() => {
 
 // naming a site or a performer is a deliberate pick, so it outranks the
 // ambient orientation filter — otherwise every card in the /sites and
-// /performers directories could open onto an empty page. Premium + mutes still
-// apply either way.
+// /performers directories could open onto an empty page. Access + mutes
+// still apply either way.
 const scopedPick = computed(() =>
   Boolean(partnerId.value || performerId.value)
 );
@@ -907,6 +964,11 @@ async function shareResults() {
 .videos-page__count {
   margin: 0;
   color: var(--color-text-tertiary);
+}
+
+// its own row under the title/count pair, which share the baseline above it
+.videos-page__gate {
+  flex-basis: 100%;
 }
 
 // sits under the orientation group in the filter sheet, aligned to its inset

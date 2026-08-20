@@ -1,5 +1,9 @@
 <template>
-  <q-layout view="lHh Lpr lFf" class="app-shell">
+  <q-layout
+    view="lHh Lpr lFf"
+    class="app-shell"
+    :class="{ 'app-shell--full-width': settings.fullWidth }"
+  >
     <q-header
       :class="[
         'app-header',
@@ -42,7 +46,33 @@
           class="app-toolbar__btn"
           to="/favorites"
         />
+        <q-btn
+          flat
+          round
+          dense
+          icon="history"
+          aria-label="Recently viewed"
+          class="app-toolbar__btn"
+          to="/history"
+        />
         <OrientationMenu />
+        <!-- only while mutes are on: a gate that removes more of the catalog
+             than any other had no presence in the chrome at all -->
+        <q-btn
+          v-if="settings.mutedTags.length"
+          flat
+          round
+          dense
+          icon="volume_off"
+          :aria-label="mutedLabel"
+          class="app-toolbar__btn"
+          @click="mutedTagsOpen = true"
+        >
+          <q-badge floating rounded color="primary">
+            {{ settings.mutedTags.length }}
+          </q-badge>
+          <q-tooltip>{{ mutedLabel }}</q-tooltip>
+        </q-btn>
         <q-btn
           flat
           round
@@ -82,6 +112,13 @@
           @click="drawer = false"
         />
         <HDrawerItem
+          label="Recently viewed"
+          icon="history"
+          to="/history"
+          :active="isActive('/history')"
+          @click="drawer = false"
+        />
+        <HDrawerItem
           label="Privacy"
           icon="policy"
           to="/privacy"
@@ -100,12 +137,13 @@
     </q-page-container>
 
     <SettingsDialog v-model="settingsOpen" />
+    <MutedTagsDialog v-model="mutedTagsOpen" />
     <ConsentDialog />
   </q-layout>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
 import { useQuasar } from "quasar";
 import {
@@ -117,9 +155,11 @@ import {
   useHandyTheme
 } from "@/components/handy";
 import ConsentDialog from "@/components/ConsentDialog.vue";
+import MutedTagsDialog from "@/components/MutedTagsDialog.vue";
 import OrientationMenu from "@/components/OrientationMenu.vue";
 import SettingsDialog from "@/components/SettingsDialog.vue";
 import { useCatalogStore } from "@/stores/catalog";
+import { useSettingsStore } from "@/stores/settings";
 
 const NAV_LINKS = [
   { label: "Videos", to: "/videos", icon: "movie" },
@@ -133,10 +173,23 @@ const NAV_LINKS = [
 const $q = useQuasar();
 const route = useRoute();
 const settingsOpen = ref(false);
+const mutedTagsOpen = ref(false);
 const drawer = ref(false);
 const { dark, apply, init } = useHandyTheme();
 const { scrolled } = useGlassOnScroll();
 const catalog = useCatalogStore();
+const settings = useSettingsStore();
+
+// leads with the cost, not the count: "1 tag muted" reads as trivia, while
+// the video figure is the thing that surprised you
+const mutedLabel = computed(() => {
+  const tags = settings.mutedTags.length;
+  const tagPart = `${tags} muted tag${tags === 1 ? "" : "s"}`;
+  const hidden = catalog.gates.byMutedTags;
+  if (!hidden) return tagPart;
+  const noun = hidden === 1 ? "video" : "videos";
+  return `${hidden.toLocaleString()} ${noun} hidden by ${tagPart}`;
+});
 
 // exact match only — design.md: "prefix matching must not light up a parent"
 function isActive(to: string): boolean {

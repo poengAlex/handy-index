@@ -81,7 +81,8 @@ const rows = computed<ClearRow[]>(() => {
     .join(" · ");
   const preferencesTouched =
     settings.nsfw ||
-    !settings.showPremium ||
+    settings.scriptFilter !== "free" ||
+    settings.videoFilter !== "all" ||
     settings.inlinePlayers ||
     settings.orientation !== "straight";
   return [
@@ -139,7 +140,7 @@ const rows = computed<ClearRow[]>(() => {
       key: "preferences",
       icon: "tune",
       label: "Viewing preferences",
-      caption: "Explicit previews, premium videos, orientation",
+      caption: "Explicit previews, orientation, script & video access",
       empty: !preferencesTouched,
       clear: settings.resetPreferences
     }

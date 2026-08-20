@@ -45,10 +45,72 @@ export const UNMUTABLE_TAGS: ReadonlySet<string> = new Set([
   "trans"
 ]);
 
+/** Which half of a paywall the gate keeps: everything, only what's free, or
+ * only what sits behind it. Three states rather than a show/hide toggle so
+ * "premium only" can't contradict "hide premium".
+ *
+ * The index carries TWO independent paywalls and they cross freely — of
+ * 15,572 videos, 2,939 are paid videos with a free script and 2,684 are paid
+ * on both — so scripts and videos get one of these each, never a shared one.
+ */
+export type AccessFilter = "all" | "free" | "premium";
+
+export const ACCESS_FILTERS: AccessFilter[] = ["all", "free", "premium"];
+
+export const ACCESS_FILTER_ICONS: Record<AccessFilter, string> = {
+  all: "all_inclusive",
+  free: "lock_open",
+  premium: "workspace_premium"
+};
+
+/** Shared vocabulary for every access control (settings, browse filters) and
+ * for the hidden-count disclosure, so they can't drift apart. Named per
+ * paywall: "Free only" alone never says free *what*. */
+export const SCRIPT_FILTER_LABELS: Record<AccessFilter, string> = {
+  all: "Every script",
+  free: "Free scripts only",
+  premium: "Premium scripts only"
+};
+
+export const VIDEO_FILTER_LABELS: Record<AccessFilter, string> = {
+  all: "Every video",
+  free: "Free videos only",
+  premium: "Paid videos only"
+};
+
+/** Both access fields are optional in the index, and an absent value is not
+ * a promise of free access — so "not public" is what premium means here, and
+ * the free/premium split covers the catalog exactly once. */
+function matchesAccess(access: string | undefined, filter: AccessFilter) {
+  if (filter === "all") return true;
+  const free = access === "public";
+  return filter === "free" ? free : !free;
+}
+
+/** Is the SCRIPT free to download? (scriptAccess) */
+export function matchesScriptAccess(
+  video: PartnerVideo,
+  filter: AccessFilter
+): boolean {
+  return matchesAccess(video.scriptAccess, filter);
+}
+
+/** Is the VIDEO free to watch on the partner site? (videoAccess) — a
+ * different paywall from the script's, and the one that matters less here:
+ * this is a script database. */
+export function matchesVideoAccess(
+  video: PartnerVideo,
+  filter: AccessFilter
+): boolean {
+  return matchesAccess(video.videoAccess, filter);
+}
+
 export interface CatalogFilter {
   orientation: Orientation;
-  /** include videos whose script is not free */
-  premium: boolean;
+  /** which script-paywall half of the catalog to keep */
+  script: AccessFilter;
+  /** which video-paywall half of the catalog to keep */
+  video: AccessFilter;
   /** tags the user muted. A Set, built once by the caller — passing an array
    * would make the 15k pass O(videos × tags × muted) string compares. */
   mutedTags: ReadonlySet<string>;
@@ -69,20 +131,72 @@ export function hasMutedTag(
   return false;
 }
 
-/** Baseline gate applied before any row query: orientation + premium + mutes.
- * Matching is exact — a substring rule would make "teen" mute "eighteen". */
+/** Baseline gate applied before any row query: orientation + the two access
+ * filters + mutes. Matching is exact — a substring rule would make "teen"
+ * mute "eighteen". */
 export function visibleVideos(
   videos: readonly PartnerVideo[],
   filter: CatalogFilter
 ): PartnerVideo[] {
   const base = (video: PartnerVideo) =>
     matchesOrientation(video, filter.orientation) &&
-    (filter.premium || video.scriptAccess === "public");
+    matchesScriptAccess(video, filter.script) &&
+    matchesVideoAccess(video, filter.video);
   // nothing muted (the common case) skips the per-video tag loop entirely
   if (!filter.mutedTags.size) return videos.filter(base);
   return videos.filter(
     video => base(video) && !hasMutedTag(video, filter.mutedTags)
   );
+}
+
+export interface GateBreakdown {
+  /** everything in the index */
+  total: number;
+  /** what visibleVideos returns for the same filter */
+  visible: number;
+  hidden: number;
+  byOrientation: number;
+  byScript: number;
+  byVideo: number;
+  byMutedTags: number;
+}
+
+/** Why visibleVideos dropped what it dropped — the numbers behind a "9,284
+ * videos hidden" disclosure. Attribution is first-reason-wins in the same
+ * order the gate applies, so a video that is both off-orientation and muted
+ * is counted once and the reasons sum exactly to `hidden` (independent
+ * per-gate counts would overlap and overstate the total — and with two
+ * access filters that overlap is thousands of videos wide). Must stay in
+ * step with visibleVideos: same predicates, same order. */
+export function gateBreakdown(
+  videos: readonly PartnerVideo[],
+  filter: CatalogFilter
+): GateBreakdown {
+  let byOrientation = 0;
+  let byScript = 0;
+  let byVideo = 0;
+  let byMutedTags = 0;
+  for (const video of videos) {
+    if (!matchesOrientation(video, filter.orientation)) {
+      byOrientation += 1;
+    } else if (!matchesScriptAccess(video, filter.script)) {
+      byScript += 1;
+    } else if (!matchesVideoAccess(video, filter.video)) {
+      byVideo += 1;
+    } else if (hasMutedTag(video, filter.mutedTags)) {
+      byMutedTags += 1;
+    }
+  }
+  const hidden = byOrientation + byScript + byVideo + byMutedTags;
+  return {
+    total: videos.length,
+    visible: videos.length - hidden,
+    hidden,
+    byOrientation,
+    byScript,
+    byVideo,
+    byMutedTags
+  };
 }
 
 // parsed-timestamp cache: sorting the 15k-item catalog would otherwise call
@@ -288,8 +402,18 @@ export function embedUrlOf(video: PartnerVideo): string | undefined {
   return undefined;
 }
 
-export function withThumbnail(videos: readonly PartnerVideo[]): PartnerVideo[] {
-  return videos.filter(video => Boolean(artworkOf(video)));
+/** Videos with usable artwork. Metadata presence alone isn't enough — dead
+ * partner CDNs leave stale links behind — so callers can also pass the
+ * catalog's broken-artwork registry to drop videos whose link 404'd. */
+export function withThumbnail(
+  videos: readonly PartnerVideo[],
+  brokenArtwork?: ReadonlySet<string>
+): PartnerVideo[] {
+  return videos.filter(video => {
+    const artwork = artworkOf(video);
+    if (!artwork) return false;
+    return !brokenArtwork?.has(artwork);
+  });
 }
 
 export interface TagSummary {
@@ -324,25 +448,30 @@ export interface PartnerSummary {
   partnerId: string;
   name: string;
   count: number;
-  /** videos whose script is not free */
-  premiumCount: number;
+  /** videos behind the partner's own paywall (videoAccess) */
+  paidVideoCount: number;
+  /** videos whose script is not free (scriptAccess) — a different paywall */
+  premiumScriptCount: number;
 }
 
 /** Every site in the catalog with its video count, biggest first. */
 export function partnersOf(videos: readonly PartnerVideo[]): PartnerSummary[] {
   const partners = new Map<string, PartnerSummary>();
   for (const video of videos) {
+    const paid = video.videoAccess !== "public" ? 1 : 0;
     const premium = video.scriptAccess !== "public" ? 1 : 0;
     const existing = partners.get(video.partnerId);
     if (existing) {
       existing.count += 1;
-      existing.premiumCount += premium;
+      existing.paidVideoCount += paid;
+      existing.premiumScriptCount += premium;
     } else {
       partners.set(video.partnerId, {
         partnerId: video.partnerId,
         name: video.partnerName ?? video.partnerId,
         count: 1,
-        premiumCount: premium
+        paidVideoCount: paid,
+        premiumScriptCount: premium
       });
     }
   }
@@ -401,10 +530,14 @@ export function performersOf(
     .sort((a, b) => b.count - a.count);
 }
 
-/** Hero candidate: fresh, decently rated and has artwork. */
+/** Hero candidate: fresh, decently rated and has artwork that loads. */
 export function featuredPick(
-  videos: readonly PartnerVideo[]
+  videos: readonly PartnerVideo[],
+  brokenArtwork?: ReadonlySet<string>
 ): PartnerVideo | undefined {
-  const candidates = recentFirst(withThumbnail(videos)).slice(0, 50);
+  const candidates = recentFirst(withThumbnail(videos, brokenArtwork)).slice(
+    0,
+    50
+  );
   return topRated(candidates)[0] ?? candidates[0];
 }

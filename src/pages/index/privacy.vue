@@ -43,7 +43,7 @@
             <li>your answer to the first-visit consent dialog</li>
             <li>the explicit previews (NSFW) setting</li>
             <li>the orientation filter</li>
-            <li>whether premium videos are shown</li>
+            <li>your script and video access filters</li>
             <li>your favorites</li>
             <li>votes you've cast on video requests</li>
             <li>your Handy connection key</li>
@@ -83,8 +83,8 @@
           <h2 class="text-h5">Changing your choices</h2>
           <p class="text-body">
             Nothing you chose in the first-visit dialog is final. Explicit
-            previews, orientation, and premium visibility can be changed at any
-            time from the settings dialog in the top bar.
+            previews, orientation, and the script and video access filters can
+            be changed at any time from the settings dialog in the top bar.
           </p>
 
           <h2 class="text-h5">Contact</h2>

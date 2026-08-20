@@ -20,10 +20,35 @@
           >
             {{ countLabel }}
           </p>
+          <GateNotice v-if="catalog.status === 'ready'" />
         </header>
 
         <div v-if="catalog.status !== 'ready'" class="tags-page__center">
-          <HandyLoader />
+          <div class="tags-page__loading">
+            <HandyLoader />
+            <div
+              class="tags-page__bar"
+              role="progressbar"
+              aria-label="Loading tags"
+              aria-valuemin="0"
+              aria-valuemax="100"
+              :aria-valuenow="percent"
+            >
+              <div
+                class="tags-page__bar-fill"
+                :style="{ width: `${percent}%` }"
+              />
+            </div>
+            <p class="text-body-sm tags-page__loading-line" aria-live="polite">
+              <span>{{ loadingPhase }}</span>
+              <HTabularNum class="tags-page__loading-pct">
+                {{ percent }}%
+              </HTabularNum>
+            </p>
+            <p class="text-caption tags-page__loading-note">
+              {{ loadingNote }}
+            </p>
+          </div>
         </div>
 
         <template v-else>
@@ -148,9 +173,11 @@ import {
   HBtn,
   HChip,
   HEmptyState,
+  HTabularNum,
   HandyLoader,
   hToast
 } from "@/components/handy";
+import GateNotice from "@/components/GateNotice.vue";
 import MutedTagsDialog from "@/components/MutedTagsDialog.vue";
 import { useIncrementalReveal } from "@/composables/useIncrementalReveal";
 import { tagsOf } from "@/services/script-index/queries";
@@ -172,6 +199,30 @@ const NATURAL_DIR: Record<SortKey, SortDir> = { count: "desc", name: "asc" };
 
 const catalog = useCatalogStore();
 const settings = useSettingsStore();
+
+// The cloud can't draw a single pill until the whole index is in, and that is
+// a ~40 MB wait — long enough that a bare spinner reads as a hang. So: how
+// far along, and why it's worth waiting for.
+const percent = computed(() => Math.round(catalog.progress * 100));
+
+const loadingPhase = computed(() =>
+  catalog.parsing ? "Reading the index" : "Downloading the script index"
+);
+
+const loadingNote = computed(() => {
+  if (catalog.parsing) return "All in — sorting it into tags now.";
+  const received = megabytes(catalog.loadedBytes);
+  // the total is only last visit's size; an index that grew since must not
+  // print "44 of ~41 MB"
+  if (catalog.loadedBytes > catalog.expectedBytes) {
+    return `${received} MB unpacked — the whole catalog, fetched once.`;
+  }
+  return `${received} of ~${megabytes(catalog.expectedBytes)} MB unpacked — the whole catalog, fetched once, so every page after this is instant.`;
+});
+
+function megabytes(bytes: number): string {
+  return (bytes / 1_000_000).toFixed(1);
+}
 
 const mutedOpen = ref(false);
 
@@ -293,6 +344,51 @@ const countLabel = computed(() => {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.tags-page__loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+  width: 100%;
+  max-width: 320px;
+  text-align: center;
+}
+
+.tags-page__bar {
+  width: 100%;
+  height: 4px;
+  border-radius: var(--radius-full);
+  background: var(--color-stroke-subtle);
+  overflow: hidden;
+}
+
+.tags-page__bar-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: var(--color-action-primary);
+  // chunks land in bursts; ease them so the bar glides instead of ratcheting
+  transition: width 240ms ease-out;
+}
+
+.tags-page__loading-line {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  width: 100%;
+  margin: 0;
+  color: var(--color-text-secondary);
+}
+
+.tags-page__loading-pct {
+  color: var(--color-text-primary);
+}
+
+.tags-page__loading-note {
+  margin: 0;
+  color: var(--color-text-tertiary);
+  text-wrap: balance;
 }
 
 .tags-page__cloud {

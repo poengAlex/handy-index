@@ -21,6 +21,7 @@
             >
               {{ countLabel }}
             </p>
+            <GateNotice v-if="catalog.status === 'ready'" />
           </header>
 
           <div
@@ -142,6 +143,7 @@
 // via endless scroll. Cards link into /videos pre-filtered on the performer.
 import { computed, ref, watch } from "vue";
 import { HEmptyState, HandyLoader } from "@/components/handy";
+import GateNotice from "@/components/GateNotice.vue";
 import MediaImage from "@/components/MediaImage.vue";
 import TileCard from "@/components/TileCard.vue";
 import { useIncrementalReveal } from "@/composables/useIncrementalReveal";

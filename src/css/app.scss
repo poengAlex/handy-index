@@ -464,6 +464,24 @@ a {
   }
 }
 
+// settings.fullWidth: the content column spans the viewport. The peek
+// carousel's ≥1440px gutter is derived from the centered 1440px column
+// ((100vw - 1440px) / 2 + padding); with the cap gone the content inset is
+// just the container padding. :not(.h-peek--contained) both skips contained
+// carousels (their gutter stays 0) and lifts specificity above the
+// component's scoped defaults.
+.app-shell--full-width {
+  .h-container {
+    max-width: none;
+  }
+
+  @media (min-width: 1440px) {
+    .h-peek:not(.h-peek--contained) {
+      --h-gutter: 40px;
+    }
+  }
+}
+
 .h-section {
   background: var(--color-bg-page);
   padding-block: var(--space-xl);
@@ -548,6 +566,14 @@ a {
   &.q-field--error .q-field__control {
     box-shadow: inset 0 0 0 2px var(--color-stroke-error);
   }
+}
+
+// Quasar paints the focused floating label with $primary in both themes —
+// on dark that's Brand Blue as text (forbidden). The link token resolves
+// to the same hex as --color-stroke-focus per theme, so the label and the
+// 2px focus border always match. Error keeps Quasar's negative.
+.q-field--focused:not(.q-field--error) .q-field__label {
+  color: var(--color-text-link);
 }
 
 .q-field--disabled {

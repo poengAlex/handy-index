@@ -21,9 +21,7 @@
         <header class="sites-page__header">
           <h1 class="text-h2 sites-page__title">Sites</h1>
           <p class="text-body-sm sites-page__count">{{ countLabel }}</p>
-          <p v-if="hiddenLabel" class="text-caption sites-page__hidden">
-            {{ hiddenLabel }}
-          </p>
+          <GateNotice />
         </header>
 
         <q-input
@@ -43,9 +41,11 @@
 
         <div v-if="!partners.length" class="sites-page__center">
           <HEmptyState
-            icon="filter_alt_off"
+            icon="inventory_2"
             title="Nothing to show"
-            body="Your premium filter and muted tags hide the whole catalog. Loosen them in settings."
+            body="The index came back without a single site. Try loading it again."
+            action-label="Try again"
+            @action="catalog.retry()"
           />
         </div>
         <div v-else-if="!filtered.length" class="sites-page__center">
@@ -71,35 +71,34 @@
 </template>
 
 <script setup lang="ts">
-// The site directory: every partner in the catalog as a nav card,
-// count-sorted by partnersOf, with a client-side name filter on top.
+// The site directory: every partner in the INDEX as a nav card, count-sorted
+// by partnersOf, with a client-side name filter on top. The LIST is ungated —
+// a directory that dropped sites would read as an incomplete index — while
+// the captions do respect the gates, so what a card promises is what opening
+// it delivers. Each card also breaks the site down by both paywalls.
 import { computed, ref } from "vue";
 import { HEmptyState, HNavCard, HandyLoader } from "@/components/handy";
+import GateNotice from "@/components/GateNotice.vue";
 import {
-  ORIENTATION_LABELS,
   partnersOf,
   type PartnerSummary
 } from "@/services/script-index/queries";
 import { useCatalogStore } from "@/stores/catalog";
-import { useSettingsStore } from "@/stores/settings";
 
 const catalog = useCatalogStore();
-const settings = useSettingsStore();
 
 const query = ref("");
 
-// every site in the index, orientation gate lifted (catalog.anyOrientation) —
-// a directory that hid sites would read as an incomplete index
-const partners = computed(() => partnersOf(catalog.anyOrientation));
+const partners = computed(() => partnersOf(catalog.videos));
 
-// how many of each site's videos the orientation gate lets through, so the
-// caption can move when you switch orientation without dropping the site.
-// null on "Everything": nothing is being narrowed, so there is no second
-// number to show and the second pass isn't worth taking.
+// what each site actually opens onto. The browse page lifts the orientation
+// gate for a deliberate site pick (catalog.anyOrientation) and applies the
+// rest, so this counts the same way. null when no gate is narrowing anything:
+// there is then no second number to show, and the pass isn't worth taking.
 const matching = computed(() => {
-  if (settings.orientation === "all") return null;
+  if (catalog.anyOrientation.length === catalog.videos.length) return null;
   const counts = new Map<string, number>();
-  for (const summary of partnersOf(catalog.visible)) {
+  for (const summary of partnersOf(catalog.anyOrientation)) {
     counts.set(summary.partnerId, summary.count);
   }
   return counts;
@@ -113,11 +112,8 @@ const filtered = computed(() => {
   );
 });
 
-// the two totals the per-site captions add up to, so the header explains the
-// arithmetic instead of leaving "38 of 300" to be inferred
-const totalVideos = computed(() => catalog.anyOrientation.length);
-
-const hiddenVideos = computed(() => totalVideos.value - catalog.visible.length);
+// the total the per-site captions add up to
+const totalVideos = computed(() => catalog.videos.length);
 
 const countLabel = computed(() => {
   const sites = partners.value.length;
@@ -127,24 +123,29 @@ const countLabel = computed(() => {
   return `${sites.toLocaleString()} ${siteNoun} · ${videos.toLocaleString()} ${videoNoun} in the index`;
 });
 
-const hiddenLabel = computed(() => {
-  if (settings.orientation === "all" || !hiddenVideos.value) return "";
-  const label = ORIENTATION_LABELS[settings.orientation];
-  const noun = hiddenVideos.value === 1 ? "video" : "videos";
-  return `${hiddenVideos.value.toLocaleString()} ${noun} hidden by the ${label} filter — that's the gap in each “X of Y” below.`;
-});
+function countOf(count: number, noun: string): string {
+  return `${count.toLocaleString()} ${noun}${count === 1 ? "" : "s"}`;
+}
 
+// "1,234 of 2,000 videos · 500 paid videos · 300 premium scripts" — the total
+// stays the headline because that is what the site holds; the first number is
+// what your filters leave of it. The two paywalls are named in full: they are
+// different gates, and "500 premium" would not say which.
 function videoCountLabel(partner: PartnerSummary): string {
-  const total = `${partner.count.toLocaleString()} ${partner.count === 1 ? "video" : "videos"}`;
+  const total = countOf(partner.count, "video");
   const counts = matching.value;
-  // "38 of 300 videos" — the total stays the headline because that is what
-  // opening the site actually shows
-  const videos = counts
-    ? `${(counts.get(partner.partnerId) ?? 0).toLocaleString()} of ${total}`
-    : total;
-  return partner.premiumCount
-    ? `${videos} · ${partner.premiumCount.toLocaleString()} premium`
-    : videos;
+  const parts = [
+    counts
+      ? `${(counts.get(partner.partnerId) ?? 0).toLocaleString()} of ${total}`
+      : total
+  ];
+  if (partner.paidVideoCount) {
+    parts.push(countOf(partner.paidVideoCount, "paid video"));
+  }
+  if (partner.premiumScriptCount) {
+    parts.push(countOf(partner.premiumScriptCount, "premium script"));
+  }
+  return parts.join(" · ");
 }
 </script>
 
@@ -176,14 +177,6 @@ function videoCountLabel(partner: PartnerSummary): string {
 .sites-page__count {
   color: var(--color-text-tertiary);
   margin: var(--space-xs) 0 0;
-}
-
-// the footnote that decodes the "X of Y" captions — half a step quieter than
-// the count line it explains
-.sites-page__hidden {
-  color: var(--color-text-tertiary);
-  margin: calc(var(--space-xs) / 2) 0 0;
-  max-width: 60ch;
 }
 
 .sites-page__search {

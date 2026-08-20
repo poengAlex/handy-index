@@ -39,6 +39,7 @@ declare module 'vue-router/auto-routes' {
       | '//(index)'
       | '//favorites'
       | '//help'
+      | '//history'
       | '//performers'
       | '//playlists/(index)'
       | '//playlists/[playlistId]'
@@ -67,6 +68,13 @@ declare module 'vue-router/auto-routes' {
     '//help': RouteRecordInfo<
       '//help',
       '/help',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '//history': RouteRecordInfo<
+      '//history',
+      '/history',
       Record<never, never>,
       Record<never, never>,
       | never
@@ -167,6 +175,7 @@ declare module 'vue-router/auto-routes' {
         | '//(index)'
         | '//favorites'
         | '//help'
+        | '//history'
         | '//performers'
         | '//playlists/(index)'
         | '//playlists/[playlistId]'
@@ -201,6 +210,14 @@ declare module 'vue-router/auto-routes' {
     'src/pages/index/help.vue': {
       routes:
         | '//help'
+      views:
+        | never
+      pathParamNames:
+        | never
+    }
+    'src/pages/index/history.vue': {
+      routes:
+        | '//history'
       views:
         | never
       pathParamNames:

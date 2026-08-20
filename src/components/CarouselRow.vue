@@ -12,6 +12,18 @@
           <q-icon name="chevron_right" class="carousel-row__chevron" />
         </router-link>
         <template v-else>{{ title }}</template>
+        <!-- sibling of the link on purpose: hovering the hint must not
+             read as (or trigger) the see-all affordance -->
+        <q-icon
+          v-if="hint"
+          name="help_outline"
+          class="carousel-row__hint"
+          tabindex="0"
+          role="img"
+          :aria-label="hint"
+        >
+          <q-tooltip max-width="280px">{{ hint }}</q-tooltip>
+        </q-icon>
       </h2>
     </div>
     <HPeekCarousel
@@ -42,8 +54,12 @@ withDefaults(
     loading?: boolean;
     /** see-all destination; makes the header clickable */
     to?: string;
+    /** shows a small help icon after the title carrying this tooltip.
+     * `| undefined` keeps callers free to pass optional row fields straight
+     * through under exactOptionalPropertyTypes */
+    hint?: string | undefined;
   }>(),
-  { title: "", videos: () => [], loading: false, to: "" }
+  { title: "", videos: () => [], loading: false, to: "", hint: "" }
 );
 </script>
 
@@ -82,6 +98,19 @@ withDefaults(
 @media (prefers-reduced-motion: reduce) {
   .carousel-row__title-skeleton {
     animation: none;
+  }
+}
+
+// deliberately small and tertiary: metadata about the row, not part of it
+.carousel-row__hint {
+  font-size: 18px;
+  color: var(--color-text-tertiary);
+  margin-left: var(--space-xs);
+  cursor: help;
+  outline: none;
+
+  &:focus-visible {
+    color: var(--color-text-link);
   }
 }
 
