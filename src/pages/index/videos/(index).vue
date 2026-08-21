@@ -233,26 +233,41 @@
               catalog shows.
             </p>
 
-            <HList title="Script access">
-              <HRadioRow
-                v-for="option in ACCESS_FILTERS"
-                :key="option"
-                v-model="settings.scriptFilter"
-                :val="option"
-                :icon="ACCESS_FILTER_ICONS[option]"
-                :label="SCRIPT_FILTER_LABELS[option]"
+            <HList title="Access">
+              <HToggleRow
+                v-model="settings.showPremiumScripts"
+                icon="workspace_premium"
+                label="Premium scripts"
+                caption="Include scripts behind the Handy paywall"
+              />
+              <HToggleRow
+                v-model="settings.showPaidVideos"
+                icon="paid"
+                label="Paid videos"
+                caption="Include videos behind the partner's paywall"
               />
             </HList>
 
-            <HList title="Video access">
-              <HRadioRow
-                v-for="option in ACCESS_FILTERS"
-                :key="option"
-                v-model="settings.videoFilter"
-                :val="option"
-                :icon="ACCESS_FILTER_ICONS[option]"
-                :label="VIDEO_FILTER_LABELS[option]"
-              />
+            <!-- the third gate, and the only one with no control in the
+                 browsing chrome: a single common tag can carry half the
+                 index, so it is listed here with the others rather than
+                 living solely behind the hidden-count notice -->
+            <HList>
+              <HListRow
+                icon="block"
+                label="Muted tags"
+                :caption="mutedCaption"
+                :clickable="false"
+              >
+                <template #trailing>
+                  <HBtn
+                    variant="tertiary"
+                    size="sm"
+                    label="Manage"
+                    @click="mutedTagsOpen = true"
+                  />
+                </template>
+              </HListRow>
             </HList>
 
             <HLabeledSlider
@@ -282,6 +297,8 @@
         </template>
       </HModal>
     </q-dialog>
+
+    <MutedTagsDialog v-model="mutedTagsOpen" />
   </q-page>
 </template>
 
@@ -300,6 +317,7 @@ import {
   HEmptyState,
   HLabeledSlider,
   HList,
+  HListRow,
   HModal,
   HRadioRow,
   HToggleRow,
@@ -309,18 +327,12 @@ import {
 import type { HLabeledSliderRange } from "@/components/handy/HLabeledSlider.vue";
 import GateNotice from "@/components/GateNotice.vue";
 import ModalScroll from "@/components/ModalScroll.vue";
+import MutedTagsDialog from "@/components/MutedTagsDialog.vue";
 import VideoGrid from "@/components/VideoGrid.vue";
-import type {
-  AccessFilter,
-  Orientation
-} from "@/services/script-index/queries";
+import type { Orientation } from "@/services/script-index/queries";
 import {
-  ACCESS_FILTERS,
-  ACCESS_FILTER_ICONS,
   ORIENTATIONS,
   ORIENTATION_LABELS,
-  SCRIPT_FILTER_LABELS,
-  VIDEO_FILTER_LABELS,
   alphabetical,
   byDurationRange,
   byPartner,
@@ -454,24 +466,22 @@ const orientationParam = computed<Orientation | null>(() => {
   return (ORIENTATIONS as string[]).includes(raw) ? (raw as Orientation) : null;
 });
 
-function accessParam(raw: string): AccessFilter | null {
-  return (ACCESS_FILTERS as string[]).includes(raw)
-    ? (raw as AccessFilter)
-    : null;
+// "1"/"0" today; the word forms are the three-way gate this briefly shipped
+// with, where premium-only has no boolean equivalent and reads as "shown"
+function accessParam(raw: string): boolean | null {
+  if (raw === "1" || raw === "all" || raw === "premium") return true;
+  if (raw === "0" || raw === "free") return false;
+  return null;
 }
 
-const scriptParam = computed<AccessFilter | null>(() => {
-  const own = accessParam(firstParam(route.query.script));
-  if (own) return own;
-  // links shared while the two paywalls were one boolean gate — it was the
-  // script one all along (1 meant premium scripts included)
-  const legacy = firstParam(route.query.premium);
-  if (legacy === "1") return "all";
-  if (legacy === "0") return "free";
-  return accessParam(legacy);
-});
+const scriptParam = computed<boolean | null>(
+  () =>
+    // ?premium= was this same switch back when the two paywalls were one gate
+    accessParam(firstParam(route.query.script)) ??
+    accessParam(firstParam(route.query.premium))
+);
 
-const videoParam = computed<AccessFilter | null>(() =>
+const videoParam = computed<boolean | null>(() =>
   accessParam(firstParam(route.query.video))
 );
 
@@ -509,9 +519,9 @@ interface Filters {
   /** global gate — read from the store, not the URL (see currentFilters) */
   orientation: Orientation;
   /** global gate — read from the store, not the URL */
-  script: AccessFilter;
+  script: boolean;
   /** global gate — read from the store, not the URL */
-  video: AccessFilter;
+  video: boolean;
 }
 
 function currentFilters(): Filters {
@@ -529,8 +539,8 @@ function currentFilters(): Filters {
     // the store is the truth for both gates: every write goes through it
     // first, so what lands in the URL is what the app is actually using
     orientation: settings.orientation,
-    script: settings.scriptFilter,
-    video: settings.videoFilter
+    script: settings.showPremiumScripts,
+    video: settings.showPaidVideos
   };
 }
 
@@ -555,8 +565,8 @@ function apply(filters: Filters) {
   // would export nothing on the most common visit — the one where you never
   // touched the gates and copied the URL from the address bar
   query.orientation = filters.orientation;
-  query.script = filters.script;
-  query.video = filters.video;
+  query.script = filters.script ? "1" : "0";
+  query.video = filters.video ? "1" : "0";
   void router.replace({ query });
 }
 
@@ -624,8 +634,8 @@ watch(
     scriptParam,
     videoParam,
     () => settings.orientation,
-    () => settings.scriptFilter,
-    () => settings.videoFilter
+    () => settings.showPremiumScripts,
+    () => settings.showPaidVideos
   ],
   ([orientation, script, video], before) => {
     // no `before` = the immediate first run, where the URL always leads
@@ -636,15 +646,15 @@ watch(
       video !== before[2];
     if (urlLed) {
       if (orientation) settings.orientation = orientation;
-      if (script) settings.scriptFilter = script;
-      if (video) settings.videoFilter = video;
+      if (script !== null) settings.showPremiumScripts = script;
+      if (video !== null) settings.showPaidVideos = video;
     }
     // fills a bare /videos, an inbound link that carried only some of the
     // gates, and any unparseable value — the URL always ends up stating all
     if (
       orientation !== settings.orientation ||
-      script !== settings.scriptFilter ||
-      video !== settings.videoFilter
+      script !== settings.showPremiumScripts ||
+      video !== settings.showPaidVideos
     ) {
       apply(currentFilters());
     }
@@ -655,6 +665,19 @@ watch(
 // --- the advanced-filters modal ---
 
 const filtersOpen = ref(false);
+const mutedTagsOpen = ref(false);
+
+// names them rather than counting them: "3 tags muted" tells you a gate is
+// on, but not whether it's the one emptying your grid
+const MUTED_SHOWN = 3;
+
+const mutedCaption = computed(() => {
+  const tags = settings.mutedTags;
+  if (!tags.length) return "Nothing muted";
+  const shown = tags.slice(0, MUTED_SHOWN).join(", ");
+  const rest = tags.length - MUTED_SHOWN;
+  return rest > 0 ? `${shown} +${rest} more` : shown;
+});
 
 /** how many advanced filters are active (search and sort don't count) */
 const advancedCount = computed(

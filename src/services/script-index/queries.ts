@@ -45,72 +45,28 @@ export const UNMUTABLE_TAGS: ReadonlySet<string> = new Set([
   "trans"
 ]);
 
-/** Which half of a paywall the gate keeps: everything, only what's free, or
- * only what sits behind it. Three states rather than a show/hide toggle so
- * "premium only" can't contradict "hide premium".
- *
- * The index carries TWO independent paywalls and they cross freely — of
+/** The index carries TWO independent paywalls and they cross freely — of
  * 15,572 videos, 2,939 are paid videos with a free script and 2,684 are paid
- * on both — so scripts and videos get one of these each, never a shared one.
- */
-export type AccessFilter = "all" | "free" | "premium";
-
-export const ACCESS_FILTERS: AccessFilter[] = ["all", "free", "premium"];
-
-export const ACCESS_FILTER_ICONS: Record<AccessFilter, string> = {
-  all: "all_inclusive",
-  free: "lock_open",
-  premium: "workspace_premium"
-};
-
-/** Shared vocabulary for every access control (settings, browse filters) and
- * for the hidden-count disclosure, so they can't drift apart. Named per
- * paywall: "Free only" alone never says free *what*. */
-export const SCRIPT_FILTER_LABELS: Record<AccessFilter, string> = {
-  all: "Every script",
-  free: "Free scripts only",
-  premium: "Premium scripts only"
-};
-
-export const VIDEO_FILTER_LABELS: Record<AccessFilter, string> = {
-  all: "Every video",
-  free: "Free videos only",
-  premium: "Paid videos only"
-};
-
-/** Both access fields are optional in the index, and an absent value is not
- * a promise of free access — so "not public" is what premium means here, and
- * the free/premium split covers the catalog exactly once. */
-function matchesAccess(access: string | undefined, filter: AccessFilter) {
-  if (filter === "all") return true;
-  const free = access === "public";
-  return filter === "free" ? free : !free;
+ * on both — so scripts and videos get one switch each, never a shared one.
+ *
+ * Both access fields are optional in the index, and an absent value is not a
+ * promise of free access, so anything but "public" counts as behind the
+ * paywall. */
+function hasFreeScript(video: PartnerVideo): boolean {
+  return video.scriptAccess === "public";
 }
 
-/** Is the SCRIPT free to download? (scriptAccess) */
-export function matchesScriptAccess(
-  video: PartnerVideo,
-  filter: AccessFilter
-): boolean {
-  return matchesAccess(video.scriptAccess, filter);
-}
-
-/** Is the VIDEO free to watch on the partner site? (videoAccess) — a
- * different paywall from the script's, and the one that matters less here:
- * this is a script database. */
-export function matchesVideoAccess(
-  video: PartnerVideo,
-  filter: AccessFilter
-): boolean {
-  return matchesAccess(video.videoAccess, filter);
+function hasFreeVideo(video: PartnerVideo): boolean {
+  return video.videoAccess === "public";
 }
 
 export interface CatalogFilter {
   orientation: Orientation;
-  /** which script-paywall half of the catalog to keep */
-  script: AccessFilter;
-  /** which video-paywall half of the catalog to keep */
-  video: AccessFilter;
+  /** include videos whose script is behind the Handy paywall */
+  premiumScripts: boolean;
+  /** include videos behind the partner's own paywall — a different question:
+   * this is a script database, so it matters less here */
+  paidVideos: boolean;
   /** tags the user muted. A Set, built once by the caller — passing an array
    * would make the 15k pass O(videos × tags × muted) string compares. */
   mutedTags: ReadonlySet<string>;
@@ -131,8 +87,8 @@ export function hasMutedTag(
   return false;
 }
 
-/** Baseline gate applied before any row query: orientation + the two access
- * filters + mutes. Matching is exact — a substring rule would make "teen"
+/** Baseline gate applied before any row query: orientation + the two paywall
+ * switches + mutes. Matching is exact — a substring rule would make "teen"
  * mute "eighteen". */
 export function visibleVideos(
   videos: readonly PartnerVideo[],
@@ -140,8 +96,8 @@ export function visibleVideos(
 ): PartnerVideo[] {
   const base = (video: PartnerVideo) =>
     matchesOrientation(video, filter.orientation) &&
-    matchesScriptAccess(video, filter.script) &&
-    matchesVideoAccess(video, filter.video);
+    (filter.premiumScripts || hasFreeScript(video)) &&
+    (filter.paidVideos || hasFreeVideo(video));
   // nothing muted (the common case) skips the per-video tag loop entirely
   if (!filter.mutedTags.size) return videos.filter(base);
   return videos.filter(
@@ -179,9 +135,9 @@ export function gateBreakdown(
   for (const video of videos) {
     if (!matchesOrientation(video, filter.orientation)) {
       byOrientation += 1;
-    } else if (!matchesScriptAccess(video, filter.script)) {
+    } else if (!(filter.premiumScripts || hasFreeScript(video))) {
       byScript += 1;
-    } else if (!matchesVideoAccess(video, filter.video)) {
+    } else if (!(filter.paidVideos || hasFreeVideo(video))) {
       byVideo += 1;
     } else if (hasMutedTag(video, filter.mutedTags)) {
       byMutedTags += 1;

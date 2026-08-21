@@ -65,13 +65,28 @@
             <HandyLoader />
           </div>
 
+          <!-- the key can be rejected mid-session (rotated in the Handy app),
+               and that needs the dialog, not a retry button -->
+          <div
+            v-else-if="listState === 'rejected'"
+            class="requests-page__center"
+          >
+            <HEmptyState
+              icon="key_off"
+              title="Connection key rejected"
+              body="The script index didn't accept your connection key. Check it in the Handy app and enter it again."
+              action-label="Enter key again"
+              @action="keyDialog = true"
+            />
+          </div>
+
           <div v-else-if="listState === 'error'" class="requests-page__center">
             <HEmptyState
               icon="cloud_off"
               title="Couldn't load requests"
-              body="The script index didn't answer. Check your connection key and try again."
+              body="The script index didn't answer. Check your connection and try again."
               action-label="Try again"
-              @action="loadFirst"
+              @action="load"
             />
           </div>
 
@@ -84,9 +99,34 @@
           </div>
 
           <template v-else>
-            <div class="requests-page__list">
+            <RequestFilters
+              v-model:search="search"
+              v-model:sort="sortKey"
+              v-model:hide-voted="hideVoted"
+              :tags="tags"
+              :all-tags="allTags"
+              :active-count="activeCount"
+              class="requests-page__filters"
+              @add-tag="addTag"
+              @remove-tag="removeTag"
+              @clear="clear"
+            />
+
+            <p class="text-body-sm requests-page__count">{{ countLabel }}</p>
+
+            <div v-if="!results.length" class="requests-page__center">
+              <HEmptyState
+                icon="search_off"
+                title="No requests match"
+                body="Nothing on the board matches those filters. Loosen them to see the rest."
+                action-label="Clear filters"
+                @action="clear"
+              />
+            </div>
+
+            <div v-else class="requests-page__list">
               <RequestCard
-                v-for="request in requests"
+                v-for="request in shown"
                 :key="request.requestId"
                 :request="request"
               >
@@ -116,20 +156,17 @@
               </RequestCard>
             </div>
 
-            <div v-if="hasMore" class="requests-page__more">
-              <HBtn
-                variant="secondary"
-                label="Load more"
-                :loading="loadingMore"
-                @click="loadMore"
-              />
-            </div>
+            <div
+              v-if="results.length && !done"
+              ref="sentinel"
+              class="requests-page__sentinel"
+            />
           </template>
         </template>
       </div>
     </div>
 
-    <ConnectionKeyDialog v-model="keyDialog" @saved="onKeySaved">
+    <ConnectionKeyDialog v-model="keyDialog" @saved="loadUnlessReady">
       The request board is bound to your Handy. Enter the connection key from
       the Handy app to continue.
     </ConnectionKeyDialog>
@@ -143,31 +180,51 @@ import { computed, onMounted, ref } from "vue";
 import { HBtn, HEmptyState, HandyLoader, hToast } from "@/components/handy";
 import ConnectionKeyDialog from "@/components/ConnectionKeyDialog.vue";
 import RequestCard from "@/components/RequestCard.vue";
+import RequestFilters from "@/components/RequestFilters.vue";
+import { useIncrementalReveal } from "@/composables/useIncrementalReveal";
+import { useRequestFilters } from "@/composables/useRequestFilters";
+import { useVotableRequests } from "@/composables/useVotableRequests";
 import {
   createVideoRequest,
-  getVotableRequests,
   isAuthError,
   voteForRequest
 } from "@/services/script-index/client";
 import type { VideoRequest } from "@/services/script-index/types";
 import { useSettingsStore } from "@/stores/settings";
 
-const PAGE_SIZE = 24;
-
 const settings = useSettingsStore();
 
-const requests = ref<VideoRequest[]>([]);
-const listState = ref<"idle" | "loading" | "ready" | "error">("idle");
-const loadingMore = ref(false);
-/** a full page arrived, so the next skip is worth fetching */
-const hasMore = ref(false);
+// the whole board in one load: filtering a "Load more" list would only ever
+// search the pages you happened to have opened
+const {
+  requests,
+  state: listState,
+  capped,
+  hasKey,
+  load,
+  loadUnlessReady
+} = useVotableRequests();
+
+const {
+  search,
+  sortKey,
+  tags,
+  hideVoted,
+  allTags,
+  results,
+  activeCount,
+  addTag,
+  removeTag,
+  clear
+} = useRequestFilters(requests);
+
+const { shown, done, sentinel } = useIncrementalReveal(results, 30);
+
 const keyDialog = ref(false);
 
 const url = ref("");
 const submitting = ref(false);
 const votingId = ref("");
-
-const hasKey = computed(() => settings.connectionKey.trim().length > 0);
 
 const validUrl = computed(() => {
   const raw = url.value.trim();
@@ -180,38 +237,15 @@ const validUrl = computed(() => {
   }
 });
 
-async function loadFirst() {
-  const key = settings.connectionKey.trim();
-  if (!key) return;
-  listState.value = "loading";
-  try {
-    const page = await getVotableRequests(key, PAGE_SIZE, 0);
-    requests.value = page;
-    hasMore.value = page.length === PAGE_SIZE;
-    listState.value = "ready";
-  } catch {
-    listState.value = "error";
-  }
-}
-
-async function loadMore() {
-  const key = settings.connectionKey.trim();
-  if (!key || loadingMore.value) return;
-  loadingMore.value = true;
-  try {
-    const page = await getVotableRequests(
-      key,
-      PAGE_SIZE,
-      requests.value.length
-    );
-    requests.value = [...requests.value, ...page];
-    hasMore.value = page.length === PAGE_SIZE;
-  } catch {
-    hToast("negative", "Couldn't load more requests", "Try again in a moment.");
-  } finally {
-    loadingMore.value = false;
-  }
-}
+const countLabel = computed(() => {
+  const total = requests.value.length;
+  const count = results.value.length;
+  const label = `${count.toLocaleString()} request${count === 1 ? "" : "s"}`;
+  const matched = activeCount.value
+    ? `${label} of ${total.toLocaleString()}`
+    : `${label} up for a vote`;
+  return capped.value ? `${matched} (board is longer than we loaded)` : matched;
+});
 
 async function vote(request: VideoRequest) {
   if (settings.hasUpvoted(request.requestId) || votingId.value) return;
@@ -277,12 +311,8 @@ async function submit() {
   }
 }
 
-function onKeySaved() {
-  if (listState.value !== "ready") void loadFirst();
-}
-
 onMounted(() => {
-  if (hasKey.value) void loadFirst();
+  if (hasKey.value) void load();
 });
 </script>
 
@@ -352,6 +382,19 @@ onMounted(() => {
 .requests-page__url-input {
   flex: 1;
   min-width: 220px;
+}
+
+.requests-page__filters {
+  margin-bottom: var(--space-md);
+}
+
+.requests-page__count {
+  color: var(--color-text-tertiary);
+  margin: 0 0 var(--space-sm);
+}
+
+.requests-page__sentinel {
+  height: 1px;
 }
 
 .requests-page__list {

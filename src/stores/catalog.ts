@@ -92,8 +92,8 @@ export const useCatalogStore = defineStore("catalog", () => {
     const settings = useSettingsStore();
     return visibleVideos(videos.value, {
       orientation: settings.orientation,
-      script: settings.scriptFilter,
-      video: settings.videoFilter,
+      premiumScripts: settings.showPremiumScripts,
+      paidVideos: settings.showPaidVideos,
       mutedTags: settings.mutedSet
     });
   });
@@ -107,8 +107,8 @@ export const useCatalogStore = defineStore("catalog", () => {
     const settings = useSettingsStore();
     return visibleVideos(videos.value, {
       orientation: "all",
-      script: settings.scriptFilter,
-      video: settings.videoFilter,
+      premiumScripts: settings.showPremiumScripts,
+      paidVideos: settings.showPaidVideos,
       mutedTags: settings.mutedSet
     });
   });
@@ -121,8 +121,8 @@ export const useCatalogStore = defineStore("catalog", () => {
     const settings = useSettingsStore();
     return gateBreakdown(videos.value, {
       orientation: settings.orientation,
-      script: settings.scriptFilter,
-      video: settings.videoFilter,
+      premiumScripts: settings.showPremiumScripts,
+      paidVideos: settings.showPaidVideos,
       mutedTags: settings.mutedSet
     });
   });

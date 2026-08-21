@@ -74,8 +74,10 @@
 // The site directory: every partner in the INDEX as a nav card, count-sorted
 // by partnersOf, with a client-side name filter on top. The LIST is ungated —
 // a directory that dropped sites would read as an incomplete index — while
-// the captions do respect the gates, so what a card promises is what opening
-// it delivers. Each card also breaks the site down by both paywalls.
+// every COUNT on the page is fully gated: script access, video access, muted
+// tags and orientation all move it. Each card also breaks the site down by
+// both paywalls, which is the one figure the filters don't touch (it
+// describes the site, not your view of it).
 import { computed, ref } from "vue";
 import { HEmptyState, HNavCard, HandyLoader } from "@/components/handy";
 import GateNotice from "@/components/GateNotice.vue";
@@ -89,16 +91,21 @@ const catalog = useCatalogStore();
 
 const query = ref("");
 
+function countOf(count: number, noun: string): string {
+  return `${count.toLocaleString()} ${noun}${count === 1 ? "" : "s"}`;
+}
+
 const partners = computed(() => partnersOf(catalog.videos));
 
-// what each site actually opens onto. The browse page lifts the orientation
-// gate for a deliberate site pick (catalog.anyOrientation) and applies the
-// rest, so this counts the same way. null when no gate is narrowing anything:
-// there is then no second number to show, and the pass isn't worth taking.
+// what each site has left once EVERY active filter is applied — both
+// paywalls, muted tags and orientation (catalog.visible). A count that quietly
+// skipped one of them would be the one number on the page you couldn't trust.
+// null when nothing is narrowing: there is then no second number to show, and
+// the pass isn't worth taking.
 const matching = computed(() => {
-  if (catalog.anyOrientation.length === catalog.videos.length) return null;
+  if (catalog.visible.length === catalog.videos.length) return null;
   const counts = new Map<string, number>();
-  for (const summary of partnersOf(catalog.anyOrientation)) {
+  for (const summary of partnersOf(catalog.visible)) {
     counts.set(summary.partnerId, summary.count);
   }
   return counts;
@@ -112,20 +119,15 @@ const filtered = computed(() => {
   );
 });
 
-// the total the per-site captions add up to
-const totalVideos = computed(() => catalog.videos.length);
-
+// the totals the per-site captions add up to, in the same "x of y" shape as
+// the cards, so the header and the grid can never tell different stories
 const countLabel = computed(() => {
-  const sites = partners.value.length;
-  const siteNoun = sites === 1 ? "site" : "sites";
-  const videos = totalVideos.value;
-  const videoNoun = videos === 1 ? "video" : "videos";
-  return `${sites.toLocaleString()} ${siteNoun} · ${videos.toLocaleString()} ${videoNoun} in the index`;
+  const sites = countOf(partners.value.length, "site");
+  const total = countOf(catalog.videos.length, "video");
+  return matching.value
+    ? `${sites} · ${catalog.visible.length.toLocaleString()} of ${total}`
+    : `${sites} · ${total} in the index`;
 });
-
-function countOf(count: number, noun: string): string {
-  return `${count.toLocaleString()} ${noun}${count === 1 ? "" : "s"}`;
-}
 
 // "1,234 of 2,000 videos · 500 paid videos · 300 premium scripts" — the total
 // stays the headline because that is what the site holds; the first number is

@@ -52,27 +52,18 @@
             />
           </HList>
 
-          <HList title="Script access">
-            <HRadioRow
-              v-for="option in ACCESS_FILTERS"
-              :key="option"
-              v-model="settings.scriptFilter"
-              :val="option"
-              :icon="ACCESS_FILTER_ICONS[option]"
-              :label="SCRIPT_FILTER_LABELS[option]"
-              :caption="SCRIPT_CAPTIONS[option]"
+          <HList title="Access">
+            <HToggleRow
+              v-model="settings.showPremiumScripts"
+              icon="workspace_premium"
+              label="Premium scripts"
+              caption="Include videos whose script is behind the Handy paywall"
             />
-          </HList>
-
-          <HList title="Video access">
-            <HRadioRow
-              v-for="option in ACCESS_FILTERS"
-              :key="option"
-              v-model="settings.videoFilter"
-              :val="option"
-              :icon="ACCESS_FILTER_ICONS[option]"
-              :label="VIDEO_FILTER_LABELS[option]"
-              :caption="VIDEO_CAPTIONS[option]"
+            <HToggleRow
+              v-model="settings.showPaidVideos"
+              icon="paid"
+              label="Paid videos"
+              caption="Include videos behind the partner's own paywall"
             />
           </HList>
 
@@ -139,30 +130,10 @@ import ModalScroll from "@/components/ModalScroll.vue";
 import MutedTagsDialog from "@/components/MutedTagsDialog.vue";
 import { sanitizeConnectionKey } from "@/services/format";
 import {
-  ACCESS_FILTERS,
-  ACCESS_FILTER_ICONS,
   ORIENTATIONS,
-  ORIENTATION_LABELS,
-  SCRIPT_FILTER_LABELS,
-  VIDEO_FILTER_LABELS
+  ORIENTATION_LABELS
 } from "@/services/script-index/queries";
-import type { AccessFilter } from "@/services/script-index/queries";
 import { useSettingsStore } from "@/stores/settings";
-
-// Two paywalls, and the labels alone don't say which is which — settings has
-// the room to spell it out (the browse filter sheet carries the labels
-// alone). The script one is what this catalog is for, so it leads.
-const SCRIPT_CAPTIONS: Record<AccessFilter, string> = {
-  all: "Free and premium scripts",
-  free: "Only scripts you can download for free",
-  premium: "Only scripts behind the Handy paywall"
-};
-
-const VIDEO_CAPTIONS: Record<AccessFilter, string> = {
-  all: "However the video itself is gated",
-  free: "Only videos you can watch for free",
-  premium: "Only videos behind the partner's paywall"
-};
 
 defineProps<{ modelValue: boolean }>();
 

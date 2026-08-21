@@ -23,9 +23,18 @@ export function useIncrementalReveal<T>(
   const shown = computed(() => source.value.slice(0, limit.value));
   const done = computed(() => limit.value >= source.value.length);
 
-  watch(source, () => {
-    limit.value = pageSize;
-  });
+  // Length, not identity: a computed source hands back a fresh array on every
+  // recompute, and some of those are in-place edits of the same rows — the
+  // request board bumping a vote count, say. Resetting on those would collapse
+  // a reader 900 rows deep back to the first page for a change they made
+  // themselves. A narrowed filter still moves the length, which is the reset
+  // that matters; re-sorting keeps the reveal and simply shows the new order.
+  watch(
+    () => source.value.length,
+    () => {
+      limit.value = pageSize;
+    }
+  );
 
   let observer: IntersectionObserver | undefined;
 

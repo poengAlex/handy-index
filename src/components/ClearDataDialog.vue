@@ -81,8 +81,8 @@ const rows = computed<ClearRow[]>(() => {
     .join(" · ");
   const preferencesTouched =
     settings.nsfw ||
-    settings.scriptFilter !== "free" ||
-    settings.videoFilter !== "all" ||
+    settings.showPremiumScripts ||
+    !settings.showPaidVideos ||
     settings.inlinePlayers ||
     settings.orientation !== "straight";
   return [

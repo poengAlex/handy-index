@@ -51,7 +51,7 @@
           <HandyLoader />
         </div>
 
-        <div v-else-if="!ranked.length" class="queue-page__center">
+        <div v-else-if="!requests.length" class="queue-page__center">
           <HEmptyState
             icon="pending_actions"
             title="The queue is empty"
@@ -62,14 +62,42 @@
         </div>
 
         <template v-else>
+          <RequestFilters
+            v-model:search="search"
+            v-model:sort="sortKey"
+            v-model:hide-voted="hideVoted"
+            :tags="tags"
+            :all-tags="allTags"
+            :active-count="activeCount"
+            class="queue-page__filters"
+            @add-tag="addTag"
+            @remove-tag="removeTag"
+            @clear="clear"
+          />
+
           <p class="text-body-sm queue-page__count">{{ countLabel }}</p>
-          <div class="queue-page__list">
+
+          <div v-if="!results.length" class="queue-page__center">
+            <HEmptyState
+              icon="search_off"
+              title="No requests match"
+              body="Nothing in the queue matches those filters. Loosen them to see the rest."
+              action-label="Clear filters"
+              @action="clear"
+            />
+          </div>
+
+          <div v-else class="queue-page__list">
             <div
-              v-for="(request, index) in shown"
+              v-for="request in shown"
               :key="request.requestId"
               class="queue-page__row"
             >
-              <span class="text-h5 queue-page__rank">{{ index + 1 }}</span>
+              <!-- the true queue position, never the row number: filtering or
+                   re-sorting must not renumber the scripting order -->
+              <span class="text-h5 queue-page__rank">
+                {{ ranks.get(request.requestId) }}
+              </span>
               <RequestCard :request="request" class="queue-page__card">
                 <div class="queue-page__tally">
                   <span class="text-h5 queue-page__tally-count">
@@ -82,7 +110,11 @@
               </RequestCard>
             </div>
           </div>
-          <div v-if="!done" ref="sentinel" class="queue-page__sentinel" />
+          <div
+            v-if="results.length && !done"
+            ref="sentinel"
+            class="queue-page__sentinel"
+          />
         </template>
       </div>
     </div>
@@ -95,74 +127,58 @@
 </template>
 
 <script setup lang="ts">
-// The queue in scripting order: every votable request, ranked by votes.
-// (The spec's full-pipeline GET /requests isn't served by production — it
-// answers 405 — so the votable set is the whole visible queue.)
+// The queue in scripting order: every votable request, ranked by votes, with
+// the board's filter/sort controls on top. (The spec's full-pipeline GET
+// /requests isn't served by production — it answers 405 — so the votable set
+// is the whole visible queue.)
 import { computed, onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { HBtn, HEmptyState, HandyLoader } from "@/components/handy";
 import ConnectionKeyDialog from "@/components/ConnectionKeyDialog.vue";
 import RequestCard from "@/components/RequestCard.vue";
+import RequestFilters from "@/components/RequestFilters.vue";
 import { useIncrementalReveal } from "@/composables/useIncrementalReveal";
-import {
-  getVotableRequests,
-  isAuthError
-} from "@/services/script-index/client";
-import type { VideoRequest } from "@/services/script-index/types";
-import { useSettingsStore } from "@/stores/settings";
-
-const PAGE_SIZE = 100;
-// backstop against a runaway loop — the live queue is ~1k, so this covers it
-// with headroom; if it's ever hit, the count label says the list is capped
-const MAX_REQUESTS = 2000;
+import { useRequestFilters } from "@/composables/useRequestFilters";
+import { useVotableRequests } from "@/composables/useVotableRequests";
+import { rankByVotes } from "@/services/script-index/requests";
 
 const router = useRouter();
-const settings = useSettingsStore();
 
-const requests = ref<VideoRequest[]>([]);
-const state = ref<"idle" | "loading" | "ready" | "error" | "rejected">("idle");
 const keyDialog = ref(false);
-/** the fetch loop hit MAX_REQUESTS — the ranking only covers what we got */
-const capped = ref(false);
 
-const hasKey = computed(() => settings.connectionKey.trim().length > 0);
+const { requests, state, capped, hasKey, load } = useVotableRequests();
 
-const ranked = computed(() =>
-  [...requests.value].sort((a, b) => (b.votes ?? 0) - (a.votes ?? 0))
-);
+const {
+  search,
+  sortKey,
+  tags,
+  hideVoted,
+  allTags,
+  results,
+  activeCount,
+  addTag,
+  removeTag,
+  clear
+} = useRequestFilters(requests);
 
-const { shown, done, sentinel } = useIncrementalReveal(ranked, 50);
+// positions come from the whole set, so a filtered view still shows where
+// each request actually sits in the queue
+const ranks = computed(() => rankByVotes(requests.value));
+
+const { shown, done, sentinel } = useIncrementalReveal(results, 50);
 
 const countLabel = computed(() => {
-  const count = ranked.value.length;
-  if (capped.value) {
-    return `${count.toLocaleString()}+ requests waiting (showing the first ${count.toLocaleString()})`;
-  }
-  return `${count.toLocaleString()} request${count === 1 ? "" : "s"} waiting`;
+  const total = requests.value.length;
+  const count = results.value.length;
+  const waiting = `${count.toLocaleString()} request${count === 1 ? "" : "s"}`;
+  // "of 1,080" only when filters are on — otherwise it's the same number twice
+  const matched = activeCount.value
+    ? `${waiting} of ${total.toLocaleString()}`
+    : waiting;
+  return capped.value
+    ? `${matched} (the queue is longer than we loaded)`
+    : `${matched} waiting`;
 });
-
-async function load() {
-  const key = settings.connectionKey.trim();
-  if (!key) return;
-  state.value = "loading";
-  try {
-    const all: VideoRequest[] = [];
-    let sawShortPage = false;
-    for (let skip = 0; skip < MAX_REQUESTS; skip += PAGE_SIZE) {
-      const page = await getVotableRequests(key, PAGE_SIZE, skip);
-      all.push(...page);
-      if (page.length < PAGE_SIZE) {
-        sawShortPage = true;
-        break;
-      }
-    }
-    requests.value = all;
-    capped.value = !sawShortPage;
-    state.value = "ready";
-  } catch (error) {
-    state.value = isAuthError(error) ? "rejected" : "error";
-  }
-}
 
 onMounted(() => {
   if (hasKey.value) void load();
@@ -193,6 +209,10 @@ onMounted(() => {
 .queue-page__lead {
   color: var(--color-text-secondary);
   margin: var(--space-xs) 0 0;
+}
+
+.queue-page__filters {
+  margin-bottom: var(--space-md);
 }
 
 .queue-page__count {

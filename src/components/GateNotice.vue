@@ -31,11 +31,7 @@
 // also the click target that opens the manager.
 import { computed, ref } from "vue";
 import MutedTagsDialog from "@/components/MutedTagsDialog.vue";
-import {
-  ORIENTATION_LABELS,
-  SCRIPT_FILTER_LABELS,
-  VIDEO_FILTER_LABELS
-} from "@/services/script-index/queries";
+import { ORIENTATION_LABELS } from "@/services/script-index/queries";
 import { useCatalogStore } from "@/stores/catalog";
 import { useSettingsStore } from "@/stores/settings";
 
@@ -72,21 +68,20 @@ const reasons = computed<Reason[]>(() => {
       by: `by the ${ORIENTATION_LABELS[settings.orientation]} filter`
     });
   }
-  // both name the mode, not the gate: in "Premium scripts only" what got
-  // hidden is the free half, and "by the premium filter" would read as the
-  // exact opposite. Naming them also keeps the two paywalls apart.
+  // named in full, both of them: they are different paywalls, and "hidden by
+  // the premium filter" would not say which one did it
   if (gates.byScript) {
     list.push({
       key: "script",
       count: gates.byScript,
-      by: `by ${SCRIPT_FILTER_LABELS[settings.scriptFilter]}`
+      by: "by the premium-script filter"
     });
   }
   if (gates.byVideo) {
     list.push({
       key: "video",
       count: gates.byVideo,
-      by: `by ${VIDEO_FILTER_LABELS[settings.videoFilter]}`
+      by: "by the paid-video filter"
     });
   }
   return list;

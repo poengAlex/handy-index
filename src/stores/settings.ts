@@ -1,13 +1,7 @@
 import { acceptHMRUpdate, defineStore } from "pinia";
 import { computed, ref } from "vue";
-import {
-  ACCESS_FILTERS,
-  UNMUTABLE_TAGS
-} from "@/services/script-index/queries";
-import type {
-  AccessFilter,
-  Orientation
-} from "@/services/script-index/queries";
+import { UNMUTABLE_TAGS } from "@/services/script-index/queries";
+import type { Orientation } from "@/services/script-index/queries";
 
 export interface Playlist {
   id: string;
@@ -16,10 +10,6 @@ export interface Playlist {
 }
 
 const RECENTLY_VIEWED_CAP = 30;
-
-function isAccessFilter(value: unknown): value is AccessFilter {
-  return ACCESS_FILTERS.includes(value as AccessFilter);
-}
 
 /**
  * Persisted user preferences. Favorites, playlists and history store
@@ -32,14 +22,14 @@ export const useSettingsStore = defineStore(
     const consentAnswered = ref(false);
     /** show explicit thumbnails; off renders neutral placeholder tiles */
     const nsfw = ref(false);
-    /** the script paywall: everything, only free scripts, or only premium
-     * ones. "free" by default — a script you can't download is the one thing
-     * a script database can't do anything with */
-    const scriptFilter = ref<AccessFilter>("free");
-    /** the video paywall, which is a different question entirely (2,939
-     * videos are paid to watch but have a free script). Off by default: what
-     * you can watch is the partner's business, not this catalog's */
-    const videoFilter = ref<AccessFilter>("all");
+    /** include videos whose script is behind the Handy paywall. OFF by
+     * default — a script you can't download is the one thing a script
+     * database can't do anything with */
+    const showPremiumScripts = ref(false);
+    /** include videos behind the partner's own paywall — a different question
+     * entirely (2,939 videos are paid to watch but have a free script). ON by
+     * default: what you can watch is the partner's business, not ours */
+    const showPaidVideos = ref(true);
     /** embedded partner players (Pornhub/xHamster) on video pages */
     const inlinePlayers = ref(false);
     /** let pages span the whole viewport instead of the 1440px column */
@@ -214,8 +204,8 @@ export const useSettingsStore = defineStore(
      * the consent modal doesn't reappear */
     function resetPreferences(): void {
       nsfw.value = false;
-      scriptFilter.value = "free";
-      videoFilter.value = "all";
+      showPremiumScripts.value = false;
+      showPaidVideos.value = true;
       inlinePlayers.value = false;
       fullWidth.value = false;
       orientation.value = "straight";
@@ -224,8 +214,8 @@ export const useSettingsStore = defineStore(
     function clearAll(): void {
       consentAnswered.value = false;
       nsfw.value = false;
-      scriptFilter.value = "free";
-      videoFilter.value = "all";
+      showPremiumScripts.value = false;
+      showPaidVideos.value = true;
       inlinePlayers.value = false;
       fullWidth.value = false;
       orientation.value = "straight";
@@ -243,8 +233,8 @@ export const useSettingsStore = defineStore(
     return {
       consentAnswered,
       nsfw,
-      scriptFilter,
-      videoFilter,
+      showPremiumScripts,
+      showPaidVideos,
       inlinePlayers,
       fullWidth,
       orientation,
@@ -286,31 +276,39 @@ export const useSettingsStore = defineStore(
   {
     persist: {
       // the gate assumes clean input, but a blob from an older build or a
-      // hand-edited localStorage can carry a retired premium key, an unknown
-      // gate value, or muted tags with mixed case, dupes or an orientation
-      // tag — normalize once on the way in
+      // hand-edited localStorage can carry a retired access key, a non-boolean
+      // switch, or muted tags with mixed case, dupes or an orientation tag —
+      // normalize once on the way in
       afterHydrate: ({ store }) => {
         const settings = store as ReturnType<typeof useSettingsStore>;
-        // The script gate was a boolean (showPremium) and then briefly a
-        // single three-way premiumFilter; both meant script access, so both
-        // migrate into scriptFilter. $state, not the store: an unknown key
-        // patched in by the hydrator lands there, and that is also what gets
-        // re-serialized — so the delete is what retires it.
+        // The script switch has been through two retired shapes: a single
+        // showPremium boolean, then a three-way premiumFilter/scriptFilter
+        // ("free" | "all" | "premium"). All of them meant script access, and
+        // the premium-only mode has no boolean equivalent — it becomes "show
+        // them". $state, not the store: an unknown key patched in by the
+        // hydrator lands there, and that is also what gets re-serialized — so
+        // the delete is what retires it.
         const legacy = settings.$state as unknown as Record<string, unknown>;
-        if (typeof legacy.showPremium === "boolean") {
-          settings.scriptFilter = legacy.showPremium ? "all" : "free";
-        }
-        if (isAccessFilter(legacy.premiumFilter)) {
-          settings.scriptFilter = legacy.premiumFilter;
-        }
+        const retired = (value: unknown): boolean | undefined => {
+          if (typeof value === "boolean") return value;
+          if (value === "free") return false;
+          if (value === "all" || value === "premium") return true;
+          return undefined;
+        };
+        settings.showPremiumScripts =
+          retired(legacy.scriptFilter) ??
+          retired(legacy.premiumFilter) ??
+          retired(legacy.showPremium) ??
+          settings.showPremiumScripts;
+        settings.showPaidVideos =
+          retired(legacy.videoFilter) ?? settings.showPaidVideos;
         delete legacy.showPremium;
         delete legacy.premiumFilter;
-        if (!isAccessFilter(settings.scriptFilter)) {
-          settings.scriptFilter = "free";
-        }
-        if (!isAccessFilter(settings.videoFilter)) {
-          settings.videoFilter = "all";
-        }
+        delete legacy.scriptFilter;
+        delete legacy.videoFilter;
+        // a hand-edited blob can still carry a non-boolean
+        settings.showPremiumScripts = Boolean(settings.showPremiumScripts);
+        settings.showPaidVideos = Boolean(settings.showPaidVideos);
         const raw: unknown = settings.mutedTags;
         settings.mutedTags = [
           ...new Set(

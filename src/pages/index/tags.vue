@@ -248,9 +248,9 @@ function mute(tag: string) {
   );
 }
 
-// a muted pill vanishes from the cloud and useIncrementalReveal resets to the
-// first page, so a mute made 900 pills deep would strand the user in blank
-// space — covers mutes made in the dialog too
+// a muted pill vanishes from the cloud, which shortens the list and so resets
+// useIncrementalReveal to the first page — a mute made 900 pills deep would
+// strand the user in blank space. Covers mutes made in the dialog too
 watch(
   () => settings.mutedTags.length,
   () => window.scrollTo({ top: 0 })
