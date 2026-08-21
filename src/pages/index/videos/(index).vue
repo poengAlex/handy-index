@@ -116,6 +116,16 @@
             :action-label="mutedAction"
             @action="unmuteActive"
           />
+          <!-- the ambient gate is invisible from here, so an empty grid that
+               a different orientation would fill has to say so -->
+          <HEmptyState
+            v-else-if="withoutOrientation.length"
+            icon="filter_alt_off"
+            :title="`Nothing here in ${ORIENTATION_LABELS[settings.orientation]}`"
+            :body="orientationBody"
+            action-label="Show every orientation"
+            @action="settings.orientation = 'all'"
+          />
           <HEmptyState
             v-else
             icon="search_off"
@@ -227,11 +237,6 @@
                 :label="ORIENTATION_LABELS[option]"
               />
             </HList>
-            <p v-if="scopedPick" class="text-caption videos-page__note">
-              Not applied here — you're browsing a
-              {{ partnerId ? "site" : "performer" }} you picked, so their full
-              catalog shows.
-            </p>
 
             <HList title="Access">
               <HToggleRow
@@ -787,10 +792,11 @@ const allTags = computed(() =>
   catalog.status === "ready" ? tagsOf(catalog.visible) : []
 );
 
-// the site picker offers every partner, matching the /sites directory — the
-// pick itself lifts the orientation gate (see results)
+// the picker is a filter control, so it offers what a pick would actually
+// show — counts included. The /sites directory is the complete map instead,
+// and discloses "0 of 1,211" for a site your gates empty.
 const allSites = computed(() =>
-  catalog.status === "ready" ? partnersOf(catalog.anyOrientation) : []
+  catalog.status === "ready" ? partnersOf(catalog.visible) : []
 );
 
 const tagOptions = computed<PickOption[]>(() =>
@@ -877,34 +883,47 @@ const chips = computed<FilterChip[]>(() => {
 // --- results:
 // byTags → byPartner → byPerformer → vrOnly → duration → search → sort ---
 
-// naming a site or a performer is a deliberate pick, so it outranks the
-// ambient orientation filter — otherwise every card in the /sites and
-// /performers directories could open onto an empty page. Access + mutes
-// still apply either way.
-const scopedPick = computed(() =>
-  Boolean(partnerId.value || performerId.value)
-);
-
-const results = computed<PartnerVideo[]>(() => {
-  if (catalog.status !== "ready") return [];
-  let pool = byTags(
-    scopedPick.value ? catalog.anyOrientation : catalog.visible,
-    tags.value
-  );
-  if (partnerId.value) pool = byPartner(pool, partnerId.value);
-  if (performerId.value) pool = byPerformer(pool, performerId.value);
-  if (vr.value) pool = vrOnly(pool);
-  pool = byDurationRange(
-    pool,
+// Picking a site or a performer used to lift the orientation gate, on the
+// theory that a deliberate pick outranks an ambient filter. It reads as a
+// broken filter instead: one site alone served 1,567 gay/trans videos under a
+// Straight filter, and the directory card promising "5,751 of 7,320" opened
+// onto 7,318. Every filter applies to every surface now; a pick that empties
+// the grid says so, and offers to lift the gate (see the empty state).
+function filterPool(pool: readonly PartnerVideo[]): PartnerVideo[] {
+  let out = byTags(pool, tags.value);
+  if (partnerId.value) out = byPartner(out, partnerId.value);
+  if (performerId.value) out = byPerformer(out, performerId.value);
+  if (vr.value) out = vrOnly(out);
+  out = byDurationRange(
+    out,
     durationMin.value * 60,
     durationMax.value >= DURATION_MAX ? Infinity : durationMax.value * 60
   );
-  pool = searchTitle(pool, q.value);
-  const sorted = SORTERS[sortKey.value](pool);
+  return searchTitle(out, q.value);
+}
+
+const results = computed<PartnerVideo[]>(() => {
+  if (catalog.status !== "ready") return [];
+  const sorted = SORTERS[sortKey.value](filterPool(catalog.visible));
   // sorters return fresh arrays, so in-place reverse is safe
   return sortDir.value === NATURAL_DIR[sortKey.value]
     ? sorted
     : sorted.reverse();
+});
+
+// what the same filters would find with the orientation gate lifted. Only the
+// empty state reads it, and computeds are lazy, so this second pass over the
+// catalog runs only when the grid came back empty.
+const withoutOrientation = computed<PartnerVideo[]>(() =>
+  catalog.status === "ready" && settings.orientation !== "all"
+    ? filterPool(catalog.anyOrientation)
+    : []
+);
+
+const orientationBody = computed(() => {
+  const count = withoutOrientation.value.length;
+  const label = ORIENTATION_LABELS[settings.orientation];
+  return `${count.toLocaleString()} video${count === 1 ? "" : "s"} here match everything else you set, but not the ${label} filter.`;
 });
 
 const countLabel = computed(() => {
@@ -992,12 +1011,6 @@ async function shareResults() {
 // its own row under the title/count pair, which share the baseline above it
 .videos-page__gate {
   flex-basis: 100%;
-}
-
-// sits under the orientation group in the filter sheet, aligned to its inset
-.videos-page__note {
-  margin: calc(-1 * var(--space-xs)) var(--space-md) 0;
-  color: var(--color-text-tertiary);
 }
 
 .videos-page__controls {

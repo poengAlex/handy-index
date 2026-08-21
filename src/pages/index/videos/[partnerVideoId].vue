@@ -220,26 +220,46 @@
         </div>
       </div>
 
-      <!-- Stills gallery — only when explicit previews are on -->
+      <!-- Stills gallery — only when explicit previews are on. The partner
+           roll clip, when there is one, rides at the front of the strip and
+           plays on its own; the rest are stills. -->
       <section v-if="gallery.length" class="video-page__gallery">
         <div class="h-container">
-          <h2 class="text-h4 video-page__gallery-title">Photos</h2>
+          <h2 class="text-h4 video-page__gallery-title">{{ galleryTitle }}</h2>
         </div>
         <HPeekCarousel :items="gallery" item-width="clamp(220px, 60vw, 320px)">
           <template #default="{ item, index }">
             <button
               type="button"
               class="video-page__gallery-tile"
-              :aria-label="`Open photo ${index + 1} of ${gallery.length}`"
+              :aria-label="galleryLabel(item, index)"
               @click="viewerIndex = index"
             >
+              <video
+                v-if="item.clip"
+                :src="item.src"
+                :poster="artworkOf(video) || undefined"
+                class="video-page__gallery-img"
+                muted
+                loop
+                autoplay
+                playsinline
+                preload="auto"
+                disablepictureinpicture
+                @error="brokenClip = item.src"
+              />
               <img
-                :src="item"
-                :alt="`Still ${index + 1} from ${video.title ?? 'video'}`"
+                v-else
+                :src="item.src"
+                :alt="`Still ${photoNumber(index)} from ${video.title ?? 'video'}`"
                 loading="lazy"
                 class="video-page__gallery-img"
-                @error="brokenStills.add(item)"
+                @error="brokenStills.add(item.src)"
               />
+              <span v-if="item.clip" class="video-page__gallery-badge">
+                <q-icon name="play_arrow" size="16px" />
+                Preview
+              </span>
             </button>
           </template>
         </HPeekCarousel>
@@ -339,10 +359,25 @@
       :model-value="viewerIndex !== null"
       @update:model-value="viewerIndex = null"
     >
-      <div v-if="viewerImage" class="video-page__viewer">
+      <div v-if="viewerItem" class="video-page__viewer">
+        <!-- muted so autoplay is allowed everywhere; the roll clips are
+             silent anyway, and controls are there if one isn't -->
+        <video
+          v-if="viewerItem.clip"
+          :src="viewerItem.src"
+          :poster="video ? artworkOf(video) || undefined : undefined"
+          class="video-page__viewer-img"
+          muted
+          loop
+          autoplay
+          playsinline
+          controls
+          @error="brokenClip = viewerItem.src"
+        />
         <img
-          :src="viewerImage"
-          :alt="`Still ${(viewerIndex ?? 0) + 1} from ${video?.title ?? 'video'}`"
+          v-else
+          :src="viewerItem.src"
+          :alt="`Still ${photoNumber(viewerIndex ?? 0)} from ${video?.title ?? 'video'}`"
           class="video-page__viewer-img"
         />
         <div class="video-page__viewer-bar">
@@ -464,21 +499,63 @@ const commentsState = ref<"idle" | "loading" | "ready" | "error">("idle");
 const commentDraft = ref("");
 const postingComment = ref(false);
 
-// stills gallery + full-size viewer (broken stills drop out of the gallery
-// entirely — a strip of error tiles would be worse than no strip)
+// gallery + full-size viewer (broken media drops out of the gallery entirely
+// — a strip of error tiles would be worse than no strip). Roughly half the
+// catalog ships a short silent roll clip; where there is one it leads the
+// strip and plays on its own, so the section shows motion before anything is
+// clicked. A clip that won't decode (plenty are AV1) falls out the same way a
+// dead still does, leaving the stills-only strip.
 const brokenStills = ref(new Set<string>());
+/** this clip URL was tried and didn't play — never offer it again */
+const brokenClip = ref("");
 const viewerIndex = ref<number | null>(null);
 
-const gallery = computed(() => {
+interface GalleryItem {
+  src: string;
+  /** the partner roll clip, rather than a still */
+  clip: boolean;
+}
+
+const gallery = computed<GalleryItem[]>(() => {
   if (!settings.nsfw) return [];
-  return (video.value?.images ?? []).filter(
-    still => !brokenStills.value.has(still)
-  );
+  const preview = video.value?.preview;
+  const items: GalleryItem[] =
+    preview && preview !== brokenClip.value
+      ? [{ src: preview, clip: true }]
+      : [];
+  for (const still of video.value?.images ?? []) {
+    if (!brokenStills.value.has(still)) items.push({ src: still, clip: false });
+  }
+  return items;
 });
 
-const viewerImage = computed(() =>
+const viewerItem = computed(() =>
   viewerIndex.value === null ? undefined : gallery.value[viewerIndex.value]
 );
+
+const hasClip = computed(() => gallery.value[0]?.clip === true);
+
+/** stills-only heading, so a video whose only item is the clip isn't
+ * announced as "Photos" */
+const galleryTitle = computed(() =>
+  gallery.value.some(item => !item.clip) ? "Photos" : "Preview"
+);
+
+/** the clip sits at index 0, so a still's own number is one behind the
+ * strip's */
+function photoNumber(index: number): number {
+  return hasClip.value ? index : index + 1;
+}
+
+const photoCount = computed(
+  () => gallery.value.length - (hasClip.value ? 1 : 0)
+);
+
+function galleryLabel(item: GalleryItem, index: number): string {
+  return item.clip
+    ? "Play preview clip full size"
+    : `Open photo ${photoNumber(index)} of ${photoCount.value}`;
+}
 
 const videoId = computed(() => route.params.partnerVideoId);
 
@@ -577,6 +654,7 @@ async function load(id: string) {
   state.value = "loading";
   scripts.value = [];
   brokenStills.value = new Set();
+  brokenClip.value = "";
   viewerIndex.value = null;
   comments.value = [];
   commentsState.value = "idle";
@@ -667,7 +745,7 @@ async function getScript() {
     hToast(
       "negative",
       "Couldn't get the script",
-      "Check your connection key and try again."
+      "Either the connection key is wrong or your Handy isn't online. Check both, then try again."
     );
   } finally {
     gettingScript.value = false;
@@ -1143,6 +1221,24 @@ async function submitComment() {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+// the clip tile is already moving; the badge says why, without covering it
+.video-page__gallery-badge {
+  position: absolute;
+  left: var(--space-xs);
+  bottom: var(--space-xs);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  background: rgba(0, 0, 0, 0.62);
+  color: #fff;
+  font-family: var(--font-brand);
+  font-size: 12px;
+  line-height: 20px;
+  pointer-events: none;
 }
 
 .video-page__viewer {

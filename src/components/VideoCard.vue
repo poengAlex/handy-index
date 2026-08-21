@@ -208,7 +208,7 @@ async function downloadScript() {
     hToast(
       "negative",
       "Couldn't get the script",
-      "Check your connection key and try again."
+      "Either the connection key is wrong or your Handy isn't online. Check both, then try again."
     );
   }
 }

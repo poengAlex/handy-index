@@ -74,7 +74,7 @@
             <HEmptyState
               icon="key_off"
               title="Connection key rejected"
-              body="The script index didn't accept your connection key. Check it in the Handy app and enter it again."
+              body="Either the key is wrong or your Handy isn't online. Check the key in the Handy app, make sure the device is switched on and connected, then enter it again."
               action-label="Enter key again"
               @action="keyDialog = true"
             />
@@ -271,7 +271,7 @@ async function vote(request: VideoRequest) {
       hToast(
         "negative",
         "Vote failed",
-        "Your connection key was rejected — enter it again."
+        "Either the key is wrong or your Handy isn't online — check both and enter it again."
       );
     } else {
       hToast(

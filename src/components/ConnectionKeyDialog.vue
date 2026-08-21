@@ -21,6 +21,13 @@
         @update:model-value="onInput(String($event ?? ''))"
         @keyup.enter="save"
       />
+      <div class="text-caption key-dialog__hint">
+        <q-icon name="wifi_tethering" size="16px" />
+        <span>
+          Your Handy has to be switched on and online for the key to work — an
+          offline device fails in exactly the same way a wrong key does.
+        </span>
+      </div>
       <template #actions>
         <HBtn v-close-popup variant="tertiary" label="Cancel" />
         <HBtn
@@ -92,5 +99,13 @@ function save() {
 <style scoped lang="scss">
 .key-dialog__input {
   margin-top: var(--space-sm);
+}
+
+.key-dialog__hint {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-xs);
+  margin-top: var(--space-sm);
+  color: var(--color-text-tertiary);
 }
 </style>
