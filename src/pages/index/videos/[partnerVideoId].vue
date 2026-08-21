@@ -95,6 +95,14 @@
             aria-label="Add to playlist"
             @click="playlistDialog = true"
           />
+          <q-btn
+            flat
+            round
+            icon="flag"
+            class="video-page__action"
+            aria-label="Report this video"
+            :href="reportMailto"
+          />
         </div>
         <p v-if="!expectFree" class="text-body-sm video-page__premium-note">
           The script for this video is premium — it comes with the video on the
@@ -799,6 +807,30 @@ async function share() {
     hToast("negative", "Couldn't copy the link");
   }
 }
+
+/** Reports go to a mailbox, not a moderation backend, so the link ships the
+ * video already identified — a report that only says "this one" is useless
+ * once it lands in an inbox. */
+const reportMailto = computed(() => {
+  const v = video.value;
+  if (!v) return "";
+  const body = [
+    "I want to report a video.",
+    "",
+    `Title: ${v.title ?? "(untitled)"}`,
+    `Video ID: ${v.partnerVideoId}`,
+    `Site: ${v.partnerName ?? v.partnerId}`,
+    `Link: ${window.location.href}`,
+    "",
+    "Reason for the report:",
+    ""
+  ].join("\n");
+  return (
+    "mailto:lars@ohdoki.com" +
+    `?subject=${encodeURIComponent("I want to report a video")}` +
+    `&body=${encodeURIComponent(body)}`
+  );
+});
 
 /** Resumes whatever rating/comment action the key prompt interrupted. */
 function runPendingAction() {

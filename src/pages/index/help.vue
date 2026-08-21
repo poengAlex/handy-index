@@ -117,7 +117,7 @@
           <HListRow
             icon="filter_alt"
             label="Orientation, script & video filters"
-            caption="Free or premium scripts, free or paid videos, and who's in them — in settings, or right in the browse filters"
+            caption="Free or premium scripts, free or premium videos, and who's in them — in settings, or right in the browse filters"
           />
           <HListRow
             icon="block"

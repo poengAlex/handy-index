@@ -48,13 +48,13 @@ export const useSettingsStore = defineStore(
     const consentAnswered = ref(false);
     /** show explicit thumbnails; off renders neutral placeholder tiles */
     const nsfw = ref(false);
-    /** include videos whose script is behind the Handy paywall. OFF by
+    /** include videos whose script is behind a partner's paywall. OFF by
      * default — a script you can't download is the one thing a script
      * database can't do anything with */
     const showPremiumScripts = ref(false);
     /** include videos behind the partner's own paywall — a different question
-     * entirely (2,939 videos are paid to watch but have a free script). ON by
-     * default: what you can watch is the partner's business, not ours */
+     * entirely (2,939 videos are premium to watch but have a free script). ON
+     * by default: what you can watch is the partner's business, not ours */
     const showPaidVideos = ref(true);
     /** how long each still holds while a card preview cycles its images */
     const previewFrameMs = ref(PREVIEW_FRAME_MS.default);

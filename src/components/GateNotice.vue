@@ -81,7 +81,7 @@ const reasons = computed<Reason[]>(() => {
     list.push({
       key: "video",
       count: gates.byVideo,
-      by: "by the paid-video filter"
+      by: "by the premium-video filter"
     });
   }
   return list;

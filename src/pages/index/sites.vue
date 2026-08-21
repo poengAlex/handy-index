@@ -129,10 +129,10 @@ const countLabel = computed(() => {
     : `${sites} · ${total} in the index`;
 });
 
-// "1,234 of 2,000 videos · 500 paid videos · 300 premium scripts" — the total
-// stays the headline because that is what the site holds; the first number is
-// what your filters leave of it. The two paywalls are named in full: they are
-// different gates, and "500 premium" would not say which.
+// "1,234 of 2,000 videos · 500 premium videos · 300 premium scripts" — the
+// total stays the headline because that is what the site holds; the first
+// number is what your filters leave of it. The two paywalls are named in
+// full: they are different gates, and "500 premium" would not say which.
 function videoCountLabel(partner: PartnerSummary): string {
   const total = countOf(partner.count, "video");
   const counts = matching.value;
@@ -142,7 +142,7 @@ function videoCountLabel(partner: PartnerSummary): string {
       : total
   ];
   if (partner.paidVideoCount) {
-    parts.push(countOf(partner.paidVideoCount, "paid video"));
+    parts.push(countOf(partner.paidVideoCount, "premium video"));
   }
   if (partner.premiumScriptCount) {
     parts.push(countOf(partner.premiumScriptCount, "premium script"));

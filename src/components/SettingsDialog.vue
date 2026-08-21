@@ -63,13 +63,13 @@
               v-model="settings.showPremiumScripts"
               icon="workspace_premium"
               label="Premium scripts"
-              caption="Include videos whose script is behind the Handy paywall"
+              caption="Include videos whose script is behind a partner's paywall"
             />
             <HToggleRow
               v-model="settings.showPaidVideos"
               icon="paid"
-              label="Paid videos"
-              caption="Include videos behind the partner's own paywall"
+              label="Premium videos"
+              caption="Include videos behind a partner's paywall"
             />
           </HList>
 

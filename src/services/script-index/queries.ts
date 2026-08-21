@@ -46,8 +46,9 @@ export const UNMUTABLE_TAGS: ReadonlySet<string> = new Set([
 ]);
 
 /** The index carries TWO independent paywalls and they cross freely — of
- * 15,572 videos, 2,939 are paid videos with a free script and 2,684 are paid
- * on both — so scripts and videos get one switch each, never a shared one.
+ * 15,572 videos, 2,939 are premium videos with a free script and 2,684 are
+ * premium on both — so scripts and videos get one switch each, never a
+ * shared one.
  *
  * Both access fields are optional in the index, and an absent value is not a
  * promise of free access, so anything but "public" counts as behind the
@@ -62,7 +63,7 @@ function hasFreeVideo(video: PartnerVideo): boolean {
 
 export interface CatalogFilter {
   orientation: Orientation;
-  /** include videos whose script is behind the Handy paywall */
+  /** include videos whose script is behind a partner's paywall */
   premiumScripts: boolean;
   /** include videos behind the partner's own paywall — a different question:
    * this is a script database, so it matters less here */
