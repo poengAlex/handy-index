@@ -82,7 +82,6 @@
           class="app-toolbar__btn"
           @click="settingsOpen = true"
         />
-        <HThemeToggle />
       </q-toolbar>
     </q-header>
 
@@ -150,7 +149,6 @@ import {
   HBtn,
   HDrawerItem,
   HLogo,
-  HThemeToggle,
   useGlassOnScroll,
   useHandyTheme
 } from "@/components/handy";

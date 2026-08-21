@@ -23,6 +23,16 @@
           <p class="text-body-sm history-page__note">
             {{ countLabel }}Only stored in this browser — your viewing history
             is never tracked or sent anywhere.
+            <template v-if="viewed.length">
+              <span aria-hidden="true"> · </span>
+              <button
+                type="button"
+                class="history-page__clear"
+                @click="clearOpen = true"
+              >
+                Clear
+              </button>
+            </template>
           </p>
         </header>
 
@@ -38,6 +48,18 @@
         <VideoGrid v-else :videos="viewed" />
       </div>
     </div>
+
+    <!-- one click from the header, so it asks first (same as the home shelf) -->
+    <q-dialog v-model="clearOpen">
+      <HModal title="Clear recently viewed?">
+        The videos stay in the catalog — only this browser's list of what you've
+        opened goes away.
+        <template #actions>
+          <HBtn variant="tertiary" label="Cancel" @click="clearOpen = false" />
+          <HBtn variant="danger" label="Clear history" @click="clearHistory" />
+        </template>
+      </HModal>
+    </q-dialog>
   </q-page>
 </template>
 
@@ -46,9 +68,15 @@
 // first. Same gating stance as the home row (see its comment): the full
 // catalog on purpose, with muted tags as the only filter. The ids live in
 // this browser's storage and are never sent anywhere — the header says so.
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
-import { HEmptyState, HandyLoader } from "@/components/handy";
+import {
+  HBtn,
+  HEmptyState,
+  HModal,
+  HandyLoader,
+  hToast
+} from "@/components/handy";
 import VideoGrid from "@/components/VideoGrid.vue";
 import { hasMutedTag, inOrder } from "@/services/script-index/queries";
 import { useCatalogStore } from "@/stores/catalog";
@@ -63,6 +91,14 @@ const viewed = computed(() =>
     video => !hasMutedTag(video, settings.mutedSet)
   )
 );
+
+const clearOpen = ref(false);
+
+function clearHistory(): void {
+  clearOpen.value = false;
+  settings.clearRecentlyViewed();
+  hToast("info", "Recently viewed cleared");
+}
 
 const countLabel = computed(() => {
   const count = viewed.value.length;
@@ -99,5 +135,17 @@ const countLabel = computed(() => {
 .history-page__note {
   color: var(--color-text-tertiary);
   margin: var(--space-xs) 0 0;
+}
+
+// a link, not a button shape: it sits at the end of the note sentence
+.history-page__clear {
+  border: 0;
+  background: none;
+  padding: 0;
+  font: inherit;
+  color: var(--color-text-link);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
 }
 </style>

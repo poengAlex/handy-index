@@ -1,21 +1,49 @@
 <template>
-  <router-link :to="to" class="tile-card">
-    <div class="tile-card__media" :style="{ aspectRatio: aspect }">
-      <slot name="media" />
+  <div class="tile-card">
+    <component :is="tag" v-bind="linkAttrs" class="tile-card__link">
+      <div class="tile-card__media" :style="{ aspectRatio: aspect }">
+        <slot name="media" />
+      </div>
+      <div class="tile-card__body">
+        <slot />
+      </div>
+    </component>
+    <!-- outside the link on purpose: a tile whose actions are buttons (vote,
+         and anything after it) can't nest them inside an anchor — every click
+         would also navigate, and interactive content inside a link is a
+         screen-reader trap -->
+    <div v-if="$slots.footer" class="tile-card__footer">
+      <slot name="footer" />
     </div>
-    <div class="tile-card__body">
-      <slot />
-    </div>
-  </router-link>
+  </div>
 </template>
 
 <script setup lang="ts">
-// The shared media-tile contract (VideoCard, performer cards): flat card
-// surface, fixed-ratio media well over a text body, hover lift per theme.
-// Slotted imagery uses .tile-card__img / .tile-card__placeholder so the well
-// owns the sizing (absolute cover — content can't stretch the ratio).
-withDefaults(defineProps<{ to: string; aspect?: string }>(), {
-  aspect: "16 / 9"
+// The shared media-tile contract (VideoCard, performer cards, requests): flat
+// card surface, fixed-ratio media well over a text body, hover lift per theme,
+// optional action footer. Slotted imagery uses .tile-card__img /
+// .tile-card__placeholder so the well owns the sizing (absolute cover —
+// content can't stretch the ratio).
+//
+// Give it `to` for an in-app route or `href` for an external link (opened in
+// a new tab); with neither, the tile is inert markup rather than a dead link.
+import { computed } from "vue";
+
+const props = withDefaults(
+  defineProps<{ to?: string; href?: string; aspect?: string }>(),
+  { to: "", href: "", aspect: "16 / 9" }
+);
+
+const tag = computed(() => {
+  if (props.to) return "router-link";
+  return props.href ? "a" : "div";
+});
+
+const linkAttrs = computed(() => {
+  if (props.to) return { to: props.to };
+  return props.href
+    ? { href: props.href, target: "_blank", rel: "noopener noreferrer" }
+    : {};
 });
 </script>
 
@@ -27,12 +55,21 @@ withDefaults(defineProps<{ to: string; aspect?: string }>(), {
   background: var(--color-bg-card);
   overflow: hidden;
   color: var(--color-text-primary);
-  text-decoration: none !important;
   transition: box-shadow 180ms ease;
 
   &:hover {
     box-shadow: var(--shadow-md);
   }
+}
+
+// the link fills the card so the whole tile (minus the footer) is the target
+.tile-card__link {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  color: inherit;
+  text-decoration: none !important;
 }
 
 .tile-card__media {
@@ -62,6 +99,15 @@ withDefaults(defineProps<{ to: string; aspect?: string }>(), {
   flex-direction: column;
   gap: 2px;
   padding: var(--space-sm);
+}
+
+// shares the body's inset, and hangs off the bottom of the card
+.tile-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-xs);
+  padding: 0 var(--space-sm) var(--space-sm);
 }
 </style>
 

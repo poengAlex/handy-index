@@ -8,6 +8,12 @@
         <div class="settings-modal__stack">
           <HList>
             <HToggleRow
+              v-model="darkMode"
+              icon="dark_mode"
+              label="Dark mode"
+              caption="Use the dark colour theme"
+            />
+            <HToggleRow
               v-model="settings.nsfw"
               icon="visibility"
               label="Explicit previews"
@@ -67,6 +73,39 @@
             />
           </HList>
 
+          <div class="settings-modal__block">
+            <div class="text-body-compact settings-modal__label">
+              Card previews
+            </div>
+            <div
+              class="text-caption settings-modal__hint settings-modal__hint--lead"
+            >
+              Hover a card — or drag a finger across one — to preview it. Click
+              a label to put that speed back.
+            </div>
+            <HLabeledSlider
+              :model-value="frameSeconds"
+              label="Image speed"
+              unit="s"
+              :min="PREVIEW_FRAME_MS.min / 1000"
+              :max="PREVIEW_FRAME_MS.max / 1000"
+              :step="PREVIEW_FRAME_MS.step / 1000"
+              :decimals="1"
+              :reset="PREVIEW_FRAME_MS.default / 1000"
+              @update:model-value="setFrameSeconds"
+            />
+            <HLabeledSlider
+              v-model="settings.previewClipRate"
+              label="Clip speed"
+              unit="×"
+              :min="PREVIEW_CLIP_RATE.min"
+              :max="PREVIEW_CLIP_RATE.max"
+              :step="PREVIEW_CLIP_RATE.step"
+              :decimals="2"
+              :reset="PREVIEW_CLIP_RATE.default"
+            />
+          </div>
+
           <div>
             <div class="text-body-compact settings-modal__label">
               Connection key
@@ -118,12 +157,14 @@
 import { computed, nextTick, ref } from "vue";
 import {
   HBtn,
+  HLabeledSlider,
   HList,
   HListRow,
   HNavCard,
   HRadioRow,
   HToggleRow,
-  HModal
+  HModal,
+  useHandyTheme
 } from "@/components/handy";
 import ClearDataDialog from "@/components/ClearDataDialog.vue";
 import ModalScroll from "@/components/ModalScroll.vue";
@@ -133,13 +174,33 @@ import {
   ORIENTATIONS,
   ORIENTATION_LABELS
 } from "@/services/script-index/queries";
-import { useSettingsStore } from "@/stores/settings";
+import {
+  PREVIEW_CLIP_RATE,
+  PREVIEW_FRAME_MS,
+  useSettingsStore
+} from "@/stores/settings";
 
 defineProps<{ modelValue: boolean }>();
 
 const emit = defineEmits<{ "update:modelValue": [value: boolean] }>();
 
 const settings = useSettingsStore();
+
+// theme lives outside the settings store (it's persisted by useHandyTheme
+// under "handy-theme"), so the row proxies the shared state instead
+const { dark, apply } = useHandyTheme();
+const darkMode = computed({
+  get: () => dark.value,
+  set: (value: boolean) => apply(value)
+});
+
+// the store keeps milliseconds (it is a timer); the slider speaks seconds,
+// which is the unit anyone reading "how long each image holds" thinks in
+const frameSeconds = computed(() => settings.previewFrameMs / 1000);
+
+function setFrameSeconds(value: number | { min: number; max: number }) {
+  if (typeof value === "number") settings.previewFrameMs = value * 1000;
+}
 
 const clearDataOpen = ref(false);
 const mutedTagsOpen = ref(false);
@@ -182,5 +243,16 @@ async function onKeyInput(raw: string) {
 .settings-modal__hint {
   color: var(--color-text-tertiary);
   margin-top: var(--space-xs);
+}
+
+// the sliders bring their own spacing, so the lead sits tight under the label
+.settings-modal__hint--lead {
+  margin: 0;
+}
+
+.settings-modal__block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
 }
 </style>

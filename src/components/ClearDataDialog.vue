@@ -44,7 +44,11 @@
 // lives here too and still wipes everything including consent.
 import { computed } from "vue";
 import { HBtn, HList, HListRow, HModal, hToast } from "@/components/handy";
-import { useSettingsStore } from "@/stores/settings";
+import {
+  PREVIEW_CLIP_RATE,
+  PREVIEW_FRAME_MS,
+  useSettingsStore
+} from "@/stores/settings";
 
 defineProps<{ modelValue: boolean }>();
 
@@ -83,6 +87,8 @@ const rows = computed<ClearRow[]>(() => {
     settings.nsfw ||
     settings.showPremiumScripts ||
     !settings.showPaidVideos ||
+    settings.previewFrameMs !== PREVIEW_FRAME_MS.default ||
+    settings.previewClipRate !== PREVIEW_CLIP_RATE.default ||
     settings.inlinePlayers ||
     settings.orientation !== "straight";
   return [
@@ -140,7 +146,7 @@ const rows = computed<ClearRow[]>(() => {
       key: "preferences",
       icon: "tune",
       label: "Viewing preferences",
-      caption: "Explicit previews, orientation, script & video access",
+      caption: "Explicit previews, orientation, access filters, preview speeds",
       empty: !preferencesTouched,
       clear: settings.resetPreferences
     }

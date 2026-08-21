@@ -87,28 +87,28 @@
             />
           </div>
 
-          <div v-else class="queue-page__list">
-            <div
+          <div v-else class="queue-page__grid">
+            <!-- rank is the request's real place in the scripting order, from
+                 the whole set: filtering or re-sorting must not renumber it -->
+            <RequestCard
               v-for="request in shown"
               :key="request.requestId"
-              class="queue-page__row"
+              :request="request"
+              :rank="ranks.get(request.requestId) ?? 0"
             >
-              <!-- the true queue position, never the row number: filtering or
-                   re-sorting must not renumber the scripting order -->
-              <span class="text-h5 queue-page__rank">
-                {{ ranks.get(request.requestId) }}
+              <!-- read-only: voting lives on the board, and a button here
+                   that only linked there would drop you on a list of 1,080
+                   with your request nowhere in sight -->
+              <span class="text-caption queue-page__votes">
+                {{ voteLabel(request) }}
               </span>
-              <RequestCard :request="request" class="queue-page__card">
-                <div class="queue-page__tally">
-                  <span class="text-h5 queue-page__tally-count">
-                    {{ request.votes ?? 0 }}
-                  </span>
-                  <span class="text-caption queue-page__tally-label">
-                    votes
-                  </span>
-                </div>
-              </RequestCard>
-            </div>
+              <span
+                v-if="settings.hasUpvoted(request.requestId)"
+                class="text-caption queue-page__voted"
+              >
+                <q-icon name="check" size="14px" /> Voted
+              </span>
+            </RequestCard>
           </div>
           <div
             v-if="results.length && !done"
@@ -140,9 +140,12 @@ import RequestFilters from "@/components/RequestFilters.vue";
 import { useIncrementalReveal } from "@/composables/useIncrementalReveal";
 import { useRequestFilters } from "@/composables/useRequestFilters";
 import { useVotableRequests } from "@/composables/useVotableRequests";
-import { rankByVotes } from "@/services/script-index/requests";
+import { rankByVotes, votesOf } from "@/services/script-index/requests";
+import type { VideoRequest } from "@/services/script-index/types";
+import { useSettingsStore } from "@/stores/settings";
 
 const router = useRouter();
+const settings = useSettingsStore();
 
 const keyDialog = ref(false);
 
@@ -166,6 +169,11 @@ const {
 const ranks = computed(() => rankByVotes(requests.value));
 
 const { shown, done, sentinel } = useIncrementalReveal(results, 50);
+
+function voteLabel(request: VideoRequest): string {
+  const votes = votesOf(request);
+  return `${votes} vote${votes === 1 ? "" : "s"}`;
+}
 
 const countLabel = computed(() => {
   const total = requests.value.length;
@@ -228,42 +236,18 @@ onMounted(() => {
   justify-content: center;
 }
 
-.queue-page__list {
-  display: flex;
-  flex-direction: column;
+.queue-page__grid {
+  display: grid;
   gap: var(--space-sm);
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
 }
 
-.queue-page__row {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-}
-
-.queue-page__rank {
-  flex: none;
-  min-width: 40px;
-  text-align: center;
-  color: var(--color-text-tertiary);
+.queue-page__votes {
+  color: var(--color-text-secondary);
   font-variant-numeric: tabular-nums;
 }
 
-.queue-page__card {
-  flex: 1;
-  min-width: 0;
-}
-
-.queue-page__tally {
-  display: flex;
-  align-items: baseline;
-  gap: var(--space-xs);
-}
-
-.queue-page__tally-count {
-  font-variant-numeric: tabular-nums;
-}
-
-.queue-page__tally-label {
+.queue-page__voted {
   color: var(--color-text-tertiary);
 }
 

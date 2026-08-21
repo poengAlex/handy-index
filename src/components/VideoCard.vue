@@ -4,9 +4,11 @@
     :aria-label="video.title ?? 'Video'"
   >
     <template #media>
-      <MediaImage
+      <MediaPreview
         v-if="settings.nsfw && artwork"
-        :src="artwork"
+        :poster="artwork"
+        :images="video.images ?? []"
+        :preview="video.preview ?? ''"
         :alt="video.title ?? 'Video'"
         class="tile-card__img"
       />
@@ -116,13 +118,14 @@
 
 <script setup lang="ts">
 // The catalog media tile: TileCard with a 16:9 thumbnail well over two text
-// lines. Explicit artwork only renders when the NSFW setting is on.
+// lines. Explicit artwork only renders when the NSFW setting is on — which
+// also gates the hover preview, since that is the same artwork in motion.
 import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
 import { HChip, hToast } from "@/components/handy";
 import AddToPlaylistDialog from "@/components/AddToPlaylistDialog.vue";
 import ConnectionKeyDialog from "@/components/ConnectionKeyDialog.vue";
-import MediaImage from "@/components/MediaImage.vue";
+import MediaPreview from "@/components/MediaPreview.vue";
 import TileCard from "@/components/TileCard.vue";
 import { formatDuration } from "@/services/format";
 import { downloadFreeScript } from "@/services/script-download";

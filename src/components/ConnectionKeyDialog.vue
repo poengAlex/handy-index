@@ -9,6 +9,7 @@
         Handy app to continue.
       </slot>
       <q-input
+        ref="inputRef"
         :model-value="keyInput"
         filled
         dense
@@ -36,6 +37,7 @@
 // The one connection-key prompt: saves the key to settings and emits `saved`
 // so the caller can resume whatever needed the key.
 import { nextTick, ref, watch } from "vue";
+import type { QInput } from "quasar";
 import { HBtn, HModal } from "@/components/handy";
 import { sanitizeConnectionKey } from "@/services/format";
 import { useSettingsStore } from "@/stores/settings";
@@ -49,11 +51,20 @@ const emit = defineEmits<{
 
 const settings = useSettingsStore();
 const keyInput = ref("");
+const inputRef = ref<QInput>();
 
+// A key rarely changes, and the dialog also reopens when the API rejects a
+// call — starting empty would make every reopen a full retype. Prefill the
+// saved key and select it, so confirming is one tap and replacing is one
+// keystroke.
 watch(
   () => props.modelValue,
-  open => {
-    if (open) keyInput.value = "";
+  async open => {
+    if (!open) return;
+    keyInput.value = sanitizeConnectionKey(settings.connectionKey);
+    if (!keyInput.value) return;
+    await nextTick();
+    inputRef.value?.select();
   }
 );
 

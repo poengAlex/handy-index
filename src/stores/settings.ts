@@ -11,6 +11,32 @@ export interface Playlist {
 
 const RECENTLY_VIEWED_CAP = 30;
 
+/** Bounds for the two card-preview speeds, shared by the settings sliders and
+ * the hydration clamp so a hand-edited blob can't hand a card a 0 ms interval
+ * or a playback rate no browser will accept. */
+export const PREVIEW_FRAME_MS = {
+  min: 200,
+  max: 3000,
+  step: 100,
+  default: 800
+};
+
+export const PREVIEW_CLIP_RATE = {
+  min: 0.25,
+  max: 3,
+  step: 0.25,
+  default: 1
+};
+
+function clamp(
+  value: unknown,
+  bounds: { min: number; max: number; default: number }
+): number {
+  const n = Number(value);
+  if (!Number.isFinite(n)) return bounds.default;
+  return Math.min(Math.max(n, bounds.min), bounds.max);
+}
+
 /**
  * Persisted user preferences. Favorites, playlists and history store
  * partnerVideoIds only — the catalog is the single source of video data.
@@ -30,6 +56,10 @@ export const useSettingsStore = defineStore(
      * entirely (2,939 videos are paid to watch but have a free script). ON by
      * default: what you can watch is the partner's business, not ours */
     const showPaidVideos = ref(true);
+    /** how long each still holds while a card preview cycles its images */
+    const previewFrameMs = ref(PREVIEW_FRAME_MS.default);
+    /** playback rate for the partner roll clip a card preview plays */
+    const previewClipRate = ref(PREVIEW_CLIP_RATE.default);
     /** embedded partner players (Pornhub/xHamster) on video pages */
     const inlinePlayers = ref(false);
     /** let pages span the whole viewport instead of the 1440px column */
@@ -206,6 +236,8 @@ export const useSettingsStore = defineStore(
       nsfw.value = false;
       showPremiumScripts.value = false;
       showPaidVideos.value = true;
+      previewFrameMs.value = PREVIEW_FRAME_MS.default;
+      previewClipRate.value = PREVIEW_CLIP_RATE.default;
       inlinePlayers.value = false;
       fullWidth.value = false;
       orientation.value = "straight";
@@ -216,6 +248,8 @@ export const useSettingsStore = defineStore(
       nsfw.value = false;
       showPremiumScripts.value = false;
       showPaidVideos.value = true;
+      previewFrameMs.value = PREVIEW_FRAME_MS.default;
+      previewClipRate.value = PREVIEW_CLIP_RATE.default;
       inlinePlayers.value = false;
       fullWidth.value = false;
       orientation.value = "straight";
@@ -235,6 +269,8 @@ export const useSettingsStore = defineStore(
       nsfw,
       showPremiumScripts,
       showPaidVideos,
+      previewFrameMs,
+      previewClipRate,
       inlinePlayers,
       fullWidth,
       orientation,
@@ -309,6 +345,14 @@ export const useSettingsStore = defineStore(
         // a hand-edited blob can still carry a non-boolean
         settings.showPremiumScripts = Boolean(settings.showPremiumScripts);
         settings.showPaidVideos = Boolean(settings.showPaidVideos);
+        settings.previewFrameMs = clamp(
+          settings.previewFrameMs,
+          PREVIEW_FRAME_MS
+        );
+        settings.previewClipRate = clamp(
+          settings.previewClipRate,
+          PREVIEW_CLIP_RATE
+        );
         const raw: unknown = settings.mutedTags;
         settings.mutedTags = [
           ...new Set(

@@ -39,6 +39,9 @@ export interface PartnerVideo {
   tags?: string[];
   images?: string[];
   thumbnail?: string;
+  /** short silent roll clip (mp4/webm) — on 7,041 of the live 15,572 videos,
+   * and 5,749 of those are AV1, which not every browser decodes */
+  preview?: string;
   videoAccess?: VideoAccess;
   scriptAccess?: ScriptAccessIndicator;
   views?: number;

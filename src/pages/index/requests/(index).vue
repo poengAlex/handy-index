@@ -124,20 +124,15 @@
               />
             </div>
 
-            <div v-else class="requests-page__list">
+            <div v-else class="requests-page__grid">
               <RequestCard
                 v-for="request in shown"
                 :key="request.requestId"
                 :request="request"
               >
-                <div class="requests-page__tally">
-                  <span class="text-h5 requests-page__tally-count">
-                    {{ request.votes ?? 0 }}
-                  </span>
-                  <span class="text-caption requests-page__tally-label">
-                    votes
-                  </span>
-                </div>
+                <span class="text-caption requests-page__votes">
+                  {{ voteLabel(request) }}
+                </span>
                 <HBtn
                   size="sm"
                   icon="thumb_up"
@@ -189,6 +184,7 @@ import {
   isAuthError,
   voteForRequest
 } from "@/services/script-index/client";
+import { votesOf } from "@/services/script-index/requests";
 import type { VideoRequest } from "@/services/script-index/types";
 import { useSettingsStore } from "@/stores/settings";
 
@@ -236,6 +232,11 @@ const validUrl = computed(() => {
     return false;
   }
 });
+
+function voteLabel(request: VideoRequest): string {
+  const votes = votesOf(request);
+  return `${votes} vote${votes === 1 ? "" : "s"}`;
+}
 
 const countLabel = computed(() => {
   const total = requests.value.length;
@@ -397,23 +398,16 @@ onMounted(() => {
   height: 1px;
 }
 
-.requests-page__list {
-  display: flex;
-  flex-direction: column;
+// same rhythm as the catalog grid, so a request reads as the same kind of
+// object as a video
+.requests-page__grid {
+  display: grid;
   gap: var(--space-sm);
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
 }
 
-.requests-page__tally {
-  display: flex;
-  align-items: baseline;
-  gap: var(--space-xs);
-}
-
-.requests-page__tally-count {
+.requests-page__votes {
+  color: var(--color-text-secondary);
   font-variant-numeric: tabular-nums;
-}
-
-.requests-page__tally-label {
-  color: var(--color-text-tertiary);
 }
 </style>
