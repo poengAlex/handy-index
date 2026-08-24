@@ -31,8 +31,7 @@ const settings: typeof enUS = {
   // `common.count.tags` and this message only carries the verb.
   muted: {
     label: "Étiquettes en sourdine",
-    caption:
-      "{count} étiquette en sourdine | {count} étiquettes en sourdine",
+    caption: "{count} étiquette en sourdine | {count} étiquettes en sourdine",
     empty: "Rien en sourdine"
   },
 

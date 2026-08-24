@@ -109,15 +109,18 @@ const video: typeof enUS = {
   // Replaces ConnectionKeyDialog's generic blurb — the reason the key is
   // being asked for differs per action.
   keyPrompt: {
-    script: "Scripts 与你的 Handy 绑定。输入 Handy 应用里的 connection key 以继续。",
-    action: "评分和评论与你的 Handy 绑定。输入 Handy 应用里的 connection key 以继续。"
+    script:
+      "Scripts 与你的 Handy 绑定。输入 Handy 应用里的 connection key 以继续。",
+    action:
+      "评分和评论与你的 Handy 绑定。输入 Handy 应用里的 connection key 以继续。"
   },
 
   script: {
     readyTitle: "Script 已就绪",
     readyBody: "下载已在新标签页中打开。",
     errorTitle: "无法获取 script",
-    errorBody: "Connection key 有误，或者 Handy 不在线。两者都检查一遍，然后重试。"
+    errorBody:
+      "Connection key 有误，或者 Handy 不在线。两者都检查一遍，然后重试。"
   },
 
   mute: {

@@ -89,8 +89,7 @@ const requests: typeof enUS = {
     failedTitle: "투표에 실패했어요",
     failedKeyBody:
       "키가 틀렸거나 Handy가 온라인 상태가 아니에요. 둘 다 확인하고 다시 입력하세요.",
-    failedBody:
-      "Script 색인이 투표를 받아들이지 않았어요. 다시 시도해 보세요."
+    failedBody: "Script 색인이 투표를 받아들이지 않았어요. 다시 시도해 보세요."
   },
 
   // One request tile.

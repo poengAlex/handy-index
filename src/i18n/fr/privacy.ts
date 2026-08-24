@@ -32,8 +32,7 @@ const privacy: typeof enUS = {
     intro:
       "Il n'y a ni comptes, ni cookies, ni outils de mesure d'audience. Tout ce que tu règles est stocké uniquement dans le stockage local de ce navigateur :",
     item: {
-      consent:
-        "ta réponse à la fenêtre de consentement de la première visite",
+      consent: "ta réponse à la fenêtre de consentement de la première visite",
       previews: "le réglage des aperçus explicites (NSFW)",
       orientation: "le filtre d'orientation",
       accessFilters: "tes filtres d'accès aux scripts et aux vidéos",

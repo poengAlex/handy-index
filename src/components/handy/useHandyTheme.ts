@@ -56,7 +56,7 @@ export function useHandyTheme() {
     // from the moment the user toggles.
     if (query && !following) {
       following = true;
-      query.addEventListener("change", (event) => {
+      query.addEventListener("change", event => {
         if (localStorage.getItem(STORAGE_KEY) === null) set(event.matches);
       });
     }

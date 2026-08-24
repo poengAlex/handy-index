@@ -12,14 +12,17 @@ const requests: typeof enUS = {
     title: "需要 connection key",
     boardBody:
       "请求榜与你的 Handy 绑定。添加 Handy 应用里的 connection key，即可查看请求、提交请求并投票。",
-    queueBody: "队列与你的 Handy 绑定。添加 Handy 应用里的 connection key 即可查看。",
+    queueBody:
+      "队列与你的 Handy 绑定。添加 Handy 应用里的 connection key 即可查看。",
     addAction: "添加 connection key",
     rejectedTitle: "Connection key 被拒绝",
     rejectedBody:
       "密钥有误，或者 Handy 不在线。在 Handy 应用里核对密钥，确认设备已开机并联网，然后重新输入。",
     rejectedAction: "重新输入密钥",
-    boardDialog: "请求榜与你的 Handy 绑定。输入 Handy 应用里的 connection key 以继续。",
-    queueDialog: "队列与你的 Handy 绑定。输入 Handy 应用里的 connection key 以继续。"
+    boardDialog:
+      "请求榜与你的 Handy 绑定。输入 Handy 应用里的 connection key 以继续。",
+    queueDialog:
+      "队列与你的 Handy 绑定。输入 Handy 应用里的 connection key 以继续。"
   },
 
   // The voting board page. There are four count messages rather than one
@@ -48,7 +51,8 @@ const requests: typeof enUS = {
     lead: "制作顺序：票数最高的请求最先做 script。",
     boardLink: "投票榜",
     emptyTitle: "队列为空",
-    emptyBody: "现在没有等着做 script 的视频。到投票榜请求一个视频，让队列动起来。",
+    emptyBody:
+      "现在没有等着做 script 的视频。到投票榜请求一个视频，让队列动起来。",
     emptyAction: "前往请求页",
     errorTitle: "无法加载队列",
     noMatchBody: "队列里没有符合这些筛选条件的请求。放宽条件就能看到其余的。",

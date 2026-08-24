@@ -57,8 +57,7 @@ const browse: typeof enUS = {
     orientation: "性的指向",
     access: "利用条件",
     premiumScriptsLabel: "有料script",
-    premiumScriptsCaption:
-      "パートナーサイトの有料エリアにあるscriptも含めます",
+    premiumScriptsCaption: "パートナーサイトの有料エリアにあるscriptも含めます",
     premiumVideosLabel: "有料動画",
     premiumVideosCaption: "パートナーサイトの有料エリアにある動画も含めます",
     mutedLabel: "ミュート中のタグ",

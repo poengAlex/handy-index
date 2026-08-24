@@ -355,7 +355,9 @@ if (pinned.length) {
       ` fixed option names, not copy:\n`
   );
   for (const p of pinned) {
-    console.log(`  ${p.locale.padEnd(7)} ${p.key} = ${JSON.stringify(p.value)} (want ${JSON.stringify(p.english)})`);
+    console.log(
+      `  ${p.locale.padEnd(7)} ${p.key} = ${JSON.stringify(p.value)} (want ${JSON.stringify(p.english)})`
+    );
   }
 }
 

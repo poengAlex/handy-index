@@ -78,7 +78,8 @@ const requests: typeof enUS = {
     sentTitle: "Solicitud enviada",
     sentBody: "Pasa por una verificación antes de aparecer en la votación.",
     failedTitle: "La solicitud ha fallado",
-    failedBody: "El índice de scripts no ha aceptado la URL. Vuelve a intentarlo."
+    failedBody:
+      "El índice de scripts no ha aceptado la URL. Vuelve a intentarlo."
   },
 
   // The vote button and its toasts. `failedKeyBody` is the auth case: the key
@@ -91,7 +92,8 @@ const requests: typeof enUS = {
     failedTitle: "El voto ha fallado",
     failedKeyBody:
       "O la clave es incorrecta o tu Handy no está en línea — revisa las dos cosas y escríbela otra vez.",
-    failedBody: "El índice de scripts no ha aceptado el voto. Vuelve a intentarlo."
+    failedBody:
+      "El índice de scripts no ha aceptado el voto. Vuelve a intentarlo."
   },
 
   // One request tile.

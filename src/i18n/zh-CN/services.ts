@@ -15,7 +15,8 @@ const services: typeof enUS = {
   // t(`services.scriptDownload.${scriptDownloadCode(error)}`)
   scriptDownload: {
     noFreeScript: "这个视频没有免费 script。片库里的条目已经过时。",
-    unauthorized: "Connection key 有误，或者 Handy 不在线。两者都检查一遍，然后重试。",
+    unauthorized:
+      "Connection key 有误，或者 Handy 不在线。两者都检查一遍，然后重试。",
     failed: "Script 服务器没有响应。检查网络连接后重试。"
   }
 };

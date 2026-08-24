@@ -33,8 +33,7 @@ const nav: typeof enUS = {
   // ("1 dempet tagg" / "2 dempede tagger"), so it has to plural together.
   // `{tags}` receives the whole muted-tag phrase, so word order stays with
   // the translator.
-  mutedTags:
-    "{count} étiquette en sourdine | {count} étiquettes en sourdine",
+  mutedTags: "{count} étiquette en sourdine | {count} étiquettes en sourdine",
   mutedHidden:
     "{count} vidéo masquée par {tags} | {count} vidéos masquées par {tags}",
 

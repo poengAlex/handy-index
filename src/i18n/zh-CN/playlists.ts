@@ -89,7 +89,8 @@ const playlists: typeof enUS = {
   bulk: {
     label: "获取全部 scripts（{count}）",
     progress: "正在获取 {done}/{total}…",
-    keyPrompt: "Scripts 与你的 Handy 绑定。输入 Handy 应用里的 connection key 以继续。",
+    keyPrompt:
+      "Scripts 与你的 Handy 绑定。输入 Handy 应用里的 connection key 以继续。",
     // the explanation under this title is the shared one from
     // `services.scriptDownload.*` — same failure, same words as everywhere else
     failedTitle: "无法获取 scripts",
