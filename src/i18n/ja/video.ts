@@ -22,11 +22,11 @@ const video: typeof enUS = {
   },
 
   hero: {
-    premiumChip: "有料スクリプト"
+    premiumChip: "有料script"
   },
 
   action: {
-    getScript: "スクリプトを取得",
+    getScript: "Scriptを取得",
     // {site} is the partner's own name, or `fallback.site` when it has none
     watchOn: "{site}で見る",
     addFavorite: "お気に入りに追加",
@@ -36,10 +36,10 @@ const video: typeof enUS = {
   },
 
   premiumNote:
-    "この動画のスクリプトは有料です。パートナーサイトで動画と一緒に提供されます。",
+    "この動画のscriptは有料です。パートナーサイトで動画と一緒に提供されます。",
 
   playerNote:
-    "IVDB上の再生はHandyと同期しません。このプレーヤーは映像のみです。動きを同期させるには、スクリプトをダウンロードして、お使いのHandy環境で再生してください。",
+    "The Handyは、IVDB上の再生とは同期しません。このプレーヤーは映像のみです。動きを同期させるには、scriptをダウンロードして、Handy環境で再生してください。",
 
   tag: {
     unmuteAria: "タグのミュートを解除：{tag}",
@@ -50,7 +50,7 @@ const video: typeof enUS = {
 
   details: {
     title: "詳細",
-    script: "スクリプト",
+    script: "Script",
     free: "無料",
     premium: "有料",
     published: "公開日",
@@ -59,18 +59,18 @@ const video: typeof enUS = {
     // the non-VR case: an ordinary 2D video
     formatFlat: "2D",
     site: "サイト",
-    scriptBy: "スクリプト作成者",
+    scriptBy: "Script作成者",
     rating: "評価",
     ratingValue: "{percent}%",
     // {votes} arrives already pluralized from useFormat().count("votes", n)
     ratingWithVotes: "{percent}%・{votes}",
-    scriptPlays: "スクリプト再生回数"
+    scriptPlays: "Script再生数"
   },
 
   rate: {
-    title: "このスクリプトを評価",
+    title: "このscriptを評価",
     community: "みんなの評価：{percent}%",
-    thanks: "スクリプトの評価ありがとうございます",
+    thanks: "Scriptの評価ありがとうございます",
     errorTitle: "評価を保存できませんでした"
   },
 
@@ -85,14 +85,14 @@ const video: typeof enUS = {
     stillAlt: "{title}の静止画{number}枚目",
     previousPhoto: "前の写真",
     nextPhoto: "次の写真",
-    closeViewer: "ビューアーを閉じる",
+    closeViewer: "拡大表示を閉じる",
     // position counter under the full-size viewer — "3 / 12"
     viewerCount: "{index} / {total}"
   },
 
   comments: {
     title: "コメント",
-    gateHint: "コメントの利用には接続キーが必要です。",
+    gateHint: "コメントの利用にはconnection keyが必要です。",
     gateAction: "キーを追加",
     inputLabel: "コメントを入力",
     submit: "投稿",
@@ -112,17 +112,17 @@ const video: typeof enUS = {
   // being asked for differs per action.
   keyPrompt: {
     script:
-      "スクリプトはお使いのHandyに紐付いています。続けるには、Handyアプリの接続キーを入力してください。",
+      "ScriptはHandyに紐付いています。続けるには、Handyアプリのconnection keyを入力してください。",
     action:
-      "評価とコメントはお使いのHandyに紐付いています。続けるには、Handyアプリの接続キーを入力してください。"
+      "評価とコメントはHandyに紐付いています。続けるには、Handyアプリのconnection keyを入力してください。"
   },
 
   script: {
-    readyTitle: "スクリプトを準備しました",
+    readyTitle: "Scriptを準備しました",
     readyBody: "新しいタブでダウンロードを開きました。",
-    errorTitle: "スクリプトを取得できませんでした",
+    errorTitle: "Scriptを取得できませんでした",
     errorBody:
-      "接続キーが間違っているか、Handyがオンラインになっていません。両方を確認してから、もう一度お試しください。"
+      "Connection keyが間違っているか、Handyがオンラインになっていません。両方を確認してから、もう一度試してください。"
   },
 
   mute: {

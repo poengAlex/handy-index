@@ -12,10 +12,10 @@ const settings: typeof enUS = {
     darkModeLabel: "다크 모드",
     darkModeCaption: "어두운 색상 테마를 사용해요",
     nsfwLabel: "선정적 미리보기",
-    nsfwCaption: "밋밋한 타일 대신 실제 이미지를 보여줘요",
+    nsfwCaption: "밋밋한 기본 이미지 대신 실제 이미지를 보여줘요",
     playersLabel: "내장 플레이어",
     playersCaption: "Pornhub와 xHamster 동영상을 상세 페이지에서 바로 재생해요",
-    fullWidthLabel: "전체 너비 레이아웃",
+    fullWidthLabel: "전체 너비 보기",
     fullWidthCaption: "가운데 정렬된 단 대신 화면 전체를 사용해요",
     backgroundLabel: "애니메이션 배경",
     backgroundCaption:
@@ -38,27 +38,27 @@ const settings: typeof enUS = {
 
   access: {
     title: "이용 범위",
-    premiumScriptsLabel: "유료 스크립트",
+    premiumScriptsLabel: "유료 script",
     premiumScriptsCaption:
-      "파트너 사이트에서 스크립트를 유료로 파는 동영상도 포함해요",
+      "제휴 사이트에서 script를 유료로 파는 동영상도 포함해요",
     premiumVideosLabel: "유료 동영상",
-    premiumVideosCaption: "파트너 사이트에서 유료로 파는 동영상도 포함해요"
+    premiumVideosCaption: "제휴 사이트에서 유료로 파는 동영상도 포함해요"
   },
 
   previews: {
-    title: "카드 미리보기",
+    title: "목록 미리보기",
     hint:
-      "카드에 마우스를 올리거나 손가락으로 문지르면 미리보기가 나와요. " +
-      "라벨을 누르면 그 속도가 원래대로 돌아가요.",
+      "목록의 동영상에 마우스를 올리거나 손가락으로 문지르면 미리보기가 " +
+      "나와요. 항목 이름을 누르면 그 속도가 원래대로 돌아가요.",
     imageSpeed: "이미지 속도",
     clipSpeed: "클립 속도"
   },
 
   // shared by the settings field and the connection-key prompt
   connectionKey: {
-    label: "연결 키",
+    label: "Connection key",
     placeholder: "예: a1B2c3D4e5",
-    hint: "스크립트를 다운로드할 때 쓰는 Handy 연결 키예요."
+    hint: "Script를 다운로드할 때 쓰는 Handy connection key 값이에요."
   },
 
   clearDataAction: "데이터 지우기…",
@@ -72,7 +72,7 @@ const settings: typeof enUS = {
       "이 사이트가 기억하는 것은 전부 이 브라우저 안에만 있어요. 하나씩 " +
       "지우거나 한 번에 전부 지울 수 있어요.",
     clearAll: "모든 데이터 지우기",
-    allToast: "모든 로컬 데이터를 지웠어요",
+    allToast: "저장된 데이터를 모두 지웠어요",
 
     recentLabel: "최근 본 동영상",
     recentToast: "최근 본 동영상을 지웠어요",
@@ -86,12 +86,12 @@ const settings: typeof enUS = {
     votesLabel: "평가 및 투표",
     votesEmpty: "기록 없음",
     votesToast: "평가와 투표를 지웠어요",
-    ratingCount: "스크립트 평가 {count}개",
+    ratingCount: "Script 평가 {count}개",
     requestVoteCount: "요청 투표 {count}표",
 
     keySaved: "이 기기에 저장됨",
     keyUnset: "설정 안 됨",
-    keyToast: "연결 키를 지웠어요",
+    keyToast: "Connection key 값을 지웠어요",
 
     preferencesLabel: "보기 설정",
     preferencesCaption:
@@ -104,7 +104,7 @@ const settings: typeof enUS = {
   consent: {
     title: "둘러보기 전에",
     body:
-      "IVDB는 The Handy용 스크립트가 있는 인터랙티브 성인 동영상을 정리한 " +
+      "IVDB는 The Handy용 script가 있는 인터랙티브 성인 동영상을 정리한 " +
       "카탈로그예요. 선정적 미리보기를 켜고 둘러보려면 만 18세 이상임을 " +
       "확인하세요. 확인하지 않고 계속하면 미리보기는 계속 숨겨진 채로 " +
       "남고, 설정에서 언제든 바꿀 수 있어요. 설정한 내용은 이 브라우저에만 " +
@@ -115,10 +115,10 @@ const settings: typeof enUS = {
 
   // ConnectionKeyDialog — shown when an action needs a key that isn't set
   keyPrompt: {
-    title: "연결 키가 필요해요",
+    title: "Connection key 값이 필요해요",
     body:
       "이 작업은 Handy와 연결돼 있어요. 계속하려면 Handy 앱에 있는 " +
-      "연결 키를 입력하세요.",
+      "connection key 값을 입력하세요.",
     hint:
       "키가 작동하려면 Handy가 켜져 있고 온라인 상태여야 해요. 기기가 " +
       "오프라인이면 키를 잘못 넣었을 때와 똑같은 방식으로 실패해요.",

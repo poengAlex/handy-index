@@ -14,7 +14,7 @@ const performers: typeof enUS = {
 
   sort: {
     aria: "Ordenar intérpretes",
-    count: "Más videos",
+    count: "Más vídeos",
     rating: "Mejor valorados",
     // an alphabet range, so it changes with the language
     name: "A–Z",
@@ -30,12 +30,12 @@ const performers: typeof enUS = {
   // the star chip on a card; Norwegian puts a space before the percent sign
   ratingBadge: "★ {rating}%",
 
-  errorTitle: "No se pudieron cargar los intérpretes",
+  errorTitle: "No se han podido cargar los intérpretes",
   hiddenBody:
     "Tu filtro premium y las etiquetas silenciadas ocultan a todos los intérpretes. Quita alguno en los ajustes.",
   noMatchTitle: "Ningún intérprete coincide",
   noMatchBody:
-    "Nada del índice coincide con “{query}”. Prueba con un nombre más corto."
+    "Nada del índice coincide con «{query}». Prueba con un nombre más corto."
 };
 
 export default performers;

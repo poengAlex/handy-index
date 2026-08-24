@@ -9,20 +9,20 @@ const requests: typeof enUS = {
   // Connection-key gate and the two failure states behind it. Shown by both
   // pages; only the body differs.
   key: {
-    title: "연결 키가 필요해요",
+    title: "Connection key 값이 필요해요",
     boardBody:
-      "요청 게시판은 Handy와 연결돼 있어요. 요청을 보고, 올리고, 투표하려면 Handy 앱에 있는 연결 키를 추가하세요.",
+      "요청 게시판은 Handy와 연결돼 있어요. 요청을 보고, 올리고, 투표하려면 Handy 앱에 있는 connection key 값을 추가하세요.",
     queueBody:
-      "대기열은 Handy와 연결돼 있어요. 확인하려면 Handy 앱에 있는 연결 키를 추가하세요.",
-    addAction: "연결 키 추가",
-    rejectedTitle: "연결 키가 거부됐어요",
+      "대기열은 Handy와 연결돼 있어요. 확인하려면 Handy 앱에 있는 connection key 값을 추가하세요.",
+    addAction: "Connection key 추가",
+    rejectedTitle: "Connection key 값이 거부됐어요",
     rejectedBody:
       "키가 틀렸거나 Handy가 온라인 상태가 아니에요. Handy 앱에서 키를 확인하고, 기기가 켜져 있고 연결됐는지 본 다음 다시 입력하세요.",
     rejectedAction: "키 다시 입력",
     boardDialog:
-      "요청 게시판은 Handy와 연결돼 있어요. 계속하려면 Handy 앱에 있는 연결 키를 입력하세요.",
+      "요청 게시판은 Handy와 연결돼 있어요. 계속하려면 Handy 앱에 있는 connection key 값을 입력하세요.",
     queueDialog:
-      "대기열은 Handy와 연결돼 있어요. 계속하려면 Handy 앱에 있는 연결 키를 입력하세요."
+      "대기열은 Handy와 연결돼 있어요. 계속하려면 Handy 앱에 있는 connection key 값을 입력하세요."
   },
 
   // The voting board page. There are four count messages rather than one
@@ -32,8 +32,8 @@ const requests: typeof enUS = {
   // and pluralized ("12 requests", from common.count.requests) — move it
   // wherever the sentence wants it.
   board: {
-    title: "스크립트 요청",
-    lead: "다음에 어떤 동영상에 스크립트를 만들지 투표하세요 — 표를 가장 많이 받은 요청부터 만들어요.",
+    title: "Script 요청",
+    lead: "다음에 어떤 동영상에 script를 만들지 투표하세요 — 표를 가장 많이 받은 요청부터 만들어요.",
     queueLink: "대기열 보기",
     emptyTitle: "기다리는 요청이 없어요",
     emptyBody:
@@ -51,11 +51,11 @@ const requests: typeof enUS = {
   // The queue page: the same requests, ranked, read-only.
   queue: {
     title: "요청 대기열",
-    lead: "스크립트 제작 순서예요. 표를 가장 많이 받은 요청부터 만들어요.",
+    lead: "Script 제작 순서예요. 표를 가장 많이 받은 요청부터 만들어요.",
     boardLink: "투표 게시판",
     emptyTitle: "대기열이 비어 있어요",
     emptyBody:
-      "지금은 스크립트를 기다리는 동영상이 없어요. 투표 게시판에서 동영상을 요청하면 시작돼요.",
+      "지금은 script를 기다리는 동영상이 없어요. 투표 게시판에서 동영상을 요청하면 시작돼요.",
     emptyAction: "요청 페이지로 가기",
     errorTitle: "대기열을 불러오지 못했어요",
     noMatchBody:
@@ -70,13 +70,13 @@ const requests: typeof enUS = {
   // The submit row on the board, plus the two toasts it can raise.
   submit: {
     title: "동영상 요청",
-    hint: "스크립트가 있었으면 하는 동영상 링크를 붙여 넣으세요. 확인 절차를 거친 뒤 투표 목록에 올라와요.",
+    hint: "Script가 있었으면 하는 동영상 링크를 붙여 넣으세요. 확인 절차를 거친 뒤 투표 목록에 올라와요.",
     urlLabel: "동영상 URL",
     action: "동영상 요청하기",
     sentTitle: "요청을 보냈어요",
     sentBody: "확인 절차를 거친 뒤 투표 목록에 올라와요.",
     failedTitle: "요청에 실패했어요",
-    failedBody: "스크립트 색인이 URL을 받아들이지 않았어요. 다시 시도해 보세요."
+    failedBody: "Script 색인이 URL을 받아들이지 않았어요. 다시 시도해 보세요."
   },
 
   // The vote button and its toasts. `failedKeyBody` is the auth case: the key
@@ -85,12 +85,12 @@ const requests: typeof enUS = {
     action: "투표",
     voted: "투표 완료",
     successTitle: "투표했어요",
-    successBody: "표를 많이 받은 요청부터 스크립트를 만들어요.",
+    successBody: "표를 많이 받은 요청부터 script를 만들어요.",
     failedTitle: "투표에 실패했어요",
     failedKeyBody:
       "키가 틀렸거나 Handy가 온라인 상태가 아니에요. 둘 다 확인하고 다시 입력하세요.",
     failedBody:
-      "스크립트 색인이 투표를 받아들이지 않았어요. 다시 시도해 보세요."
+      "Script 색인이 투표를 받아들이지 않았어요. 다시 시도해 보세요."
   },
 
   // One request tile.

@@ -12,7 +12,7 @@ import type enUS from "../en-US/common";
 const common: typeof enUS = {
   action: {
     backToHome: "Volver al inicio",
-    browseVideos: "Explorar videos",
+    browseVideos: "Explorar vídeos",
     cancel: "Cancelar",
     clear: "Borrar",
     clearFilters: "Quitar filtros",
@@ -29,16 +29,16 @@ const common: typeof enUS = {
   },
 
   state: {
-    catalogErrorTitle: "No se pudo cargar el catálogo",
+    catalogErrorTitle: "No se ha podido cargar el catálogo",
     catalogErrorBody:
-      "El índice de scripts no respondió. Revisa tu conexión y vuelve a intentarlo.",
+      "El índice de scripts no ha respondido. Revisa tu conexión y vuelve a intentarlo.",
     emptyTitle: "Nada que mostrar"
   },
 
   // "12 of 340" — the shown/total pair every filtered listing prints. Both
   // sides arrive pre-formatted through `$n()`.
   ofTotal: {
-    videos: "{shown} de {total} video | {shown} de {total} videos",
+    videos: "{shown} de {total} vídeo | {shown} de {total} vídeos",
     performers:
       "{shown} de {total} intérprete | {shown} de {total} intérpretes",
     tags: "{shown} de {total} etiqueta | {shown} de {total} etiquetas"
@@ -50,7 +50,7 @@ const common: typeof enUS = {
     requests: "{count} solicitud | {count} solicitudes",
     sites: "{count} sitio | {count} sitios",
     tags: "{count} etiqueta | {count} etiquetas",
-    videos: "{count} video | {count} videos",
+    videos: "{count} vídeo | {count} vídeos",
     votes: "{count} voto | {count} votos"
   },
 
@@ -70,10 +70,10 @@ const common: typeof enUS = {
   // switcher — the same "can't drift apart" reason ORIENTATION_LABELS gave
   // for living in queries.ts, which is where these strings came from.
   orientation: {
-    straight: "Hetero",
+    straight: "Straight",
     gay: "Gay",
     trans: "Trans",
-    all: "Todo"
+    all: "Everything"
   },
 
   language: {

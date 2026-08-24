@@ -37,8 +37,8 @@ const settings: typeof enUS = {
 
   access: {
     title: "访问权限",
-    premiumScriptsLabel: "付费脚本",
-    premiumScriptsCaption: "包含脚本需在合作网站付费的视频",
+    premiumScriptsLabel: "付费 scripts",
+    premiumScriptsCaption: "包含 script 需在合作网站付费的视频",
     premiumVideosLabel: "付费视频",
     premiumVideosCaption: "包含需在合作网站付费的视频"
   },
@@ -52,9 +52,9 @@ const settings: typeof enUS = {
 
   // shared by the settings field and the connection-key prompt
   connectionKey: {
-    label: "连接密钥",
+    label: "Connection key",
     placeholder: "例如 a1B2c3D4e5",
-    hint: "你的 Handy 连接密钥，下载脚本时使用。"
+    hint: "你的 Handy connection key，下载 scripts 时使用。"
   },
 
   clearDataAction: "清除数据…",
@@ -80,12 +80,12 @@ const settings: typeof enUS = {
     votesLabel: "评分与投票",
     votesEmpty: "没有记录",
     votesToast: "已清除评分和投票",
-    ratingCount: "{count} 个脚本评分",
+    ratingCount: "{count} 个 script 评分",
     requestVoteCount: "{count} 个请求投票",
 
     keySaved: "已保存在本设备",
     keyUnset: "未设置",
-    keyToast: "已清除连接密钥",
+    keyToast: "已清除 connection key",
 
     preferencesLabel: "浏览偏好",
     preferencesCaption: "露骨预览、取向、访问权限筛选、预览速度、背景",
@@ -97,7 +97,7 @@ const settings: typeof enUS = {
   consent: {
     title: "浏览之前",
     body:
-      "IVDB 收录带有 Handy 动作脚本的互动成人视频。确认你已年满 18 周岁，" +
+      "IVDB 收录带有 The Handy 动作 scripts 的互动成人视频。确认你已年满 18 周岁，" +
       "才能在浏览时看到露骨预览。不确认也可以继续，预览会保持隐藏——" +
       "随时可以在设置里更改。你的偏好只保存在这个浏览器里。",
     decline: "不看预览，继续",
@@ -106,8 +106,8 @@ const settings: typeof enUS = {
 
   // ConnectionKeyDialog — shown when an action needs a key that isn't set
   keyPrompt: {
-    title: "需要连接密钥",
-    body: "此操作与你的 Handy 绑定。输入 Handy 应用里的连接密钥以继续。",
+    title: "需要 connection key",
+    body: "此操作与你的 Handy 绑定。输入 Handy 应用里的 connection key 以继续。",
     hint: "密钥要生效，Handy 必须开机并联网——设备离线的报错和密钥错误一模一样。",
     save: "保存并继续"
   }

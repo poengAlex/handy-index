@@ -35,7 +35,7 @@ const playlists: typeof enUS = {
     // One key per `PlaylistImportFailure` in services/playlist-transfer.ts,
     // plus `unknown` for a throw from somewhere else entirely.
     error: {
-      unreachable: "Der Paste-Dienst war nicht erreichbar.",
+      unreachable: "Der Dienst für den Teilen-Link war nicht erreichbar.",
       linkDead:
         "Dieser Teilen-Link antwortet nicht — vielleicht ist er abgelaufen.",
       notJson: "Diese Datei ist kein gültiges JSON.",
@@ -76,7 +76,7 @@ const playlists: typeof enUS = {
     exportAria: "Export-JSON der Wiedergabeliste",
     linkAria: "Teilen-Link",
     copyLink: "Teilen-Link kopieren",
-    note: "Wer den Link hat, kann diese Wiedergabeliste importieren. Der Paste ist temporär — er läuft nach etwa 90 Tagen ab.",
+    note: "Wer den Link hat, kann diese Wiedergabeliste importieren. Der Link ist temporär — er läuft nach etwa 90 Tagen ab.",
     copyJson: "JSON kopieren",
     saveFile: "Datei speichern",
     createLink: "Teilen-Link erstellen",
@@ -89,20 +89,20 @@ const playlists: typeof enUS = {
     linkCreated: "Teilen-Link erstellt",
     linkFailedTitle: "Teilen-Link konnte nicht erstellt werden",
     linkFailedBody:
-      "Der Paste-Dienst hat nicht geantwortet. Kopiere stattdessen das JSON."
+      "Der Dienst für den Teilen-Link hat nicht geantwortet. Kopiere stattdessen das JSON."
   },
 
   // downloading every free script in the playlist, one after another
   bulk: {
-    label: "Alle Skripte holen ({count})",
+    label: "Alle scripts holen ({count})",
     progress: "Hole {done}/{total}…",
     keyPrompt:
-      "Skripte sind an dein Handy gebunden. Gib den Verbindungsschlüssel aus der Handy-App ein, um fortzufahren.",
+      "Scripts sind an The Handy gebunden. Gib den connection key aus der Handy-App ein, um fortzufahren.",
     // the explanation under this title is the shared one from
     // `services.scriptDownload.*` — same failure, same words as everywhere else
-    failedTitle: "Skripte konnten nicht abgerufen werden",
-    doneTitle: "Skripte heruntergeladen",
-    doneBody: "{count} Skript gespeichert. | {count} Skripte gespeichert.",
+    failedTitle: "Scripts konnten nicht abgerufen werden",
+    doneTitle: "Scripts heruntergeladen",
+    doneBody: "{count} script gespeichert. | {count} scripts gespeichert.",
     // both counts in one sentence: the split between them is not the same
     // shape in every language
     partialBody: "{saved} gespeichert, {failed} fehlgeschlagen."

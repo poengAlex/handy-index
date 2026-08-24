@@ -8,9 +8,8 @@ const video: typeof enUS = {
   missingBody:
     "Denne videoen ligger ikke i indeksen lenger, eller så er lenken feil.",
 
-  // "nettstedet" og "dette nettstedet" står i bestemt form fordi de alltid
-  // havner etter en preposisjon: "Se på nettstedet", "Mer fra dette
-  // nettstedet".
+  // "nettstedet" and "dette nettstedet" are definite because they always land
+  // after a preposition: "Se på nettstedet", "Mer fra dette nettstedet".
   fallback: {
     video: "Video",
     player: "Videospiller",
@@ -19,11 +18,11 @@ const video: typeof enUS = {
   },
 
   hero: {
-    premiumChip: "Premiumskript"
+    premiumChip: "Premium-script"
   },
 
   action: {
-    getScript: "Hent skript",
+    getScript: "Hent script",
     watchOn: "Se på {site}",
     addFavorite: "Legg til i favoritter",
     removeFavorite: "Fjern fra favoritter",
@@ -32,15 +31,17 @@ const video: typeof enUS = {
   },
 
   premiumNote:
-    "Skriptet til denne videoen er premium — det følger med videoen på partnernettstedet.",
+    "Denne videoens script er premium — det følger med videoen på partnernettstedet.",
 
-  // "Handy-en" med bindestrek, samme som services.ts: den bestemte endelsen
-  // på et engelsk merkenavn ser ut som en skrivefeil uten.
+  // The device name takes no Norwegian article or definite suffix — it is
+  // handled as a proper noun, the same way services.ts and help.ts handle it.
+  // `script` is protected the same way: bare after the verb, never the
+  // Norwegian definite "skriptet".
   playerNote:
-    "Handy-en synkroniserer ikke med avspillingen her på IVDB — denne spilleren viser bare video. Last ned skriptet og spill det av i Handy-oppsettet ditt, så følger bevegelsene videoen.",
+    "Handy synkroniserer ikke med avspillingen her på IVDB — denne spilleren viser bare video. Last ned script og spill det av i Handy-oppsettet ditt, så følger bevegelsene videoen.",
 
-  // Demping «fjernes», den «oppheves» ikke — samme ordlyd som gates.ts og
-  // browse.ts, så de tre stedene man møter en dempet tagg sier det likt.
+  // A mute is "fjernet", never "opphevet" — the same wording as gates.ts and
+  // browse.ts, so all three places you meet a muted tag say it alike.
   tag: {
     unmuteAria: "Fjern demping av taggen {tag}",
     mutedTitle: "«{tag}» er dempet — klikk for å fjerne dempingen",
@@ -50,28 +51,33 @@ const video: typeof enUS = {
 
   details: {
     title: "Detaljer",
-    script: "Skript",
+    script: "Script",
     free: "Gratis",
     premium: "Premium",
     published: "Publisert",
     duration: "Varighet",
     format: "Format",
-    // motstykket til "VR 180°" i det samme feltet: "flat" sier ingenting på
-    // norsk, "2D" sier det med én gang
+    // the counterpart to "VR 180°" in the same field: "flat" says nothing in
+    // Norwegian, "2D" says it at once
     formatFlat: "2D",
     site: "Nettsted",
-    scriptBy: "Skript av",
+    scriptBy: "Script av",
     rating: "Vurdering",
-    // norsk setter mellomrom foran prosenttegnet
+    // Norwegian sets a space before the percent sign
     ratingValue: "{percent} %",
     ratingWithVotes: "{percent} % · {votes}",
-    scriptPlays: "Avspillinger"
+    // "Avspillinger" alone reads as video plays; `script` is protected, so
+    // the label keeps it and the Norwegian head carries the compound
+    scriptPlays: "Script-avspillinger"
   },
 
   rate: {
-    title: "Vurder dette skriptet",
+    title: "Vurder denne videoens script",
     community: "Fellesskapet: {percent} %",
-    thanks: "Takk for vurderingen",
+    // the compound keeps `script` and puts the definite ending on the
+    // Norwegian head — the same shape settings.ts counts in
+    // "{count} script-vurderinger"
+    thanks: "Takk for script-vurderingen",
     errorTitle: "Klarte ikke å lagre vurderingen"
   },
 
@@ -90,7 +96,7 @@ const video: typeof enUS = {
 
   comments: {
     title: "Kommentarer",
-    gateHint: "Kommentarer krever tilkoblingsnøkkelen din.",
+    gateHint: "Kommentarer krever din connection key.",
     gateAction: "Legg inn nøkkel",
     inputLabel: "Skriv en kommentar",
     submit: "Kommenter",
@@ -108,17 +114,17 @@ const video: typeof enUS = {
 
   keyPrompt: {
     script:
-      "Skript er bundet til Handy-en din. Skriv inn tilkoblingsnøkkelen fra Handy-appen for å fortsette.",
+      "Scripts er bundet til din Handy. Skriv inn connection key fra Handy-appen for å fortsette.",
     action:
-      "Vurderinger og kommentarer er bundet til Handy-en din. Skriv inn tilkoblingsnøkkelen fra Handy-appen for å fortsette."
+      "Vurderinger og kommentarer er bundet til din Handy. Skriv inn connection key fra Handy-appen for å fortsette."
   },
 
   script: {
-    readyTitle: "Skriptet er klart",
+    readyTitle: "Script klart",
     readyBody: "Nedlastingen startet i en ny fane.",
-    errorTitle: "Klarte ikke å hente skriptet",
+    errorTitle: "Klarte ikke å hente script",
     errorBody:
-      "Enten er tilkoblingsnøkkelen feil, eller så er ikke Handy-en din på nett. Sjekk begge deler og prøv igjen."
+      "Enten er connection key feil, eller så er ikke din Handy på nett. Sjekk begge deler og prøv igjen."
   },
 
   mute: {

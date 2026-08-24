@@ -10,7 +10,7 @@ const help: typeof enUS = {
   lead: "Todo lo que este sitio puede hacer, en un solo lugar. Las filas con flecha te llevan directo allí.",
 
   finding: {
-    title: "Encontrar videos",
+    title: "Encontrar vídeos",
     search: {
       label: "Buscar y filtrar",
       caption:
@@ -24,7 +24,7 @@ const help: typeof enUS = {
     tags: {
       label: "Nube de etiquetas",
       caption:
-        "Todas las etiquetas del catálogo menos las que silenciaste, con búsqueda y orden — un clic filtra la página de exploración"
+        "Todas las etiquetas del catálogo menos las que has silenciado, con búsqueda y orden — un clic filtra la página de exploración"
     },
     performers: {
       label: "Intérpretes",
@@ -32,7 +32,7 @@ const help: typeof enUS = {
     },
     sites: {
       label: "Sitios",
-      caption: "Todos los sitios asociados del índice con su número de videos"
+      caption: "Todos los sitios asociados del índice con su número de vídeos"
     }
   },
 
@@ -41,11 +41,11 @@ const help: typeof enUS = {
     favorites: {
       label: "Favoritos",
       caption:
-        "Marca con el corazón cualquier video para tenerlo a mano — se guarda en este dispositivo"
+        "Marca con el corazón cualquier vídeo para tenerlo a mano — se guarda en este dispositivo"
     },
     playlists: {
       label: "Listas de reproducción",
-      caption: "Crea, renombra y organiza listas con los videos que quieras"
+      caption: "Crea, renombra y organiza listas con los vídeos que quieras"
     },
     transfer: {
       label: "Compartir, importar y exportar listas",
@@ -60,7 +60,7 @@ const help: typeof enUS = {
     quickMenu: {
       label: "Menú rápido",
       caption:
-        "Haz clic derecho en cualquier miniatura de video —o mantenla presionada— para favoritos, listas, copiar el enlace y más"
+        "Haz clic con el botón derecho en cualquier miniatura de vídeo —o mantenla pulsada— para favoritos, listas, copiar el enlace y más"
     }
   },
 
@@ -69,21 +69,21 @@ const help: typeof enUS = {
     free: {
       label: "Scripts gratuitos",
       caption:
-        "Los videos marcados como Gratis tienen un script que puedes descargar con tu clave de conexión de Handy"
+        "Los vídeos marcados como Gratis tienen un script que puedes descargar con tu connection key de Handy"
     },
     rate: {
       label: "Valorar scripts",
       caption:
-        "Valora con estrellas cualquier script gratuito en la propia página del video"
+        "Valora con estrellas cualquier script gratuito en la propia página del vídeo"
     },
     comments: {
       label: "Comentarios sobre los scripts",
       caption: "Lee y publica comentarios anónimos sobre los scripts"
     },
     requests: {
-      label: "Solicitar videos",
+      label: "Solicitar vídeos",
       caption:
-        "Pide un script para cualquier video y vota cuáles tendrán script a continuación"
+        "Pide un script para cualquier vídeo y vota cuáles tendrán script a continuación"
     }
   },
 
@@ -97,17 +97,17 @@ const help: typeof enUS = {
     players: {
       label: "Reproductores integrados",
       caption:
-        "Desactivados por defecto — mira los videos de Pornhub y xHamster en la propia página del video (la reproducción no se sincroniza con el Handy)"
+        "Desactivados por defecto — mira los vídeos de Pornhub y xHamster en la propia página del vídeo (la reproducción no se sincroniza con el Handy)"
     },
     filters: {
-      label: "Filtros de orientación, scripts y videos",
+      label: "Filtros de orientación, scripts y vídeos",
       caption:
-        "Scripts gratuitos o premium, videos gratuitos o premium, y quién sale en ellos — en los ajustes, o directamente en los filtros de exploración"
+        "Scripts gratuitos o premium, vídeos gratuitos o premium, y quién sale en ellos — en los ajustes, o directamente en los filtros de exploración"
     },
     mutedTags: {
       label: "Etiquetas silenciadas",
       caption:
-        "Silencia una etiqueta y todos los videos que la llevan salen del catálogo — haz clic derecho en cualquier etiqueta, o gestiona la lista en los ajustes"
+        "Silencia una etiqueta y todos los vídeos que la llevan salen del catálogo — haz clic con el botón derecho en cualquier etiqueta, o gestiona la lista en los ajustes"
     },
     theme: {
       label: "Tema claro y oscuro",
@@ -116,7 +116,7 @@ const help: typeof enUS = {
     share: {
       label: "Compartir",
       caption:
-        "Cada página de video y cada lista de resultados filtrada tiene un enlace que se puede compartir"
+        "Cada página de vídeo y cada lista de resultados filtrada tiene un enlace que se puede compartir"
     }
   }
 };

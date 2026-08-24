@@ -10,10 +10,11 @@ const sites: typeof enUS = {
 
   count: {
     totalInIndex: "{total} i indeksen",
-    // Norwegian compounds these into one word; "skript" is neuter and one
-    // syllable, so its plural stays unmarked.
+    // "premiumvideo" compounds into one word the Norwegian way. `script` is
+    // a protected English term, so its compound takes a hyphen and the
+    // English plural the source uses — no Norwegian ending on the term.
     premiumVideos: "{count} premiumvideo | {count} premiumvideoer",
-    premiumScripts: "{count} premiumskript | {count} premiumskript"
+    premiumScripts: "{count} premium-script | {count} premium-scripts"
   },
 
   errorTitle: "Kunne ikke laste nettstedene",

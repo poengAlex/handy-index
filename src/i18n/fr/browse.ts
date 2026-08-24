@@ -45,8 +45,8 @@ const browse: typeof enUS = {
 
   filters: {
     title: "Filtres",
-    addTag: "Ajouter un tag",
-    noTags: "Aucun tag correspondant",
+    addTag: "Ajouter une étiquette",
+    noTags: "Aucune étiquette correspondante",
     site: "Site",
     noSites: "Aucun site correspondant",
     // one row of either picker: the tag or site name, then how many videos
@@ -60,7 +60,7 @@ const browse: typeof enUS = {
     premiumScriptsCaption: "Inclure les scripts payants chez un partenaire",
     premiumVideosLabel: "Vidéos premium",
     premiumVideosCaption: "Inclure les vidéos payantes chez un partenaire",
-    mutedLabel: "Tags en sourdine",
+    mutedLabel: "Étiquettes en sourdine",
     mutedNone: "Rien en sourdine",
     // {tags} is a comma-joined list of the first few muted tags
     mutedMore: "{tags} +{rest} autres",
@@ -75,24 +75,27 @@ const browse: typeof enUS = {
     // can fix it, so the one-tag case names the tag it is talking about.
     mutedOneTitle: "« {tag} » est en sourdine",
     mutedOneBody:
-      "Les vidéos portant ce tag sont masquées partout. Réactivez-le pour voir ces résultats.",
+      "Les vidéos portant cette étiquette sont masquées partout. Réactive-la pour voir ces résultats.",
     mutedOneAction: "Réactiver « {tag} »",
-    mutedManyTitle: "Certains de ces tags sont en sourdine",
+    mutedManyTitle: "Certaines de ces étiquettes sont en sourdine",
     mutedManyBody:
-      "Les vidéos portant ces tags sont masquées partout. Réactivez-les pour voir ces résultats.",
+      "Les vidéos portant ces étiquettes sont masquées partout. Réactive-les pour voir ces résultats.",
     mutedManyAction: "Les réactiver",
-    // {orientation} comes from common.orientation.* via useFormat()
-    // "le filtre {orientation}" and never "en {orientation}": the value
-    // arrives in its dictionary form and takes no article of its own
-    orientationTitle: "Rien avec le filtre {orientation}",
+    // {orientation} comes from common.orientation.* via useFormat(), where
+    // the four option names are pinned to English. So it is a fixed label,
+    // never French copy: "le filtre « {orientation} »" and never "en
+    // {orientation}" — the apposition takes no article, gender or elision
+    // from it, and the guillemets are what this locale puts around every
+    // other catalog value it drops into a sentence.
+    orientationTitle: "Rien avec le filtre « {orientation} »",
     // one sentence, not a count phrase glued to a clause: the verb agrees
     // with the count in English and the word order differs in Norwegian
     orientationBody:
-      "{count} vidéo correspond à tous vos autres critères, mais pas au filtre {orientation}. | {count} vidéos correspondent à tous vos autres critères, mais pas au filtre {orientation}.",
+      "{count} vidéo correspond à tous tes autres critères, mais pas au filtre « {orientation} ». | {count} vidéos correspondent à tous tes autres critères, mais pas au filtre « {orientation} ».",
     orientationAction: "Afficher toutes les orientations",
     noneTitle: "Aucune vidéo ne correspond",
     noneBody:
-      "Toutes les vidéos ont été filtrées. Élargissez la recherche ou retirez des filtres.",
+      "Toutes les vidéos ont été filtrées. Élargis la recherche ou retire des filtres.",
     noneAction: "Effacer tous les filtres"
   },
 
@@ -102,7 +105,7 @@ const browse: typeof enUS = {
     title: "IVDB — {count}",
     fallbackTitle: "Vidéos IVDB",
     copiedTitle: "Lien copié",
-    copiedBody: "Il conserve tous les filtres que vous avez choisis.",
+    copiedBody: "Il conserve tous les filtres que tu as choisis.",
     failedTitle: "Impossible de copier le lien"
   }
 };

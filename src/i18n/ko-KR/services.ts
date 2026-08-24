@@ -15,11 +15,11 @@ const services: typeof enUS = {
   // t(`services.scriptDownload.${scriptDownloadCode(error)}`)
   scriptDownload: {
     noFreeScript:
-      "이 동영상에는 무료 스크립트가 없어요. 카탈로그 정보가 오래됐어요.",
+      "이 동영상에는 무료 script가 없어요. 카탈로그 정보가 오래됐어요.",
     unauthorized:
-      "연결 키가 틀렸거나 Handy가 온라인 상태가 아니에요. 둘 다 확인한 뒤 다시 시도해 보세요.",
+      "connection key 값이 틀렸거나 Handy가 온라인 상태가 아니에요. 둘 다 확인한 뒤 다시 시도해 보세요.",
     failed:
-      "스크립트 서버가 응답하지 않았어요. 연결을 확인하고 다시 시도해 보세요."
+      "Script 서버가 응답하지 않았어요. 연결을 확인하고 다시 시도해 보세요."
   }
 };
 

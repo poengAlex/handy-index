@@ -17,9 +17,9 @@ const services: typeof enUS = {
     noFreeScript:
       "Il n'y a pas de script gratuit pour cette vidéo. La fiche du catalogue n'est plus à jour.",
     unauthorized:
-      "Soit la clé de connexion est incorrecte, soit votre Handy n'est pas en ligne. Vérifiez les deux, puis réessayez.",
+      "Soit la connection key est incorrecte, soit ton Handy n'est pas en ligne. Vérifie les deux, puis réessaie.",
     failed:
-      "Le serveur de scripts n'a pas répondu. Vérifiez votre connexion, puis réessayez."
+      "Le serveur de scripts n'a pas répondu. Vérifie ta connexion, puis réessaie."
   }
 };
 

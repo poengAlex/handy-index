@@ -12,14 +12,14 @@ import type enUS from "../en-US/gates";
 const gates: typeof enUS = {
   notice: {
     hiddenByMuted: "屏蔽标签隐藏了 {count}",
-    hiddenByOrientation: "{orientation}筛选隐藏了 {count}",
-    hiddenByScript: "付费脚本筛选隐藏了 {count}",
+    hiddenByOrientation: "取向筛选（{orientation}）隐藏了 {count}",
+    hiddenByScript: "付费 script 筛选隐藏了 {count}",
     hiddenByVideo: "付费视频筛选隐藏了 {count}",
 
     hiddenTotal: "已隐藏 {count}",
     byMuted: "屏蔽标签：{count}",
-    byOrientation: "{orientation}筛选：{count}",
-    byScript: "付费脚本筛选：{count}",
+    byOrientation: "取向筛选（{orientation}）：{count}",
+    byScript: "付费 script 筛选：{count}",
     byVideo: "付费视频筛选：{count}"
   },
 

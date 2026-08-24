@@ -9,20 +9,20 @@ const requests: typeof enUS = {
   // Connection-key gate and the two failure states behind it. Shown by both
   // pages; only the body differs.
   key: {
-    title: "Clé de connexion requise",
+    title: "Connection key requise",
     boardBody:
-      "Le tableau des demandes est lié à votre Handy. Ajoutez la clé de connexion de l'application Handy pour consulter les demandes, en soumettre et voter.",
+      "Le tableau des demandes est lié à ton Handy. Ajoute la connection key de l'application Handy pour consulter les demandes, en soumettre et voter.",
     queueBody:
-      "La file d'attente est liée à votre Handy. Ajoutez la clé de connexion de l'application Handy pour la consulter.",
-    addAction: "Ajouter la clé de connexion",
-    rejectedTitle: "Clé de connexion refusée",
+      "La file d'attente est liée à ton Handy. Ajoute la connection key de l'application Handy pour la consulter.",
+    addAction: "Ajouter la connection key",
+    rejectedTitle: "Connection key refusée",
     rejectedBody:
-      "Soit la clé est incorrecte, soit votre Handy n'est pas en ligne. Vérifiez la clé dans l'application Handy, assurez-vous que l'appareil est allumé et connecté, puis saisissez-la de nouveau.",
+      "Soit la clé est incorrecte, soit ton Handy n'est pas en ligne. Vérifie la clé dans l'application Handy, assure-toi que l'appareil est allumé et connecté, puis saisis-la de nouveau.",
     rejectedAction: "Saisir la clé de nouveau",
     boardDialog:
-      "Le tableau des demandes est lié à votre Handy. Saisissez la clé de connexion de l'application Handy pour continuer.",
+      "Le tableau des demandes est lié à ton Handy. Saisis la connection key de l'application Handy pour continuer.",
     queueDialog:
-      "La file d'attente est liée à votre Handy. Saisissez la clé de connexion de l'application Handy pour continuer."
+      "La file d'attente est liée à ton Handy. Saisis la connection key de l'application Handy pour continuer."
   },
 
   // The voting board page. There are four count messages rather than one
@@ -37,14 +37,14 @@ const requests: typeof enUS = {
   // nothing in the sentence may have to agree with it.
   board: {
     title: "Demandes de script",
-    lead: "Votez pour les vidéos qui recevront un script — la demande la plus votée passe en premier.",
+    lead: "Vote pour les vidéos qui recevront un script — la demande la plus votée passe en premier.",
     queueLink: "Voir la file d'attente",
     emptyTitle: "Aucune demande en attente",
     emptyBody:
-      "Rien n'est soumis au vote pour le moment. Demandez une vidéo ci-dessus pour lancer le mouvement.",
+      "Rien n'est soumis au vote pour le moment. Demande une vidéo ci-dessus pour lancer le mouvement.",
     errorTitle: "Impossible de charger les demandes",
     noMatchBody:
-      "Aucune demande du tableau ne correspond à ces filtres. Élargissez-les pour voir le reste.",
+      "Aucune demande du tableau ne correspond à ces filtres. Élargis-les pour voir le reste.",
     countAll: "{requests} en attente de vote",
     countAllCapped:
       "{requests} en attente de vote (le tableau est plus long que ce que nous avons chargé)",
@@ -60,11 +60,11 @@ const requests: typeof enUS = {
     boardLink: "Tableau de vote",
     emptyTitle: "La file d'attente est vide",
     emptyBody:
-      "Rien n'attend de script pour le moment. Demandez une vidéo depuis le tableau de vote pour lancer le mouvement.",
+      "Rien n'attend de script pour le moment. Demande une vidéo depuis le tableau de vote pour lancer le mouvement.",
     emptyAction: "Aller aux demandes",
     errorTitle: "Impossible de charger la file d'attente",
     noMatchBody:
-      "Aucune demande de la file d'attente ne correspond à ces filtres. Élargissez-les pour voir le reste.",
+      "Aucune demande de la file d'attente ne correspond à ces filtres. Élargis-les pour voir le reste.",
     countWaiting: "{requests} en attente",
     countWaitingCapped:
       "{requests} en attente (la file d'attente est plus longue que ce que nous avons chargé)",
@@ -76,13 +76,13 @@ const requests: typeof enUS = {
   // The submit row on the board, plus the two toasts it can raise.
   submit: {
     title: "Demander une vidéo",
-    hint: "Collez le lien d'une vidéo pour laquelle vous voulez un script. Elle passe par une vérification avant d'être soumise au vote.",
+    hint: "Colle le lien d'une vidéo pour laquelle tu veux un script. Elle passe par une vérification avant d'être soumise au vote.",
     urlLabel: "URL de la vidéo",
     action: "Envoyer la demande",
     sentTitle: "Demande envoyée",
     sentBody: "Elle passe par une vérification avant d'être soumise au vote.",
     failedTitle: "Échec de la demande",
-    failedBody: "L'index des scripts n'a pas accepté l'URL. Réessayez."
+    failedBody: "L'index des scripts n'a pas accepté l'URL. Réessaie."
   },
 
   // The vote button and its toasts. `failedKeyBody` is the auth case: the key
@@ -95,8 +95,8 @@ const requests: typeof enUS = {
       "Les demandes les plus votées reçoivent leur script en premier.",
     failedTitle: "Échec du vote",
     failedKeyBody:
-      "Soit la clé est incorrecte, soit votre Handy n'est pas en ligne — vérifiez les deux et saisissez-la de nouveau.",
-    failedBody: "L'index des scripts n'a pas accepté le vote. Réessayez."
+      "Soit la clé est incorrecte, soit ton Handy n'est pas en ligne — vérifie les deux et saisis-la de nouveau.",
+    failedBody: "L'index des scripts n'a pas accepté le vote. Réessaie."
   },
 
   // One request tile.
@@ -113,13 +113,13 @@ const requests: typeof enUS = {
     searchPlaceholder: "Rechercher une demande",
     searchAria: "Rechercher des demandes par titre",
     sortAria: "Trier les demandes",
-    tagLabel: "Tag",
-    tagEmpty: "Aucun tag correspondant",
+    tagLabel: "Étiquette",
+    tagEmpty: "Aucune étiquette correspondante",
     // one row of the tag picker: the tag, then how many requests carry it
     tagOption: "{tag} ({count})",
     removeTagAria: "Retirer le filtre : {tag}",
     hideVoted: "Masquer les demandes votées",
-    hideVotedTitle: "Masquer les demandes pour lesquelles vous avez déjà voté",
+    hideVotedTitle: "Masquer les demandes pour lesquelles tu as déjà voté",
     emptyTitle: "Aucune demande ne correspond"
   },
 

@@ -15,7 +15,7 @@ const common: typeof enUS = {
     browseVideos: "動画一覧へ",
     cancel: "キャンセル",
     clear: "クリア",
-    clearFilters: "フィルターをクリア",
+    clearFilters: "フィルターを解除",
     clearSearch: "検索をクリア",
     create: "作成",
     delete: "削除",
@@ -31,7 +31,7 @@ const common: typeof enUS = {
   state: {
     catalogErrorTitle: "カタログを読み込めませんでした",
     catalogErrorBody:
-      "スクリプトインデックスから応答がありませんでした。接続を確認して、もう一度お試しください。",
+      "Scriptインデックスから応答がありませんでした。接続を確認して、もう一度試してください。",
     emptyTitle: "表示できるものがありません"
   },
 
@@ -69,10 +69,10 @@ const common: typeof enUS = {
   // switcher — the same "can't drift apart" reason ORIENTATION_LABELS gave
   // for living in queries.ts, which is where these strings came from.
   orientation: {
-    straight: "ストレート",
-    gay: "ゲイ",
-    trans: "トランス",
-    all: "すべて"
+    straight: "Straight",
+    gay: "Gay",
+    trans: "Trans",
+    all: "Everything"
   },
 
   language: {

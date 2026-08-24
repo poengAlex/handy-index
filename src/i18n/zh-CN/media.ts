@@ -19,9 +19,9 @@ const media: typeof enUS = {
     removeFavorite: "取消收藏",
     addToPlaylist: "添加到播放列表…",
     copyLink: "复制链接",
-    downloadScript: "下载脚本",
+    downloadScript: "下载 script",
     downloadBlocked: "无法下载",
-    downloadBlockedCaption: "这是付费脚本",
+    downloadBlockedCaption: "这是付费 script",
     // {site} is the partner's own name; the second form covers the entries
     // that arrive without one, and has to read as a whole sentence
     watchOn: "在 {site} 观看",
@@ -31,16 +31,16 @@ const media: typeof enUS = {
   toast: {
     linkCopied: "链接已复制",
     linkCopyFailed: "无法复制链接",
-    scriptDownloaded: "脚本已下载",
-    scriptFailedTitle: "无法获取脚本",
+    scriptDownloaded: "Script 已下载",
+    scriptFailedTitle: "无法获取 script",
     scriptFailedBody:
-      "连接密钥有误，或者 Handy 不在线。两者都检查一遍，然后重试。"
+      "Connection key 有误，或者 Handy 不在线。两者都检查一遍，然后重试。"
   },
 
   keyDialog: {
     // replaces ConnectionKeyDialog's generic blurb when the key is needed for
     // a script download
-    body: "脚本与你的 Handy 绑定。输入 Handy 应用里的连接密钥以继续。"
+    body: "Scripts 与你的 Handy 绑定。输入 Handy 应用里的 connection key 以继续。"
   }
 };
 

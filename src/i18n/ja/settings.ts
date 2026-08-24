@@ -37,9 +37,9 @@ const settings: typeof enUS = {
 
   access: {
     title: "利用条件",
-    premiumScriptsLabel: "有料スクリプト",
+    premiumScriptsLabel: "有料script",
     premiumScriptsCaption:
-      "スクリプトがパートナーサイトの有料エリアにある動画も含めます",
+      "Scriptがパートナーサイトの有料エリアにある動画も含めます",
     premiumVideosLabel: "有料動画",
     premiumVideosCaption: "パートナーサイトの有料エリアにある動画も含めます"
   },
@@ -53,11 +53,16 @@ const settings: typeof enUS = {
     clipSpeed: "クリップの速度"
   },
 
-  // shared by the settings field and the connection-key prompt
+  // Shared by the settings field and the connection-key prompt. "connection
+  // key" — like "script" — is a fixed system term and stays in Latin script
+  // in every locale; Japanese particles attach straight to it, with no space
+  // on either side, the way Handy/IVDB/API are already set in this locale.
+  // House rule on case: sentence case when the term opens a string, verbatim
+  // lowercase anywhere inside one.
   connectionKey: {
-    label: "接続キー",
+    label: "Connection key",
     placeholder: "例：a1B2c3D4e5",
-    hint: "スクリプトのダウンロードに使う、Handyの接続キーです。"
+    hint: "Scriptのダウンロードに使う、Handyのconnection keyです。"
   },
 
   clearDataAction: "データを消去…",
@@ -85,12 +90,12 @@ const settings: typeof enUS = {
     votesLabel: "評価と投票",
     votesEmpty: "記録なし",
     votesToast: "評価と投票を消去しました",
-    ratingCount: "スクリプト評価{count}件",
+    ratingCount: "Script評価{count}件",
     requestVoteCount: "リクエスト投票{count}件",
 
     keySaved: "このデバイスに保存済み",
     keyUnset: "未設定",
-    keyToast: "接続キーを消去しました",
+    keyToast: "Connection keyを消去しました",
 
     preferencesLabel: "表示の設定",
     preferencesCaption:
@@ -103,7 +108,7 @@ const settings: typeof enUS = {
   consent: {
     title: "閲覧の前に",
     body:
-      "IVDBは、Handy用のスクリプトが付いたインタラクティブなアダルト動画を" +
+      "IVDBは、The Handy用のscriptが付いたインタラクティブなアダルト動画を" +
       "集めたカタログです。露骨なプレビューを表示して閲覧するには、" +
       "18歳以上であることを確認してください。確認せずに進んだ場合、" +
       "プレビューは非表示のままになります。これは設定でいつでも変更できます。" +
@@ -114,10 +119,10 @@ const settings: typeof enUS = {
 
   // ConnectionKeyDialog — shown when an action needs a key that isn't set
   keyPrompt: {
-    title: "接続キーが必要です",
+    title: "Connection keyが必要です",
     body:
-      "この操作はお使いのHandyに紐付いています。続けるには、" +
-      "Handyアプリの接続キーを入力してください。",
+      "この操作はHandyに紐付いています。続けるには、" +
+      "Handyアプリのconnection keyを入力してください。",
     hint:
       "キーが働くには、Handyの電源が入っていてオンラインである必要があります。" +
       "オフラインのデバイスは、キーが間違っている場合とまったく同じように失敗します。",

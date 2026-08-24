@@ -19,7 +19,7 @@ const sites: typeof enUS = {
     // the two paywalls are named in full on the cards: they are different
     // gates, and a bare "500 premium" would not say which
     premiumVideos: "유료 동영상 {count}개",
-    premiumScripts: "유료 스크립트 {count}개"
+    premiumScripts: "유료 script {count}개"
   },
 
   errorTitle: "사이트를 불러오지 못했어요",

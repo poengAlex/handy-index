@@ -13,13 +13,13 @@ const gates: typeof enUS = {
   notice: {
     hiddenByMuted: "{count} скрыто заглушёнными тегами",
     hiddenByOrientation: "{count} скрыто фильтром «{orientation}»",
-    hiddenByScript: "{count} скрыто фильтром платных скриптов",
+    hiddenByScript: "{count} скрыто фильтром платных scripts",
     hiddenByVideo: "{count} скрыто фильтром платных видео",
 
     hiddenTotal: "{count} скрыто",
     byMuted: "{count} заглушёнными тегами",
     byOrientation: "{count} фильтром «{orientation}»",
-    byScript: "{count} фильтром платных скриптов",
+    byScript: "{count} фильтром платных scripts",
     byVideo: "{count} фильтром платных видео"
   },
 
@@ -28,7 +28,7 @@ const gates: typeof enUS = {
     lead:
       "Заглушённые теги исчезают из каталога — их пропускают просмотр, " +
       "поиск, подборки и похожие видео. Совпадение точное: если заглушить " +
-      "«gay», «gay massage» останется. Избранное и плейлисты — ваши, они " +
+      "«gay», «gay massage» останется. Избранное и плейлисты — твои, они " +
       "остаются на месте.",
 
     // the tag picker, and the cost printed under every option in it
@@ -51,7 +51,7 @@ const gates: typeof enUS = {
 
     chipUnmuteAria: "Вернуть тег: {tag}",
     empty:
-      "Пока ничего не заглушено. Выберите тег выше — и все видео с ним " +
+      "Пока ничего не заглушено. Выбери тег выше — и все видео с ним " +
       "покинут каталог.",
     unmuteAll: "Вернуть все",
 

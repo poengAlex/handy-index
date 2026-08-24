@@ -20,7 +20,7 @@ const media: typeof enUS = {
     addToPlaylist: "Adicionar a uma playlist…",
     copyLink: "Copiar link",
     downloadScript: "Baixar script",
-    downloadBlocked: "Download indisponível",
+    downloadBlocked: "Não dá para baixar",
     downloadBlockedCaption: "Este script é premium",
     // {site} is the partner's own name; the second form covers the entries
     // that arrive without one, and has to read as a whole sentence
@@ -34,13 +34,13 @@ const media: typeof enUS = {
     scriptDownloaded: "Script baixado",
     scriptFailedTitle: "Não foi possível baixar o script",
     scriptFailedBody:
-      "Ou a chave de conexão está errada, ou o seu Handy não está online. Verifique os dois e tente de novo."
+      "Ou a connection key está errada, ou o seu Handy não está online. Verifique os dois e tente de novo."
   },
 
   keyDialog: {
     // replaces ConnectionKeyDialog's generic blurb when the key is needed for
     // a script download
-    body: "Os scripts estão vinculados ao seu Handy. Digite a chave de conexão do app do Handy para continuar."
+    body: "Os scripts estão vinculados ao seu Handy. Digite a connection key do app do Handy para continuar."
   }
 };
 

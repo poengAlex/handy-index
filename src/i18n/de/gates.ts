@@ -11,24 +11,25 @@ import type enUS from "../en-US/gates";
 // `useFormat().count("videos", n)`, the clause form through `$n()`.
 const gates: typeof enUS = {
   notice: {
-    hiddenByMuted: "{count} durch stummgeschaltete Tags ausgeblendet",
-    // {orientation} arrives uninflected from common.orientation.*, so it is
-    // hyphenated onto the noun rather than given a case of its own
+    hiddenByMuted: "{count} durch stummgeschaltete Schlagwörter ausgeblendet",
+    // {orientation} arrives from common.orientation.* as an English label
+    // that cannot inflect, so it is hyphenated onto the noun rather than
+    // given a case of its own; "Filter" carries the case for both forms
     hiddenByOrientation: "{count} vom {orientation}-Filter ausgeblendet",
-    hiddenByScript: "{count} vom Premium-Skript-Filter ausgeblendet",
+    hiddenByScript: "{count} vom Premium-Script-Filter ausgeblendet",
     hiddenByVideo: "{count} vom Premium-Video-Filter ausgeblendet",
 
     hiddenTotal: "{count} ausgeblendet",
-    byMuted: "{count} durch stummgeschaltete Tags",
+    byMuted: "{count} durch stummgeschaltete Schlagwörter",
     byOrientation: "{count} vom {orientation}-Filter",
-    byScript: "{count} vom Premium-Skript-Filter",
+    byScript: "{count} vom Premium-Script-Filter",
     byVideo: "{count} vom Premium-Video-Filter"
   },
 
   muted: {
-    title: "Stummgeschaltete Tags",
+    title: "Stummgeschaltete Schlagwörter",
     lead:
-      "Stummgeschaltete Tags verschwinden aus dem Katalog — in der " +
+      "Stummgeschaltete Schlagwörter verschwinden aus dem Katalog — in der " +
       "Videoübersicht, in der Suche, in den Reihen auf der Startseite und " +
       "bei ähnlichen Videos tauchen sie nicht mehr auf. Getroffen wird nur " +
       "exakt: „gay“ stummzuschalten schaltet „gay massage“ nicht mit " +
@@ -36,8 +37,8 @@ const gates: typeof enUS = {
       "sie sind.",
 
     // the tag picker, and the cost printed under every option in it
-    pickerLabel: "Tag stummschalten",
-    pickerEmpty: "Keine passenden Tags",
+    pickerLabel: "Schlagwort stummschalten",
+    pickerEmpty: "Keine passenden Schlagwörter",
     costNone: "keines der Videos, die du sehen kannst",
     costLine: "{count} · {share} von dem, was du siehst",
     // a share small enough to round to zero still isn't nothing, so it gets
@@ -50,15 +51,15 @@ const gates: typeof enUS = {
     // has to pass first
     confirmBody:
       "„{tag}“ steckt in {count} — {share} von dem, was du gerade sehen " +
-      "kannst. Schaltest du den Tag stumm, verschwinden sie überall: aus " +
-      "der Videoübersicht, aus der Suche, aus den Reihen und aus ähnlichen " +
-      "Videos.",
+      "kannst. Schaltest du das Schlagwort stumm, verschwinden sie " +
+      "überall: aus der Videoübersicht, aus der Suche, aus den Reihen und " +
+      "aus ähnlichen Videos.",
     confirmMute: "Trotzdem stummschalten",
 
     chipUnmuteAria: "Stummschaltung aufheben: {tag}",
     empty:
-      "Noch nichts stummgeschaltet. Wähle oben einen Tag aus, und jedes " +
-      "Video mit diesem Tag verlässt den Katalog.",
+      "Noch nichts stummgeschaltet. Wähle oben ein Schlagwort aus, und jedes " +
+      "Video mit diesem Schlagwort verlässt den Katalog.",
     unmuteAll: "Alle Stummschaltungen aufheben",
 
     toastMutedTitle: "„{tag}“ stummgeschaltet",

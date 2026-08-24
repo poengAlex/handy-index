@@ -16,13 +16,13 @@ const privacy: typeof enUS = {
     "Dies ist eine Übersetzung. Weichen die beiden Fassungen voneinander ab, gilt die englische.",
 
   intro:
-    "IVDB ist ein Katalog von Videos mit Handy-Skripten, gepflegt vom Handy-Team (Ohdoki AS). Diese Seite erklärt, was hier mit deinen Daten passiert — kurz gesagt: so wenig wie möglich.",
+    "IVDB ist ein Katalog von Videos mit scripts für The Handy, gepflegt vom Handy-Team (Ohdoki AS). Diese Seite erklärt, was hier mit deinen Daten passiert — kurz gesagt: so wenig wie möglich.",
 
   what: {
     title: "Was diese Seite ist",
-    body: "Die Seite listet Videos mit Skript und verlinkt auf die Skripte und auf die Partnerseiten, die die eigentlichen Inhalte hosten. Auf unseren Servern liegen keine Videos — nur die Skripte. Für Handy-Nutzer ist das Stöbern kostenlos.",
+    body: "Die Seite listet Videos mit script und verlinkt auf die scripts und auf die Partnerseiten, die die eigentlichen Inhalte hosten. Auf unseren Servern liegen keine Videos — nur die scripts. Für alle mit The Handy ist das Stöbern kostenlos.",
     apiBody:
-      "Die Seite baut auf der öffentlichen API des Skriptindex auf — nutze sie gern für eigene Projekte: {apiDocs}. Die Seite selbst ist Open Source, für volle Transparenz: {repo}.",
+      "Die Seite baut auf der öffentlichen API des Script-Index auf — nutze sie gern für eigene Projekte: {apiDocs}. Die Seite selbst ist Open Source, für volle Transparenz: {repo}.",
     apiDocsLink: "API-Dokumentation",
     repoLink: "GitHub-Repository"
   },
@@ -35,10 +35,10 @@ const privacy: typeof enUS = {
       consent: "deine Antwort im Einwilligungsdialog beim ersten Besuch",
       previews: "die Einstellung für explizite Vorschaubilder (NSFW)",
       orientation: "der Orientierungsfilter",
-      accessFilters: "deine Zugangsfilter für Skripte und Videos",
+      accessFilters: "deine Zugangsfilter für scripts und Videos",
       favorites: "deine Favoriten",
       votes: "deine Stimmen zu Video-Anfragen",
-      connectionKey: "dein Handy-Verbindungsschlüssel"
+      connectionKey: "dein connection key für The Handy"
     },
     outro:
       "Öffne die Seite auf einem anderen Gerät — oder lösche deine Browserdaten — und all das ist weg; auf einem Server gibt es nichts wiederherzustellen. Die Kehrseite fehlender Analysewerkzeuge: Wir sehen Fehler nicht passieren, deshalb sind Fehlermeldungen besonders willkommen."
@@ -46,7 +46,7 @@ const privacy: typeof enUS = {
 
   catalog: {
     title: "Woher der Katalog kommt",
-    body: "Der Katalog, seine Metadaten und die Skripte werden von der Skriptindex-API auf handyfeeling.com geladen. Wenn du ein Skript herunterlädst, ein Video anfragst oder für eines abstimmst, geht dein Verbindungsschlüssel zur Autorisierung an diese API — nur dann verlässt etwas, das du eingegeben hast, deinen Browser."
+    body: "Der Katalog, seine Metadaten und die scripts werden von der Script-Index-API auf handyfeeling.com geladen. Wenn du ein script herunterlädst, ein Video anfragst oder für eines abstimmst, geht dein connection key zur Autorisierung an diese API — nur dann verlässt etwas, das du eingegeben hast, deinen Browser."
   },
 
   thirdParty: {
@@ -61,7 +61,7 @@ const privacy: typeof enUS = {
 
   choices: {
     title: "Deine Entscheidungen ändern",
-    body: "Nichts, was du im Dialog beim ersten Besuch gewählt hast, ist endgültig. Explizite Vorschaubilder, Orientierung und die Zugangsfilter für Skripte und Videos lassen sich jederzeit im Einstellungsdialog in der Kopfzeile ändern."
+    body: "Nichts, was du im Dialog beim ersten Besuch gewählt hast, ist endgültig. Explizite Vorschaubilder, Orientierung und die Zugangsfilter für scripts und Videos lassen sich jederzeit im Einstellungsdialog in der Kopfzeile ändern."
   },
 
   contact: {

@@ -14,7 +14,7 @@ const help: typeof enUS = {
     search: {
       label: "Suchen und filtern",
       caption:
-        "Titel suchen und nach Tag, Website, Darsteller, VR und Dauer eingrenzen — jeder Filter steht in der URL, Ergebnisse lassen sich also teilen"
+        "Titel suchen und nach Schlagwort, Website, Darsteller, VR und Dauer eingrenzen — jeder Filter steht in der URL, Ergebnisse lassen sich also teilen"
     },
     sort: {
       label: "Sortieren, wie du willst",
@@ -22,9 +22,9 @@ const help: typeof enUS = {
         "Zuletzt hinzugefügt, bestbewertet, meistgespielt und mehr — der Pfeil-Button neben der Sortierung dreht die Richtung um"
     },
     tags: {
-      label: "Tag-Wolke",
+      label: "Schlagwortwolke",
       caption:
-        "Jeder Tag im Katalog außer den stummgeschalteten, durchsuchbar und sortierbar — ein Klick filtert die Videoübersicht"
+        "Jedes Schlagwort im Katalog außer den stummgeschalteten, durchsuchbar und sortierbar — ein Klick filtert die Videoübersicht"
     },
     performers: {
       label: "Darsteller",
@@ -54,9 +54,9 @@ const help: typeof enUS = {
         "Eine Wiedergabeliste als Datei, als kopierbaren JSON-Text oder als temporären Teilen-Link weitergeben — und aus jedem davon importieren"
     },
     bulkDownload: {
-      label: "Alle Skripte auf einmal holen",
+      label: "Alle scripts auf einmal holen",
       caption:
-        "Ein Klick in einer Wiedergabeliste lädt jedes kostenlose Skript darin herunter"
+        "Ein Klick in einer Wiedergabeliste lädt jedes kostenlose script darin herunter"
     },
     quickMenu: {
       label: "Schnellmenü",
@@ -66,25 +66,25 @@ const help: typeof enUS = {
   },
 
   scripts: {
-    title: "Skripte & dein Handy",
+    title: "Scripts & The Handy",
     free: {
-      label: "Kostenlose Skripte",
+      label: "Kostenlose scripts",
       caption:
-        "Videos mit der Markierung „Kostenlos“ haben ein Skript, das du mit deinem Handy-Verbindungsschlüssel herunterladen kannst"
+        "Videos mit der Markierung „Kostenlos“ haben ein script, das du mit deinem connection key für The Handy herunterladen kannst"
     },
     rate: {
-      label: "Skripte bewerten",
+      label: "Scripts bewerten",
       caption:
-        "Jedes kostenlose Skript direkt auf der Videoseite mit Sternen bewerten"
+        "Jedes kostenlose script direkt auf der Videoseite mit Sternen bewerten"
     },
     comments: {
-      label: "Skriptkommentare",
-      caption: "Anonyme Kommentare zu Skripten lesen und schreiben"
+      label: "Script-Kommentare",
+      caption: "Anonyme Kommentare zu scripts lesen und schreiben"
     },
     requests: {
       label: "Videos anfragen",
       caption:
-        "Für jedes Video ein Skript anfragen und mit abstimmen, was als Nächstes drankommt"
+        "Für jedes Video ein script anfragen und mit abstimmen, was als Nächstes drankommt"
     }
   },
 
@@ -97,17 +97,17 @@ const help: typeof enUS = {
     players: {
       label: "Eingebettete Player",
       caption:
-        "Standardmäßig aus — Videos von Pornhub und xHamster direkt auf der Videoseite ansehen (die Wiedergabe läuft nicht synchron mit dem Handy)"
+        "Standardmäßig aus — Videos von Pornhub und xHamster direkt auf der Videoseite ansehen (die Wiedergabe läuft nicht synchron mit The Handy)"
     },
     filters: {
-      label: "Filter für Orientierung, Skripte & Videos",
+      label: "Filter für Orientierung, scripts & Videos",
       caption:
-        "Kostenlose oder Premium-Skripte, kostenlose oder Premium-Videos und wer mitspielt — in den Einstellungen oder direkt in den Filtern der Videoübersicht"
+        "Kostenlose oder Premium-Scripts, kostenlose oder Premium-Videos und wer mitspielt — in den Einstellungen oder direkt in den Filtern der Videoübersicht"
     },
     mutedTags: {
-      label: "Stummgeschaltete Tags",
+      label: "Stummgeschaltete Schlagwörter",
       caption:
-        "Einen Tag stummschalten, und jedes Video damit fällt aus dem Katalog — Rechtsklick auf einen Tag oder die Liste in den Einstellungen verwalten"
+        "Ein Schlagwort stummschalten, und jedes Video damit fällt aus dem Katalog — Rechtsklick auf ein Schlagwort oder die Liste in den Einstellungen verwalten"
     },
     theme: {
       label: "Helles & dunkles Design",

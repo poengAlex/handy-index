@@ -30,7 +30,7 @@ const video: typeof enUS = {
     watchOn: "Regarder sur {site}",
     addFavorite: "Ajouter aux favoris",
     removeFavorite: "Retirer des favoris",
-    addToPlaylist: "Ajouter à une playlist",
+    addToPlaylist: "Ajouter à une liste de lecture",
     report: "Signaler cette vidéo"
   },
 
@@ -38,13 +38,14 @@ const video: typeof enUS = {
     "Le script de cette vidéo est premium — il est fourni avec la vidéo sur le site partenaire.",
 
   playerNote:
-    "Le Handy ne se synchronise pas avec la lecture ici sur IVDB — ce lecteur ne diffuse que la vidéo. Téléchargez le script et lancez-le depuis votre installation Handy pour des va-et-vient synchronisés.",
+    "Le Handy ne se synchronise pas avec la lecture ici sur IVDB — ce lecteur ne diffuse que la vidéo. Télécharge le script et lance-le depuis ton installation Handy pour des va-et-vient synchronisés.",
 
   tag: {
-    unmuteAria: "Réactiver le tag : {tag}",
-    mutedTitle: "« {tag} » est en sourdine — cliquer pour le réactiver",
-    browse: "Parcourir ce tag",
-    mute: "Mettre ce tag en sourdine"
+    unmuteAria: "Réactiver l'étiquette : {tag}",
+    mutedTitle:
+      "L'étiquette « {tag} » est en sourdine — cliquer pour la réactiver",
+    browse: "Parcourir cette étiquette",
+    mute: "Mettre cette étiquette en sourdine"
   },
 
   details: {
@@ -70,7 +71,7 @@ const video: typeof enUS = {
     title: "Noter ce script",
     community: "Communauté : {percent} %",
     thanks: "Merci d'avoir noté ce script",
-    errorTitle: "Impossible d'enregistrer votre note"
+    errorTitle: "Impossible d'enregistrer ta note"
   },
 
   gallery: {
@@ -93,15 +94,15 @@ const video: typeof enUS = {
 
   comments: {
     title: "Commentaires",
-    gateHint: "Les commentaires nécessitent votre clé de connexion.",
+    gateHint: "Les commentaires nécessitent ta connection key.",
     gateAction: "Ajouter la clé",
     inputLabel: "Ajouter un commentaire",
     submit: "Commenter",
     errorHint: "Impossible de charger les commentaires.",
-    emptyHint: "Aucun commentaire pour l'instant — soyez le premier.",
+    emptyHint: "Aucun commentaire pour l'instant — sois le premier.",
     postedTitle: "Commentaire envoyé",
     postedBody: "Il apparaîtra après validation.",
-    postErrorTitle: "Impossible de publier votre commentaire"
+    postErrorTitle: "Impossible de publier ton commentaire"
   },
 
   more: {
@@ -115,9 +116,9 @@ const video: typeof enUS = {
   // being asked for differs per action.
   keyPrompt: {
     script:
-      "Les scripts sont liés à votre Handy. Saisissez la clé de connexion de l'application Handy pour continuer.",
+      "Les scripts sont liés à ton Handy. Saisis la connection key de l'application Handy pour continuer.",
     action:
-      "Les notes et les commentaires sont liés à votre Handy. Saisissez la clé de connexion de l'application Handy pour continuer."
+      "Les notes et les commentaires sont liés à ton Handy. Saisis la connection key de l'application Handy pour continuer."
   },
 
   script: {
@@ -125,17 +126,17 @@ const video: typeof enUS = {
     readyBody: "Le téléchargement s'est ouvert dans un nouvel onglet.",
     errorTitle: "Impossible d'obtenir le script",
     errorBody:
-      "Soit la clé de connexion est incorrecte, soit votre Handy n'est pas en ligne. Vérifiez les deux, puis réessayez."
+      "Soit la connection key est incorrecte, soit ton Handy n'est pas en ligne. Vérifie les deux, puis réessaie."
   },
 
   mute: {
-    refusedTitle: "« {tag} » ne peut pas être mis en sourdine",
+    refusedTitle: "L'étiquette « {tag} » ne peut pas être mise en sourdine",
     refusedBody:
-      "Les tags d'orientation déterminent le catalogue que vous voyez — cela se change dans les paramètres.",
-    doneTitle: "« {tag} » mis en sourdine",
+      "Les étiquettes d'orientation déterminent le catalogue que tu vois — cela se change dans les paramètres.",
+    doneTitle: "Étiquette « {tag} » mise en sourdine",
     doneBody:
-      "Il figure dans vos tags en sourdine — vous pouvez le réactiver à tout moment.",
-    undoneTitle: "« {tag} » réactivé"
+      "Elle figure dans tes étiquettes en sourdine — tu peux la réactiver à tout moment.",
+    undoneTitle: "Étiquette « {tag} » réactivée"
   },
 
   share: {

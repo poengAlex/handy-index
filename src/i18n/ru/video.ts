@@ -21,11 +21,11 @@ const video: typeof enUS = {
   },
 
   hero: {
-    premiumChip: "Платный скрипт"
+    premiumChip: "Платный script"
   },
 
   action: {
-    getScript: "Скачать скрипт",
+    getScript: "Скачать script",
     // {site} is the partner's own name, or `fallback.site` when it has none
     watchOn: "Смотреть на {site}",
     addFavorite: "Добавить в избранное",
@@ -35,21 +35,21 @@ const video: typeof enUS = {
   },
 
   premiumNote:
-    "Скрипт для этого видео платный — он идёт вместе с видео на сайте партнёра.",
+    "Script для этого видео платный — он идёт вместе с видео на сайте партнёра.",
 
   playerNote:
-    "Handy не синхронизируется с воспроизведением здесь, на IVDB, — этот плеер только показывает видео. Скачайте скрипт и запустите его в своём плеере для Handy, чтобы движения совпадали с картинкой.",
+    "Handy не синхронизируется с воспроизведением здесь, на IVDB, — этот плеер только показывает видео. Скачай script и запусти его в своём плеере для Handy, чтобы движения совпадали с картинкой.",
 
   tag: {
     unmuteAria: "Вернуть тег: {tag}",
-    mutedTitle: "Тег «{tag}» заглушён — нажмите, чтобы вернуть",
+    mutedTitle: "Тег «{tag}» заглушён — нажми, чтобы вернуть",
     browse: "Видео с этим тегом",
     mute: "Заглушить этот тег"
   },
 
   details: {
     title: "Подробности",
-    script: "Скрипт",
+    script: "Script",
     free: "Бесплатный",
     premium: "Платный",
     published: "Опубликовано",
@@ -58,18 +58,18 @@ const video: typeof enUS = {
     // the non-VR case: an ordinary 2D video
     formatFlat: "2D",
     site: "Сайт",
-    scriptBy: "Автор скрипта",
+    scriptBy: "Автор script",
     rating: "Рейтинг",
     ratingValue: "{percent}%",
     // {votes} arrives already pluralized from useFormat().count("votes", n)
     ratingWithVotes: "{percent}% · {votes}",
-    scriptPlays: "Запуски скрипта"
+    scriptPlays: "Запуски script"
   },
 
   rate: {
-    title: "Оцените скрипт",
+    title: "Оцени script",
     community: "Сообщество: {percent}%",
-    thanks: "Спасибо за оценку",
+    thanks: "Спасибо за оценку script",
     errorTitle: "Не удалось сохранить оценку"
   },
 
@@ -77,9 +77,9 @@ const video: typeof enUS = {
     // the strip is headed "Photos" unless the only thing in it is the
     // partner's roll clip
     photosTitle: "Фото",
-    previewTitle: "Превью",
-    previewBadge: "Превью",
-    clipAria: "Воспроизвести превью на весь экран",
+    previewTitle: "Предпросмотр",
+    previewBadge: "Предпросмотр",
+    clipAria: "Воспроизвести предпросмотр на весь экран",
     photoAria: "Открыть фото {index} из {total}",
     stillAlt: "Кадр {number} из «{title}»",
     previousPhoto: "Предыдущее фото",
@@ -91,12 +91,12 @@ const video: typeof enUS = {
 
   comments: {
     title: "Комментарии",
-    gateHint: "Для комментариев нужен ключ подключения.",
+    gateHint: "Для комментариев нужен connection key.",
     gateAction: "Добавить ключ",
     inputLabel: "Добавить комментарий",
     submit: "Отправить",
     errorHint: "Не удалось загрузить комментарии.",
-    emptyHint: "Комментариев пока нет — будьте первым.",
+    emptyHint: "Комментариев пока нет — будь первым.",
     postedTitle: "Комментарий отправлен",
     postedBody: "Он появится после проверки.",
     postErrorTitle: "Не удалось отправить комментарий"
@@ -111,23 +111,23 @@ const video: typeof enUS = {
   // being asked for differs per action.
   keyPrompt: {
     script:
-      "Скрипты привязаны к вашему Handy. Введите ключ подключения из приложения Handy, чтобы продолжить.",
+      "Scripts привязаны к твоему Handy. Введи connection key из приложения Handy, чтобы продолжить.",
     action:
-      "Оценки и комментарии привязаны к вашему Handy. Введите ключ подключения из приложения Handy, чтобы продолжить."
+      "Оценки и комментарии привязаны к твоему Handy. Введи connection key из приложения Handy, чтобы продолжить."
   },
 
   script: {
-    readyTitle: "Скрипт готов",
+    readyTitle: "Script готов",
     readyBody: "Загрузка открылась в новой вкладке.",
-    errorTitle: "Не удалось скачать скрипт",
+    errorTitle: "Не удалось скачать script",
     errorBody:
-      "Либо неверный ключ подключения, либо Handy не в сети. Проверьте и то и другое, затем попробуйте снова."
+      "Либо connection key неверный, либо Handy не в сети. Проверь и то и другое, затем попробуй снова."
   },
 
   mute: {
     refusedTitle: "Тег «{tag}» нельзя заглушить",
     refusedBody:
-      "Теги ориентации определяют, какой каталог вы видите, — измените это в настройках.",
+      "Теги ориентации определяют, какой каталог ты видишь, — измени это в настройках.",
     doneTitle: "Тег «{tag}» заглушён",
     doneBody: "Он в списке заглушённых — вернуть можно в любой момент.",
     undoneTitle: "Тег «{tag}» возвращён"

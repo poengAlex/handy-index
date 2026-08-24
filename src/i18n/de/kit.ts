@@ -17,10 +17,12 @@ const kit: typeof enUS = {
   // word order isn't Norwegian's — so it takes each finished name as a prop
   // and this is where they're written.
   //
-  // "für {label}" everywhere: the label arrives capitalized from the slider's
-  // own title, and a bare preposition keeps it out of any case ending German
-  // would otherwise want on it. "Mindestwert"/"Höchstwert" are a matched
-  // pair the way "minimum"/"maximum" are.
+  // "… für {label}" in the six value labels: the label arrives capitalized
+  // from the slider's own title, and a bare preposition keeps it out of any
+  // case ending German would otherwise want on it. `reset` puts the label
+  // in front instead, where the bare form is just as safe.
+  // "Mindestwert"/"Höchstwert" are a matched pair the way
+  // "minimum"/"maximum" are.
   slider: {
     reset: "{label} zurücksetzen",
     value: "Wert für {label}",

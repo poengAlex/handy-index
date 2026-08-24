@@ -90,15 +90,15 @@ const playlists: typeof enUS = {
 
   // downloading every free script in the playlist, one after another
   bulk: {
-    label: "스크립트 전체 받기 ({count})",
+    label: "Script 전체 받기 ({count})",
     progress: "{done}/{total} 받는 중…",
     keyPrompt:
-      "스크립트는 Handy와 연결돼 있어요. 계속하려면 Handy 앱에 있는 연결 키를 입력하세요.",
+      "Script는 Handy와 연결돼 있어요. 계속하려면 Handy 앱에 있는 connection key 값을 입력하세요.",
     // the explanation under this title is the shared one from
     // `services.scriptDownload.*` — same failure, same words as everywhere else
-    failedTitle: "스크립트를 받지 못했어요",
-    doneTitle: "스크립트를 내려받았어요",
-    doneBody: "스크립트 {count}개를 저장했어요.",
+    failedTitle: "Script를 받지 못했어요",
+    doneTitle: "Script를 다운로드했어요",
+    doneBody: "Script {count}개를 저장했어요.",
     // both counts in one sentence: the split between them is not the same
     // shape in every language
     partialBody: "{saved}개 저장, {failed}개 실패."

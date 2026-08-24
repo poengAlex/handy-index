@@ -16,7 +16,7 @@ const home: typeof enUS = {
   // One sentence, two places: under the empty hero and under the empty shelf
   // list. Both are the same "you filtered the catalog away" state.
   filteredOutBody:
-    "Deine Filter und stummgeschalteten Tags verbergen den ganzen Katalog. Lockere sie in den Einstellungen.",
+    "Deine Filter und stummgeschalteten Schlagwörter verbergen den ganzen Katalog. Lockere sie in den Einstellungen.",
 
   rows: {
     recent: "Zuletzt hinzugefügt",

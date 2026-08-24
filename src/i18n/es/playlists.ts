@@ -18,7 +18,7 @@ const playlists: typeof enUS = {
 
   emptyTitle: "Todavía no hay listas",
   emptyBody:
-    "Crea una aquí mismo, o usa el botón de listas en cualquier página de video para empezar una con un video que te guste.",
+    "Crea una aquí mismo, o usa el botón de listas en cualquier página de vídeo para empezar una con un vídeo que te guste.",
 
   import: {
     title: "Importar una lista",
@@ -29,19 +29,19 @@ const playlists: typeof enUS = {
     // playlist's name, so write a name, not a sentence.
     defaultName: "Lista importada",
     doneTitle: "Lista importada",
-    doneBody: "“{name}” — {count} video. | “{name}” — {count} videos.",
-    failedTitle: "No se pudo importar eso",
+    doneBody: "«{name}» — {count} vídeo. | «{name}» — {count} vídeos.",
+    failedTitle: "No se ha podido importar eso",
     // One key per `PlaylistImportFailure` in services/playlist-transfer.ts,
     // plus `unknown` for a throw from somewhere else entirely.
     error: {
-      unreachable: "No se pudo contactar con el servicio de pastes.",
+      unreachable: "No se ha podido contactar con el servicio de enlaces.",
       linkDead: "Ese enlace no responde — puede que haya caducado.",
       notJson: "Ese archivo no es JSON válido.",
       notExport: "Ese archivo no es una lista exportada.",
       tooNew:
         "Ese archivo lo exportó una versión más nueva de este sitio. Recarga la página y vuelve a intentarlo.",
       malformed: "La lista de ese archivo está mal formada.",
-      unknown: "Algo salió mal al leer la lista exportada."
+      unknown: "Algo ha salido mal al leer la lista exportada."
     }
   },
 
@@ -52,16 +52,16 @@ const playlists: typeof enUS = {
     notFoundAction: "Todas las listas",
     emptyTitle: "Todavía no hay nada aquí",
     emptyBody:
-      "Usa el botón de listas en cualquier página de video para añadir videos aquí.",
+      "Usa el botón de listas en cualquier página de vídeo para añadir vídeos aquí.",
     // toggles the grid into remove-a-video mode; "Done" turns it back off
     edit: "Editar",
     removeVideo: "Quitar de la lista",
     renameTitle: "Renombrar la lista",
-    deleteTitle: "¿Eliminar “{name}”?",
-    deleteBody: "Los videos siguen en el catálogo — solo desaparece la lista.",
+    deleteTitle: "¿Eliminar «{name}»?",
+    deleteBody: "Los vídeos siguen en el catálogo — solo desaparece la lista.",
     deleteConfirm: "Eliminar la lista",
     deletedTitle: "Lista eliminada",
-    deletedBody: "“{name}” ya no existe."
+    deletedBody: "«{name}» ya no existe."
   },
 
   // share dialog: the export as JSON text, as a file, or as a paste link
@@ -78,14 +78,14 @@ const playlists: typeof enUS = {
     createLink: "Crear enlace para compartir",
     newLink: "Nuevo enlace para compartir",
     jsonCopied: "JSON copiado",
-    jsonCopyFailed: "No se pudo copiar el JSON",
+    jsonCopyFailed: "No se ha podido copiar el JSON",
     linkCopied: "Enlace copiado",
     linkCopiedBody: "Cualquiera que tenga el enlace puede importar esta lista.",
-    linkCopyFailed: "No se pudo copiar el enlace",
+    linkCopyFailed: "No se ha podido copiar el enlace",
     linkCreated: "Enlace creado",
-    linkFailedTitle: "No se pudo crear el enlace",
+    linkFailedTitle: "No se ha podido crear el enlace",
     linkFailedBody:
-      "El servicio de pastes no respondió. Copia el JSON en su lugar."
+      "El servicio de enlaces no ha respondido. Copia el JSON en su lugar."
   },
 
   // downloading every free script in the playlist, one after another
@@ -93,10 +93,10 @@ const playlists: typeof enUS = {
     label: "Descargar todos los scripts ({count})",
     progress: "Descargando {done}/{total}…",
     keyPrompt:
-      "Los scripts están vinculados a tu Handy. Escribe la clave de conexión de la app de Handy para continuar.",
+      "Los scripts están vinculados a tu Handy. Escribe la connection key de la app de Handy para continuar.",
     // the explanation under this title is the shared one from
     // `services.scriptDownload.*` — same failure, same words as everywhere else
-    failedTitle: "No se pudieron descargar los scripts",
+    failedTitle: "No se han podido descargar los scripts",
     doneTitle: "Scripts descargados",
     doneBody: "{count} script guardado. | {count} scripts guardados.",
     // both counts in one sentence: the split between them is not the same

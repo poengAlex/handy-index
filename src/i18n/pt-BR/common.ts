@@ -69,10 +69,10 @@ const common: typeof enUS = {
   // switcher — the same "can't drift apart" reason ORIENTATION_LABELS gave
   // for living in queries.ts, which is where these strings came from.
   orientation: {
-    straight: "Hétero",
+    straight: "Straight",
     gay: "Gay",
     trans: "Trans",
-    all: "Tudo"
+    all: "Everything"
   },
 
   language: {

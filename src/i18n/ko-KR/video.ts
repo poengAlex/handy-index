@@ -21,11 +21,11 @@ const video: typeof enUS = {
   },
 
   hero: {
-    premiumChip: "유료 스크립트"
+    premiumChip: "유료 script"
   },
 
   action: {
-    getScript: "스크립트 받기",
+    getScript: "Script 받기",
     // {site} is the partner's own name, or `fallback.site` when it has none
     watchOn: "{site}에서 보기",
     addFavorite: "즐겨찾기에 추가",
@@ -35,10 +35,10 @@ const video: typeof enUS = {
   },
 
   premiumNote:
-    "이 동영상의 스크립트는 유료예요. 파트너 사이트에서 동영상과 함께 제공돼요.",
+    "이 동영상의 script는 유료예요. 제휴 사이트에서 동영상과 함께 제공돼요.",
 
   playerNote:
-    "IVDB에서는 재생 화면이 Handy와 동기화되지 않아요. 여기 플레이어는 영상만 재생해요. 움직임까지 맞추려면 스크립트를 내려받아 Handy 환경에서 재생하세요.",
+    "IVDB에서는 재생 화면이 Handy와 동기화되지 않아요. 이 플레이어는 영상만 재생해요. 움직임까지 맞추려면 script를 다운로드해서 Handy 환경에서 재생하세요.",
 
   tag: {
     unmuteAria: "「{tag}」 태그 차단 해제",
@@ -49,7 +49,7 @@ const video: typeof enUS = {
 
   details: {
     title: "상세 정보",
-    script: "스크립트",
+    script: "Script",
     free: "무료",
     premium: "유료",
     published: "공개일",
@@ -58,18 +58,18 @@ const video: typeof enUS = {
     // the non-VR case: an ordinary 2D video
     formatFlat: "일반",
     site: "사이트",
-    scriptBy: "스크립트 제작자",
+    scriptBy: "Script 제작자",
     rating: "평점",
     ratingValue: "{percent}%",
     // {votes} arrives already pluralized from useFormat().count("votes", n)
     ratingWithVotes: "{percent}% · {votes}",
-    scriptPlays: "스크립트 재생 수"
+    scriptPlays: "Script 재생 수"
   },
 
   rate: {
-    title: "이 스크립트 평가하기",
+    title: "이 script 평가하기",
     community: "커뮤니티: {percent}%",
-    thanks: "이 스크립트를 평가해 주셔서 고마워요",
+    thanks: "이 script를 평가해 주셔서 고마워요",
     errorTitle: "평가를 저장하지 못했어요"
   },
 
@@ -81,17 +81,17 @@ const video: typeof enUS = {
     previewBadge: "미리보기",
     clipAria: "미리보기 클립 전체 화면으로 재생",
     photoAria: "사진 {total}장 중 {index}번째 열기",
-    stillAlt: "「{title}」의 {number}번째 스틸",
+    stillAlt: "「{title}」의 {number}번째 장면",
     previousPhoto: "이전 사진",
     nextPhoto: "다음 사진",
-    closeViewer: "뷰어 닫기",
+    closeViewer: "크게 보기 닫기",
     // position counter under the full-size viewer — "3 / 12"
     viewerCount: "{index} / {total}"
   },
 
   comments: {
     title: "댓글",
-    gateHint: "댓글에는 연결 키가 필요해요.",
+    gateHint: "댓글에는 connection key 값이 필요해요.",
     gateAction: "키 추가",
     inputLabel: "댓글 남기기",
     submit: "댓글 등록",
@@ -111,17 +111,17 @@ const video: typeof enUS = {
   // being asked for differs per action.
   keyPrompt: {
     script:
-      "스크립트는 Handy와 연결돼 있어요. 계속하려면 Handy 앱에 있는 연결 키를 입력하세요.",
+      "Script는 Handy와 연결돼 있어요. 계속하려면 Handy 앱에 있는 connection key 값을 입력하세요.",
     action:
-      "평가와 댓글은 Handy와 연결돼 있어요. 계속하려면 Handy 앱에 있는 연결 키를 입력하세요."
+      "평가와 댓글은 Handy와 연결돼 있어요. 계속하려면 Handy 앱에 있는 connection key 값을 입력하세요."
   },
 
   script: {
-    readyTitle: "스크립트 준비 완료",
+    readyTitle: "Script 준비 완료",
     readyBody: "새 탭에서 다운로드가 시작됐어요.",
-    errorTitle: "스크립트를 받지 못했어요",
+    errorTitle: "Script를 받지 못했어요",
     errorBody:
-      "연결 키가 틀렸거나 Handy가 온라인 상태가 아니에요. 둘 다 확인한 뒤 다시 시도해 보세요."
+      "connection key 값이 틀렸거나 Handy가 온라인 상태가 아니에요. 둘 다 확인한 뒤 다시 시도해 보세요."
   },
 
   mute: {

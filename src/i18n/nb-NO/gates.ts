@@ -1,16 +1,21 @@
 import type enUS from "../en-US/gates";
 
+// {orientation} arrives as a fixed English option name ("Straight", "Gay",
+// "Trans"), so it can carry no Norwegian ending of its own. The hyphen
+// compound puts the definite suffix on the Norwegian head instead —
+// "Straight-filteret", built exactly like "Handy-appen" and "Script-serveren"
+// elsewhere in this locale.
 const gates: typeof enUS = {
   notice: {
     hiddenByMuted: "{count} skjult av dempede tagger",
     hiddenByOrientation: "{count} skjult av {orientation}-filteret",
-    hiddenByScript: "{count} skjult av premiumskriptfilteret",
+    hiddenByScript: "{count} skjult av premium-script-filteret",
     hiddenByVideo: "{count} skjult av premiumvideofilteret",
 
     hiddenTotal: "{count} skjult",
     byMuted: "{count} av dempede tagger",
     byOrientation: "{count} av {orientation}-filteret",
-    byScript: "{count} av premiumskriptfilteret",
+    byScript: "{count} av premium-script-filteret",
     byVideo: "{count} av premiumvideofilteret"
   },
 

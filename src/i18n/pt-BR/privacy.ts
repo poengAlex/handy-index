@@ -30,7 +30,7 @@ const privacy: typeof enUS = {
   local: {
     title: "O que fica neste navegador",
     intro:
-      "Não há contas, nem cookies, nem analytics. Tudo o que você define fica guardado apenas no armazenamento local deste navegador:",
+      "Não há contas, nem cookies, nem ferramentas de análise de uso. Tudo o que você define fica guardado apenas no armazenamento local deste navegador:",
     item: {
       consent: "a sua resposta ao aviso de consentimento da primeira visita",
       previews: "a configuração de prévias explícitas (NSFW)",
@@ -38,20 +38,20 @@ const privacy: typeof enUS = {
       accessFilters: "os seus filtros de acesso a scripts e vídeos",
       favorites: "os seus favoritos",
       votes: "os votos que você deu em pedidos de vídeo",
-      connectionKey: "a sua chave de conexão do Handy"
+      connectionKey: "a sua connection key do Handy"
     },
     outro:
-      "Abra o site em outro dispositivo — ou limpe os dados do navegador — e isso tudo some; não há nada para recuperar de um servidor. O outro lado de não ter analytics é que não conseguimos ver os erros acontecerem, então relatos de bugs são muito bem-vindos."
+      "Abra o site em outro dispositivo — ou limpe os dados do navegador — e isso tudo some; não há nada para recuperar de um servidor. O outro lado de não ter ferramentas de análise é que não conseguimos ver os erros acontecerem, então relatos de bugs são muito bem-vindos."
   },
 
   catalog: {
     title: "De onde vem o catálogo",
-    body: "O catálogo, os metadados dele e os scripts são carregados da API do índice de scripts em handyfeeling.com. Quando você baixa um script, envia um pedido de vídeo ou vota em um, a sua chave de conexão é enviada a essa API como autorização — é a única vez que algo digitado por você sai do seu navegador."
+    body: "O catálogo, os metadados dele e os scripts são carregados da API do índice de scripts em handyfeeling.com. Quando você baixa um script, envia um pedido de vídeo ou vota em um, a sua connection key é enviada a essa API como autorização — é a única vez que algo digitado por você sai do seu navegador."
   },
 
   thirdParty: {
     title: "Sites de terceiros",
-    body: "As páginas de vídeo levam aos sites parceiros que hospedam os vídeos. São sites adultos de terceiros, com políticas de privacidade e analytics próprios — quando você sai do IVDB, valem as regras deles. Com as prévias explícitas ativadas, as miniaturas são carregadas direto dos sites parceiros, então o seu navegador faz requisições que os servidores deles podem registrar. Se isso te preocupa, deixe as prévias desligadas ou use uma VPN."
+    body: "As páginas de vídeo levam aos sites parceiros que hospedam os vídeos. São sites adultos de terceiros, com políticas de privacidade e ferramentas de análise próprias — quando você sai do IVDB, valem as regras deles. Com as prévias explícitas ativadas, as miniaturas são carregadas direto dos sites parceiros, então o seu navegador faz requisições que os servidores deles podem registrar. Se isso preocupa você, deixe as prévias desligadas ou use uma VPN."
   },
 
   age: {

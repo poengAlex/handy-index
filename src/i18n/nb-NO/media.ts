@@ -14,9 +14,9 @@ const media: typeof enUS = {
     removeFavorite: "Fjern fra favoritter",
     addToPlaylist: "Legg til i spilleliste…",
     copyLink: "Kopier lenke",
-    downloadScript: "Last ned skript",
+    downloadScript: "Last ned script",
     downloadBlocked: "Kan ikke lastes ned",
-    downloadBlockedCaption: "Dette er et premium-skript",
+    downloadBlockedCaption: "Dette er et premium-script",
     watchOn: "Se på {site}",
     watchOnSite: "Se på nettstedet"
   },
@@ -24,16 +24,18 @@ const media: typeof enUS = {
   toast: {
     linkCopied: "Lenken er kopiert",
     linkCopyFailed: "Klarte ikke å kopiere lenken",
-    scriptDownloaded: "Skriptet er lastet ned",
-    scriptFailedTitle: "Klarte ikke å hente skriptet",
+    scriptDownloaded: "Script lastet ned",
+    scriptFailedTitle: "Klarte ikke å hente script",
     scriptFailedBody:
-      "Enten er tilkoblingsnøkkelen feil, eller så er ikke Handy-en din på nett. Sjekk begge deler og prøv igjen."
+      "Enten er connection key feil, eller så er ikke din Handy på nett. Sjekk begge deler og prøv igjen."
   },
 
   keyDialog: {
-    // "Handy-en" med bindestrek, samme som services.ts og video.ts: den
-    // bestemte endelsen henges på et engelsk merkenavn
-    body: "Skript er bundet til Handy-en din. Skriv inn tilkoblingsnøkkelen fra Handy-appen for å fortsette."
+    // The device name, `connection key` and `script` stay English and
+    // uninflected: the Norwegian possessive goes in front ("din Handy"),
+    // never a definite suffix on the term itself. The English source says
+    // "Scripts are bound", so the English plural `scripts` carries over.
+    body: "Scripts er bundet til din Handy. Skriv inn connection key fra Handy-appen for å fortsette."
   }
 };
 

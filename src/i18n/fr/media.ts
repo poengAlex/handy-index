@@ -17,7 +17,7 @@ const media: typeof enUS = {
     openNewTab: "Ouvrir dans un nouvel onglet",
     addFavorite: "Ajouter aux favoris",
     removeFavorite: "Retirer des favoris",
-    addToPlaylist: "Ajouter à une playlist…",
+    addToPlaylist: "Ajouter à une liste de lecture…",
     copyLink: "Copier le lien",
     downloadScript: "Télécharger le script",
     downloadBlocked: "Téléchargement impossible",
@@ -34,13 +34,13 @@ const media: typeof enUS = {
     scriptDownloaded: "Script téléchargé",
     scriptFailedTitle: "Impossible d'obtenir le script",
     scriptFailedBody:
-      "Soit la clé de connexion est incorrecte, soit votre Handy n'est pas en ligne. Vérifiez les deux, puis réessayez."
+      "Soit la connection key est incorrecte, soit ton Handy n'est pas en ligne. Vérifie les deux, puis réessaie."
   },
 
   keyDialog: {
     // replaces ConnectionKeyDialog's generic blurb when the key is needed for
     // a script download
-    body: "Les scripts sont liés à votre Handy. Saisissez la clé de connexion de l'application Handy pour continuer."
+    body: "Les scripts sont liés à ton Handy. Saisis la connection key de l'application Handy pour continuer."
   }
 };
 

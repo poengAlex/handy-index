@@ -21,9 +21,9 @@ const media: typeof enUS = {
     removeFavorite: "Aus Favoriten entfernen",
     addToPlaylist: "Zur Wiedergabeliste hinzufügen…",
     copyLink: "Link kopieren",
-    downloadScript: "Skript herunterladen",
+    downloadScript: "Script herunterladen",
     downloadBlocked: "Download nicht möglich",
-    downloadBlockedCaption: "Das ist ein Premium-Skript",
+    downloadBlockedCaption: "Das ist ein Premium-Script",
     // {site} is the partner's own name; the second form covers the entries
     // that arrive without one, and has to read as a whole sentence
     watchOn: "Auf {site} ansehen",
@@ -33,16 +33,16 @@ const media: typeof enUS = {
   toast: {
     linkCopied: "Link kopiert",
     linkCopyFailed: "Link konnte nicht kopiert werden",
-    scriptDownloaded: "Skript heruntergeladen",
-    scriptFailedTitle: "Skript konnte nicht abgerufen werden",
+    scriptDownloaded: "Script heruntergeladen",
+    scriptFailedTitle: "Script konnte nicht abgerufen werden",
     scriptFailedBody:
-      "Entweder ist der Verbindungsschlüssel falsch, oder dein Handy ist nicht online. Prüfe beides und versuche es erneut."
+      "Entweder ist der connection key falsch, oder The Handy ist nicht online. Prüfe beides und versuche es erneut."
   },
 
   keyDialog: {
     // replaces ConnectionKeyDialog's generic blurb when the key is needed for
     // a script download
-    body: "Skripte sind an dein Handy gebunden. Gib den Verbindungsschlüssel aus der Handy-App ein, um fortzufahren."
+    body: "Scripts sind an The Handy gebunden. Gib den connection key aus der Handy-App ein, um fortzufahren."
   }
 };
 

@@ -8,7 +8,7 @@ const tags: typeof enUS = {
     barLabel: "Laster tagger",
     // Norwegian sets a space between the number and the percent sign
     percent: "{percent} %",
-    downloading: "Laster ned skriptindeksen",
+    downloading: "Laster ned script-indeksen",
     parsing: "Leser indeksen",
     noteParsing: "Alt er inne — sorterer den i tagger nå.",
     note: "{received} av ~{total} MB pakket ut — hele katalogen, hentet én gang, så hver side etter dette lastes umiddelbart.",

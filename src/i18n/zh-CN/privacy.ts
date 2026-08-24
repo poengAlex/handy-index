@@ -15,13 +15,13 @@ const privacy: typeof enUS = {
   authoritativeNotice: "本页是译文。两个版本如有出入，以英文版为准。",
 
   intro:
-    "IVDB 是带 Handy 脚本的视频片库，由 Handy 团队（Ohdoki AS）维护。本页说明本站如何处理你的数据——一句话：能少则少。",
+    "IVDB 是带 Handy scripts 的视频片库，由 Handy 团队（Ohdoki AS）维护。本页说明本站如何处理你的数据——一句话：能少则少。",
 
   what: {
     title: "本站是什么",
-    body: "本站列出有脚本的视频，并把你引向脚本，以及托管实际内容的合作网站。我们的服务器上不存放任何视频，只有脚本。Handy 用户浏览本站免费。",
+    body: "本站列出有 script 的视频，并把你引向 scripts，以及托管实际内容的合作网站。我们的服务器上不存放任何视频，只有 scripts。Handy 用户浏览本站免费。",
     apiBody:
-      "本站建立在公开的脚本索引 API 之上——你也可以把它用在自己的项目里：{apiDocs}。为了完全透明，本站本身也是开源的：{repo}。",
+      "本站建立在公开的 script 索引 API 之上——你也可以把它用在自己的项目里：{apiDocs}。为了完全透明，本站本身也是开源的：{repo}。",
     apiDocsLink: "API 文档",
     repoLink: "GitHub 仓库"
   },
@@ -34,10 +34,10 @@ const privacy: typeof enUS = {
       consent: "你在首次访问的同意对话框里给出的答复",
       previews: "露骨预览（NSFW）设置",
       orientation: "取向筛选",
-      accessFilters: "你的脚本与视频访问权限筛选",
+      accessFilters: "你的 script 与视频访问权限筛选",
       favorites: "你的收藏",
       votes: "你为视频请求投过的票",
-      connectionKey: "你的 Handy 连接密钥"
+      connectionKey: "你的 Handy connection key"
     },
     outro:
       "换一台设备打开本站，或者清除浏览器数据，这些就都没了；服务器上没有任何东西可以恢复。不做分析统计的另一面，是我们看不到错误发生，所以格外欢迎你报告问题。"
@@ -45,7 +45,7 @@ const privacy: typeof enUS = {
 
   catalog: {
     title: "片库从哪里来",
-    body: "片库、它的元数据以及脚本，都从 handyfeeling.com 的脚本索引 API 加载。当你下载脚本、提交视频请求或为请求投票时，你的连接密钥会作为授权发送给该 API——这是你输入的内容唯一一次离开浏览器。"
+    body: "片库、它的元数据以及 scripts，都从 handyfeeling.com 的 script 索引 API 加载。当你下载 script、提交视频请求或为请求投票时，你的 connection key 会作为授权发送给该 API——这是你输入的内容唯一一次离开浏览器。"
   },
 
   thirdParty: {
@@ -60,7 +60,7 @@ const privacy: typeof enUS = {
 
   choices: {
     title: "更改你的选择",
-    body: "你在首次访问对话框里做的选择，没有一项是定死的。露骨预览、取向，以及脚本和视频的访问权限筛选，随时都能在顶栏的设置对话框里更改。"
+    body: "你在首次访问对话框里做的选择，没有一项是定死的。露骨预览、取向，以及 script 和视频的访问权限筛选，随时都能在顶栏的设置对话框里更改。"
   },
 
   contact: {

@@ -19,9 +19,9 @@ const media: typeof enUS = {
     removeFavorite: "Убрать из избранного",
     addToPlaylist: "Добавить в плейлист…",
     copyLink: "Копировать ссылку",
-    downloadScript: "Скачать скрипт",
+    downloadScript: "Скачать script",
     downloadBlocked: "Скачивание недоступно",
-    downloadBlockedCaption: "Это платный скрипт",
+    downloadBlockedCaption: "Это платный script",
     // {site} is the partner's own name; the second form covers the entries
     // that arrive without one, and has to read as a whole sentence
     watchOn: "Смотреть на {site}",
@@ -31,16 +31,16 @@ const media: typeof enUS = {
   toast: {
     linkCopied: "Ссылка скопирована",
     linkCopyFailed: "Не удалось скопировать ссылку",
-    scriptDownloaded: "Скрипт скачан",
-    scriptFailedTitle: "Не удалось скачать скрипт",
+    scriptDownloaded: "Script скачан",
+    scriptFailedTitle: "Не удалось скачать script",
     scriptFailedBody:
-      "Либо неверный ключ подключения, либо Handy не в сети. Проверьте и то и другое, затем попробуйте снова."
+      "Либо connection key неверный, либо Handy не в сети. Проверь и то и другое, затем попробуй снова."
   },
 
   keyDialog: {
     // replaces ConnectionKeyDialog's generic blurb when the key is needed for
     // a script download
-    body: "Скрипты привязаны к вашему Handy. Введите ключ подключения из приложения Handy, чтобы продолжить."
+    body: "Scripts привязаны к твоему Handy. Введи connection key из приложения Handy, чтобы продолжить."
   }
 };
 

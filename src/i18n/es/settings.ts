@@ -15,7 +15,7 @@ const settings: typeof enUS = {
     nsfwCaption: "Mostrar las imágenes reales en lugar de tarjetas neutras",
     playersLabel: "Reproductores integrados",
     playersCaption:
-      "Reproducir los videos de Pornhub y xHamster en la propia página del video",
+      "Reproducir los vídeos de Pornhub y xHamster en la propia página del vídeo",
     fullWidthLabel: "Diseño a ancho completo",
     fullWidthCaption: "Usar toda la pantalla en lugar de una columna centrada",
     backgroundLabel: "Fondo animado",
@@ -41,10 +41,10 @@ const settings: typeof enUS = {
     title: "Acceso",
     premiumScriptsLabel: "Scripts premium",
     premiumScriptsCaption:
-      "Incluir los videos cuyo script está tras el muro de pago de un sitio asociado",
-    premiumVideosLabel: "Videos premium",
+      "Incluir los vídeos cuyo script está tras el muro de pago de un sitio asociado",
+    premiumVideosLabel: "Vídeos premium",
     premiumVideosCaption:
-      "Incluir los videos tras el muro de pago de un sitio asociado"
+      "Incluir los vídeos tras el muro de pago de un sitio asociado"
   },
 
   previews: {
@@ -59,9 +59,9 @@ const settings: typeof enUS = {
 
   // shared by the settings field and the connection-key prompt
   connectionKey: {
-    label: "Clave de conexión",
+    label: "Connection key",
     placeholder: "p. ej. a1B2c3D4e5",
-    hint: "Tu clave de conexión de Handy, que se usa al descargar scripts."
+    hint: "Tu connection key de Handy, que se usa al descargar scripts."
   },
 
   clearDataAction: "Borrar datos…",
@@ -96,7 +96,7 @@ const settings: typeof enUS = {
 
     keySaved: "Guardada en este dispositivo",
     keyUnset: "Sin definir",
-    keyToast: "Clave de conexión borrada",
+    keyToast: "Connection key borrada",
 
     preferencesLabel: "Preferencias de visualización",
     preferencesCaption:
@@ -110,7 +110,7 @@ const settings: typeof enUS = {
   consent: {
     title: "Antes de explorar",
     body:
-      "IVDB cataloga videos interactivos para adultos con scripts para The " +
+      "IVDB cataloga vídeos interactivos para adultos con scripts para The " +
       "Handy. Confirma que tienes 18 años o más para explorar con vistas " +
       "previas explícitas. Si continúas sin confirmarlo, las vistas previas " +
       "seguirán ocultas — puedes cambiarlo cuando quieras en los ajustes. " +
@@ -121,9 +121,9 @@ const settings: typeof enUS = {
 
   // ConnectionKeyDialog — shown when an action needs a key that isn't set
   keyPrompt: {
-    title: "Hace falta la clave de conexión",
+    title: "Hace falta la connection key",
     body:
-      "Esta acción está vinculada a tu Handy. Escribe la clave de conexión " +
+      "Esta acción está vinculada a tu Handy. Escribe la connection key " +
       "de la app de Handy para continuar.",
     hint:
       "Tu Handy tiene que estar encendido y en línea para que la clave " +

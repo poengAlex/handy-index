@@ -35,7 +35,7 @@ const performers: typeof enUS = {
     "有料コンテンツのフィルターとミュート中のタグで、すべての出演者が隠れています。設定で条件を緩めてください。",
   noMatchTitle: "一致する出演者がいません",
   noMatchBody:
-    "「{query}」に一致するものは、インデックスにありません。もっと短い名前でお試しください。"
+    "「{query}」に一致するものは、インデックスにありません。もっと短い名前で試してください。"
 };
 
 export default performers;

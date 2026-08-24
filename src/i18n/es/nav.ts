@@ -13,7 +13,7 @@ const nav: typeof enUS = {
 
   links: {
     home: "Inicio",
-    videos: "Videos",
+    videos: "Vídeos",
     tags: "Etiquetas",
     sites: "Sitios",
     performers: "Intérpretes",
@@ -35,7 +35,7 @@ const nav: typeof enUS = {
   // the translator.
   mutedTags: "{count} etiqueta silenciada | {count} etiquetas silenciadas",
   mutedHidden:
-    "{count} video sin mostrar por {tags} | {count} videos sin mostrar por {tags}",
+    "{count} vídeo sin mostrar por {tags} | {count} vídeos sin mostrar por {tags}",
 
   orientation: {
     aria: "Orientación: {value}",

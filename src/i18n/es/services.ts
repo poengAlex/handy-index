@@ -15,11 +15,11 @@ const services: typeof enUS = {
   // t(`services.scriptDownload.${scriptDownloadCode(error)}`)
   scriptDownload: {
     noFreeScript:
-      "No hay ningún script gratuito para este video. La ficha del catálogo está desactualizada.",
+      "No hay ningún script gratuito para este vídeo. La ficha del catálogo está desactualizada.",
     unauthorized:
-      "O la clave de conexión es incorrecta o tu Handy no está en línea. Revisa las dos cosas y vuelve a intentarlo.",
+      "O la connection key es incorrecta o tu Handy no está en línea. Revisa las dos cosas y vuelve a intentarlo.",
     failed:
-      "El servidor de scripts no respondió. Revisa tu conexión y vuelve a intentarlo."
+      "El servidor de scripts no ha respondido. Revisa tu conexión y vuelve a intentarlo."
   }
 };
 

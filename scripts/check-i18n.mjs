@@ -271,6 +271,128 @@ if (unused.length) {
   for (const key of unused) console.log(`  ${key}`);
 }
 
+// -------------------------------------------------- report: house glossary
+
+// Terms the Handy house glossary fixes as English in every language, because
+// they name specific parts of the system: they appear in the API, in support
+// articles, on the packaging and in partner integrations. A user who reads a
+// translated word for one of them cannot match it to anything else they meet,
+// and support cannot tell which setting they mean.
+//
+// The check is positional: wherever the *English* string contains one of these,
+// every other locale's string for that same key must contain it too. That
+// catches a term translated away without caring where in the sentence it moved.
+// Proper nouns are matched case-sensitively on a word boundary: English uses
+// "handy" as an ordinary adjective ("keep it handy"), and a case-blind match
+// would demand the product name in a sentence that never mentioned it.
+const PROTECTED_NAMES = [
+  "Handyverse",
+  "Handyfeeling",
+  "Handy",
+  "IVDB",
+  "Bluetooth",
+  "Wi-Fi"
+];
+
+// System terms are ordinary words in English and get capitalised when they
+// head a label, so these match case-insensitively.
+const PROTECTED_TERMS = [
+  "connection key",
+  // The Handy motion file for a video. Named alongside the other vital system
+  // terms by product decision: it is what users download, what they search
+  // support for, and what the Handy app itself calls the thing — a translated
+  // word for it cannot be matched to anything else they will meet.
+  "script",
+  "stroke length",
+  "stroke zone",
+  "sleeve",
+  "firmware",
+  "funscript"
+];
+
+const PROTECTED = [
+  ...PROTECTED_NAMES.map(term => ({
+    term,
+    re: new RegExp(`\\b${term.replace(/[-]/g, "\\$&")}\\b`)
+  })),
+  ...PROTECTED_TERMS.map(term => ({ term, re: new RegExp(term, "i") }))
+];
+
+// Keys whose value must be byte-identical to English in every locale. Unlike
+// PROTECTED_*, which asks "does the term survive somewhere in the sentence",
+// this pins the whole string — the right shape for a fixed option set, where a
+// half-translated control ("Straight / Gay / Trans / すべて") reads as a bug.
+//
+// The orientation filter is derived from the catalog's own English tags
+// (see matchesOrientation in services/script-index/queries.ts), so its option
+// names are closer to data values than to UI copy.
+const PINNED_KEYS = [
+  "common.orientation.straight",
+  "common.orientation.gay",
+  "common.orientation.trans",
+  "common.orientation.all"
+];
+
+const pinned = [];
+for (const key of PINNED_KEYS) {
+  const english = en.get(key);
+  if (english === undefined) {
+    failed = true;
+    console.log(`\n✗ pinned key ${key} does not exist in ${REFERENCE}`);
+    continue;
+  }
+  for (const locale of LOCALES) {
+    if (locale === REFERENCE) continue;
+    const value = defined.get(locale).get(key);
+    if (value !== english) pinned.push({ locale, key, english, value });
+  }
+}
+
+if (pinned.length) {
+  failed = true;
+  console.log(
+    `\n✗ ${pinned.length} pinned value(s) differ from English — these are` +
+      ` fixed option names, not copy:\n`
+  );
+  for (const p of pinned) {
+    console.log(`  ${p.locale.padEnd(7)} ${p.key} = ${JSON.stringify(p.value)} (want ${JSON.stringify(p.english)})`);
+  }
+}
+
+const violations = [];
+for (const [key, english] of en) {
+  for (const { term, re } of PROTECTED) {
+    if (!re.test(english)) continue;
+    for (const locale of LOCALES) {
+      if (locale === REFERENCE) continue;
+      const value = defined.get(locale).get(key) ?? "";
+      if (!re.test(value)) violations.push({ locale, key, term, value });
+    }
+    break; // one report per key: the first (longest) matching term is enough
+  }
+}
+
+if (violations.length) {
+  failed = true;
+  const byLocale = new Map();
+  for (const v of violations) {
+    if (!byLocale.has(v.locale)) byLocale.set(v.locale, []);
+    byLocale.get(v.locale).push(v);
+  }
+  console.log(
+    `\n✗ ${violations.length} glossary violation(s) — a term the house` +
+      ` glossary fixes as English was translated:\n`
+  );
+  for (const [locale, list] of byLocale) {
+    console.log(`  ${locale} (${list.length})`);
+    for (const v of list.slice(0, 4)) {
+      console.log(`      ${v.key} — lost "${v.term}"`);
+      console.log(`          ${JSON.stringify(v.value).slice(0, 78)}`);
+    }
+    if (list.length > 4) console.log(`      … and ${list.length - 4} more`);
+  }
+}
+
 // ----------------------------------------------------------------- report 2
 
 // Attributes whose value is read by a person. Only the *static* form matters

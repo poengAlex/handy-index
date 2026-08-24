@@ -60,7 +60,12 @@ export function translate(...args: Parameters<typeof i18n.global.t>): string {
   return i18n.global.t(...args);
 }
 
-const loaded = new Set<Locale>([DEFAULT_LOCALE]);
+/** Quasar lang packs, kept once fetched. vue-i18n remembers the messages it
+ * has been given; Quasar's Lang plugin holds only the *current* pack, so
+ * switching back to a language visited earlier still has to re-apply it. */
+const quasarPacks = new Map<Locale, QuasarLanguage>([
+  [DEFAULT_LOCALE, langEnUS]
+]);
 
 /**
  * Switch every consumer at once: vue-i18n's messages, the Quasar lang pack,
@@ -73,21 +78,23 @@ const loaded = new Set<Locale>([DEFAULT_LOCALE]);
  * in place rather than stranding the user on a blank UI.
  */
 async function applyLocale(locale: Locale): Promise<void> {
-  if (!loaded.has(locale)) {
-    const loadMessages = messageLoaders[locale as Exclude<Locale, "en-US">];
-    const loadLang = QUASAR_LANG[locale as Exclude<Locale, "en-US">];
+  if (!quasarPacks.has(locale)) {
+    const key = locale as Exclude<Locale, "en-US">;
     try {
-      const [messages, lang] = await Promise.all([loadMessages(), loadLang()]);
+      const [messages, lang] = await Promise.all([
+        messageLoaders[key](),
+        QUASAR_LANG[key]()
+      ]);
       i18n.global.setLocaleMessage(locale, messages.default);
-      Lang.set(lang.default);
-      loaded.add(locale);
+      quasarPacks.set(locale, lang.default);
     } catch {
       // keep whatever is on screen; en-US is always resident
       return;
     }
-  } else if (locale === DEFAULT_LOCALE) {
-    Lang.set(langEnUS);
   }
+
+  const pack = quasarPacks.get(locale);
+  if (pack) Lang.set(pack);
   i18n.global.locale.value = locale;
   document.documentElement.setAttribute("lang", locale);
 }

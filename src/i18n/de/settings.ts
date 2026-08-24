@@ -31,8 +31,9 @@ const settings: typeof enUS = {
   // ("3 tags") rather than a bare number, so the pluralization stays in
   // `common.count.tags` and this message only carries the verb.
   muted: {
-    label: "Stummgeschaltete Tags",
-    caption: "{count} Tag stummgeschaltet | {count} Tags stummgeschaltet",
+    label: "Stummgeschaltete Schlagwörter",
+    caption:
+      "{count} Schlagwort stummgeschaltet | {count} Schlagwörter stummgeschaltet",
     empty: "Nichts stummgeschaltet"
   },
 
@@ -40,9 +41,9 @@ const settings: typeof enUS = {
 
   access: {
     title: "Zugang",
-    premiumScriptsLabel: "Premium-Skripte",
+    premiumScriptsLabel: "Premium-Scripts",
     premiumScriptsCaption:
-      "Auch Videos zeigen, deren Skript hinter der Bezahlschranke eines Partners liegt",
+      "Auch Videos zeigen, deren script hinter der Bezahlschranke eines Partners liegt",
     premiumVideosLabel: "Premium-Videos",
     premiumVideosCaption:
       "Auch Videos hinter der Bezahlschranke eines Partners zeigen"
@@ -60,9 +61,9 @@ const settings: typeof enUS = {
 
   // shared by the settings field and the connection-key prompt
   connectionKey: {
-    label: "Verbindungsschlüssel",
+    label: "Connection key",
     placeholder: "z. B. a1B2c3D4e5",
-    hint: "Dein Handy-Verbindungsschlüssel, nötig beim Herunterladen von Skripten."
+    hint: "Dein connection key für The Handy, nötig beim Herunterladen von scripts."
   },
 
   clearDataAction: "Daten löschen…",
@@ -84,19 +85,19 @@ const settings: typeof enUS = {
     favoritesToast: "Favoriten gelöscht",
     playlistsLabel: "Wiedergabelisten",
     playlistsToast: "Wiedergabelisten gelöscht",
-    mutedToast: "Stummgeschaltete Tags gelöscht",
+    mutedToast: "Stummgeschaltete Schlagwörter gelöscht",
 
     // the two halves of the ratings row's caption, printed side by side
     votesLabel: "Bewertungen & Stimmen",
     votesEmpty: "Nichts gespeichert",
     votesToast: "Bewertungen und Stimmen gelöscht",
-    ratingCount: "{count} Skriptbewertung | {count} Skriptbewertungen",
+    ratingCount: "{count} Script-Bewertung | {count} Script-Bewertungen",
     requestVoteCount:
       "{count} Stimme für Anfragen | {count} Stimmen für Anfragen",
 
     keySaved: "Auf diesem Gerät gespeichert",
     keyUnset: "Nicht gesetzt",
-    keyToast: "Verbindungsschlüssel gelöscht",
+    keyToast: "Connection key gelöscht",
 
     preferencesLabel: "Anzeigeeinstellungen",
     preferencesCaption:
@@ -110,7 +111,7 @@ const settings: typeof enUS = {
   consent: {
     title: "Bevor du loslegst",
     body:
-      "IVDB katalogisiert interaktive Videos für Erwachsene mit Skripten " +
+      "IVDB katalogisiert interaktive Videos für Erwachsene mit scripts " +
       "für The Handy. Bestätige, dass du 18 Jahre oder älter bist, um den " +
       "Katalog mit expliziten Vorschaubildern zu durchstöbern. Fährst du " +
       "ohne Bestätigung fort, bleiben die Vorschaubilder ausgeblendet — " +
@@ -122,14 +123,14 @@ const settings: typeof enUS = {
 
   // ConnectionKeyDialog — shown when an action needs a key that isn't set
   keyPrompt: {
-    title: "Verbindungsschlüssel nötig",
+    title: "Connection key nötig",
     body:
-      "Diese Aktion ist an dein Handy gebunden. Gib den " +
-      "Verbindungsschlüssel aus der Handy-App ein, um fortzufahren.",
+      "Diese Aktion ist an The Handy gebunden. Gib den connection key " +
+      "aus der Handy-App ein, um fortzufahren.",
     hint:
-      "Dein Handy muss eingeschaltet und online sein, damit der Schlüssel " +
-      "funktioniert — ein Gerät ohne Verbindung scheitert genauso wie ein " +
-      "falscher Schlüssel.",
+      "The Handy muss eingeschaltet und online sein, damit der " +
+      "connection key funktioniert — ein Gerät ohne Verbindung scheitert " +
+      "genauso wie ein falscher connection key.",
     save: "Speichern und fortfahren"
   }
 };

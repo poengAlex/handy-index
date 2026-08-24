@@ -9,20 +9,20 @@ const requests: typeof enUS = {
   // Connection-key gate and the two failure states behind it. Shown by both
   // pages; only the body differs.
   key: {
-    title: "Hace falta la clave de conexión",
+    title: "Hace falta la connection key",
     boardBody:
-      "El tablero de solicitudes está vinculado a tu Handy. Añade la clave de conexión de la app de Handy para ver, enviar y votar solicitudes.",
+      "El tablero de solicitudes está vinculado a tu Handy. Añade la connection key de la app de Handy para ver, enviar y votar solicitudes.",
     queueBody:
-      "La cola está vinculada a tu Handy. Añade la clave de conexión de la app de Handy para verla.",
-    addAction: "Añadir la clave de conexión",
-    rejectedTitle: "Clave de conexión rechazada",
+      "La cola está vinculada a tu Handy. Añade la connection key de la app de Handy para verla.",
+    addAction: "Añadir la connection key",
+    rejectedTitle: "Connection key rechazada",
     rejectedBody:
       "O la clave es incorrecta o tu Handy no está en línea. Revisa la clave en la app de Handy, comprueba que el dispositivo está encendido y conectado, y escríbela otra vez.",
     rejectedAction: "Escribir la clave otra vez",
     boardDialog:
-      "El tablero de solicitudes está vinculado a tu Handy. Escribe la clave de conexión de la app de Handy para continuar.",
+      "El tablero de solicitudes está vinculado a tu Handy. Escribe la connection key de la app de Handy para continuar.",
     queueDialog:
-      "La cola está vinculada a tu Handy. Escribe la clave de conexión de la app de Handy para continuar."
+      "La cola está vinculada a tu Handy. Escribe la connection key de la app de Handy para continuar."
   },
 
   // The voting board page. There are four count messages rather than one
@@ -33,12 +33,12 @@ const requests: typeof enUS = {
   // wherever the sentence wants it.
   board: {
     title: "Solicitudes de scripts",
-    lead: "Vota qué videos tendrán script a continuación — la solicitud más votada va primero.",
+    lead: "Vota qué vídeos tendrán script a continuación — la solicitud más votada va primero.",
     queueLink: "Ver la cola",
     emptyTitle: "No hay solicitudes esperando",
     emptyBody:
-      "Ahora mismo no hay nada en votación. Solicita un video aquí arriba para poner esto en marcha.",
-    errorTitle: "No se pudieron cargar las solicitudes",
+      "Ahora mismo no hay nada en votación. Solicita un vídeo aquí arriba para poner esto en marcha.",
+    errorTitle: "No se han podido cargar las solicitudes",
     noMatchBody:
       "Nada del tablero coincide con esos filtros. Quita alguno para ver el resto.",
     countAll: "{requests} en votación",
@@ -56,9 +56,9 @@ const requests: typeof enUS = {
     boardLink: "Tablero de votación",
     emptyTitle: "La cola está vacía",
     emptyBody:
-      "Ahora mismo no hay nada esperando script. Solicita un video desde el tablero de votación para poner esto en marcha.",
+      "Ahora mismo no hay nada esperando script. Solicita un vídeo desde el tablero de votación para poner esto en marcha.",
     emptyAction: "Ir a las solicitudes",
-    errorTitle: "No se pudo cargar la cola",
+    errorTitle: "No se ha podido cargar la cola",
     noMatchBody:
       "Nada de la cola coincide con esos filtros. Quita alguno para ver el resto.",
     countWaiting: "{requests} esperando",
@@ -71,14 +71,14 @@ const requests: typeof enUS = {
 
   // The submit row on the board, plus the two toasts it can raise.
   submit: {
-    title: "Solicitar un video",
-    hint: "Pega el enlace de un video al que quieras que le hagan un script. Pasa por una verificación antes de aparecer en la votación.",
-    urlLabel: "URL del video",
-    action: "Solicitar video",
+    title: "Solicitar un vídeo",
+    hint: "Pega el enlace de un vídeo al que quieras que le hagan un script. Pasa por una verificación antes de aparecer en la votación.",
+    urlLabel: "URL del vídeo",
+    action: "Solicitar vídeo",
     sentTitle: "Solicitud enviada",
     sentBody: "Pasa por una verificación antes de aparecer en la votación.",
-    failedTitle: "La solicitud falló",
-    failedBody: "El índice de scripts no aceptó la URL. Vuelve a intentarlo."
+    failedTitle: "La solicitud ha fallado",
+    failedBody: "El índice de scripts no ha aceptado la URL. Vuelve a intentarlo."
   },
 
   // The vote button and its toasts. `failedKeyBody` is the auth case: the key
@@ -88,15 +88,15 @@ const requests: typeof enUS = {
     voted: "Votado",
     successTitle: "Voto registrado",
     successBody: "Las solicitudes más votadas reciben su script primero.",
-    failedTitle: "El voto falló",
+    failedTitle: "El voto ha fallado",
     failedKeyBody:
       "O la clave es incorrecta o tu Handy no está en línea — revisa las dos cosas y escríbela otra vez.",
-    failedBody: "El índice de scripts no aceptó el voto. Vuelve a intentarlo."
+    failedBody: "El índice de scripts no ha aceptado el voto. Vuelve a intentarlo."
   },
 
   // One request tile.
   card: {
-    untitled: "Solicitud de video",
+    untitled: "Solicitud de vídeo",
     openAria: "Abrir {name}",
     // the request's place in the scripting order, on a badge with room for
     // about four characters
@@ -114,7 +114,7 @@ const requests: typeof enUS = {
     tagOption: "{tag} ({count})",
     removeTagAria: "Quitar filtro: {tag}",
     hideVoted: "Ocultar votadas",
-    hideVotedTitle: "Ocultar las solicitudes que ya votaste",
+    hideVotedTitle: "Ocultar las solicitudes que ya has votado",
     emptyTitle: "Ninguna solicitud coincide"
   },
 

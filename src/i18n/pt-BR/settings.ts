@@ -13,10 +13,10 @@ const settings: typeof enUS = {
     darkModeCaption: "Usar o tema de cores escuro",
     nsfwLabel: "Prévias explícitas",
     nsfwCaption: "Mostrar as imagens reais em vez de blocos neutros",
-    playersLabel: "Players incorporados",
+    playersLabel: "Reprodutores incorporados",
     playersCaption:
       "Reproduzir vídeos do Pornhub e do xHamster na própria página do vídeo",
-    fullWidthLabel: "Layout em tela cheia",
+    fullWidthLabel: "Página em largura total",
     fullWidthCaption: "Usar a tela inteira em vez de uma coluna centralizada",
     backgroundLabel: "Plano de fundo animado",
     backgroundCaption:
@@ -41,25 +41,26 @@ const settings: typeof enUS = {
     title: "Acesso",
     premiumScriptsLabel: "Scripts premium",
     premiumScriptsCaption:
-      "Incluir vídeos cujo script está atrás do paywall de um parceiro",
+      "Incluir vídeos cujo script fica na área paga de um parceiro",
     premiumVideosLabel: "Vídeos premium",
-    premiumVideosCaption: "Incluir vídeos atrás do paywall de um parceiro"
+    premiumVideosCaption: "Incluir vídeos que ficam na área paga de um parceiro"
   },
 
   previews: {
-    title: "Prévias nos cards",
+    title: "Prévias nas miniaturas",
     hint:
-      "Passe o mouse sobre um card — ou arraste o dedo por ele — para ver a " +
-      "prévia. Clique no nome de um controle para restaurar aquela velocidade.",
+      "Passe o mouse sobre uma miniatura — ou arraste o dedo por ela — para " +
+      "ver a prévia. Clique no nome de um controle para restaurar aquela " +
+      "velocidade.",
     imageSpeed: "Velocidade da imagem",
     clipSpeed: "Velocidade do clipe"
   },
 
   // shared by the settings field and the connection-key prompt
   connectionKey: {
-    label: "Chave de conexão",
+    label: "Connection key",
     placeholder: "ex.: a1B2c3D4e5",
-    hint: "A chave de conexão do seu Handy, usada para baixar scripts."
+    hint: "A connection key do seu Handy, usada para baixar scripts."
   },
 
   clearDataAction: "Limpar dados…",
@@ -92,7 +93,7 @@ const settings: typeof enUS = {
 
     keySaved: "Salva neste dispositivo",
     keyUnset: "Não definida",
-    keyToast: "Chave de conexão apagada",
+    keyToast: "Connection key apagada",
 
     preferencesLabel: "Preferências de exibição",
     preferencesCaption:
@@ -106,7 +107,7 @@ const settings: typeof enUS = {
   consent: {
     title: "Antes de começar",
     body:
-      "O IVDB cataloga vídeos adultos interativos com scripts para o Handy. " +
+      "O IVDB cataloga vídeos adultos interativos com scripts para The Handy. " +
       "Confirme que você tem 18 anos ou mais para navegar com prévias " +
       "explícitas. Se continuar sem confirmar, as prévias ficam ocultas — dá " +
       "para mudar isso a qualquer momento nas configurações. Suas " +
@@ -117,9 +118,9 @@ const settings: typeof enUS = {
 
   // ConnectionKeyDialog — shown when an action needs a key that isn't set
   keyPrompt: {
-    title: "Chave de conexão necessária",
+    title: "Connection key necessária",
     body:
-      "Esta ação está vinculada ao seu Handy. Digite a chave de conexão do " +
+      "Esta ação está vinculada ao seu Handy. Digite a connection key do " +
       "app do Handy para continuar.",
     hint:
       "O Handy precisa estar ligado e online para a chave funcionar — um " +

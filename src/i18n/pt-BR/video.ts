@@ -15,7 +15,7 @@ const video: typeof enUS = {
   // media.ts gives an unnamed partner), "Still 3 from Video".
   fallback: {
     video: "Vídeo",
-    player: "Player de vídeo",
+    player: "Reprodutor de vídeo",
     site: "site",
     thisSite: "mesmo site"
   },
@@ -38,7 +38,7 @@ const video: typeof enUS = {
     "O script deste vídeo é premium — ele vem junto com o vídeo no site parceiro.",
 
   playerNote:
-    "O Handy não sincroniza com a reprodução aqui no IVDB — este player só mostra o vídeo. Baixe o script e reproduza pelo seu setup do Handy para ter os movimentos sincronizados.",
+    "The Handy não sincroniza com a reprodução aqui no IVDB — este reprodutor só mostra o vídeo. Baixe o script e reproduza na sua configuração do Handy para ter os movimentos sincronizados.",
 
   tag: {
     unmuteAria: "Deixar de silenciar a tag: {tag}",
@@ -91,7 +91,7 @@ const video: typeof enUS = {
 
   comments: {
     title: "Comentários",
-    gateHint: "Os comentários precisam da sua chave de conexão.",
+    gateHint: "Os comentários precisam da sua connection key.",
     gateAction: "Adicionar chave",
     inputLabel: "Adicionar um comentário",
     submit: "Comentar",
@@ -111,17 +111,17 @@ const video: typeof enUS = {
   // being asked for differs per action.
   keyPrompt: {
     script:
-      "Os scripts estão vinculados ao seu Handy. Digite a chave de conexão do app do Handy para continuar.",
+      "Os scripts estão vinculados ao seu Handy. Digite a connection key do app do Handy para continuar.",
     action:
-      "As avaliações e os comentários estão vinculados ao seu Handy. Digite a chave de conexão do app do Handy para continuar."
+      "As avaliações e os comentários estão vinculados ao seu Handy. Digite a connection key do app do Handy para continuar."
   },
 
   script: {
     readyTitle: "Script pronto",
-    readyBody: "O download abriu em uma nova aba.",
+    readyBody: "O arquivo abriu em uma nova aba.",
     errorTitle: "Não foi possível baixar o script",
     errorBody:
-      "Ou a chave de conexão está errada, ou o seu Handy não está online. Verifique os dois e tente de novo."
+      "Ou a connection key está errada, ou o seu Handy não está online. Verifique os dois e tente de novo."
   },
 
   mute: {

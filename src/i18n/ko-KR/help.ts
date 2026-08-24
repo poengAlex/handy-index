@@ -32,12 +32,12 @@ const help: typeof enUS = {
     },
     sites: {
       label: "사이트",
-      caption: "색인에 있는 모든 파트너 사이트를 동영상 수와 함께 보여줘요"
+      caption: "색인에 있는 모든 제휴 사이트를 동영상 수와 함께 보여줘요"
     }
   },
 
   library: {
-    title: "내 라이브러리",
+    title: "내 보관함",
     favorites: {
       label: "즐겨찾기",
       caption:
@@ -54,9 +54,9 @@ const help: typeof enUS = {
         "재생목록을 파일로, 복사할 수 있는 JSON 텍스트로, 또는 임시 공유 링크로 옮길 수 있고, 셋 중 어떤 방식으로든 가져올 수도 있어요"
     },
     bulkDownload: {
-      label: "스크립트 한 번에 받기",
+      label: "Script 한 번에 받기",
       caption:
-        "재생목록에서 한 번만 누르면 그 안의 무료 스크립트를 모두 내려받아요"
+        "재생목록에서 한 번만 누르면 그 안의 무료 script를 모두 다운로드해요"
     },
     quickMenu: {
       label: "빠른 메뉴",
@@ -66,24 +66,24 @@ const help: typeof enUS = {
   },
 
   scripts: {
-    title: "스크립트와 Handy",
+    title: "Script와 Handy",
     free: {
-      label: "무료 스크립트",
+      label: "무료 script",
       caption:
-        "무료로 표시된 동영상은 Handy 연결 키로 스크립트를 내려받을 수 있어요"
+        "무료로 표시된 동영상은 Handy connection key 값으로 script를 다운로드할 수 있어요"
     },
     rate: {
-      label: "스크립트 평가",
-      caption: "무료 스크립트는 동영상 페이지에서 바로 별점을 매길 수 있어요"
+      label: "Script 평가",
+      caption: "무료 script는 동영상 페이지에서 바로 별점을 매길 수 있어요"
     },
     comments: {
-      label: "스크립트 댓글",
-      caption: "스크립트에 익명 댓글을 읽고 남길 수 있어요"
+      label: "Script 댓글",
+      caption: "Script에 달린 익명 댓글을 읽고, 직접 남길 수도 있어요"
     },
     requests: {
       label: "동영상 요청",
       caption:
-        "어떤 동영상이든 스크립트를 요청하고, 다음에 무엇을 만들지 투표할 수 있어요"
+        "어떤 동영상이든 script를 요청하고, 다음에 무엇을 만들지 투표할 수 있어요"
     }
   },
 
@@ -99,18 +99,18 @@ const help: typeof enUS = {
         "기본은 꺼짐이에요 — 켜면 Pornhub와 xHamster 동영상을 동영상 페이지에서 바로 볼 수 있어요 (재생은 Handy와 동기화되지 않아요)"
     },
     filters: {
-      label: "성향·스크립트·동영상 필터",
+      label: "성향·script·동영상 필터",
       caption:
-        "스크립트와 동영상을 무료만 볼지 유료까지 볼지, 그리고 누가 나오는 동영상을 볼지 — 설정에서, 또는 둘러보기 필터에서 바로 정할 수 있어요"
+        "Script와 동영상을 무료만 볼지 유료까지 볼지, 그리고 누가 나오는 동영상을 볼지 — 설정에서, 또는 둘러보기 필터에서 바로 정할 수 있어요"
     },
     mutedTags: {
       label: "차단한 태그",
       caption:
-        "태그를 차단하면 그 태그가 붙은 동영상이 카탈로그에서 모두 빠져요 — 태그 칩을 오른쪽 클릭하거나 설정에서 목록을 관리하세요"
+        "태그를 차단하면 그 태그가 붙은 동영상이 카탈로그에서 모두 빠져요 — 태그를 오른쪽 클릭하거나 설정에서 목록을 관리하세요"
     },
     theme: {
       label: "라이트·다크 테마",
-      caption: "헤더에서 전환하면 고른 테마가 모든 화면에 그대로 이어져요"
+      caption: "상단 바에서 전환하면 고른 테마가 모든 화면에 그대로 이어져요"
     },
     share: {
       label: "공유",

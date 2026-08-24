@@ -8,8 +8,8 @@ const home: typeof enUS = {
   hero: {
     kicker: "Destacado",
     /** alt text when the featured video has no title of its own */
-    alt: "Video destacado",
-    cta: "Ver el video",
+    alt: "Vídeo destacado",
+    cta: "Ver el vídeo",
     emptyTitle: "Nada que destacar"
   },
 
@@ -36,7 +36,7 @@ const home: typeof enUS = {
 
   clearHistory: {
     title: "¿Borrar el historial?",
-    body: "Los videos siguen en el catálogo — solo desaparece la lista de lo que has abierto en este navegador.",
+    body: "Los vídeos siguen en el catálogo — solo desaparece la lista de lo que has abierto en este navegador.",
     confirm: "Borrar el historial",
     done: "Historial borrado"
   }

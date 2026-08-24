@@ -30,8 +30,9 @@ const settings: typeof enUS = {
   // ("3 tags") rather than a bare number, so the pluralization stays in
   // `common.count.tags` and this message only carries the verb.
   muted: {
-    label: "Tags en sourdine",
-    caption: "{count} tag en sourdine | {count} tags en sourdine",
+    label: "Étiquettes en sourdine",
+    caption:
+      "{count} étiquette en sourdine | {count} étiquettes en sourdine",
     empty: "Rien en sourdine"
   },
 
@@ -49,8 +50,8 @@ const settings: typeof enUS = {
   previews: {
     title: "Aperçus des cartes",
     hint:
-      "Survolez une carte — ou faites glisser un doigt dessus — pour la " +
-      "prévisualiser. Cliquez sur un libellé pour rétablir la vitesse " +
+      "Survole une carte — ou fais glisser un doigt dessus — pour la " +
+      "prévisualiser. Clique sur un libellé pour rétablir la vitesse " +
       "d'origine.",
     imageSpeed: "Vitesse des images",
     clipSpeed: "Vitesse des clips"
@@ -58,9 +59,9 @@ const settings: typeof enUS = {
 
   // shared by the settings field and the connection-key prompt
   connectionKey: {
-    label: "Clé de connexion",
+    label: "Connection key",
     placeholder: "ex. a1B2c3D4e5",
-    hint: "Votre clé de connexion Handy, utilisée pour télécharger les scripts."
+    hint: "Ta connection key Handy, utilisée pour télécharger les scripts."
   },
 
   clearDataAction: "Effacer les données…",
@@ -71,7 +72,7 @@ const settings: typeof enUS = {
   clear: {
     title: "Effacer les données enregistrées",
     lead:
-      "Tout ce que ce site retient est conservé dans ce navigateur. Effacez " +
+      "Tout ce que ce site retient est conservé dans ce navigateur. Efface " +
       "les éléments un par un, ou tout d'un coup.",
     clearAll: "Effacer toutes les données",
     allToast: "Toutes les données locales ont été effacées",
@@ -80,9 +81,9 @@ const settings: typeof enUS = {
     recentToast: "Historique effacé",
     favoritesLabel: "Favoris",
     favoritesToast: "Favoris effacés",
-    playlistsLabel: "Playlists",
-    playlistsToast: "Playlists effacées",
-    mutedToast: "Tags en sourdine effacés",
+    playlistsLabel: "Listes de lecture",
+    playlistsToast: "Listes de lecture effacées",
+    mutedToast: "Étiquettes en sourdine effacées",
 
     // the two halves of the ratings row's caption, printed side by side
     votesLabel: "Notes et votes",
@@ -94,7 +95,7 @@ const settings: typeof enUS = {
 
     keySaved: "Enregistrée sur cet appareil",
     keyUnset: "Non définie",
-    keyToast: "Clé de connexion effacée",
+    keyToast: "Connection key effacée",
 
     preferencesLabel: "Préférences d'affichage",
     preferencesCaption:
@@ -109,10 +110,10 @@ const settings: typeof enUS = {
     title: "Avant de commencer",
     body:
       "IVDB répertorie des vidéos interactives pour adultes, avec des " +
-      "scripts pour The Handy. Confirmez que vous avez 18 ans ou plus pour " +
-      "naviguer avec les aperçus explicites. Continuez sans confirmer et les " +
-      "aperçus restent masqués — vous pouvez changer cela à tout moment dans " +
-      "les paramètres. Vos préférences sont conservées uniquement dans ce " +
+      "scripts pour The Handy. Confirme que tu as 18 ans ou plus pour " +
+      "naviguer avec les aperçus explicites. Continue sans confirmer et les " +
+      "aperçus restent masqués — tu peux changer cela à tout moment dans " +
+      "les paramètres. Tes préférences sont conservées uniquement dans ce " +
       "navigateur.",
     decline: "Continuer sans les aperçus",
     accept: "J'ai 18 ans ou plus"
@@ -120,12 +121,12 @@ const settings: typeof enUS = {
 
   // ConnectionKeyDialog — shown when an action needs a key that isn't set
   keyPrompt: {
-    title: "Clé de connexion requise",
+    title: "Connection key requise",
     body:
-      "Cette action est liée à votre Handy. Saisissez la clé de connexion " +
+      "Cette action est liée à ton Handy. Saisis la connection key " +
       "de l'application Handy pour continuer.",
     hint:
-      "Votre Handy doit être allumé et en ligne pour que la clé fonctionne " +
+      "Ton Handy doit être allumé et en ligne pour que la clé fonctionne " +
       "— un appareil hors ligne échoue exactement comme une clé erronée.",
     save: "Enregistrer et continuer"
   }

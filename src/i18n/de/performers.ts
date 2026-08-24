@@ -34,7 +34,7 @@ const performers: typeof enUS = {
 
   errorTitle: "Darsteller konnten nicht geladen werden",
   hiddenBody:
-    "Dein Premium-Filter und die stummgeschalteten Tags verbergen jeden Darsteller. Lockere sie in den Einstellungen.",
+    "Dein Premium-Filter und die stummgeschalteten Schlagwörter verbergen jeden Darsteller. Lockere sie in den Einstellungen.",
   noMatchTitle: "Keine passenden Darsteller",
   noMatchBody:
     "Nichts im Index passt zu „{query}“. Versuche es mit einem kürzeren Namen."

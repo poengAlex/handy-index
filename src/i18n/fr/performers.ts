@@ -32,10 +32,10 @@ const performers: typeof enUS = {
 
   errorTitle: "Impossible de charger les acteurs",
   hiddenBody:
-    "Votre filtre premium et vos tags en sourdine masquent tous les acteurs. Assouplissez-les dans les paramètres.",
+    "Ton filtre premium et tes étiquettes en sourdine masquent tous les acteurs. Assouplis-les dans les paramètres.",
   noMatchTitle: "Aucun acteur ne correspond",
   noMatchBody:
-    "Rien dans l'index ne correspond à « {query} ». Essayez un nom plus court."
+    "Rien dans l'index ne correspond à « {query} ». Essaie un nom plus court."
 };
 
 export default performers;

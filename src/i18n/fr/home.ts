@@ -16,7 +16,7 @@ const home: typeof enUS = {
   // One sentence, two places: under the empty hero and under the empty shelf
   // list. Both are the same "you filtered the catalog away" state.
   filteredOutBody:
-    "Vos filtres et vos tags en sourdine masquent tout le catalogue. Assouplissez-les dans les paramètres.",
+    "Tes filtres et tes étiquettes en sourdine masquent tout le catalogue. Assouplis-les dans les paramètres.",
 
   rows: {
     recent: "Ajoutées récemment",
@@ -24,11 +24,11 @@ const home: typeof enUS = {
     recentlyViewed: "Vues récemment",
     /** help-icon tooltip on the recently-viewed shelf */
     recentlyViewedHint:
-      "Conservé uniquement dans ce navigateur — votre historique n'est jamais suivi ni envoyé où que ce soit.",
+      "Conservé uniquement dans ce navigateur — ton historique n'est jamais suivi ni envoyé où que ce soit.",
     /** delete-icon tooltip on the same shelf */
     recentlyViewedClear: "Effacer l'historique",
     /** {tag} is a catalog tag and stays untranslated */
-    becauseYouLike: "Parce que vous aimez « {tag} »",
+    becauseYouLike: "Parce que tu aimes « {tag} »",
     topRated: "Les mieux notées",
     mostPlayed: "Les plus jouées",
     updated: "Mises à jour récemment"
@@ -36,7 +36,7 @@ const home: typeof enUS = {
 
   clearHistory: {
     title: "Effacer l'historique ?",
-    body: "Les vidéos restent dans le catalogue — seule la liste de ce que vous avez ouvert dans ce navigateur disparaît.",
+    body: "Les vidéos restent dans le catalogue — seule la liste de ce que tu as ouvert dans ce navigateur disparaît.",
     confirm: "Effacer l'historique",
     done: "Historique effacé"
   }

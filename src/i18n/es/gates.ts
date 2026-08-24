@@ -12,30 +12,30 @@ import type enUS from "../en-US/gates";
 const gates: typeof enUS = {
   notice: {
     hiddenByMuted: "{count} sin mostrar por etiquetas silenciadas",
-    hiddenByOrientation: "{count} sin mostrar por el filtro {orientation}",
+    hiddenByOrientation: "{count} sin mostrar por el filtro «{orientation}»",
     hiddenByScript: "{count} sin mostrar por el filtro de scripts premium",
-    hiddenByVideo: "{count} sin mostrar por el filtro de videos premium",
+    hiddenByVideo: "{count} sin mostrar por el filtro de vídeos premium",
 
     hiddenTotal: "{count} sin mostrar",
     byMuted: "{count} por etiquetas silenciadas",
-    byOrientation: "{count} por el filtro {orientation}",
+    byOrientation: "{count} por el filtro «{orientation}»",
     byScript: "{count} por el filtro de scripts premium",
-    byVideo: "{count} por el filtro de videos premium"
+    byVideo: "{count} por el filtro de vídeos premium"
   },
 
   muted: {
     title: "Etiquetas silenciadas",
     lead:
       "Las etiquetas silenciadas desaparecen del catálogo — no aparecen al " +
-      "explorar, ni en las búsquedas, ni en las filas, ni en los videos " +
-      "relacionados. La coincidencia es exacta, así que silenciar “gay” no " +
-      "silencia “gay massage”. Los favoritos y las listas son tuyos, así " +
+      "explorar, ni en las búsquedas, ni en las filas, ni en los vídeos " +
+      "relacionados. La coincidencia es exacta, así que silenciar «gay» no " +
+      "silencia «gay massage». Los favoritos y las listas son tuyos, así " +
       "que se quedan donde están.",
 
     // the tag picker, and the cost printed under every option in it
     pickerLabel: "Silenciar una etiqueta",
     pickerEmpty: "Ninguna etiqueta coincide",
-    costNone: "ninguno de los videos que ves",
+    costNone: "ninguno de los vídeos que ves",
     costLine: "{count} · {share} de lo que ves",
     // a share small enough to round to zero still isn't nothing, so it gets
     // its own reading rather than "0%"
@@ -45,18 +45,18 @@ const gates: typeof enUS = {
     // the inline confirm a tag heavy enough to take a tenth of the catalog
     // has to pass first
     confirmBody:
-      "“{tag}” está en {count} — {share} de lo que ves ahora mismo. " +
-      "Silenciarla los quita de explorar, buscar, las filas y los videos " +
-      "relacionados en todo el sitio.",
+      "«{tag}» está en {count} — {share} de lo que ves ahora mismo. Si la " +
+      "silencias, esos vídeos dejan de aparecer al explorar, en las " +
+      "búsquedas, en las filas y en los vídeos relacionados de todo el sitio.",
     confirmMute: "Silenciar de todos modos",
 
     chipUnmuteAria: "Dejar de silenciar la etiqueta: {tag}",
     empty:
       "Todavía no hay nada silenciado. Elige una etiqueta arriba y todos los " +
-      "videos que la lleven saldrán del catálogo.",
+      "vídeos que la lleven saldrán del catálogo.",
     unmuteAll: "Dejar de silenciar todas",
 
-    toastMutedTitle: "“{tag}” silenciada",
+    toastMutedTitle: "«{tag}» silenciada",
     toastMutedBody: "{count} sin mostrar",
     toastUnmutedAll: "Ya no hay etiquetas silenciadas"
   }

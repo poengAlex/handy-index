@@ -14,7 +14,7 @@ const tags: typeof enUS = {
     // Norwegian puts a space before the percent sign, so this is a message
     // rather than a bare "%" glued on in the template
     percent: "{percent}%",
-    downloading: "正在下载脚本索引",
+    downloading: "正在下载 script 索引",
     parsing: "正在读取索引",
     noteParsing: "全部到齐——正在整理成标签。",
     note: "已解压 {received} / 约 {total} MB——整个片库只取一次，之后每一页都是秒开。",

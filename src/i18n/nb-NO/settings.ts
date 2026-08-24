@@ -1,8 +1,10 @@
 import type enUS from "../en-US/settings";
 
-// "Handy-en din" med bindestrek, samme konvensjon som services.ts: den
-// bestemte endelsen henger på et engelsk varemerke, og bindestreken holder
-// navnet lesbart.
+// House glossary: the product name, `connection key` and `script` stay
+// English and uninflected, and the Norwegian grammar is built around them —
+// "din Handy", never a Norwegian definite suffix welded onto the term. Where
+// Norwegian would compound, the compound takes a hyphen instead, so the
+// Norwegian head carries the inflection ("script-vurderinger").
 const settings: typeof enUS = {
   title: "Innstillinger",
 
@@ -29,9 +31,9 @@ const settings: typeof enUS = {
 
   access: {
     title: "Tilgang",
-    premiumScriptsLabel: "Premiumskript",
+    premiumScriptsLabel: "Premium-scripts",
     premiumScriptsCaption:
-      "Ta med videoer der skriptet ligger bak en partners betalingsmur",
+      "Ta med videoer som har script bak en partners betalingsmur",
     premiumVideosLabel: "Premiumvideoer",
     premiumVideosCaption:
       "Ta med videoer som ligger bak en partners betalingsmur"
@@ -48,11 +50,9 @@ const settings: typeof enUS = {
   },
 
   connectionKey: {
-    label: "Tilkoblingsnøkkel",
+    label: "Connection key",
     placeholder: "f.eks. a1B2c3D4e5",
-    hint:
-      "Tilkoblingsnøkkelen til Handy-en din. Den brukes når du laster ned " +
-      "skript."
+    hint: "Connection key til din Handy. Den brukes når du laster ned scripts."
   },
 
   clearDataAction: "Slett data…",
@@ -76,13 +76,13 @@ const settings: typeof enUS = {
     votesLabel: "Vurderinger og stemmer",
     votesEmpty: "Ingenting registrert",
     votesToast: "Vurderingene og stemmene er slettet",
-    ratingCount: "{count} skriptvurdering | {count} skriptvurderinger",
+    ratingCount: "{count} script-vurdering | {count} script-vurderinger",
     requestVoteCount:
       "{count} forespørselsstemme | {count} forespørselsstemmer",
 
     keySaved: "Lagret på denne enheten",
     keyUnset: "Ikke lagret",
-    keyToast: "Tilkoblingsnøkkelen er slettet",
+    keyToast: "Connection key er slettet",
 
     preferencesLabel: "Visningsinnstillinger",
     preferencesCaption:
@@ -94,7 +94,7 @@ const settings: typeof enUS = {
   consent: {
     title: "Før du utforsker katalogen",
     body:
-      "IVDB katalogiserer interaktive voksenvideoer med skript for The " +
+      "IVDB katalogiserer interaktive voksenvideoer med scripts for The " +
       "Handy. Bekreft at du er 18 år eller eldre for å utforske med " +
       "eksplisitte forhåndsvisninger. Fortsetter du uten å bekrefte, " +
       "forblir forhåndsvisningene skjult — du kan endre dette når som " +
@@ -104,14 +104,13 @@ const settings: typeof enUS = {
   },
 
   keyPrompt: {
-    title: "Du trenger en tilkoblingsnøkkel",
+    title: "Du trenger en connection key",
     body:
-      "Denne handlingen er bundet til Handy-en din. Skriv inn " +
-      "tilkoblingsnøkkelen fra Handy-appen for å fortsette.",
+      "Denne handlingen er bundet til din Handy. Skriv inn connection key " +
+      "fra Handy-appen for å fortsette.",
     hint:
-      "Handy-en din må være slått på og tilkoblet nettet for at nøkkelen " +
-      "skal virke — en frakoblet enhet gir nøyaktig samme feil som en feil " +
-      "nøkkel.",
+      "Din Handy må være slått på og tilkoblet nettet for at nøkkelen skal " +
+      "virke — en frakoblet enhet gir nøyaktig samme feil som en feil nøkkel.",
     save: "Lagre og fortsett"
   }
 };

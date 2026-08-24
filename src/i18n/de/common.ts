@@ -9,6 +9,23 @@ import type enUS from "../en-US/common";
 // `{n}`, because the count has to be run through `$n()` first so 15000 reads
 // "15,000" in English and "15 000" in Norwegian. Call them as
 // `$t("common.count.videos", { count: $n(x) }, x)`.
+//
+// Two German house rulings this locale follows everywhere:
+//
+// 1. `tag` is translated, as "Schlagwort" (n., pl. "Schlagwörter"). German
+//    "Tag" is a false friend — it is the word for *day*, so "1 Tag
+//    stummgeschaltet" reads as "1 day muted" right next to a publish date.
+//    "Schlagwort" is the ordinary German word for a catalog keyword, and it
+//    is neuter where "Tag" is masculine, so the articles and adjectives
+//    around it move with it ("1 stummgeschaltetes Schlagwort").
+//
+// 2. `script` is NOT translated: it is the Handy motion file, the thing
+//    users download and search support for, so it stays the English word,
+//    uninflected, like `connection key`. It is lowercase mid-sentence
+//    ("Lade das script herunter") and sentence-cased when it opens a string
+//    ("Script bereit"). German compounds keep it whole behind a hyphen
+//    ("Script-Index", "Premium-Script"); where a compound would fuse an
+//    ending onto it the sentence is restructured instead.
 const common: typeof enUS = {
   action: {
     backToHome: "Zurück zur Startseite",
@@ -30,10 +47,11 @@ const common: typeof enUS = {
 
   state: {
     catalogErrorTitle: "Katalog konnte nicht geladen werden",
-    // "Verbindung" alone would read as the connection key here — it is the
-    // network that failed, so the compound says so
+    // "Verbindung" alone is too vague here, and the connection key is now
+    // named in English anyway — it is the network that failed, so the
+    // compound says which connection
     catalogErrorBody:
-      "Der Skriptindex hat nicht geantwortet. Prüfe deine Internetverbindung und versuche es erneut.",
+      "Der Script-Index hat nicht geantwortet. Prüfe deine Internetverbindung und versuche es erneut.",
     emptyTitle: "Nichts zu zeigen"
   },
 
@@ -43,7 +61,7 @@ const common: typeof enUS = {
     videos: "{shown} von {total} Video | {shown} von {total} Videos",
     performers:
       "{shown} von {total} Darsteller | {shown} von {total} Darstellern",
-    tags: "{shown} von {total} Tag | {shown} von {total} Tags"
+    tags: "{shown} von {total} Schlagwort | {shown} von {total} Schlagwörtern"
   },
 
   count: {
@@ -51,7 +69,7 @@ const common: typeof enUS = {
     playlists: "{count} Wiedergabeliste | {count} Wiedergabelisten",
     requests: "{count} Anfrage | {count} Anfragen",
     sites: "{count} Website | {count} Websites",
-    tags: "{count} Tag | {count} Tags",
+    tags: "{count} Schlagwort | {count} Schlagwörter",
     videos: "{count} Video | {count} Videos",
     votes: "{count} Stimme | {count} Stimmen"
   },
@@ -71,11 +89,18 @@ const common: typeof enUS = {
   // Shared by the settings radio group, the browse filters and the header
   // switcher — the same "can't drift apart" reason ORIENTATION_LABELS gave
   // for living in queries.ts, which is where these strings came from.
+  //
+  // Pinned to English in every locale, by product decision: the filter is
+  // derived from the catalog's own English tags, so these read as data
+  // values rather than UI copy. Do not translate them back — check-i18n.mjs
+  // pins all four and fails the build on any difference. The sentences that
+  // interpolate one (gates.notice.*Orientation, browse.empty.orientation*)
+  // are written to take the bare, uninflectable English word.
   orientation: {
-    straight: "Hetero",
+    straight: "Straight",
     gay: "Gay",
     trans: "Trans",
-    all: "Alles"
+    all: "Everything"
   },
 
   language: {

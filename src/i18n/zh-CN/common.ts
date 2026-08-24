@@ -30,12 +30,21 @@ const common: typeof enUS = {
 
   state: {
     catalogErrorTitle: "无法加载片库",
-    catalogErrorBody: "脚本索引没有响应。检查网络连接后重试。",
+    catalogErrorBody: "Script 索引没有响应。检查网络连接后重试。",
     emptyTitle: "暂无内容"
   },
 
-  // "12 of 340" — the shown/total pair every filtered listing prints. Both
-  // sides arrive pre-formatted through `$n()`.
+  // "12 of 340 tags" — the shown/total pair every filtered listing prints.
+  //
+  // One message per noun, rather than a generic "{shown} of {total}" handed a
+  // pre-counted total. Japanese, Korean and Chinese attach a counter to *both*
+  // numbers and the counter is chosen by the noun (動画→本, タグ→個, 出演者→人),
+  // which a shared message cannot express — all four CJK/Slavic reviewers
+  // independently reported the generic form as their worst string. Russian
+  // needs it too: the noun after the total declines with it.
+  //
+  // Both numbers arrive bare through `$n()`; the plural branch is chosen by
+  // the *total*, not by what is shown.
   ofTotal: {
     videos: "{total} 个视频中的 {shown} 个",
     performers: "{total} 位演员中的 {shown} 位",
@@ -68,10 +77,10 @@ const common: typeof enUS = {
   // switcher — the same "can't drift apart" reason ORIENTATION_LABELS gave
   // for living in queries.ts, which is where these strings came from.
   orientation: {
-    straight: "异性恋",
-    gay: "同性恋",
-    trans: "跨性别",
-    all: "全部"
+    straight: "Straight",
+    gay: "Gay",
+    trans: "Trans",
+    all: "Everything"
   },
 
   language: {

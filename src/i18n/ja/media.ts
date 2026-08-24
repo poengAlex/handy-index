@@ -19,9 +19,9 @@ const media: typeof enUS = {
     removeFavorite: "お気に入りから削除",
     addToPlaylist: "プレイリストに追加…",
     copyLink: "リンクをコピー",
-    downloadScript: "スクリプトをダウンロード",
+    downloadScript: "Scriptをダウンロード",
     downloadBlocked: "ダウンロードできません",
-    downloadBlockedCaption: "有料スクリプトです",
+    downloadBlockedCaption: "有料scriptです",
     // {site} is the partner's own name; the second form covers the entries
     // that arrive without one, and has to read as a whole sentence
     watchOn: "{site}で見る",
@@ -31,16 +31,16 @@ const media: typeof enUS = {
   toast: {
     linkCopied: "リンクをコピーしました",
     linkCopyFailed: "リンクをコピーできませんでした",
-    scriptDownloaded: "スクリプトをダウンロードしました",
-    scriptFailedTitle: "スクリプトを取得できませんでした",
+    scriptDownloaded: "Scriptをダウンロードしました",
+    scriptFailedTitle: "Scriptを取得できませんでした",
     scriptFailedBody:
-      "接続キーが間違っているか、Handyがオンラインになっていません。両方を確認してから、もう一度お試しください。"
+      "Connection keyが間違っているか、Handyがオンラインになっていません。両方を確認してから、もう一度試してください。"
   },
 
   keyDialog: {
     // replaces ConnectionKeyDialog's generic blurb when the key is needed for
     // a script download
-    body: "スクリプトはお使いのHandyに紐付いています。続けるには、Handyアプリの接続キーを入力してください。"
+    body: "ScriptはHandyに紐付いています。続けるには、Handyアプリのconnection keyを入力してください。"
   }
 };
 

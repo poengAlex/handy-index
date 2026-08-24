@@ -35,13 +35,13 @@ const playlists: typeof enUS = {
     // One key per `PlaylistImportFailure` in services/playlist-transfer.ts,
     // plus `unknown` for a throw from somewhere else entirely.
     error: {
-      unreachable: "ペーストサービスに接続できませんでした。",
+      unreachable: "共有リンクのサービスに接続できませんでした。",
       linkDead:
         "その共有リンクは応答しません。期限が切れている可能性があります。",
       notJson: "そのファイルは有効なJSONではありません。",
       notExport: "そのファイルはプレイリストの書き出しではありません。",
       tooNew:
-        "そのファイルは、このサイトの新しいバージョンで書き出されたものです。ページを再読み込みして、もう一度お試しください。",
+        "そのファイルは、このサイトの新しいバージョンで書き出されたものです。ページを再読み込みして、もう一度試してください。",
       malformed: "そのファイルに入っているプレイリストの形式が壊れています。",
       unknown: "書き出しデータの読み取り中に問題が発生しました。"
     }
@@ -75,7 +75,7 @@ const playlists: typeof enUS = {
     exportAria: "プレイリストの書き出しJSON",
     linkAria: "共有リンク",
     copyLink: "共有リンクをコピー",
-    note: "リンクを知っている人は誰でも、このプレイリストを読み込めます。ペーストは一時的なもので、約90日で期限切れになります。",
+    note: "リンクを知っている人は誰でも、このプレイリストを読み込めます。共有リンクは一時的なもので、約90日で期限切れになります。",
     copyJson: "JSONをコピー",
     saveFile: "ファイルに保存",
     createLink: "共有リンクを作成",
@@ -89,20 +89,20 @@ const playlists: typeof enUS = {
     linkCreated: "共有リンクを作成しました",
     linkFailedTitle: "共有リンクを作成できませんでした",
     linkFailedBody:
-      "ペーストサービスが応答しませんでした。代わりにJSONをコピーしてください。"
+      "共有リンクのサービスが応答しませんでした。代わりにJSONをコピーしてください。"
   },
 
   // downloading every free script in the playlist, one after another
   bulk: {
-    label: "スクリプトをすべて取得（{count}）",
+    label: "Scriptをすべて取得（{count}）",
     progress: "取得中 {done}/{total}…",
     keyPrompt:
-      "スクリプトはお使いのHandyに紐付いています。続けるには、Handyアプリの接続キーを入力してください。",
+      "ScriptはHandyに紐付いています。続けるには、Handyアプリのconnection keyを入力してください。",
     // the explanation under this title is the shared one from
     // `services.scriptDownload.*` — same failure, same words as everywhere else
-    failedTitle: "スクリプトを取得できませんでした",
-    doneTitle: "スクリプトをダウンロードしました",
-    doneBody: "スクリプト{count}件を保存しました。",
+    failedTitle: "Scriptを取得できませんでした",
+    doneTitle: "Scriptをダウンロードしました",
+    doneBody: "Script{count}件を保存しました。",
     // both counts in one sentence: the split between them is not the same
     // shape in every language
     partialBody: "{saved}件を保存、{failed}件が失敗しました。"

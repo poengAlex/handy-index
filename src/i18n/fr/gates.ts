@@ -14,34 +14,40 @@ import type enUS from "../en-US/gates";
 // agree with a count the message cannot see ("1 vidéo masquée"), while a
 // filter doing the masking keeps the verb fixed. `hiddenTotal` only ever runs
 // with two reasons or more, so its plural is safe.
+//
+// `{orientation}` is a pinned English option name, not French copy, so it sits
+// in guillemets — the same treatment this locale gives every other catalog
+// value dropped into a sentence ("« {tag} »", "« {query} »"). It stays in
+// apposition to "le filtre", which needs no article, gender or elision from
+// it: "le filtre « Straight »" reads the same as "le filtre « Everything »".
 const gates: typeof enUS = {
   notice: {
-    hiddenByMuted: "Les tags en sourdine masquent {count}",
-    hiddenByOrientation: "Le filtre {orientation} masque {count}",
+    hiddenByMuted: "Les étiquettes en sourdine masquent {count}",
+    hiddenByOrientation: "Le filtre « {orientation} » masque {count}",
     hiddenByScript: "Le filtre scripts premium masque {count}",
     hiddenByVideo: "Le filtre vidéos premium masque {count}",
 
     hiddenTotal: "{count} masquées",
-    byMuted: "{count} par les tags en sourdine",
-    byOrientation: "{count} par le filtre {orientation}",
+    byMuted: "{count} par les étiquettes en sourdine",
+    byOrientation: "{count} par le filtre « {orientation} »",
     byScript: "{count} par le filtre scripts premium",
     byVideo: "{count} par le filtre vidéos premium"
   },
 
   muted: {
-    title: "Tags en sourdine",
+    title: "Étiquettes en sourdine",
     lead:
-      "Les tags en sourdine disparaissent du catalogue — la navigation, la " +
-      "recherche, les rangées et les vidéos similaires les ignorent. La " +
-      "correspondance est exacte : mettre « gay » en sourdine ne touche " +
-      "pas « gay massage ». Vos favoris et vos playlists vous " +
-      "appartiennent, ils restent en place.",
+      "Les étiquettes en sourdine disparaissent du catalogue — la " +
+      "navigation, la recherche, les rangées et les vidéos similaires les " +
+      "ignorent. La correspondance est exacte : mettre « gay » en sourdine " +
+      "ne touche pas « gay massage ». Tes favoris et tes listes de lecture " +
+      "t'appartiennent, ils restent en place.",
 
     // the tag picker, and the cost printed under every option in it
-    pickerLabel: "Mettre un tag en sourdine",
-    pickerEmpty: "Aucun tag correspondant",
-    costNone: "aucune des vidéos que vous pouvez voir",
-    costLine: "{count} · {share} de ce que vous voyez",
+    pickerLabel: "Mettre une étiquette en sourdine",
+    pickerEmpty: "Aucune étiquette correspondante",
+    costNone: "aucune des vidéos que tu peux voir",
+    costLine: "{count} · {share} de ce que tu vois",
     // a share small enough to round to zero still isn't nothing, so it gets
     // its own reading rather than "0%"
     percent: "{value} %",
@@ -50,20 +56,20 @@ const gates: typeof enUS = {
     // the inline confirm a tag heavy enough to take a tenth of the catalog
     // has to pass first
     confirmBody:
-      "« {tag} » concerne {count} — {share} de ce que vous pouvez voir " +
-      "actuellement. Le mettre en sourdine les retire de la navigation, de " +
-      "la recherche, des rangées et des vidéos similaires, partout.",
+      "L'étiquette « {tag} » concerne {count} — {share} de ce que tu peux " +
+      "voir actuellement. La mettre en sourdine les retire de la navigation, " +
+      "de la recherche, des rangées et des vidéos similaires, partout.",
     confirmMute: "Mettre en sourdine quand même",
 
-    chipUnmuteAria: "Réactiver le tag : {tag}",
+    chipUnmuteAria: "Réactiver l'étiquette : {tag}",
     empty:
-      "Rien en sourdine pour l'instant. Choisissez un tag ci-dessus et " +
-      "toutes les vidéos qui le portent quittent le catalogue.",
+      "Rien en sourdine pour l'instant. Choisis une étiquette ci-dessus " +
+      "et toutes les vidéos qui la portent quittent le catalogue.",
     unmuteAll: "Tout réactiver",
 
-    toastMutedTitle: "« {tag} » mis en sourdine",
+    toastMutedTitle: "Étiquette « {tag} » mise en sourdine",
     toastMutedBody: "{count} hors catalogue",
-    toastUnmutedAll: "Tous les tags ont été réactivés"
+    toastUnmutedAll: "Toutes les étiquettes ont été réactivées"
   }
 };
 

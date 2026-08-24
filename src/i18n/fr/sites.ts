@@ -24,10 +24,10 @@ const sites: typeof enUS = {
 
   errorTitle: "Impossible de charger les sites",
   emptyBody:
-    "L'index est revenu sans le moindre site. Essayez de le charger à nouveau.",
+    "L'index est revenu sans le moindre site. Essaie de le charger à nouveau.",
   noMatchTitle: "Aucun site ne correspond",
   noMatchBody:
-    "Aucun nom de site ne correspond à cette recherche. Essayez moins de lettres."
+    "Aucun nom de site ne correspond à cette recherche. Essaie moins de lettres."
 };
 
 export default sites;

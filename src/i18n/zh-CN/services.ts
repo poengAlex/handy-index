@@ -14,9 +14,9 @@ const services: typeof enUS = {
   // caller goes straight from catch to message:
   // t(`services.scriptDownload.${scriptDownloadCode(error)}`)
   scriptDownload: {
-    noFreeScript: "这个视频没有免费脚本。片库里的条目已经过时。",
-    unauthorized: "连接密钥有误，或者 Handy 不在线。两者都检查一遍，然后重试。",
-    failed: "脚本服务器没有响应。检查网络连接后重试。"
+    noFreeScript: "这个视频没有免费 script。片库里的条目已经过时。",
+    unauthorized: "Connection key 有误，或者 Handy 不在线。两者都检查一遍，然后重试。",
+    failed: "Script 服务器没有响应。检查网络连接后重试。"
   }
 };
 

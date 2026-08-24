@@ -18,12 +18,12 @@ const sites: typeof enUS = {
     totalInIndex: "{total} en el índice",
     // the two paywalls are named in full on the cards: they are different
     // gates, and a bare "500 premium" would not say which
-    premiumVideos: "{count} video premium | {count} videos premium",
+    premiumVideos: "{count} vídeo premium | {count} vídeos premium",
     premiumScripts: "{count} script premium | {count} scripts premium"
   },
 
-  errorTitle: "No se pudieron cargar los sitios",
-  emptyBody: "El índice llegó sin un solo sitio. Vuelve a cargarlo.",
+  errorTitle: "No se han podido cargar los sitios",
+  emptyBody: "El índice ha llegado sin un solo sitio. Vuelve a cargarlo.",
   noMatchTitle: "Ningún sitio coincide",
   noMatchBody:
     "Ningún nombre de sitio coincide con esa búsqueda. Prueba con menos letras."

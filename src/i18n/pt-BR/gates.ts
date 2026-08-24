@@ -9,16 +9,21 @@ import type enUS from "../en-US/gates";
 // reason after it is a bare clause ("1,816 by the Straight filter"). Both
 // receive `{count}` pre-formatted — the sentence form through
 // `useFormat().count("videos", n)`, the clause form through `$n()`.
+//
+// `{orientation}` is one of the four pinned English option names, so it
+// arrives as a Latin word ("Straight") that cannot inflect. "filtro" is
+// masculine and fixed, so the article never moves; the value is quoted the
+// way tag names are below, which also keeps "Everything" readable as a label.
 const gates: typeof enUS = {
   notice: {
     hiddenByMuted: "{count} fora do catálogo por tags silenciadas",
-    hiddenByOrientation: "{count} fora do catálogo pelo filtro {orientation}",
+    hiddenByOrientation: "{count} fora do catálogo pelo filtro “{orientation}”",
     hiddenByScript: "{count} fora do catálogo pelo filtro de scripts premium",
     hiddenByVideo: "{count} fora do catálogo pelo filtro de vídeos premium",
 
     hiddenTotal: "{count} fora do catálogo",
     byMuted: "{count} por tags silenciadas",
-    byOrientation: "{count} pelo filtro {orientation}",
+    byOrientation: "{count} pelo filtro “{orientation}”",
     byScript: "{count} pelo filtro de scripts premium",
     byVideo: "{count} pelo filtro de vídeos premium"
   },

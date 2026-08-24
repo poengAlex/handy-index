@@ -19,7 +19,7 @@ const sites: typeof enUS = {
     // the two paywalls are named in full on the cards: they are different
     // gates, and a bare "500 premium" would not say which
     premiumVideos: "{count} Premium-Video | {count} Premium-Videos",
-    premiumScripts: "{count} Premium-Skript | {count} Premium-Skripte"
+    premiumScripts: "{count} Premium-Script | {count} Premium-Scripts"
   },
 
   errorTitle: "Websites konnten nicht geladen werden",

@@ -87,14 +87,14 @@ const playlists: typeof enUS = {
 
   // downloading every free script in the playlist, one after another
   bulk: {
-    label: "获取全部脚本（{count}）",
+    label: "获取全部 scripts（{count}）",
     progress: "正在获取 {done}/{total}…",
-    keyPrompt: "脚本与你的 Handy 绑定。输入 Handy 应用里的连接密钥以继续。",
+    keyPrompt: "Scripts 与你的 Handy 绑定。输入 Handy 应用里的 connection key 以继续。",
     // the explanation under this title is the shared one from
     // `services.scriptDownload.*` — same failure, same words as everywhere else
-    failedTitle: "无法获取脚本",
-    doneTitle: "脚本已下载",
-    doneBody: "已保存 {count} 个脚本。",
+    failedTitle: "无法获取 scripts",
+    doneTitle: "Scripts 已下载",
+    doneBody: "已保存 {count} 个 script。",
     // both counts in one sentence: the split between them is not the same
     // shape in every language
     partialBody: "已保存 {saved} 个，失败 {failed} 个。"

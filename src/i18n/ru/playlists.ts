@@ -18,11 +18,11 @@ const playlists: typeof enUS = {
 
   emptyTitle: "Плейлистов пока нет",
   emptyBody:
-    "Создайте плейлист прямо здесь или нажмите кнопку плейлиста на странице любого видео, чтобы начать с понравившегося.",
+    "Создай плейлист прямо здесь или нажми кнопку плейлиста на странице любого видео, чтобы начать с понравившегося.",
 
   import: {
     title: "Импорт плейлиста",
-    placeholder: "Вставьте выгрузку плейлиста (JSON) или ссылку pastes.dev",
+    placeholder: "Вставь выгрузку плейлиста (JSON) или ссылку pastes.dev",
     inputAria: "Текст выгрузки плейлиста или ссылка",
     chooseFile: "Выбрать файл…",
     // The name an export gets when the file carried none. It becomes the
@@ -40,7 +40,7 @@ const playlists: typeof enUS = {
       notJson: "Это не корректный JSON.",
       notExport: "Это не выгрузка плейлиста.",
       tooNew:
-        "Файл выгружен более новой версией сайта. Перезагрузите страницу и попробуйте снова.",
+        "Файл выгружен более новой версией сайта. Перезагрузи страницу и попробуй снова.",
       malformed: "Плейлист в этом файле повреждён.",
       unknown: "При чтении выгрузки что-то пошло не так."
     }
@@ -52,7 +52,7 @@ const playlists: typeof enUS = {
     notFoundBody: "Этого плейлиста больше нет, либо ссылка неверна.",
     notFoundAction: "Все плейлисты",
     emptyTitle: "Здесь пока пусто",
-    emptyBody: "Добавляйте видео кнопкой плейлиста на странице любого видео.",
+    emptyBody: "Добавляй видео кнопкой плейлиста на странице любого видео.",
     // toggles the grid into remove-a-video mode; "Done" turns it back off
     edit: "Изменить",
     removeVideo: "Убрать из плейлиста",
@@ -85,21 +85,21 @@ const playlists: typeof enUS = {
     linkCopyFailed: "Не удалось скопировать ссылку",
     linkCreated: "Ссылка создана",
     linkFailedTitle: "Не удалось создать ссылку",
-    linkFailedBody: "Сервис ссылок не ответил — скопируйте JSON."
+    linkFailedBody: "Сервис ссылок не ответил — скопируй JSON."
   },
 
   // downloading every free script in the playlist, one after another
   bulk: {
-    label: "Скачать все скрипты ({count})",
+    label: "Скачать все scripts ({count})",
     progress: "Скачивание {done}/{total}…",
     keyPrompt:
-      "Скрипты привязаны к вашему Handy. Введите ключ подключения из приложения Handy, чтобы продолжить.",
+      "Scripts привязаны к твоему Handy. Введи connection key из приложения Handy, чтобы продолжить.",
     // the explanation under this title is the shared one from
     // `services.scriptDownload.*` — same failure, same words as everywhere else
-    failedTitle: "Не удалось скачать скрипты",
-    doneTitle: "Скрипты скачаны",
+    failedTitle: "Не удалось скачать scripts",
+    doneTitle: "Scripts скачаны",
     doneBody:
-      "Сохранён {count} скрипт. | Сохранено {count} скрипта. | Сохранено {count} скриптов.",
+      "Сохранён {count} script. | Сохранено {count} scripts. | Сохранено {count} scripts.",
     // both counts in one sentence: the split between them is not the same
     // shape in every language
     partialBody: "Сохранено: {saved}, с ошибкой: {failed}."
@@ -108,7 +108,7 @@ const playlists: typeof enUS = {
   // the dialog a video page opens to file that video
   add: {
     title: "Добавить в плейлист",
-    empty: "Плейлистов пока нет — создайте первый ниже."
+    empty: "Плейлистов пока нет — создай первый ниже."
   }
 };
 

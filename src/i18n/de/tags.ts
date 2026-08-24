@@ -4,20 +4,20 @@ import type enUS from "../en-US/tags";
 // pill, searchable and sortable, plus the long index-download wait it sits
 // behind and the right-click menu that mutes a tag.
 const tags: typeof enUS = {
-  title: "Tags",
-  errorTitle: "Tags konnten nicht geladen werden",
+  title: "Schlagwörter",
+  errorTitle: "Schlagwörter konnten nicht geladen werden",
 
   // The cloud can't draw a pill until the whole ~40 MB index is in, so the
   // wait gets a phase, a percentage and a reason it's worth it.
   loading: {
-    barLabel: "Tags werden geladen",
+    barLabel: "Schlagwörter werden geladen",
     // Norwegian puts a space before the percent sign, so this is a message
     // rather than a bare "%" glued on in the template. German wants it too,
     // as a non-breaking space (U+00A0) so the figure never wraps.
     percent: "{percent} %",
-    downloading: "Skriptindex wird heruntergeladen",
+    downloading: "Script-Index wird heruntergeladen",
     parsing: "Index wird gelesen",
-    noteParsing: "Alles da — wird jetzt in Tags sortiert.",
+    noteParsing: "Alles da — wird jetzt in Schlagwörter sortiert.",
     note: "{received} von ~{total} MB entpackt — der ganze Katalog, einmal geladen, danach ist jede Seite sofort da.",
     // the expected total is only last visit's size, so an index that grew
     // since gets a line that doesn't print "44 of ~41 MB"
@@ -25,9 +25,9 @@ const tags: typeof enUS = {
   },
 
   controls: {
-    searchPlaceholder: "Tags suchen",
-    searchLabel: "Tags suchen",
-    sortLabel: "Tags sortieren",
+    searchPlaceholder: "Schlagwörter suchen",
+    searchLabel: "Schlagwörter suchen",
+    sortLabel: "Schlagwörter sortieren",
     sortByCount: "Meiste Videos",
     // the alphabet's first and last letter — Norwegian ends at Å
     sortByName: "A–Z",
@@ -40,25 +40,25 @@ const tags: typeof enUS = {
   },
 
   empty: {
-    searchTitle: "Keine passenden Tags",
+    searchTitle: "Keine passenden Schlagwörter",
     searchBody: "Nichts im Index passt zu „{query}“.",
     filteredBody:
-      "Deine Filter und stummgeschalteten Tags verbergen jeden Tag im Index. Lockere sie in den Einstellungen.",
-    filteredAction: "Stummgeschaltete Tags"
+      "Deine Filter und stummgeschalteten Schlagwörter verbergen jedes Schlagwort im Index. Lockere sie in den Einstellungen.",
+    filteredAction: "Stummgeschaltete Schlagwörter"
   },
 
   menu: {
-    browse: "Nach diesem Tag filtern",
-    mute: "Diesen Tag stummschalten"
+    browse: "Nach diesem Schlagwort filtern",
+    mute: "Dieses Schlagwort stummschalten"
   },
 
   toast: {
     refusedTitle: "„{tag}“ lässt sich nicht stummschalten",
     refusedBody:
-      "Orientierungs-Tags bestimmen, welchen Katalog du siehst — ändere das in den Einstellungen.",
+      "Orientierungs-Schlagwörter bestimmen, welchen Katalog du siehst — ändere das in den Einstellungen.",
     mutedTitle: "„{tag}“ stummgeschaltet",
     mutedBody:
-      "Der Tag steht jetzt in deiner Liste — du kannst die Stummschaltung jederzeit aufheben."
+      "Das Schlagwort steht jetzt in deiner Liste — du kannst die Stummschaltung jederzeit aufheben."
   }
 };
 

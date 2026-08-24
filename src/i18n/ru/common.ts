@@ -31,7 +31,7 @@ const common: typeof enUS = {
   state: {
     catalogErrorTitle: "Не удалось загрузить каталог",
     catalogErrorBody:
-      "Индекс скриптов не ответил. Проверьте соединение и попробуйте снова.",
+      "Индекс script не ответил. Проверь соединение и попробуй снова.",
     emptyTitle: "Показывать нечего"
   },
 
@@ -71,15 +71,15 @@ const common: typeof enUS = {
   // switcher — the same "can't drift apart" reason ORIENTATION_LABELS gave
   // for living in queries.ts, which is where these strings came from.
   orientation: {
-    straight: "Гетеро",
-    gay: "Гей",
-    trans: "Транс",
-    all: "Всё"
+    straight: "Straight",
+    gay: "Gay",
+    trans: "Trans",
+    all: "Everything"
   },
 
   language: {
     label: "Язык",
-    caption: "Выберите язык, на котором показывать сайт",
+    caption: "Выбери язык, на котором показывать сайт",
     system: "Как в браузере"
   }
 };

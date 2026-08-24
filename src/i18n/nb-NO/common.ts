@@ -24,10 +24,10 @@ const common: typeof enUS = {
 
   state: {
     catalogErrorTitle: "Kunne ikke laste katalogen",
-    // "tilkoblingen" ville lest som tilkoblingsnøkkelen her — det er
-    // nettforbindelsen som svikter
+    // "nettforbindelsen", not "tilkoblingen": it is the network connection
+    // that fails here, and nothing to do with the connection key.
     catalogErrorBody:
-      "Skriptindeksen svarte ikke. Sjekk nettforbindelsen og prøv igjen.",
+      "Script-indeksen svarte ikke. Sjekk nettforbindelsen og prøv igjen.",
     emptyTitle: "Ingenting å vise"
   },
 
@@ -60,10 +60,10 @@ const common: typeof enUS = {
   justNow: "akkurat nå",
 
   orientation: {
-    straight: "Hetero",
-    gay: "Homo",
+    straight: "Straight",
+    gay: "Gay",
     trans: "Trans",
-    all: "Alt"
+    all: "Everything"
   },
 
   language: {

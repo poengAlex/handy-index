@@ -6,16 +6,16 @@ import type enUS from "../en-US/video";
 // script comments, the "more like this" shelves, and a toast for every
 // outcome each of those can produce.
 const video: typeof enUS = {
-  missingTitle: "Video no encontrado",
-  missingBody: "Este video ya no está en el índice, o el enlace es incorrecto.",
+  missingTitle: "Vídeo no encontrado",
+  missingBody: "Este vídeo ya no está en el índice, o el enlace es incorrecto.",
 
   // Stand-ins for catalog fields the index published empty. They are read
   // out loud (alt text, an iframe title) or land mid-sentence, so each one
   // has to work in the slot it fills — "Watch on the site" (the same reading
   // media.ts gives an unnamed partner), "Still 3 from Video".
   fallback: {
-    video: "Video",
-    player: "Reproductor de video",
+    video: "Vídeo",
+    player: "Reproductor de vídeo",
     site: "el sitio",
     thisSite: "este sitio"
   },
@@ -31,18 +31,18 @@ const video: typeof enUS = {
     addFavorite: "Añadir a favoritos",
     removeFavorite: "Quitar de favoritos",
     addToPlaylist: "Añadir a una lista",
-    report: "Denunciar este video"
+    report: "Denunciar este vídeo"
   },
 
   premiumNote:
-    "El script de este video es premium — viene con el video en el sitio asociado.",
+    "El script de este vídeo es premium — viene con el vídeo en el sitio asociado.",
 
   playerNote:
-    "El Handy no se sincroniza con la reproducción aquí en IVDB — este reproductor solo reproduce el video. Descarga el script y reprodúcelo con tu Handy para que los movimientos vayan sincronizados.",
+    "El Handy no se sincroniza con la reproducción aquí en IVDB — este reproductor solo muestra el vídeo. Descarga el script y reprodúcelo con tu Handy para que los movimientos vayan sincronizados.",
 
   tag: {
     unmuteAria: "Dejar de silenciar la etiqueta: {tag}",
-    mutedTitle: "“{tag}” está silenciada — haz clic para dejar de silenciarla",
+    mutedTitle: "«{tag}» está silenciada — haz clic para dejar de silenciarla",
     browse: "Explorar esta etiqueta",
     mute: "Silenciar esta etiqueta"
   },
@@ -70,7 +70,7 @@ const video: typeof enUS = {
     title: "Valora este script",
     community: "Comunidad: {percent}%",
     thanks: "Gracias por valorar este script",
-    errorTitle: "No se pudo guardar tu valoración"
+    errorTitle: "No se ha podido guardar tu valoración"
   },
 
   gallery: {
@@ -91,19 +91,19 @@ const video: typeof enUS = {
 
   comments: {
     title: "Comentarios",
-    gateHint: "Para los comentarios hace falta tu clave de conexión.",
-    gateAction: "Añadir clave",
+    gateHint: "Para los comentarios hace falta tu connection key.",
+    gateAction: "Añadir la clave",
     inputLabel: "Escribe un comentario",
     submit: "Comentar",
-    errorHint: "No se pudieron cargar los comentarios.",
+    errorHint: "No se han podido cargar los comentarios.",
     emptyHint: "Aún no hay comentarios — sé el primero.",
     postedTitle: "Comentario enviado",
     postedBody: "Aparece en cuanto pase la revisión.",
-    postErrorTitle: "No se pudo publicar tu comentario"
+    postErrorTitle: "No se ha podido publicar tu comentario"
   },
 
   more: {
-    related: "Videos relacionados",
+    related: "Vídeos relacionados",
     fromPartner: "Más de {site}"
   },
 
@@ -111,44 +111,44 @@ const video: typeof enUS = {
   // being asked for differs per action.
   keyPrompt: {
     script:
-      "Los scripts están vinculados a tu Handy. Escribe la clave de conexión de la app de Handy para continuar.",
+      "Los scripts están vinculados a tu Handy. Escribe la connection key de la app de Handy para continuar.",
     action:
-      "Las valoraciones y los comentarios están vinculados a tu Handy. Escribe la clave de conexión de la app de Handy para continuar."
+      "Las valoraciones y los comentarios están vinculados a tu Handy. Escribe la connection key de la app de Handy para continuar."
   },
 
   script: {
     readyTitle: "Script listo",
-    readyBody: "La descarga se abrió en una pestaña nueva.",
-    errorTitle: "No se pudo descargar el script",
+    readyBody: "La descarga se ha abierto en una pestaña nueva.",
+    errorTitle: "No se ha podido descargar el script",
     errorBody:
-      "O la clave de conexión es incorrecta o tu Handy no está en línea. Revisa las dos cosas y vuelve a intentarlo."
+      "O la connection key es incorrecta o tu Handy no está en línea. Revisa las dos cosas y vuelve a intentarlo."
   },
 
   mute: {
-    refusedTitle: "“{tag}” no se puede silenciar",
+    refusedTitle: "«{tag}» no se puede silenciar",
     refusedBody:
       "Las etiquetas de orientación deciden qué catálogo ves — eso se cambia en los ajustes.",
-    doneTitle: "“{tag}” silenciada",
+    doneTitle: "«{tag}» silenciada",
     doneBody:
       "Está en tu lista de etiquetas silenciadas — puedes dejar de " +
       "silenciarla cuando quieras.",
-    undoneTitle: "“{tag}” ya no está silenciada"
+    undoneTitle: "«{tag}» ya no está silenciada"
   },
 
   share: {
     copiedTitle: "Enlace copiado",
-    errorTitle: "No se pudo copiar el enlace"
+    errorTitle: "No se ha podido copiar el enlace"
   },
 
   // The report button opens a pre-filled mail draft. The reader is the one
   // who finishes and sends it, so the draft is written in their language;
   // the identifying lines keep it useful once it reaches the inbox.
   report: {
-    subject: "Quiero denunciar un video",
-    intro: "Quiero denunciar un video.",
+    subject: "Quiero denunciar un vídeo",
+    intro: "Quiero denunciar un vídeo.",
     titleLine: "Título: {title}",
     untitled: "(sin título)",
-    idLine: "ID del video: {id}",
+    idLine: "ID del vídeo: {id}",
     siteLine: "Sitio: {site}",
     linkLine: "Enlace: {link}",
     reasonLine: "Motivo de la denuncia:"

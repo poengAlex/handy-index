@@ -68,7 +68,7 @@ const help: typeof enUS = {
     free: {
       label: "Scripts grátis",
       caption:
-        "Vídeos marcados como Grátis têm um script que você baixa com a chave de conexão do seu Handy"
+        "Vídeos marcados como Grátis têm um script que você baixa com a connection key do seu Handy"
     },
     rate: {
       label: "Avaliar scripts",
@@ -92,7 +92,7 @@ const help: typeof enUS = {
       caption: "Desligadas por padrão — ative as imagens nas configurações"
     },
     players: {
-      label: "Players incorporados",
+      label: "Reprodutores incorporados",
       caption:
         "Desligados por padrão — assista aos vídeos do Pornhub e do xHamster na própria página do vídeo (a reprodução não sincroniza com o Handy)"
     },

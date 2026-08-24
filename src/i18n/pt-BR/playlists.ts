@@ -35,7 +35,7 @@ const playlists: typeof enUS = {
     // One key per `PlaylistImportFailure` in services/playlist-transfer.ts,
     // plus `unknown` for a throw from somewhere else entirely.
     error: {
-      unreachable: "Não foi possível acessar o serviço de paste.",
+      unreachable: "Não foi possível acessar o serviço de compartilhamento.",
       linkDead:
         "Esse link de compartilhamento não responde — pode ter expirado.",
       notJson: "Esse arquivo não é um JSON válido.",
@@ -74,7 +74,7 @@ const playlists: typeof enUS = {
     exportAria: "JSON de exportação da playlist",
     linkAria: "Link de compartilhamento",
     copyLink: "Copiar link de compartilhamento",
-    note: "Qualquer pessoa com o link pode importar esta playlist. O paste é temporário — expira em cerca de 90 dias.",
+    note: "Qualquer pessoa com o link pode importar esta playlist. O link é temporário — expira em cerca de 90 dias.",
     copyJson: "Copiar JSON",
     saveFile: "Salvar arquivo",
     createLink: "Criar link de compartilhamento",
@@ -87,7 +87,7 @@ const playlists: typeof enUS = {
     linkCreated: "Link de compartilhamento criado",
     linkFailedTitle: "Não foi possível criar o link de compartilhamento",
     linkFailedBody:
-      "O serviço de paste não respondeu. Copie o JSON em vez disso."
+      "O serviço de compartilhamento não respondeu. Copie o JSON em vez disso."
   },
 
   // downloading every free script in the playlist, one after another
@@ -95,7 +95,7 @@ const playlists: typeof enUS = {
     label: "Baixar todos os scripts ({count})",
     progress: "Baixando {done}/{total}…",
     keyPrompt:
-      "Os scripts estão vinculados ao seu Handy. Digite a chave de conexão do app do Handy para continuar.",
+      "Os scripts estão vinculados ao seu Handy. Digite a connection key do app do Handy para continuar.",
     // the explanation under this title is the shared one from
     // `services.scriptDownload.*` — same failure, same words as everywhere else
     failedTitle: "Não foi possível baixar os scripts",

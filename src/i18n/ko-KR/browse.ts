@@ -39,7 +39,7 @@ const browse: typeof enUS = {
     // {label} is catalog data — a tag, a site name, a performer name
     removeAria: "필터 제거: {label}",
     // stand-ins for a filtered id whose name isn't in the loaded catalog
-    partnerFallback: "파트너",
+    partnerFallback: "제휴사",
     performerFallback: "출연자"
   },
 
@@ -56,10 +56,10 @@ const browse: typeof enUS = {
     vrCaption: "VR 동영상만 보여줘요",
     orientation: "성향",
     access: "이용 범위",
-    premiumScriptsLabel: "유료 스크립트",
-    premiumScriptsCaption: "파트너 사이트에서 유료로 파는 스크립트도 포함해요",
+    premiumScriptsLabel: "유료 script",
+    premiumScriptsCaption: "제휴 사이트에서 유료로 파는 script도 포함해요",
     premiumVideosLabel: "유료 동영상",
-    premiumVideosCaption: "파트너 사이트에서 유료로 파는 동영상도 포함해요",
+    premiumVideosCaption: "제휴 사이트에서 유료로 파는 동영상도 포함해요",
     mutedLabel: "차단한 태그",
     mutedNone: "차단한 태그 없음",
     // {tags} is a comma-joined list of the first few muted tags
@@ -81,8 +81,13 @@ const browse: typeof enUS = {
     mutedManyBody:
       "이 태그들이 붙은 동영상은 어디에서도 보이지 않아요. 결과를 보려면 차단을 해제하세요.",
     mutedManyAction: "차단 해제하기",
-    // {orientation} comes from common.orientation.* via useFormat()
-    orientationTitle: "{orientation} 필터에 맞는 동영상이 없어요",
+    // {orientation} comes from common.orientation.* via useFormat(), and is
+    // pinned to English. No Korean particle may touch it: 은/는, 이/가 and
+    // 로/으로 each pick their form from the sound the preceding word ends in,
+    // and a Latin value cannot decide that. Both messages below keep 필터
+    // between the value and the particle, which also lets the sentence read
+    // as "the filter named X" — the shape that survives "Everything".
+    orientationTitle: "여기엔 {orientation} 필터에 맞는 동영상이 없어요",
     // one sentence, not a count phrase glued to a clause: the verb agrees
     // with the count in English and the word order differs in Norwegian
     orientationBody:

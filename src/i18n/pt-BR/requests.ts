@@ -9,20 +9,20 @@ const requests: typeof enUS = {
   // Connection-key gate and the two failure states behind it. Shown by both
   // pages; only the body differs.
   key: {
-    title: "Chave de conexão necessária",
+    title: "Connection key necessária",
     boardBody:
-      "O quadro de pedidos está vinculado ao seu Handy. Adicione a chave de conexão do app do Handy para ver, enviar e votar em pedidos.",
+      "O quadro de pedidos está vinculado ao seu Handy. Adicione a connection key do app do Handy para ver, enviar e votar em pedidos.",
     queueBody:
-      "A fila está vinculada ao seu Handy. Adicione a chave de conexão do app do Handy para vê-la.",
-    addAction: "Adicionar chave de conexão",
-    rejectedTitle: "Chave de conexão recusada",
+      "A fila está vinculada ao seu Handy. Adicione a connection key do app do Handy para vê-la.",
+    addAction: "Adicionar connection key",
+    rejectedTitle: "Connection key recusada",
     rejectedBody:
       "Ou a chave está errada, ou o seu Handy não está online. Verifique a chave no app do Handy, veja se o dispositivo está ligado e conectado e digite-a de novo.",
     rejectedAction: "Digitar a chave de novo",
     boardDialog:
-      "O quadro de pedidos está vinculado ao seu Handy. Digite a chave de conexão do app do Handy para continuar.",
+      "O quadro de pedidos está vinculado ao seu Handy. Digite a connection key do app do Handy para continuar.",
     queueDialog:
-      "A fila está vinculada ao seu Handy. Digite a chave de conexão do app do Handy para continuar."
+      "A fila está vinculada ao seu Handy. Digite a connection key do app do Handy para continuar."
   },
 
   // The voting board page. There are four count messages rather than one

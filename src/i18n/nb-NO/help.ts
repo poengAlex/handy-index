@@ -51,9 +51,9 @@ const help: typeof enUS = {
         "Flytt en spilleliste som fil, som JSON-tekst du kan kopiere, eller som en midlertidig delingslenke — og importer fra alle tre"
     },
     bulkDownload: {
-      label: "Hent alle skript på én gang",
+      label: "Hent alle scripts på én gang",
       caption:
-        "Ett klikk på en spilleliste laster ned alle de gratis skriptene i den"
+        "Ett klikk på en spilleliste laster ned alle gratis scripts i den"
     },
     quickMenu: {
       label: "Hurtigmeny",
@@ -63,26 +63,28 @@ const help: typeof enUS = {
   },
 
   scripts: {
-    // "Handy-en" with a hyphen, same as video.ts and services.ts: the definite
-    // ending on an English brand name reads as a typo without it.
-    title: "Skript og Handy-en din",
+    // The device name stays uninflected — the possessive goes in front
+    // ("din Handy"), same as video.ts and services.ts. `script` is protected
+    // the same way, so it never picks up a Norwegian ending; the plural is
+    // the English `scripts` wherever the source says "scripts".
+    title: "Scripts og din Handy",
     free: {
-      label: "Gratis skript",
+      label: "Gratis scripts",
       caption:
-        "Videoer merket «Gratis» har et skript du kan laste ned med tilkoblingsnøkkelen din"
+        "Videoer merket «Gratis» har et script du kan laste ned med connection key til din Handy"
     },
     rate: {
-      label: "Vurder skript",
-      caption: "Gi gratis skript stjerner rett på videosiden"
+      label: "Vurder scripts",
+      caption: "Gi gratis scripts stjerner rett på videosiden"
     },
     comments: {
-      label: "Skriptkommentarer",
-      caption: "Les og skriv anonyme kommentarer på skript"
+      label: "Script-kommentarer",
+      caption: "Les og skriv anonyme kommentarer på scripts"
     },
     requests: {
       label: "Be om videoer",
       caption:
-        "Be om skript til en video, og stem på hva som skal skriptes neste"
+        "Be om script til en video, og stem på hva som skal få script neste gang"
     }
   },
 
@@ -95,15 +97,15 @@ const help: typeof enUS = {
     players: {
       label: "Innebygde spillere",
       caption:
-        "Av som standard — se videoer fra Pornhub og xHamster rett på videosiden (avspillingen synkroniseres ikke med Handy-en)"
+        "Av som standard — se videoer fra Pornhub og xHamster rett på videosiden (avspillingen synkroniseres ikke med Handy)"
     },
     filters: {
-      label: "Filtre for orientering, skript og video",
+      label: "Filtre for orientering, script og video",
       // "videolisten", not "videosiden": videosiden is the detail page for a
       // single video everywhere else in the app, and these filters sit on the
       // listing.
       caption:
-        "Gratis eller premium-skript, gratis eller premium-videoer, og hvem som er med — i innstillingene, eller rett i filtrene på videolisten"
+        "Gratis eller premium-scripts, gratis eller premium-videoer, og hvem som er med — i innstillingene, eller rett i filtrene på videolisten"
     },
     mutedTags: {
       label: "Dempede tagger",

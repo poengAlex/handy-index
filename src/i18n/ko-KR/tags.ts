@@ -14,7 +14,7 @@ const tags: typeof enUS = {
     // Norwegian puts a space before the percent sign, so this is a message
     // rather than a bare "%" glued on in the template
     percent: "{percent}%",
-    downloading: "스크립트 색인 내려받는 중",
+    downloading: "Script 색인 다운로드 중",
     parsing: "색인 읽는 중",
     noteParsing: "다 받았어요. 지금 태그로 정리하는 중이에요.",
     note: "약 {total} MB 중 {received} MB 풀었어요. 카탈로그 전체를 한 번만 받아 두면 이다음부터는 모든 페이지가 바로 열려요.",

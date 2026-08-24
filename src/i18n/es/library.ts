@@ -11,7 +11,7 @@ const library: typeof enUS = {
     count: "{count} en favoritos",
     emptyTitle: "Todavía no hay favoritos",
     emptyBody:
-      "Toca el botón del corazón en cualquier página de video y se guarda aquí para tenerlo a mano."
+      "Toca el botón del corazón en cualquier página de vídeo y se guarda aquí para tenerlo a mano."
   },
 
   history: {
@@ -19,10 +19,10 @@ const library: typeof enUS = {
     note: "Solo se guarda en este navegador — tu historial no se rastrea ni se envía a ninguna parte.",
     emptyTitle: "Todavía no has visto nada",
     emptyBody:
-      "Los videos que abres se recuerdan aquí, solo en este dispositivo.",
+      "Los vídeos que abres se recuerdan aquí, solo en este dispositivo.",
     clearTitle: "¿Borrar el historial?",
     clearBody:
-      "Los videos siguen en el catálogo — solo desaparece la lista de lo que has abierto en este navegador.",
+      "Los vídeos siguen en el catálogo — solo desaparece la lista de lo que has abierto en este navegador.",
     clearConfirm: "Borrar el historial",
     clearedToast: "Historial borrado"
   }

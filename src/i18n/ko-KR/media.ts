@@ -19,9 +19,9 @@ const media: typeof enUS = {
     removeFavorite: "즐겨찾기에서 제거",
     addToPlaylist: "재생목록에 추가…",
     copyLink: "링크 복사",
-    downloadScript: "스크립트 다운로드",
+    downloadScript: "Script 다운로드",
     downloadBlocked: "다운로드 불가",
-    downloadBlockedCaption: "유료 스크립트예요",
+    downloadBlockedCaption: "유료 script예요",
     // {site} is the partner's own name; the second form covers the entries
     // that arrive without one, and has to read as a whole sentence
     watchOn: "{site}에서 보기",
@@ -31,16 +31,16 @@ const media: typeof enUS = {
   toast: {
     linkCopied: "링크를 복사했어요",
     linkCopyFailed: "링크를 복사하지 못했어요",
-    scriptDownloaded: "스크립트를 다운로드했어요",
-    scriptFailedTitle: "스크립트를 받지 못했어요",
+    scriptDownloaded: "Script를 다운로드했어요",
+    scriptFailedTitle: "Script를 받지 못했어요",
     scriptFailedBody:
-      "연결 키가 틀렸거나 Handy가 온라인 상태가 아니에요. 둘 다 확인한 뒤 다시 시도해 보세요."
+      "connection key 값이 틀렸거나 Handy가 온라인 상태가 아니에요. 둘 다 확인한 뒤 다시 시도해 보세요."
   },
 
   keyDialog: {
     // replaces ConnectionKeyDialog's generic blurb when the key is needed for
     // a script download
-    body: "스크립트는 Handy와 연결돼 있어요. 계속하려면 Handy 앱에 있는 연결 키를 입력하세요."
+    body: "Script는 Handy와 연결돼 있어요. 계속하려면 Handy 앱에 있는 connection key 값을 입력하세요."
   }
 };
 

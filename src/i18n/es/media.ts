@@ -7,7 +7,7 @@ import type enUS from "../en-US/media";
 const media: typeof enUS = {
   card: {
     // accessible name for an entry the index published without a title
-    fallbackTitle: "Video",
+    fallbackTitle: "Vídeo",
     // the star rating printed beside the tile caption — "★ 92%"
     rating: "★ {rating}%"
   },
@@ -30,17 +30,17 @@ const media: typeof enUS = {
 
   toast: {
     linkCopied: "Enlace copiado",
-    linkCopyFailed: "No se pudo copiar el enlace",
+    linkCopyFailed: "No se ha podido copiar el enlace",
     scriptDownloaded: "Script descargado",
-    scriptFailedTitle: "No se pudo descargar el script",
+    scriptFailedTitle: "No se ha podido descargar el script",
     scriptFailedBody:
-      "O la clave de conexión es incorrecta o tu Handy no está en línea. Revisa las dos cosas y vuelve a intentarlo."
+      "O la connection key es incorrecta o tu Handy no está en línea. Revisa las dos cosas y vuelve a intentarlo."
   },
 
   keyDialog: {
     // replaces ConnectionKeyDialog's generic blurb when the key is needed for
     // a script download
-    body: "Los scripts están vinculados a tu Handy. Escribe la clave de conexión de la app de Handy para continuar."
+    body: "Los scripts están vinculados a tu Handy. Escribe la connection key de la app de Handy para continuar."
   }
 };
 

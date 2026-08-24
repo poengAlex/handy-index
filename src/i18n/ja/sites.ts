@@ -19,7 +19,7 @@ const sites: typeof enUS = {
     // the two paywalls are named in full on the cards: they are different
     // gates, and a bare "500 premium" would not say which
     premiumVideos: "有料動画{count}本",
-    premiumScripts: "有料スクリプト{count}件"
+    premiumScripts: "有料script{count}件"
   },
 
   errorTitle: "サイトを読み込めませんでした",
@@ -27,7 +27,7 @@ const sites: typeof enUS = {
     "インデックスにサイトが1件も入っていませんでした。もう一度読み込んでみてください。",
   noMatchTitle: "一致するサイトがありません",
   noMatchBody:
-    "その検索に一致するサイト名はありません。文字数を減らしてお試しください。"
+    "その検索に一致するサイト名はありません。文字数を減らして試してください。"
 };
 
 export default sites;

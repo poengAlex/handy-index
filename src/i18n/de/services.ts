@@ -15,11 +15,11 @@ const services: typeof enUS = {
   // t(`services.scriptDownload.${scriptDownloadCode(error)}`)
   scriptDownload: {
     noFreeScript:
-      "Für dieses Video gibt es kein kostenloses Skript. Der Katalogeintrag ist veraltet.",
+      "Für dieses Video gibt es kein kostenloses script. Der Katalogeintrag ist veraltet.",
     unauthorized:
-      "Entweder ist der Verbindungsschlüssel falsch, oder dein Handy ist nicht online. Prüfe beides und versuche es erneut.",
+      "Entweder ist der connection key falsch, oder The Handy ist nicht online. Prüfe beides und versuche es erneut.",
     failed:
-      "Der Skriptserver hat nicht geantwortet. Prüfe deine Internetverbindung und versuche es erneut."
+      "Der Script-Server hat nicht geantwortet. Prüfe deine Internetverbindung und versuche es erneut."
   }
 };
 

@@ -14,7 +14,7 @@ const nav: typeof enUS = {
   links: {
     home: "Start",
     videos: "Videos",
-    tags: "Tags",
+    tags: "Schlagwörter",
     sites: "Websites",
     performers: "Darsteller",
     playlists: "Wiedergabelisten",
@@ -34,11 +34,12 @@ const nav: typeof enUS = {
   // `{tags}` receives the whole muted-tag phrase, so word order stays with
   // the translator.
   //
-  // German inflects that adjective too ("1 stummgeschalteter Tag"), and the
-  // singular form is nominative — so `mutedHidden` sets `{tags}` off after a
-  // dash instead of governing it with a preposition, which would demand an
-  // accusative the app cannot produce.
-  mutedTags: "{count} stummgeschalteter Tag | {count} stummgeschaltete Tags",
+  // German inflects that adjective too ("1 stummgeschaltetes Schlagwort"),
+  // and the singular form is nominative — so `mutedHidden` sets `{tags}` off
+  // after a dash instead of governing it with a preposition, which would
+  // demand an accusative the app cannot produce.
+  mutedTags:
+    "{count} stummgeschaltetes Schlagwort | {count} stummgeschaltete Schlagwörter",
   mutedHidden:
     "{count} Video ausgeblendet — {tags} | {count} Videos ausgeblendet — {tags}",
 

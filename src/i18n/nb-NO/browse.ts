@@ -44,8 +44,8 @@ const browse: typeof enUS = {
     vrCaption: "Bare videoer i virtuell virkelighet",
     orientation: "Orientering",
     access: "Tilgang",
-    premiumScriptsLabel: "Premiumskript",
-    premiumScriptsCaption: "Ta med skript bak en partners betalingsmur",
+    premiumScriptsLabel: "Premium-scripts",
+    premiumScriptsCaption: "Ta med scripts bak en partners betalingsmur",
     premiumVideosLabel: "Premiumvideoer",
     premiumVideosCaption:
       "Ta med videoer som ligger bak en partners betalingsmur",
@@ -69,6 +69,9 @@ const browse: typeof enUS = {
     mutedManyBody:
       "Videoer med disse taggene er skjult overalt. Fjern dempingen for å se disse resultatene.",
     mutedManyAction: "Fjern dempingen",
+    // {orientation} is a fixed English option name, so the title names it as
+    // the category it is ("under Straight") and the body compounds it with a
+    // hyphen, leaving the Norwegian ending on "filteret".
     orientationTitle: "Ingenting å vise under {orientation}",
     orientationBody:
       "{count} video passer med alt annet du har valgt, men ikke med {orientation}-filteret. | {count} videoer passer med alt annet du har valgt, men ikke med {orientation}-filteret.",

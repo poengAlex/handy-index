@@ -22,11 +22,11 @@ const video: typeof enUS = {
   },
 
   hero: {
-    premiumChip: "Premium-Skript"
+    premiumChip: "Premium-Script"
   },
 
   action: {
-    getScript: "Skript holen",
+    getScript: "Script holen",
     // {site} is the partner's own name, or `fallback.site` when it has none
     watchOn: "Auf {site} ansehen",
     addFavorite: "Zu Favoriten hinzufügen",
@@ -36,21 +36,21 @@ const video: typeof enUS = {
   },
 
   premiumNote:
-    "Das Skript zu diesem Video ist Premium — es gehört zum Video auf der Partnerseite.",
+    "Das script zu diesem Video ist Premium — es gehört zum Video auf der Partnerseite.",
 
   playerNote:
-    "Der Player hier auf IVDB spielt nur das Video ab — mit dem Handy wird nichts synchronisiert. Lade das Skript herunter und spiele es über dein Handy-Setup ab, damit die Bewegungen synchron laufen.",
+    "Der Player hier auf IVDB spielt nur das Video ab — mit The Handy wird nichts synchronisiert. Lade das script herunter und spiele es mit The Handy ab, damit die Bewegungen synchron laufen.",
 
   tag: {
     unmuteAria: "Stummschaltung aufheben: {tag}",
     mutedTitle: "„{tag}“ ist stummgeschaltet — zum Aufheben klicken",
-    browse: "Nach diesem Tag filtern",
-    mute: "Diesen Tag stummschalten"
+    browse: "Nach diesem Schlagwort filtern",
+    mute: "Dieses Schlagwort stummschalten"
   },
 
   details: {
     title: "Details",
-    script: "Skript",
+    script: "Script",
     free: "Kostenlos",
     premium: "Premium",
     published: "Veröffentlicht",
@@ -59,18 +59,18 @@ const video: typeof enUS = {
     // the non-VR case: an ordinary 2D video
     formatFlat: "2D",
     site: "Website",
-    scriptBy: "Skript von",
+    scriptBy: "Script von",
     rating: "Bewertung",
     ratingValue: "{percent} %",
     // {votes} arrives already pluralized from useFormat().count("votes", n)
     ratingWithVotes: "{percent} % · {votes}",
-    scriptPlays: "Skriptwiedergaben"
+    scriptPlays: "Script-Wiedergaben"
   },
 
   rate: {
-    title: "Dieses Skript bewerten",
+    title: "Dieses script bewerten",
     community: "Community: {percent} %",
-    thanks: "Danke für deine Bewertung",
+    thanks: "Danke für deine Script-Bewertung",
     errorTitle: "Bewertung konnte nicht gespeichert werden"
   },
 
@@ -92,8 +92,8 @@ const video: typeof enUS = {
 
   comments: {
     title: "Kommentare",
-    gateHint: "Für Kommentare brauchst du deinen Verbindungsschlüssel.",
-    gateAction: "Schlüssel hinzufügen",
+    gateHint: "Für Kommentare brauchst du deinen connection key.",
+    gateAction: "Connection key hinzufügen",
     inputLabel: "Kommentar schreiben",
     submit: "Kommentieren",
     errorHint: "Kommentare konnten nicht geladen werden.",
@@ -112,26 +112,26 @@ const video: typeof enUS = {
   // being asked for differs per action.
   keyPrompt: {
     script:
-      "Skripte sind an dein Handy gebunden. Gib den Verbindungsschlüssel aus der Handy-App ein, um fortzufahren.",
+      "Scripts sind an The Handy gebunden. Gib den connection key aus der Handy-App ein, um fortzufahren.",
     action:
-      "Bewertungen und Kommentare sind an dein Handy gebunden. Gib den Verbindungsschlüssel aus der Handy-App ein, um fortzufahren."
+      "Bewertungen und Kommentare sind an The Handy gebunden. Gib den connection key aus der Handy-App ein, um fortzufahren."
   },
 
   script: {
-    readyTitle: "Skript bereit",
+    readyTitle: "Script bereit",
     readyBody: "Der Download wurde in einem neuen Tab geöffnet.",
-    errorTitle: "Skript konnte nicht abgerufen werden",
+    errorTitle: "Script konnte nicht abgerufen werden",
     errorBody:
-      "Entweder ist der Verbindungsschlüssel falsch, oder dein Handy ist nicht online. Prüfe beides und versuche es erneut."
+      "Entweder ist der connection key falsch, oder The Handy ist nicht online. Prüfe beides und versuche es erneut."
   },
 
   mute: {
     refusedTitle: "„{tag}“ lässt sich nicht stummschalten",
     refusedBody:
-      "Orientierungs-Tags bestimmen, welchen Katalog du siehst — ändere das in den Einstellungen.",
+      "Orientierungs-Schlagwörter bestimmen, welchen Katalog du siehst — ändere das in den Einstellungen.",
     doneTitle: "„{tag}“ stummgeschaltet",
     doneBody:
-      "Der Tag steht jetzt in deiner Liste — du kannst die Stummschaltung jederzeit aufheben.",
+      "Das Schlagwort steht jetzt in deiner Liste — du kannst die Stummschaltung jederzeit aufheben.",
     undoneTitle: "Stummschaltung für „{tag}“ aufgehoben"
   },
 

@@ -45,8 +45,8 @@ const browse: typeof enUS = {
 
   filters: {
     title: "Filter",
-    addTag: "Tag hinzufügen",
-    noTags: "Keine passenden Tags",
+    addTag: "Schlagwort hinzufügen",
+    noTags: "Keine passenden Schlagwörter",
     site: "Website",
     noSites: "Keine passenden Websites",
     // one row of either picker: the tag or site name, then how many videos
@@ -56,13 +56,13 @@ const browse: typeof enUS = {
     vrCaption: "Nur Virtual-Reality-Videos",
     orientation: "Orientierung",
     access: "Zugang",
-    premiumScriptsLabel: "Premium-Skripte",
+    premiumScriptsLabel: "Premium-Scripts",
     premiumScriptsCaption:
-      "Auch Skripte hinter der Bezahlschranke eines Partners zeigen",
+      "Auch scripts hinter der Bezahlschranke eines Partners zeigen",
     premiumVideosLabel: "Premium-Videos",
     premiumVideosCaption:
       "Auch Videos hinter der Bezahlschranke eines Partners zeigen",
-    mutedLabel: "Stummgeschaltete Tags",
+    mutedLabel: "Stummgeschaltete Schlagwörter",
     mutedNone: "Nichts stummgeschaltet",
     // {tags} is a comma-joined list of the first few muted tags
     mutedMore: "{tags} +{rest} weitere",
@@ -77,18 +77,22 @@ const browse: typeof enUS = {
     // can fix it, so the one-tag case names the tag it is talking about.
     mutedOneTitle: "„{tag}“ ist stummgeschaltet",
     mutedOneBody:
-      "Videos mit diesem Tag sind überall ausgeblendet. Hebe die Stummschaltung auf, um diese Ergebnisse zu sehen.",
+      "Videos mit diesem Schlagwort sind überall ausgeblendet. Hebe die Stummschaltung auf, um diese Ergebnisse zu sehen.",
     mutedOneAction: "Stummschaltung für „{tag}“ aufheben",
-    mutedManyTitle: "Einige dieser Tags sind stummgeschaltet",
+    mutedManyTitle: "Einige dieser Schlagwörter sind stummgeschaltet",
     mutedManyBody:
-      "Videos mit diesen Tags sind überall ausgeblendet. Hebe die Stummschaltung auf, um diese Ergebnisse zu sehen.",
+      "Videos mit diesen Schlagwörtern sind überall ausgeblendet. Hebe die Stummschaltung auf, um diese Ergebnisse zu sehen.",
     mutedManyAction: "Stummschaltungen aufheben",
-    // {orientation} comes from common.orientation.* via useFormat()
-    orientationTitle: "Hier gibt es nichts für {orientation}",
+    // {orientation} comes from common.orientation.* via useFormat(), where
+    // it is pinned to English — so it lands here as a Latin-script data
+    // value and is quoted as the label it is, rather than left bare
+    orientationTitle: "Hier gibt es nichts für „{orientation}“",
     // one sentence, not a count phrase glued to a clause: the verb agrees
-    // with the count in English and the word order differs in Norwegian
+    // with the count in English and the word order differs in Norwegian.
+    // The value cannot inflect, so it is hyphenated onto the noun the same
+    // way gates.notice.*Orientation does it, and the case sits on "Filter".
     orientationBody:
-      "{count} Video hier erfüllt alle deine anderen Einstellungen, nur nicht den Filter {orientation}. | {count} Videos hier erfüllen alle deine anderen Einstellungen, nur nicht den Filter {orientation}.",
+      "{count} Video hier entspricht allen deinen anderen Einstellungen, nur nicht dem {orientation}-Filter. | {count} Videos hier entsprechen allen deinen anderen Einstellungen, nur nicht dem {orientation}-Filter.",
     orientationAction: "Alle Orientierungen zeigen",
     noneTitle: "Keine passenden Videos",
     noneBody:

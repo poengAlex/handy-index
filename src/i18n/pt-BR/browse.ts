@@ -57,9 +57,11 @@ const browse: typeof enUS = {
     orientation: "Orientação",
     access: "Acesso",
     premiumScriptsLabel: "Scripts premium",
-    premiumScriptsCaption: "Incluir scripts atrás do paywall de um parceiro",
+    premiumScriptsCaption:
+      "Incluir scripts que ficam na área paga de um parceiro",
     premiumVideosLabel: "Vídeos premium",
-    premiumVideosCaption: "Incluir vídeos atrás do paywall de um parceiro",
+    premiumVideosCaption:
+      "Incluir vídeos que ficam na área paga de um parceiro",
     mutedLabel: "Tags silenciadas",
     mutedNone: "Nada silenciado",
     // {tags} is a comma-joined list of the first few muted tags
@@ -81,12 +83,16 @@ const browse: typeof enUS = {
     mutedManyBody:
       "Vídeos com essas tags ficam ocultos em todo o site. Deixe de silenciar as tags para ver estes resultados.",
     mutedManyAction: "Deixar de silenciar as tags",
-    // {orientation} comes from common.orientation.* via useFormat()
-    orientationTitle: "Nada por aqui no filtro {orientation}",
+    // {orientation} comes from common.orientation.* via useFormat(), and
+    // those four option names are pinned to English — so this slot always
+    // receives a Latin word ("Straight"), never a Portuguese one that could
+    // inflect. It is quoted like a tag name above, so it reads as the option
+    // you picked rather than as an English adjective on "filtro".
+    orientationTitle: "Nada por aqui no filtro “{orientation}”",
     // one sentence, not a count phrase glued to a clause: the verb agrees
     // with the count in English and the word order differs in Norwegian
     orientationBody:
-      "{count} vídeo aqui combina com o resto dos seus filtros, mas não com o filtro {orientation}. | {count} vídeos aqui combinam com o resto dos seus filtros, mas não com o filtro {orientation}.",
+      "{count} vídeo aqui combina com o resto dos seus filtros, mas não com o filtro “{orientation}”. | {count} vídeos aqui combinam com o resto dos seus filtros, mas não com o filtro “{orientation}”.",
     orientationAction: "Mostrar todas as orientações",
     noneTitle: "Nenhum vídeo encontrado",
     noneBody:

@@ -13,13 +13,13 @@ const gates: typeof enUS = {
   notice: {
     hiddenByMuted: "{count}をミュート中のタグで非表示",
     hiddenByOrientation: "{count}を「{orientation}」フィルターで非表示",
-    hiddenByScript: "{count}を有料スクリプトのフィルターで非表示",
+    hiddenByScript: "{count}を有料scriptのフィルターで非表示",
     hiddenByVideo: "{count}を有料動画のフィルターで非表示",
 
     hiddenTotal: "{count}を非表示",
     byMuted: "ミュート中のタグ：{count}本",
     byOrientation: "「{orientation}」フィルター：{count}本",
-    byScript: "有料スクリプトのフィルター：{count}本",
+    byScript: "有料scriptのフィルター：{count}本",
     byVideo: "有料動画のフィルター：{count}本"
   },
 
@@ -29,7 +29,7 @@ const gates: typeof enUS = {
       "ミュートしたタグはカタログから消えます。一覧・検索・各行・関連動画の" +
       "すべてで除外されます。照合は完全一致なので、「gay」をミュートしても" +
       "「gay massage」はミュートされません。お気に入りとプレイリストは" +
-      "あなたのものなので、そのまま残ります。",
+      "自分のものなので、そのまま残ります。",
 
     // the tag picker, and the cost printed under every option in it
     pickerLabel: "タグをミュート",

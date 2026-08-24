@@ -78,17 +78,21 @@ const playlists: typeof enUS = {
   },
 
   bulk: {
-    label: "Hent alle skript ({count})",
+    label: "Hent alle scripts ({count})",
     progress: "Henter {done}/{total}…",
-    // "Handy-en din" with a hyphen, same as services.ts: the definite ending
-    // on an English brand name reads as a typo without it
+    // The device name stays uninflected — the possessive goes in front
+    // ("din Handy"), never a Norwegian definite suffix on the brand name.
+    // Same in services.ts, and `connection key` and `script` stay English
+    // too. "Klarte ikke å hente scripts" is bare on purpose: the Norwegian
+    // definite "skriptene" would put an ending on a protected term.
     keyPrompt:
-      "Skript er bundet til Handy-en din. Skriv inn tilkoblingsnøkkelen fra Handy-appen for å fortsette.",
-    failedTitle: "Klarte ikke å hente skriptene",
-    doneTitle: "Skript lastet ned",
-    // "skript" is neuter and one syllable, so the plural is unmarked — both
-    // sides of the | are meant to be identical
-    doneBody: "{count} skript lagret. | {count} skript lagret.",
+      "Scripts er bundet til din Handy. Skriv inn connection key fra Handy-appen for å fortsette.",
+    failedTitle: "Klarte ikke å hente scripts",
+    doneTitle: "Scripts lastet ned",
+    // `script` is a protected English term, so it takes the English plural
+    // the source uses rather than a Norwegian one: "script" on the singular
+    // branch, "scripts" on the plural
+    doneBody: "{count} script lagret. | {count} scripts lagret.",
     partialBody: "{saved} lagret, {failed} mislyktes."
   },
 

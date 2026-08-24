@@ -17,7 +17,7 @@ const services: typeof enUS = {
     noFreeScript:
       "Não existe script gratuito para este vídeo. O catálogo está desatualizado.",
     unauthorized:
-      "Ou a chave de conexão está errada, ou o seu Handy não está online. Verifique os dois e tente de novo.",
+      "Ou a connection key está errada, ou o seu Handy não está online. Verifique os dois e tente de novo.",
     failed:
       "O servidor de scripts não respondeu. Verifique sua conexão e tente de novo."
   }

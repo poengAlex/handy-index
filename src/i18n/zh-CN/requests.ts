@@ -9,17 +9,17 @@ const requests: typeof enUS = {
   // Connection-key gate and the two failure states behind it. Shown by both
   // pages; only the body differs.
   key: {
-    title: "需要连接密钥",
+    title: "需要 connection key",
     boardBody:
-      "请求榜与你的 Handy 绑定。添加 Handy 应用里的连接密钥，即可查看请求、提交请求并投票。",
-    queueBody: "队列与你的 Handy 绑定。添加 Handy 应用里的连接密钥即可查看。",
-    addAction: "添加连接密钥",
-    rejectedTitle: "连接密钥被拒绝",
+      "请求榜与你的 Handy 绑定。添加 Handy 应用里的 connection key，即可查看请求、提交请求并投票。",
+    queueBody: "队列与你的 Handy 绑定。添加 Handy 应用里的 connection key 即可查看。",
+    addAction: "添加 connection key",
+    rejectedTitle: "Connection key 被拒绝",
     rejectedBody:
       "密钥有误，或者 Handy 不在线。在 Handy 应用里核对密钥，确认设备已开机并联网，然后重新输入。",
     rejectedAction: "重新输入密钥",
-    boardDialog: "请求榜与你的 Handy 绑定。输入 Handy 应用里的连接密钥以继续。",
-    queueDialog: "队列与你的 Handy 绑定。输入 Handy 应用里的连接密钥以继续。"
+    boardDialog: "请求榜与你的 Handy 绑定。输入 Handy 应用里的 connection key 以继续。",
+    queueDialog: "队列与你的 Handy 绑定。输入 Handy 应用里的 connection key 以继续。"
   },
 
   // The voting board page. There are four count messages rather than one
@@ -29,8 +29,8 @@ const requests: typeof enUS = {
   // and pluralized ("12 requests", from common.count.requests) — move it
   // wherever the sentence wants it.
   board: {
-    title: "脚本请求",
-    lead: "投票决定接下来给哪些视频做脚本——票数最高的先做。",
+    title: "Script 请求",
+    lead: "投票决定接下来给哪些视频做 script——票数最高的先做。",
     queueLink: "查看队列",
     emptyTitle: "没有等待中的请求",
     emptyBody: "现在没有可投票的请求。在上方请求一个视频，让队列动起来。",
@@ -45,10 +45,10 @@ const requests: typeof enUS = {
   // The queue page: the same requests, ranked, read-only.
   queue: {
     title: "请求队列",
-    lead: "制作顺序：票数最高的请求最先做脚本。",
+    lead: "制作顺序：票数最高的请求最先做 script。",
     boardLink: "投票榜",
     emptyTitle: "队列为空",
-    emptyBody: "现在没有等着做脚本的视频。到投票榜请求一个视频，让队列动起来。",
+    emptyBody: "现在没有等着做 script 的视频。到投票榜请求一个视频，让队列动起来。",
     emptyAction: "前往请求页",
     errorTitle: "无法加载队列",
     noMatchBody: "队列里没有符合这些筛选条件的请求。放宽条件就能看到其余的。",
@@ -61,13 +61,13 @@ const requests: typeof enUS = {
   // The submit row on the board, plus the two toasts it can raise.
   submit: {
     title: "请求视频",
-    hint: "粘贴一个你希望有脚本的视频链接。它要先通过核验，才会出现在投票列表里。",
+    hint: "粘贴一个你希望有 script 的视频链接。它要先通过核验，才会出现在投票列表里。",
     urlLabel: "视频 URL",
     action: "提交请求",
     sentTitle: "请求已发送",
     sentBody: "它要先通过核验，才会出现在投票列表里。",
     failedTitle: "请求发送失败",
-    failedBody: "脚本索引没有接受这个 URL。再试一次。"
+    failedBody: "Script 索引没有接受这个 URL。再试一次。"
   },
 
   // The vote button and its toasts. `failedKeyBody` is the auth case: the key
@@ -76,11 +76,11 @@ const requests: typeof enUS = {
     action: "投票",
     voted: "已投票",
     successTitle: "投票已计入",
-    successBody: "票数最高的请求最先做脚本。",
+    successBody: "票数最高的请求最先做 script。",
     failedTitle: "投票失败",
     failedKeyBody:
       "密钥有误，或者 Handy 不在线——两者都检查一遍，然后重新输入。",
-    failedBody: "脚本索引没有接受这次投票。再试一次。"
+    failedBody: "Script 索引没有接受这次投票。再试一次。"
   },
 
   // One request tile.

@@ -13,13 +13,13 @@ const gates: typeof enUS = {
   notice: {
     hiddenByMuted: "차단한 태그로 숨겨진 {count}",
     hiddenByOrientation: "{orientation} 필터로 숨겨진 {count}",
-    hiddenByScript: "유료 스크립트 필터로 숨겨진 {count}",
+    hiddenByScript: "유료 script 필터로 숨겨진 {count}",
     hiddenByVideo: "유료 동영상 필터로 숨겨진 {count}",
 
     hiddenTotal: "숨겨진 {count}",
     byMuted: "차단한 태그로 {count}개",
     byOrientation: "{orientation} 필터로 {count}개",
-    byScript: "유료 스크립트 필터로 {count}개",
+    byScript: "유료 script 필터로 {count}개",
     byVideo: "유료 동영상 필터로 {count}개"
   },
 

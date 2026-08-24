@@ -15,11 +15,11 @@ const services: typeof enUS = {
   // t(`services.scriptDownload.${scriptDownloadCode(error)}`)
   scriptDownload: {
     noFreeScript:
-      "この動画に無料のスクリプトはありません。カタログの掲載内容が古くなっています。",
+      "この動画に無料のscriptはありません。カタログの掲載内容が古くなっています。",
     unauthorized:
-      "接続キーが間違っているか、Handyがオンラインになっていません。両方を確認してから、もう一度お試しください。",
+      "Connection keyが間違っているか、Handyがオンラインになっていません。両方を確認してから、もう一度試してください。",
     failed:
-      "スクリプトサーバーから応答がありませんでした。接続を確認して、もう一度お試しください。"
+      "Scriptサーバーから応答がありませんでした。接続を確認して、もう一度試してください。"
   }
 };
 

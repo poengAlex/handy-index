@@ -2,25 +2,25 @@ import type enUS from "../en-US/requests";
 
 const requests: typeof enUS = {
   key: {
-    title: "Du trenger en tilkoblingsnøkkel",
+    title: "Du trenger en connection key",
     boardBody:
-      "Avstemningen er knyttet til Handy-en din. Legg inn tilkoblingsnøkkelen fra Handy-appen for å se forespørsler, sende inn nye og stemme.",
+      "Avstemningen er knyttet til din Handy. Legg inn connection key fra Handy-appen for å se forespørsler, sende inn nye og stemme.",
     queueBody:
-      "Køen er knyttet til Handy-en din. Legg inn tilkoblingsnøkkelen fra Handy-appen for å se den.",
-    addAction: "Legg inn tilkoblingsnøkkel",
-    rejectedTitle: "Tilkoblingsnøkkelen ble avvist",
+      "Køen er knyttet til din Handy. Legg inn connection key fra Handy-appen for å se den.",
+    addAction: "Legg inn connection key",
+    rejectedTitle: "Connection key ble avvist",
     rejectedBody:
-      "Enten er nøkkelen feil, eller så er ikke Handy-en din på nett. Sjekk nøkkelen i Handy-appen, pass på at enheten er slått på og tilkoblet, og skriv den inn på nytt.",
+      "Enten er nøkkelen feil, eller så er ikke din Handy på nett. Sjekk nøkkelen i Handy-appen, pass på at enheten er slått på og tilkoblet, og skriv den inn på nytt.",
     rejectedAction: "Skriv inn nøkkelen på nytt",
     boardDialog:
-      "Avstemningen er bundet til Handy-en din. Skriv inn tilkoblingsnøkkelen fra Handy-appen for å fortsette.",
+      "Avstemningen er bundet til din Handy. Skriv inn connection key fra Handy-appen for å fortsette.",
     queueDialog:
-      "Køen er bundet til Handy-en din. Skriv inn tilkoblingsnøkkelen fra Handy-appen for å fortsette."
+      "Køen er bundet til din Handy. Skriv inn connection key fra Handy-appen for å fortsette."
   },
 
   board: {
-    title: "Skriptforespørsler",
-    lead: "Stem på hvilke videoer som skal skriptes neste gang — forespørselen med flest stemmer går først.",
+    title: "Script-forespørsler",
+    lead: "Stem på hvilke videoer som skal få script neste gang — forespørselen med flest stemmer går først.",
     queueLink: "Se køen",
     emptyTitle: "Ingen forespørsler venter",
     emptyBody:
@@ -40,11 +40,11 @@ const requests: typeof enUS = {
 
   queue: {
     title: "Forespørselskø",
-    lead: "Rekkefølgen videoene skriptes i: forespørselen med flest stemmer kommer først.",
+    lead: "Rekkefølgen videoene får script i: forespørselen med flest stemmer kommer først.",
     boardLink: "Se avstemningen",
     emptyTitle: "Køen er tom",
     emptyBody:
-      "Ingenting venter på et skript akkurat nå. Gå til avstemningen og be om en video, så kommer køen i gang.",
+      "Ingenting venter på et script akkurat nå. Gå til avstemningen og be om en video, så kommer køen i gang.",
     // it goes to the voting board, so it is named after the destination —
     // the same word the button at the top of the page uses
     emptyAction: "Gå til avstemningen",
@@ -60,25 +60,26 @@ const requests: typeof enUS = {
 
   submit: {
     title: "Be om en video",
-    hint: "Lim inn en lenke til en video du vil ha skriptet. Den må gjennom verifisering før den dukker opp til avstemning.",
+    hint: "Lim inn en lenke til en video du vil ha script til. Den må gjennom verifisering før den dukker opp til avstemning.",
     urlLabel: "Video-URL",
     action: "Be om video",
     sentTitle: "Forespørselen er sendt",
     sentBody: "Den må gjennom verifisering før den dukker opp til avstemning.",
-    // same shape as the other failures in the app: "Kunne ikke …"
+    // same shape as the other *action* failures in the app: "Klarte ikke å …".
+    // "Kunne ikke laste …" is reserved for a load that failed.
     failedTitle: "Klarte ikke å sende forespørselen",
-    failedBody: "Skriptindeksen godtok ikke URL-en. Prøv igjen."
+    failedBody: "Script-indeksen godtok ikke URL-en. Prøv igjen."
   },
 
   vote: {
     action: "Stem",
     voted: "Stemt",
     successTitle: "Stemmen er registrert",
-    successBody: "Forespørslene med flest stemmer skriptes først.",
+    successBody: "Forespørslene med flest stemmer får script først.",
     failedTitle: "Klarte ikke å registrere stemmen",
     failedKeyBody:
-      "Enten er nøkkelen feil, eller så er ikke Handy-en din på nett — sjekk begge deler og skriv den inn på nytt.",
-    failedBody: "Skriptindeksen godtok ikke stemmen. Prøv igjen."
+      "Enten er nøkkelen feil, eller så er ikke din Handy på nett — sjekk begge deler og skriv den inn på nytt.",
+    failedBody: "Script-indeksen godtok ikke stemmen. Prøv igjen."
   },
 
   card: {

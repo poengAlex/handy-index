@@ -21,11 +21,11 @@ const video: typeof enUS = {
   },
 
   hero: {
-    premiumChip: "付费脚本"
+    premiumChip: "付费 script"
   },
 
   action: {
-    getScript: "获取脚本",
+    getScript: "获取 script",
     // {site} is the partner's own name, or `fallback.site` when it has none
     watchOn: "在 {site} 观看",
     addFavorite: "加入收藏",
@@ -34,10 +34,10 @@ const video: typeof enUS = {
     report: "举报此视频"
   },
 
-  premiumNote: "此视频的脚本为付费内容——它随合作网站上的视频一同提供。",
+  premiumNote: "此视频的 script 为付费内容——它随合作网站上的视频一同提供。",
 
   playerNote:
-    "在 IVDB 上播放时 Handy 不会同步——这里只有画面。下载脚本，用你的 Handy 播放，才能得到同步的动作。",
+    "在 IVDB 上播放时 The Handy 不会同步——这里只有画面。下载 script，用你的 Handy 播放，才能得到同步的动作。",
 
   tag: {
     unmuteAria: "取消屏蔽标签：{tag}",
@@ -48,7 +48,7 @@ const video: typeof enUS = {
 
   details: {
     title: "详情",
-    script: "脚本",
+    script: "Script",
     free: "免费",
     premium: "付费",
     published: "发布时间",
@@ -57,18 +57,18 @@ const video: typeof enUS = {
     // the non-VR case: an ordinary 2D video
     formatFlat: "平面",
     site: "网站",
-    scriptBy: "脚本作者",
+    scriptBy: "Script 作者",
     rating: "评分",
     ratingValue: "{percent}%",
     // {votes} arrives already pluralized from useFormat().count("votes", n)
     ratingWithVotes: "{percent}% · {votes}",
-    scriptPlays: "脚本播放次数"
+    scriptPlays: "Script 播放次数"
   },
 
   rate: {
-    title: "为此脚本评分",
+    title: "为此 script 评分",
     community: "社区评分：{percent}%",
-    thanks: "感谢你为这个脚本评分",
+    thanks: "感谢你为这个 script 评分",
     errorTitle: "无法保存评分"
   },
 
@@ -90,7 +90,7 @@ const video: typeof enUS = {
 
   comments: {
     title: "评论",
-    gateHint: "评论需要连接密钥。",
+    gateHint: "评论需要 connection key。",
     gateAction: "添加密钥",
     inputLabel: "写评论",
     submit: "发表",
@@ -109,15 +109,15 @@ const video: typeof enUS = {
   // Replaces ConnectionKeyDialog's generic blurb — the reason the key is
   // being asked for differs per action.
   keyPrompt: {
-    script: "脚本与你的 Handy 绑定。输入 Handy 应用里的连接密钥以继续。",
-    action: "评分和评论与你的 Handy 绑定。输入 Handy 应用里的连接密钥以继续。"
+    script: "Scripts 与你的 Handy 绑定。输入 Handy 应用里的 connection key 以继续。",
+    action: "评分和评论与你的 Handy 绑定。输入 Handy 应用里的 connection key 以继续。"
   },
 
   script: {
-    readyTitle: "脚本已就绪",
+    readyTitle: "Script 已就绪",
     readyBody: "下载已在新标签页中打开。",
-    errorTitle: "无法获取脚本",
-    errorBody: "连接密钥有误，或者 Handy 不在线。两者都检查一遍，然后重试。"
+    errorTitle: "无法获取 script",
+    errorBody: "Connection key 有误，或者 Handy 不在线。两者都检查一遍，然后重试。"
   },
 
   mute: {

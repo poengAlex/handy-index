@@ -8,21 +8,21 @@ const library: typeof enUS = {
     title: "Mes favoris",
     // {count} arrives already pluralized from useFormat().count("videos", n),
     // so this message only owns the frame around the noun
-    count: "{count} dans vos favoris",
+    count: "{count} dans tes favoris",
     emptyTitle: "Aucun favori pour l'instant",
     emptyBody:
-      "Appuyez sur le cœur d'une page vidéo et la vidéo est enregistrée ici, à portée de main."
+      "Appuie sur le cœur d'une page vidéo et la vidéo est enregistrée ici, à portée de main."
   },
 
   history: {
     title: "Vues récemment",
-    note: "Conservé uniquement dans ce navigateur — votre historique n'est jamais suivi ni envoyé où que ce soit.",
+    note: "Conservé uniquement dans ce navigateur — ton historique n'est jamais suivi ni envoyé où que ce soit.",
     emptyTitle: "Aucune vidéo vue pour l'instant",
     emptyBody:
-      "Les vidéos que vous ouvrez sont retenues ici, sur cet appareil uniquement.",
+      "Les vidéos que tu ouvres sont retenues ici, sur cet appareil uniquement.",
     clearTitle: "Effacer l'historique ?",
     clearBody:
-      "Les vidéos restent dans le catalogue — seule la liste de ce que vous avez ouvert dans ce navigateur disparaît.",
+      "Les vidéos restent dans le catalogue — seule la liste de ce que tu as ouvert dans ce navigateur disparaît.",
     clearConfirm: "Effacer l'historique",
     clearedToast: "Historique effacé"
   }

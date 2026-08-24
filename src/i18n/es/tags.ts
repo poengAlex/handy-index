@@ -5,7 +5,7 @@ import type enUS from "../en-US/tags";
 // behind and the right-click menu that mutes a tag.
 const tags: typeof enUS = {
   title: "Etiquetas",
-  errorTitle: "No se pudieron cargar las etiquetas",
+  errorTitle: "No se han podido cargar las etiquetas",
 
   // The cloud can't draw a pill until the whole ~40 MB index is in, so the
   // wait gets a phase, a percentage and a reason it's worth it.
@@ -28,7 +28,7 @@ const tags: typeof enUS = {
     searchPlaceholder: "Buscar etiquetas",
     searchLabel: "Buscar etiquetas",
     sortLabel: "Ordenar etiquetas",
-    sortByCount: "Más videos",
+    sortByCount: "Más vídeos",
     // the alphabet's first and last letter — Norwegian ends at Å
     sortByName: "A–Z",
     sortedDescLabel: "Orden descendente — invertir",
@@ -41,7 +41,7 @@ const tags: typeof enUS = {
 
   empty: {
     searchTitle: "Ninguna etiqueta coincide",
-    searchBody: "Nada del índice coincide con “{query}”.",
+    searchBody: "Nada del índice coincide con «{query}».",
     filteredBody:
       "Tus filtros y etiquetas silenciadas ocultan todas las etiquetas del índice. Quita alguno en los ajustes.",
     filteredAction: "Etiquetas silenciadas"
@@ -53,10 +53,10 @@ const tags: typeof enUS = {
   },
 
   toast: {
-    refusedTitle: "“{tag}” no se puede silenciar",
+    refusedTitle: "«{tag}» no se puede silenciar",
     refusedBody:
       "Las etiquetas de orientación deciden qué catálogo ves — eso se cambia en los ajustes.",
-    mutedTitle: "“{tag}” silenciada",
+    mutedTitle: "«{tag}» silenciada",
     mutedBody:
       "Está en tu lista de etiquetas silenciadas — puedes dejar de " +
       "silenciarla cuando quieras."

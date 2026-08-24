@@ -29,7 +29,7 @@ const browse: typeof enUS = {
     recent: "新着順",
     updated: "更新順",
     top: "評価が高い順",
-    plays: "スクリプト再生数順",
+    plays: "Script再生数順",
     views: "視聴数順",
     longest: "再生時間が長い順",
     title: "タイトル順"
@@ -56,9 +56,9 @@ const browse: typeof enUS = {
     vrCaption: "VR動画だけを表示します",
     orientation: "性的指向",
     access: "利用条件",
-    premiumScriptsLabel: "有料スクリプト",
+    premiumScriptsLabel: "有料script",
     premiumScriptsCaption:
-      "パートナーサイトの有料エリアにあるスクリプトも含めます",
+      "パートナーサイトの有料エリアにあるscriptも含めます",
     premiumVideosLabel: "有料動画",
     premiumVideosCaption: "パートナーサイトの有料エリアにある動画も含めます",
     mutedLabel: "ミュート中のタグ",
@@ -82,16 +82,18 @@ const browse: typeof enUS = {
     mutedManyBody:
       "これらのタグが付いた動画は、サイト全体で非表示になっています。結果を見るにはミュートを解除してください。",
     mutedManyAction: "まとめてミュートを解除",
-    // {orientation} comes from common.orientation.* via useFormat()
-    orientationTitle: "{orientation}：表示できる動画がありません",
+    // {orientation} comes from common.orientation.* via useFormat(). It is
+    // pinned to English, so it arrives as a Latin run inside Japanese and
+    // gets the 「」 this locale already gives an interpolated data value.
+    orientationTitle: "「{orientation}」に表示できる動画がありません",
     // one sentence, not a count phrase glued to a clause: the verb agrees
     // with the count in English and the word order differs in Norwegian
     orientationBody:
-      "他の条件をすべて満たす動画が{count}本ありますが、性的指向のフィルター（{orientation}）から外れています。",
+      "他の条件はすべて満たす動画が{count}本ありますが、「{orientation}」フィルターから外れています。",
     orientationAction: "すべての性的指向を表示",
     noneTitle: "一致する動画がありません",
     noneBody:
-      "すべての動画が絞り込みから外れました。検索条件をゆるめるか、フィルターをいくつか解除してください。",
+      "すべての動画が絞り込みから外れました。検索条件を緩めるか、フィルターをいくつか解除してください。",
     noneAction: "フィルターをすべて解除"
   },
 

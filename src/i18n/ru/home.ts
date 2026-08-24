@@ -16,7 +16,7 @@ const home: typeof enUS = {
   // One sentence, two places: under the empty hero and under the empty shelf
   // list. Both are the same "you filtered the catalog away" state.
   filteredOutBody:
-    "Ваши фильтры и заглушённые теги скрывают весь каталог. Ослабьте их в настройках.",
+    "Твои фильтры и заглушённые теги скрывают весь каталог. Ослабь их в настройках.",
 
   rows: {
     recent: "Новинки",
@@ -28,7 +28,7 @@ const home: typeof enUS = {
     /** delete-icon tooltip on the same shelf */
     recentlyViewedClear: "Очистить историю просмотров",
     /** {tag} is a catalog tag and stays untranslated */
-    becauseYouLike: "Раз вам нравится «{tag}»",
+    becauseYouLike: "Раз тебе нравится «{tag}»",
     topRated: "Высокий рейтинг",
     mostPlayed: "Чаще всего запускают",
     updated: "Недавно обновлённые"
@@ -36,7 +36,7 @@ const home: typeof enUS = {
 
   clearHistory: {
     title: "Очистить историю просмотров?",
-    body: "Видео останутся в каталоге — исчезнет только список того, что вы открывали в этом браузере.",
+    body: "Видео останутся в каталоге — исчезнет только список того, что было открыто в этом браузере.",
     confirm: "Очистить историю",
     done: "История просмотров очищена"
   }

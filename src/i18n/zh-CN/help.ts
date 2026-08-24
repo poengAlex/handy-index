@@ -52,8 +52,8 @@ const help: typeof enUS = {
         "把播放列表变成文件、可复制的 JSON 文本或临时分享链接带走——这三种也都能导入回来"
     },
     bulkDownload: {
-      label: "一次获取全部脚本",
-      caption: "在播放列表上点一下，就下载里面所有的免费脚本"
+      label: "一次获取全部 scripts",
+      caption: "在播放列表上点一下，就下载里面所有的免费 scripts"
     },
     quickMenu: {
       label: "快捷菜单",
@@ -63,22 +63,22 @@ const help: typeof enUS = {
   },
 
   scripts: {
-    title: "脚本与你的 Handy",
+    title: "Scripts 与你的 Handy",
     free: {
-      label: "免费脚本",
-      caption: "标着“免费”的视频，用你的 Handy 连接密钥就能下载脚本"
+      label: "免费 scripts",
+      caption: "标着“免费”的视频，用你的 Handy connection key 就能下载 script"
     },
     rate: {
-      label: "给脚本评分",
-      caption: "在视频页上直接给任意免费脚本打星"
+      label: "给 scripts 评分",
+      caption: "在视频页上直接给任意免费 script 打星"
     },
     comments: {
-      label: "脚本评论",
-      caption: "阅读脚本评论，也可以匿名发表"
+      label: "Script 评论",
+      caption: "阅读 script 评论，也可以匿名发表"
     },
     requests: {
       label: "请求视频",
-      caption: "为任意视频申请脚本，并投票决定接下来做哪一个"
+      caption: "为任意视频申请 script，并投票决定接下来做哪一个"
     }
   },
 
@@ -94,9 +94,9 @@ const help: typeof enUS = {
         "默认关闭——在视频页上直接看 Pornhub 和 xHamster 的视频（播放不会和 Handy 同步）"
     },
     filters: {
-      label: "取向、脚本与视频筛选",
+      label: "取向、script 与视频筛选",
       caption:
-        "免费还是付费脚本、免费还是付费视频，以及片子里是谁——在设置里改，或者直接在浏览页的筛选里改"
+        "免费还是付费 scripts、免费还是付费视频，以及片子里是谁——在设置里改，或者直接在浏览页的筛选里改"
     },
     mutedTags: {
       label: "已屏蔽标签",

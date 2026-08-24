@@ -16,8 +16,8 @@ const browse: typeof enUS = {
     // a direction word, which would strand the translator.
     dirDescAria: "Сортировка по убыванию — обратить порядок",
     dirAscAria: "Сортировка по возрастанию — обратить порядок",
-    dirDescTitle: "Сортировка по убыванию — нажмите, чтобы обратить порядок",
-    dirAscTitle: "Сортировка по возрастанию — нажмите, чтобы обратить порядок",
+    dirDescTitle: "Сортировка по убыванию — нажми, чтобы обратить порядок",
+    dirAscTitle: "Сортировка по возрастанию — нажми, чтобы обратить порядок",
     filters: "Фильтры",
     filtersCount: "Фильтры ({count})",
     shareAria: "Поделиться результатами — в ссылке сохранятся все фильтры"
@@ -56,9 +56,9 @@ const browse: typeof enUS = {
     vrCaption: "Только видео в виртуальной реальности",
     orientation: "Ориентация",
     access: "Доступ",
-    premiumScriptsLabel: "Платные скрипты",
+    premiumScriptsLabel: "Платные scripts",
     premiumScriptsCaption:
-      "Включать скрипты, доступные у партнёра только платно",
+      "Включать scripts, доступные у партнёра только платно",
     premiumVideosLabel: "Платные видео",
     premiumVideosCaption: "Включать видео, доступные у партнёра только платно",
     mutedLabel: "Заглушённые теги",
@@ -76,22 +76,22 @@ const browse: typeof enUS = {
     // can fix it, so the one-tag case names the tag it is talking about.
     mutedOneTitle: "Тег «{tag}» заглушён",
     mutedOneBody:
-      "Видео с этим тегом скрыты везде. Верните тег, чтобы увидеть эти результаты.",
+      "Видео с этим тегом скрыты везде. Верни тег, чтобы увидеть эти результаты.",
     mutedOneAction: "Вернуть тег «{tag}»",
     mutedManyTitle: "Часть этих тегов заглушена",
     mutedManyBody:
-      "Видео с этими тегами скрыты везде. Верните их, чтобы увидеть эти результаты.",
+      "Видео с этими тегами скрыты везде. Верни их, чтобы увидеть эти результаты.",
     mutedManyAction: "Вернуть их",
     // {orientation} comes from common.orientation.* via useFormat()
-    orientationTitle: "В разделе «{orientation}» ничего нет",
+    orientationTitle: "С фильтром «{orientation}» здесь ничего нет",
     // one sentence, not a count phrase glued to a clause: the verb agrees
     // with the count in English and the word order differs in Norwegian
     orientationBody:
-      "{count} видео подходит по всем остальным вашим фильтрам, но не по фильтру «{orientation}». | {count} видео подходят по всем остальным вашим фильтрам, но не по фильтру «{orientation}». | {count} видео подходят по всем остальным вашим фильтрам, но не по фильтру «{orientation}».",
+      "{count} видео подходит под все остальные твои фильтры, но не под фильтр «{orientation}». | {count} видео подходят под все остальные твои фильтры, но не под фильтр «{orientation}». | {count} видео подходят под все остальные твои фильтры, но не под фильтр «{orientation}».",
     orientationAction: "Показать все ориентации",
     noneTitle: "Видео не найдены",
     noneBody:
-      "Фильтры отсеяли все видео. Упростите запрос или снимите часть фильтров.",
+      "Фильтры отсеяли все видео. Упрости запрос или сними часть фильтров.",
     noneAction: "Сбросить все фильтры"
   },
 
@@ -101,7 +101,7 @@ const browse: typeof enUS = {
     title: "IVDB — {count}",
     fallbackTitle: "Видео на IVDB",
     copiedTitle: "Ссылка скопирована",
-    copiedBody: "В ней сохранены все ваши фильтры.",
+    copiedBody: "В ней сохранены все твои фильтры.",
     failedTitle: "Не удалось скопировать ссылку"
   }
 };

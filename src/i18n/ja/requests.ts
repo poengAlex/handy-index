@@ -9,20 +9,20 @@ const requests: typeof enUS = {
   // Connection-key gate and the two failure states behind it. Shown by both
   // pages; only the body differs.
   key: {
-    title: "接続キーが必要です",
+    title: "Connection keyが必要です",
     boardBody:
-      "リクエストボードはお使いのHandyに紐付いています。リクエストの閲覧・投稿・投票には、Handyアプリの接続キーを追加してください。",
+      "投票ページはHandyに紐付いています。リクエストの閲覧・投稿・投票には、Handyアプリのconnection keyを追加してください。",
     queueBody:
-      "キューはお使いのHandyに紐付いています。表示するには、Handyアプリの接続キーを追加してください。",
-    addAction: "接続キーを追加",
-    rejectedTitle: "接続キーが拒否されました",
+      "順番待ちの一覧はHandyに紐付いています。表示するには、Handyアプリのconnection keyを追加してください。",
+    addAction: "Connection keyを追加",
+    rejectedTitle: "Connection keyが拒否されました",
     rejectedBody:
       "キーが間違っているか、Handyがオンラインになっていません。Handyアプリでキーを確認し、デバイスの電源が入っていて接続されていることを確かめてから、もう一度入力してください。",
     rejectedAction: "キーを再入力",
     boardDialog:
-      "リクエストボードはお使いのHandyに紐付いています。続けるには、Handyアプリの接続キーを入力してください。",
+      "投票ページはHandyに紐付いています。続けるには、Handyアプリのconnection keyを入力してください。",
     queueDialog:
-      "キューはお使いのHandyに紐付いています。続けるには、Handyアプリの接続キーを入力してください。"
+      "順番待ちの一覧はHandyに紐付いています。続けるには、Handyアプリのconnection keyを入力してください。"
   },
 
   // The voting board page. There are four count messages rather than one
@@ -32,15 +32,15 @@ const requests: typeof enUS = {
   // and pluralized ("12 requests", from common.count.requests) — move it
   // wherever the sentence wants it.
   board: {
-    title: "スクリプトのリクエスト",
-    lead: "次にスクリプトを作る動画を投票で決めます。得票数の多いリクエストから順に対応します。",
-    queueLink: "キューを見る",
+    title: "Scriptのリクエスト",
+    lead: "次にscriptを作る動画を投票で決めます。得票数の多いリクエストから順に対応します。",
+    queueLink: "順番待ちを見る",
     emptyTitle: "待機中のリクエストはありません",
     emptyBody:
       "現在、投票を受け付けているリクエストはありません。上のフォームから動画をリクエストしてください。",
     errorTitle: "リクエストを読み込めませんでした",
     noMatchBody:
-      "その条件に一致するリクエストはボードにありません。条件をゆるめると残りが表示されます。",
+      "投票ページには、その条件に一致するリクエストがありません。条件を緩めると残りが表示されます。",
     countAll: "{requests}が投票受付中",
     countAllCapped:
       "{requests}が投票受付中（読み込んだ分より多くのリクエストがあります）",
@@ -51,16 +51,16 @@ const requests: typeof enUS = {
 
   // The queue page: the same requests, ranked, read-only.
   queue: {
-    title: "リクエストキュー",
-    lead: "スクリプトを作る順番です。得票数の多いリクエストから作成します。",
-    boardLink: "投票ボード",
-    emptyTitle: "キューは空です",
+    title: "リクエストの順番待ち",
+    lead: "Scriptを作る順番です。得票数の多いリクエストから作成します。",
+    boardLink: "投票ページ",
+    emptyTitle: "順番待ちはありません",
     emptyBody:
-      "現在、スクリプト待ちのものはありません。投票ボードから動画をリクエストしてください。",
+      "現在、scriptの作成を待っているものはありません。投票ページから動画をリクエストしてください。",
     emptyAction: "リクエストへ移動",
-    errorTitle: "キューを読み込めませんでした",
+    errorTitle: "順番待ちを読み込めませんでした",
     noMatchBody:
-      "その条件に一致するリクエストはキューにありません。条件をゆるめると残りが表示されます。",
+      "順番待ちには、その条件に一致するリクエストがありません。条件を緩めると残りが表示されます。",
     countWaiting: "{requests}が待機中",
     countWaitingCapped:
       "{requests}が待機中（読み込んだ分より多くのリクエストがあります）",
@@ -72,14 +72,14 @@ const requests: typeof enUS = {
   // The submit row on the board, plus the two toasts it can raise.
   submit: {
     title: "動画をリクエスト",
-    hint: "スクリプトを作ってほしい動画のリンクを貼り付けてください。確認を通過してから、投票の対象として表示されます。",
+    hint: "Scriptを作ってほしい動画のリンクを貼り付けてください。確認を通過してから、投票の対象として表示されます。",
     urlLabel: "動画のURL",
     action: "リクエストする",
     sentTitle: "リクエストを送信しました",
     sentBody: "確認を通過してから、投票の対象として表示されます。",
     failedTitle: "リクエストに失敗しました",
     failedBody:
-      "スクリプトインデックスがそのURLを受け付けませんでした。もう一度お試しください。"
+      "ScriptインデックスがそのURLを受け付けませんでした。もう一度試してください。"
   },
 
   // The vote button and its toasts. `failedKeyBody` is the auth case: the key
@@ -88,12 +88,12 @@ const requests: typeof enUS = {
     action: "投票",
     voted: "投票済み",
     successTitle: "投票を受け付けました",
-    successBody: "得票数の多いリクエストから順にスクリプトを作成します。",
+    successBody: "得票数の多いリクエストから順にscriptを作成します。",
     failedTitle: "投票に失敗しました",
     failedKeyBody:
       "キーが間違っているか、Handyがオンラインになっていません。両方を確認して、もう一度入力してください。",
     failedBody:
-      "スクリプトインデックスが投票を受け付けませんでした。もう一度お試しください。"
+      "Scriptインデックスが投票を受け付けませんでした。もう一度試してください。"
   },
 
   // One request tile.

@@ -31,7 +31,7 @@ const common: typeof enUS = {
   state: {
     catalogErrorTitle: "카탈로그를 불러오지 못했어요",
     catalogErrorBody:
-      "스크립트 색인이 응답하지 않았어요. 연결을 확인하고 다시 시도해 보세요.",
+      "Script 색인이 응답하지 않았어요. 연결을 확인하고 다시 시도해 보세요.",
     emptyTitle: "표시할 내용이 없어요"
   },
 
@@ -69,10 +69,10 @@ const common: typeof enUS = {
   // switcher — the same "can't drift apart" reason ORIENTATION_LABELS gave
   // for living in queries.ts, which is where these strings came from.
   orientation: {
-    straight: "이성애",
-    gay: "게이",
-    trans: "트랜스",
-    all: "전체"
+    straight: "Straight",
+    gay: "Gay",
+    trans: "Trans",
+    all: "Everything"
   },
 
   language: {
