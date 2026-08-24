@@ -7,7 +7,7 @@
       round
       icon="close"
       class="h-modal__close"
-      aria-label="Close"
+      :aria-label="closeLabel"
       @click="emit('close')"
     />
     <h3 v-if="title" class="text-h4">{{ title }}</h3>
@@ -33,10 +33,19 @@
 //       </template>
 //     </HModal>
 //   </q-dialog>
-withDefaults(defineProps<{ title?: string; closable?: boolean }>(), {
-  title: "",
-  closable: false
-});
+// `closeLabel` — and every other label prop across this folder — is what
+// keeps the kit portable: the components carry their own English, and an
+// app with more than one language hands them a translated string instead
+// of forking the folder (ARCHITECTURE.md: the kit is never forked).
+withDefaults(
+  defineProps<{
+    title?: string;
+    closable?: boolean;
+    /** Screen-reader name for the close button. */
+    closeLabel?: string;
+  }>(),
+  { title: "", closable: false, closeLabel: "Close" }
+);
 
 const emit = defineEmits<{ close: [] }>();
 </script>

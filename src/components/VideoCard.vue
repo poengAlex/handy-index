@@ -1,7 +1,7 @@
 <template>
   <TileCard
     :to="`/videos/${video.partnerVideoId}`"
-    :aria-label="video.title ?? 'Video'"
+    :aria-label="video.title ?? $t('media.card.fallbackTitle')"
   >
     <template #media>
       <MediaPreview
@@ -9,7 +9,7 @@
         :poster="artwork"
         :images="video.images ?? []"
         :preview="video.preview ?? ''"
-        :alt="video.title ?? 'Video'"
+        :alt="video.title ?? $t('media.card.fallbackTitle')"
         class="tile-card__img"
       />
       <div v-else class="tile-card__placeholder">
@@ -24,13 +24,13 @@
             <q-item-section side>
               <q-icon name="play_arrow" size="20px" />
             </q-item-section>
-            <q-item-section>Open</q-item-section>
+            <q-item-section>{{ $t("media.menu.open") }}</q-item-section>
           </q-item>
           <q-item v-close-popup clickable @click="openNewTab">
             <q-item-section side>
               <q-icon name="open_in_new" size="20px" />
             </q-item-section>
-            <q-item-section>Open in new tab</q-item-section>
+            <q-item-section>{{ $t("media.menu.openNewTab") }}</q-item-section>
           </q-item>
           <q-separator />
           <q-item
@@ -41,15 +41,15 @@
             <q-item-section side>
               <q-icon name="favorite" size="20px" />
             </q-item-section>
-            <q-item-section>
-              {{ favorite ? "Remove from favorites" : "Add to favorites" }}
-            </q-item-section>
+            <q-item-section>{{ favoriteLabel }}</q-item-section>
           </q-item>
           <q-item v-close-popup clickable @click="playlistDialog = true">
             <q-item-section side>
               <q-icon name="playlist_add" size="20px" />
             </q-item-section>
-            <q-item-section>Add to playlist…</q-item-section>
+            <q-item-section>
+              {{ $t("media.menu.addToPlaylist") }}
+            </q-item-section>
           </q-item>
           <q-item
             v-if="video.scriptAccess === 'public'"
@@ -60,15 +60,21 @@
             <q-item-section side>
               <q-icon name="download" size="20px" />
             </q-item-section>
-            <q-item-section>Download script</q-item-section>
+            <q-item-section>
+              {{ $t("media.menu.downloadScript") }}
+            </q-item-section>
           </q-item>
           <q-item v-else disable>
             <q-item-section side>
               <q-icon name="workspace_premium" size="20px" />
             </q-item-section>
             <q-item-section>
-              <q-item-label>Download not possible</q-item-label>
-              <q-item-label caption>This is a premium script</q-item-label>
+              <q-item-label>
+                {{ $t("media.menu.downloadBlocked") }}
+              </q-item-label>
+              <q-item-label caption>
+                {{ $t("media.menu.downloadBlockedCaption") }}
+              </q-item-label>
             </q-item-section>
           </q-item>
           <q-separator />
@@ -76,7 +82,7 @@
             <q-item-section side>
               <q-icon name="link" size="20px" />
             </q-item-section>
-            <q-item-section>Copy link</q-item-section>
+            <q-item-section>{{ $t("media.menu.copyLink") }}</q-item-section>
           </q-item>
           <q-item
             v-if="video.videoUrl"
@@ -87,9 +93,7 @@
             <q-item-section side>
               <q-icon name="language" size="20px" />
             </q-item-section>
-            <q-item-section>
-              Watch on {{ video.partnerName ?? "site" }}
-            </q-item-section>
+            <q-item-section>{{ watchLabel }}</q-item-section>
           </q-item>
         </q-list>
       </q-menu>
@@ -110,8 +114,7 @@
     />
 
     <ConnectionKeyDialog v-model="keyDialog" @saved="downloadScript">
-      Scripts are bound to your Handy. Enter the connection key from the Handy
-      app to continue.
+      {{ $t("media.keyDialog.body") }}
     </ConnectionKeyDialog>
   </TileCard>
 </template>
@@ -121,13 +124,14 @@
 // lines. Explicit artwork only renders when the NSFW setting is on — which
 // also gates the hover preview, since that is the same artwork in motion.
 import { computed, ref } from "vue";
+import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { HChip, hToast } from "@/components/handy";
 import AddToPlaylistDialog from "@/components/AddToPlaylistDialog.vue";
 import ConnectionKeyDialog from "@/components/ConnectionKeyDialog.vue";
 import MediaPreview from "@/components/MediaPreview.vue";
 import TileCard from "@/components/TileCard.vue";
-import { formatDuration } from "@/services/format";
+import { useFormat } from "@/composables/useFormat";
 import { downloadFreeScript } from "@/services/script-download";
 import { artworkOf } from "@/services/script-index/queries";
 import type { PartnerVideo } from "@/services/script-index/types";
@@ -137,19 +141,23 @@ const props = defineProps<{ video: PartnerVideo }>();
 
 const router = useRouter();
 const settings = useSettingsStore();
+const { t } = useI18n();
+const { duration, num } = useFormat();
 
 const artwork = computed(() => artworkOf(props.video));
 
 const isVr = computed(() => props.video.format?.format === "vr");
 
 const caption = computed(() =>
-  [props.video.partnerName, formatDuration(props.video.duration)]
+  [props.video.partnerName, duration(props.video.duration)]
     .filter(Boolean)
     .join(" · ")
 );
 
 const ratingLabel = computed(() =>
-  props.video.rating ? `★ ${Math.round(props.video.rating)}%` : ""
+  props.video.rating
+    ? t("media.card.rating", { rating: num(Math.round(props.video.rating)) })
+    : ""
 );
 
 // --- quick menu ---
@@ -160,6 +168,19 @@ const detailPath = computed(() => `/videos/${props.video.partnerVideoId}`);
 
 const favorite = computed(() =>
   settings.isFavorite(props.video.partnerVideoId)
+);
+
+const favoriteLabel = computed(() =>
+  favorite.value ? t("media.menu.removeFavorite") : t("media.menu.addFavorite")
+);
+
+// the partner name is catalog data, so it stays untranslated inside the
+// message — but an entry without one needs a sentence of its own rather than
+// a translated word dropped into the slot
+const watchLabel = computed(() =>
+  props.video.partnerName
+    ? t("media.menu.watchOn", { site: props.video.partnerName })
+    : t("media.menu.watchOnSite")
 );
 
 /** absolute URL to the detail page — hash-router aware via resolve() */
@@ -179,9 +200,9 @@ function openNewTab() {
 async function copyLink() {
   try {
     await navigator.clipboard.writeText(detailUrl());
-    hToast("positive", "Link copied");
+    hToast("positive", t("media.toast.linkCopied"));
   } catch {
-    hToast("negative", "Couldn't copy the link");
+    hToast("negative", t("media.toast.linkCopyFailed"));
   }
 }
 
@@ -203,12 +224,12 @@ async function downloadScript() {
   }
   try {
     await downloadFreeScript(props.video, key);
-    hToast("positive", "Script downloaded");
+    hToast("positive", t("media.toast.scriptDownloaded"));
   } catch {
     hToast(
       "negative",
-      "Couldn't get the script",
-      "Either the connection key is wrong or your Handy isn't online. Check both, then try again."
+      t("media.toast.scriptFailedTitle"),
+      t("media.toast.scriptFailedBody")
     );
   }
 }

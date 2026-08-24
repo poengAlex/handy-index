@@ -66,7 +66,7 @@
               : 'h-product__star--empty'
           "
         />
-        <span>{{ rating }} · {{ ratingCount?.toLocaleString() }}</span>
+        <span>{{ ratingText }} · {{ ratingCountText }}</span>
       </div>
       <slot />
     </div>
@@ -90,9 +90,29 @@ const props = withDefaults(
     badge?: string;
     rating?: number;
     ratingCount?: number;
+    /** Pre-formatted rating ("4,6") — overrides `rating` on screen. */
+    ratingLabel?: string;
+    /** Pre-formatted review count ("15 000") — overrides `ratingCount`. */
+    ratingCountLabel?: string;
     to?: string;
   }>(),
-  { oldPrice: "", badge: "", rating: 0, ratingCount: 0, to: "" }
+  {
+    oldPrice: "",
+    badge: "",
+    rating: 0,
+    ratingCount: 0,
+    ratingLabel: "",
+    ratingCountLabel: "",
+    to: ""
+  }
+);
+
+// The count used to run through `.toLocaleString()`, which formats in the
+// *browser's* locale — not necessarily the app's. The kit has no locale of
+// its own, so numbers now arrive pre-formatted from the caller instead.
+const ratingText = computed(() => props.ratingLabel || `${props.rating}`);
+const ratingCountText = computed(
+  () => props.ratingCountLabel || `${props.ratingCount}`
 );
 
 const attrs = useAttrs();

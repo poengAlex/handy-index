@@ -1,16 +1,16 @@
 <template>
   <q-page class="video-page">
     <div v-if="state === 'loading'" class="video-page__loading">
-      <HandyLoader />
+      <HandyLoader :loading-label="$t('kit.loading')" />
     </div>
 
     <div v-else-if="state === 'missing'" class="h-section">
       <div class="h-container video-page__missing">
         <HEmptyState
           icon="videocam_off"
-          title="Video not found"
-          body="This video isn't in the index anymore, or the link is wrong."
-          action-label="Back to home"
+          :title="$t('video.missingTitle')"
+          :body="$t('video.missingBody')"
+          :action-label="$t('common.action.backToHome')"
           @action="router.push('/')"
         />
       </div>
@@ -21,7 +21,7 @@
       <MediaHero
         size="md"
         :artwork="artworkOf(video)"
-        :alt="video.title ?? 'Video'"
+        :alt="video.title ?? $t('video.fallback.video')"
       >
         <h1 class="text-h2 video-page__title">{{ video.title }}</h1>
         <div class="video-page__chips">
@@ -29,18 +29,18 @@
           <HChip
             v-if="video.duration"
             icon="schedule"
-            :label="formatDuration(video.duration)"
+            :label="format.duration(video.duration)"
           />
           <HChip v-if="formatLabel" icon="view_in_ar" :label="formatLabel" />
           <HChip
             v-if="video.publishedAt"
             icon="calendar_today"
-            :label="relativeTime(video.publishedAt)"
+            :label="format.relative(video.publishedAt)"
           />
           <HChip
             v-if="!expectFree"
             icon="workspace_premium"
-            label="Premium script"
+            :label="$t('video.hero.premiumChip')"
           />
         </div>
       </MediaHero>
@@ -49,21 +49,21 @@
         <div class="video-page__actions">
           <HBtn
             v-if="expectFree"
-            label="Get script"
+            :label="$t('video.action.getScript')"
             arrow
             :loading="gettingScript"
             @click="getScript"
           />
           <HBtn
             v-else-if="video.videoUrl"
-            :label="`Watch on ${video.partnerName ?? 'site'}`"
+            :label="watchLabel"
             arrow
             @click="openOnSite"
           />
           <HBtn
             v-if="expectFree && video.videoUrl"
             variant="secondary"
-            :label="`Watch on ${video.partnerName ?? 'site'}`"
+            :label="watchLabel"
             @click="openOnSite"
           />
           <q-btn
@@ -75,7 +75,9 @@
               { 'video-page__fav--active': favorite }
             ]"
             :aria-label="
-              favorite ? 'Remove from favorites' : 'Add to favorites'
+              favorite
+                ? $t('video.action.removeFavorite')
+                : $t('video.action.addFavorite')
             "
             @click="settings.toggleFavorite(video.partnerVideoId)"
           />
@@ -84,7 +86,7 @@
             round
             icon="share"
             class="video-page__action"
-            aria-label="Share"
+            :aria-label="$t('common.action.share')"
             @click="share"
           />
           <q-btn
@@ -92,7 +94,7 @@
             round
             icon="playlist_add"
             class="video-page__action"
-            aria-label="Add to playlist"
+            :aria-label="$t('video.action.addToPlaylist')"
             @click="playlistDialog = true"
           />
           <q-btn
@@ -100,13 +102,12 @@
             round
             icon="flag"
             class="video-page__action"
-            aria-label="Report this video"
+            :aria-label="$t('video.action.report')"
             :href="reportMailto"
           />
         </div>
         <p v-if="!expectFree" class="text-body-sm video-page__premium-note">
-          The script for this video is premium — it comes with the video on the
-          partner site.
+          {{ $t("video.premiumNote") }}
         </p>
 
         <!-- Embedded partner player — opt-in via settings, default off -->
@@ -117,7 +118,7 @@
           <div class="video-page__player-frame">
             <iframe
               :src="embedUrl"
-              :title="video.title ?? 'Video player'"
+              :title="video.title ?? $t('video.fallback.player')"
               allow="autoplay; fullscreen; picture-in-picture"
               allowfullscreen
               class="video-page__player-iframe"
@@ -125,9 +126,7 @@
           </div>
           <p class="text-body-sm video-page__player-note">
             <q-icon name="info" size="16px" />
-            The Handy doesn't sync with playback here on IVDB — this player is
-            video-only. Download the script and play it through your Handy setup
-            for synced strokes.
+            {{ $t("video.playerNote") }}
           </p>
         </section>
 
@@ -168,8 +167,8 @@
                   v-if="settings.isMuted(tag)"
                   type="button"
                   class="video-page__tag-muted"
-                  :aria-label="`Unmute tag: ${tag}`"
-                  :title="`“${tag}” is muted — click to unmute`"
+                  :aria-label="$t('video.tag.unmuteAria', { tag })"
+                  :title="$t('video.tag.mutedTitle', { tag })"
                   @click="unmute(tag)"
                 >
                   <HChip icon="volume_off" :label="tag" />
@@ -190,13 +189,17 @@
                         <q-item-section side>
                           <q-icon name="sell" size="20px" />
                         </q-item-section>
-                        <q-item-section>Browse this tag</q-item-section>
+                        <q-item-section>
+                          {{ $t("video.tag.browse") }}
+                        </q-item-section>
                       </q-item>
                       <q-item v-close-popup clickable @click="mute(tag)">
                         <q-item-section side>
                           <q-icon name="block" size="20px" />
                         </q-item-section>
-                        <q-item-section>Mute this tag</q-item-section>
+                        <q-item-section>
+                          {{ $t("video.tag.mute") }}
+                        </q-item-section>
                       </q-item>
                     </q-list>
                   </q-menu>
@@ -205,23 +208,29 @@
             </div>
           </div>
           <div class="video-page__side">
-            <HInfoCard title="Details" :items="details" />
+            <HInfoCard :title="$t('video.details.title')" :items="details" />
             <div v-if="freeScript" class="video-page__rate">
-              <h2 class="text-h5 video-page__rate-title">Rate this script</h2>
+              <h2 class="text-h5 video-page__rate-title">
+                {{ $t("video.rate.title") }}
+              </h2>
               <q-rating
                 :model-value="settings.getScriptVote(freeScript.scriptId)"
                 :max="5"
                 icon="star"
                 size="28px"
                 :disable="ratingBusy"
-                aria-label="Rate this script"
+                :aria-label="$t('video.rate.title')"
                 @update:model-value="rate"
               />
               <p
                 v-if="freeScript.rating"
                 class="text-body-sm video-page__rate-community"
               >
-                Community: {{ Math.round(freeScript.rating) }}%
+                {{
+                  $t("video.rate.community", {
+                    percent: $n(Math.round(freeScript.rating))
+                  })
+                }}
               </p>
             </div>
           </div>
@@ -259,14 +268,14 @@
               <img
                 v-else
                 :src="item.src"
-                :alt="`Still ${photoNumber(index)} from ${video.title ?? 'video'}`"
+                :alt="stillAlt(index)"
                 loading="lazy"
                 class="video-page__gallery-img"
                 @error="brokenStills.add(item.src)"
               />
               <span v-if="item.clip" class="video-page__gallery-badge">
                 <q-icon name="play_arrow" size="16px" />
-                Preview
+                {{ $t("video.gallery.previewBadge") }}
               </span>
             </button>
           </template>
@@ -276,15 +285,17 @@
       <!-- Script comments — anonymous, and key-gated even for reading -->
       <section v-if="freeScript" class="video-page__comments">
         <div class="h-container">
-          <h2 class="text-h4 video-page__comments-title">Comments</h2>
+          <h2 class="text-h4 video-page__comments-title">
+            {{ $t("video.comments.title") }}
+          </h2>
 
           <div v-if="!hasKey" class="video-page__comments-gate">
             <span class="text-body-sm video-page__comments-hint">
-              Comments need your connection key.
+              {{ $t("video.comments.gateHint") }}
             </span>
             <HBtn
               variant="tertiary"
-              label="Add key"
+              :label="$t('video.comments.gateAction')"
               @click="openKeyDialogForComments"
             />
           </div>
@@ -295,7 +306,7 @@
                 :model-value="commentDraft"
                 filled
                 dense
-                label="Add a comment"
+                :label="$t('video.comments.inputLabel')"
                 maxlength="500"
                 class="video-page__comment-input"
                 @update:model-value="commentDraft = String($event ?? '')"
@@ -303,7 +314,7 @@
               />
               <HBtn
                 variant="secondary"
-                label="Comment"
+                :label="$t('video.comments.submit')"
                 :loading="postingComment"
                 :disable="!commentDraft.trim()"
                 @click="submitComment"
@@ -314,19 +325,19 @@
               v-if="commentsState === 'loading' || commentsState === 'idle'"
               class="video-page__comments-loading"
             >
-              <HandyLoader :size="32" />
+              <HandyLoader :size="32" :loading-label="$t('kit.loading')" />
             </div>
             <p
               v-else-if="commentsState === 'error'"
               class="text-body-sm video-page__comments-hint"
             >
-              Couldn't load comments.
+              {{ $t("video.comments.errorHint") }}
             </p>
             <p
               v-else-if="!comments.length"
               class="text-body-sm video-page__comments-hint"
             >
-              No comments yet — be the first.
+              {{ $t("video.comments.emptyHint") }}
             </p>
             <ul v-else class="video-page__comment-list">
               <li
@@ -341,7 +352,7 @@
                   v-if="comment.createdAt"
                   class="text-caption video-page__comment-time"
                 >
-                  {{ relativeTime(comment.createdAt) }}
+                  {{ format.relative(comment.createdAt) }}
                 </p>
               </li>
             </ul>
@@ -350,12 +361,12 @@
       </section>
 
       <div v-if="related.length" class="video-page__more">
-        <CarouselRow title="More like this" :videos="related" />
+        <CarouselRow :title="$t('video.more.related')" :videos="related" />
       </div>
 
       <div v-if="moreFromPartner.length" class="video-page__more">
         <CarouselRow
-          :title="`More from ${video.partnerName ?? 'this site'}`"
+          :title="partnerRowTitle"
           :videos="moreFromPartner"
           :to="`/videos?partnerId=${encodeURIComponent(video.partnerId)}`"
         />
@@ -385,7 +396,7 @@
         <img
           v-else
           :src="viewerItem.src"
-          :alt="`Still ${photoNumber(viewerIndex ?? 0)} from ${video?.title ?? 'video'}`"
+          :alt="stillAlt(viewerIndex ?? 0)"
           class="video-page__viewer-img"
         />
         <div class="video-page__viewer-bar">
@@ -394,18 +405,23 @@
             round
             icon="chevron_left"
             :disable="(viewerIndex ?? 0) === 0"
-            aria-label="Previous photo"
+            :aria-label="$t('video.gallery.previousPhoto')"
             @click="viewerIndex = (viewerIndex ?? 0) - 1"
           />
           <span class="text-body-sm video-page__viewer-count">
-            {{ (viewerIndex ?? 0) + 1 }} / {{ gallery.length }}
+            {{
+              $t("video.gallery.viewerCount", {
+                index: $n((viewerIndex ?? 0) + 1),
+                total: $n(gallery.length)
+              })
+            }}
           </span>
           <q-btn
             flat
             round
             icon="chevron_right"
             :disable="(viewerIndex ?? 0) >= gallery.length - 1"
-            aria-label="Next photo"
+            :aria-label="$t('video.gallery.nextPhoto')"
             @click="viewerIndex = (viewerIndex ?? 0) + 1"
           />
           <q-btn
@@ -413,7 +429,7 @@
             flat
             round
             icon="close"
-            aria-label="Close viewer"
+            :aria-label="$t('video.gallery.closeViewer')"
           />
         </div>
       </div>
@@ -421,14 +437,12 @@
 
     <!-- Connection key prompt for the script download -->
     <ConnectionKeyDialog v-model="keyDialog" @saved="getScript">
-      Scripts are bound to your Handy. Enter the connection key from the Handy
-      app to continue.
+      {{ $t("video.keyPrompt.script") }}
     </ConnectionKeyDialog>
 
     <!-- Connection key prompt for rating and comments -->
     <ConnectionKeyDialog v-model="actionKeyDialog" @saved="runPendingAction">
-      Rating and comments are bound to your Handy. Enter the connection key from
-      the Handy app to continue.
+      {{ $t("video.keyPrompt.action") }}
     </ConnectionKeyDialog>
 
     <AddToPlaylistDialog
@@ -442,6 +456,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import { useI18n } from "vue-i18n";
 import {
   HBtn,
   HChip,
@@ -457,7 +472,7 @@ import CarouselRow from "@/components/CarouselRow.vue";
 import ConnectionKeyDialog from "@/components/ConnectionKeyDialog.vue";
 import MediaHero from "@/components/MediaHero.vue";
 import MediaImage from "@/components/MediaImage.vue";
-import { formatDuration, relativeTime } from "@/services/format";
+import { useFormat } from "@/composables/useFormat";
 import {
   getPublishedComments,
   getScriptTokenUrl,
@@ -487,6 +502,8 @@ const route = useRoute("//videos/[partnerVideoId]");
 const router = useRouter();
 const catalog = useCatalogStore();
 const settings = useSettingsStore();
+const { t, n } = useI18n();
+const format = useFormat();
 
 const video = ref<PartnerVideo>();
 const scripts = ref<Script[]>([]);
@@ -546,7 +563,9 @@ const hasClip = computed(() => gallery.value[0]?.clip === true);
 /** stills-only heading, so a video whose only item is the clip isn't
  * announced as "Photos" */
 const galleryTitle = computed(() =>
-  gallery.value.some(item => !item.clip) ? "Photos" : "Preview"
+  gallery.value.some(item => !item.clip)
+    ? t("video.gallery.photosTitle")
+    : t("video.gallery.previewTitle")
 );
 
 /** the clip sits at index 0, so a still's own number is one behind the
@@ -561,8 +580,20 @@ const photoCount = computed(
 
 function galleryLabel(item: GalleryItem, index: number): string {
   return item.clip
-    ? "Play preview clip full size"
-    : `Open photo ${photoNumber(index)} of ${photoCount.value}`;
+    ? t("video.gallery.clipAria")
+    : t("video.gallery.photoAria", {
+        index: n(photoNumber(index)),
+        total: n(photoCount.value)
+      });
+}
+
+/** Alt text for one still. The title is the video's own, so a missing one
+ * falls back to the generic noun rather than an empty alt. */
+function stillAlt(index: number): string {
+  return t("video.gallery.stillAlt", {
+    number: n(photoNumber(index)),
+    title: video.value?.title ?? t("video.fallback.video")
+  });
 }
 
 const videoId = computed(() => route.params.partnerVideoId);
@@ -576,11 +607,27 @@ const embedUrl = computed(() =>
 );
 
 const formatLabel = computed(() => {
-  const format = video.value?.format;
-  if (format?.format !== "vr") return "";
-  const view = format.view && format.view !== "na" ? ` ${format.view}°` : "";
+  const videoFormat = video.value?.format;
+  if (videoFormat?.format !== "vr") return "";
+  const view =
+    videoFormat.view && videoFormat.view !== "na"
+      ? ` ${videoFormat.view}°`
+      : "";
   return `VR${view}`;
 });
+
+/** Both "Watch on …" buttons name the partner, so the label is built once. */
+const watchLabel = computed(() =>
+  t("video.action.watchOn", {
+    site: video.value?.partnerName ?? t("video.fallback.site")
+  })
+);
+
+const partnerRowTitle = computed(() =>
+  t("video.more.fromPartner", {
+    site: video.value?.partnerName ?? t("video.fallback.thisSite")
+  })
+);
 
 /** The index's own free-script indicator — drives the CTA without waiting
  * for (or depending on) the scripts fetch. */
@@ -597,43 +644,55 @@ const details = computed<InfoItem[]>(() => {
   if (!current) return [];
   const items: InfoItem[] = [
     {
-      label: "Script",
-      badge: expectFree.value ? "Free" : "Premium",
+      label: t("video.details.script"),
+      badge: expectFree.value
+        ? t("video.details.free")
+        : t("video.details.premium"),
       badgeColor: expectFree.value ? "positive" : "primary"
     }
   ];
   if (current.publishedAt) {
     items.push({
-      label: "Published",
-      value: relativeTime(current.publishedAt)
+      label: t("video.details.published"),
+      value: format.relative(current.publishedAt)
     });
   }
   if (current.duration) {
-    items.push({ label: "Duration", value: formatDuration(current.duration) });
+    items.push({
+      label: t("video.details.duration"),
+      value: format.duration(current.duration)
+    });
   }
   items.push({
-    label: "Format",
-    value: formatLabel.value || "Flat"
+    label: t("video.details.format"),
+    value: formatLabel.value || t("video.details.formatFlat")
   });
   if (current.partnerName) {
-    items.push({ label: "Site", value: current.partnerName });
+    items.push({ label: t("video.details.site"), value: current.partnerName });
   }
   if (current.scripterName) {
-    items.push({ label: "Script by", value: current.scripterName });
+    items.push({
+      label: t("video.details.scriptBy"),
+      value: current.scripterName
+    });
   }
   if (current.rating) {
     const votes = (current.upVotes ?? 0) + (current.downVotes ?? 0);
+    const percent = n(Math.round(current.rating));
     items.push({
-      label: "Rating",
+      label: t("video.details.rating"),
       value: votes
-        ? `${Math.round(current.rating)}% · ${votes.toLocaleString()} vote${votes === 1 ? "" : "s"}`
-        : `${Math.round(current.rating)}%`
+        ? t("video.details.ratingWithVotes", {
+            percent,
+            votes: format.count("votes", votes)
+          })
+        : t("video.details.ratingValue", { percent })
     });
   }
   if (current.scriptPlays) {
     items.push({
-      label: "Script plays",
-      value: current.scriptPlays.toLocaleString()
+      label: t("video.details.scriptPlays"),
+      value: format.num(current.scriptPlays)
     });
   }
   return items;
@@ -747,13 +806,17 @@ async function getScript() {
     } else {
       window.open(token.url, "_blank", "noopener");
     }
-    hToast("positive", "Script ready", "The download opened in a new tab.");
+    hToast(
+      "positive",
+      t("video.script.readyTitle"),
+      t("video.script.readyBody")
+    );
   } catch {
     scriptWindow?.close();
     hToast(
       "negative",
-      "Couldn't get the script",
-      "Either the connection key is wrong or your Handy isn't online. Check both, then try again."
+      t("video.script.errorTitle"),
+      t("video.script.errorBody")
     );
   } finally {
     gettingScript.value = false;
@@ -766,21 +829,17 @@ function mute(tag: string) {
   if (!settings.muteTag(tag)) {
     hToast(
       "info",
-      `“${tag}” can't be muted`,
-      "Orientation tags decide which catalog you see — change that in settings."
+      t("video.mute.refusedTitle", { tag }),
+      t("video.mute.refusedBody")
     );
     return;
   }
-  hToast(
-    "info",
-    `Muted “${tag}”`,
-    "It's in your muted list — unmute any time."
-  );
+  hToast("info", t("video.mute.doneTitle", { tag }), t("video.mute.doneBody"));
 }
 
 function unmute(tag: string) {
   settings.unmuteTag(tag);
-  hToast("info", `Unmuted “${tag}”`);
+  hToast("info", t("video.mute.undoneTitle", { tag }));
 }
 
 function performerLink(performer: Performer): string {
@@ -802,32 +861,35 @@ async function share() {
   }
   try {
     await navigator.clipboard.writeText(url);
-    hToast("positive", "Link copied");
+    hToast("positive", t("video.share.copiedTitle"));
   } catch {
-    hToast("negative", "Couldn't copy the link");
+    hToast("negative", t("video.share.errorTitle"));
   }
 }
 
 /** Reports go to a mailbox, not a moderation backend, so the link ships the
  * video already identified — a report that only says "this one" is useless
- * once it lands in an inbox. */
+ * once it lands in an inbox. The draft is written in the reader's language:
+ * they are the one who has to read and finish it. */
 const reportMailto = computed(() => {
   const v = video.value;
   if (!v) return "";
   const body = [
-    "I want to report a video.",
+    t("video.report.intro"),
     "",
-    `Title: ${v.title ?? "(untitled)"}`,
-    `Video ID: ${v.partnerVideoId}`,
-    `Site: ${v.partnerName ?? v.partnerId}`,
-    `Link: ${window.location.href}`,
+    t("video.report.titleLine", {
+      title: v.title ?? t("video.report.untitled")
+    }),
+    t("video.report.idLine", { id: v.partnerVideoId }),
+    t("video.report.siteLine", { site: v.partnerName ?? v.partnerId }),
+    t("video.report.linkLine", { link: window.location.href }),
     "",
-    "Reason for the report:",
+    t("video.report.reasonLine"),
     ""
   ].join("\n");
   return (
     "mailto:lars@ohdoki.com" +
-    `?subject=${encodeURIComponent("I want to report a video")}` +
+    `?subject=${encodeURIComponent(t("video.report.subject"))}` +
     `&body=${encodeURIComponent(body)}`
   );
 });
@@ -868,13 +930,13 @@ async function rate(stars: number) {
   try {
     await rateScript(current.partnerVideoId, script.scriptId, stars * 20, key);
     settings.setScriptVote(script.scriptId, stars);
-    hToast("positive", "Thanks for rating this script");
+    hToast("positive", t("video.rate.thanks"));
   } catch (error) {
     if (isAuthError(error)) {
       pendingAction.value = () => void rate(stars);
       actionKeyDialog.value = true;
     } else {
-      hToast("negative", "Couldn't save your rating");
+      hToast("negative", t("video.rate.errorTitle"));
     }
   } finally {
     ratingBusy.value = false;
@@ -935,15 +997,15 @@ async function submitComment() {
     commentDraft.value = "";
     hToast(
       "positive",
-      "Comment submitted",
-      "It shows up once it passes review."
+      t("video.comments.postedTitle"),
+      t("video.comments.postedBody")
     );
   } catch (error) {
     if (isAuthError(error)) {
       pendingAction.value = () => void submitComment();
       actionKeyDialog.value = true;
     } else {
-      hToast("negative", "Couldn't post your comment");
+      hToast("negative", t("video.comments.postErrorTitle"));
     }
   } finally {
     postingComment.value = false;

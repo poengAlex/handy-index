@@ -4,16 +4,24 @@
     round
     dense
     :icon="ORIENTATION_ICONS[settings.orientation]"
-    :aria-label="`Orientation: ${ORIENTATION_LABELS[settings.orientation]}`"
+    :aria-label="
+      $t('nav.orientation.aria', {
+        value: orientationLabel(settings.orientation)
+      })
+    "
     class="orientation-menu__btn"
   >
     <q-tooltip>
-      Orientation: {{ ORIENTATION_LABELS[settings.orientation] }}
+      {{
+        $t("nav.orientation.aria", {
+          value: orientationLabel(settings.orientation)
+        })
+      }}
     </q-tooltip>
     <q-menu anchor="bottom right" self="top right">
       <q-list dense class="orientation-menu">
         <q-item-label header class="orientation-menu__header">
-          Show me
+          {{ $t("nav.orientation.header") }}
         </q-item-label>
         <q-item
           v-for="option in ORIENTATIONS"
@@ -27,7 +35,7 @@
           <q-item-section side>
             <q-icon :name="ORIENTATION_ICONS[option]" size="20px" />
           </q-item-section>
-          <q-item-section>{{ ORIENTATION_LABELS[option] }}</q-item-section>
+          <q-item-section>{{ orientationLabel(option) }}</q-item-section>
           <q-item-section v-if="settings.orientation === option" side>
             <q-icon name="check" size="18px" />
           </q-item-section>
@@ -43,12 +51,16 @@
 // the settings dialog and the browse filter modal bind to.
 import {
   ORIENTATIONS,
-  ORIENTATION_ICONS,
-  ORIENTATION_LABELS
+  ORIENTATION_ICONS
 } from "@/services/script-index/queries";
+import { useFormat } from "@/composables/useFormat";
 import { useSettingsStore } from "@/stores/settings";
 
 const settings = useSettingsStore();
+// the labels used to be ORIENTATION_LABELS next to the icons; they now come
+// from the shared `common.orientation.*` group so the settings radio group
+// and the browse filters can't drift away from this menu
+const { orientation: orientationLabel } = useFormat();
 </script>
 
 <style scoped lang="scss">

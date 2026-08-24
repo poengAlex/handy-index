@@ -7,14 +7,9 @@ export type Orientation = "straight" | "gay" | "trans" | "all";
 
 export const ORIENTATIONS: Orientation[] = ["straight", "gay", "trans", "all"];
 
-/** Shared vocabulary for every orientation control (settings, browse filters,
- * the header switcher) so the four options can't drift apart. */
-export const ORIENTATION_LABELS: Record<Orientation, string> = {
-  straight: "Straight",
-  gay: "Gay",
-  trans: "Trans",
-  all: "Everything"
-};
+// The display names that used to live here moved to `common.orientation.*`
+// (read through `useFormat().orientation`) when the app gained a second
+// language — this layer is framework-free *and* language-free.
 
 export const ORIENTATION_ICONS: Record<Orientation, string> = {
   straight: "woman",

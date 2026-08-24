@@ -2,7 +2,7 @@
   <q-page class="videos-page h-section">
     <div class="h-container">
       <header class="videos-page__head">
-        <h1 class="text-h2 videos-page__title">Videos</h1>
+        <h1 class="text-h2 videos-page__title">{{ $t("browse.title") }}</h1>
         <p
           v-if="catalog.status === 'ready'"
           class="text-body-sm videos-page__count"
@@ -21,8 +21,8 @@
           filled
           dense
           clearable
-          placeholder="Search titles"
-          aria-label="Search videos by title"
+          :placeholder="$t('browse.toolbar.searchPlaceholder')"
+          :aria-label="$t('browse.toolbar.searchAria')"
           class="videos-page__search"
           @update:model-value="onSearchInput"
         >
@@ -32,12 +32,12 @@
         </q-input>
         <q-select
           :model-value="sortKey"
-          :options="SORT_OPTIONS"
+          :options="sortOptions"
           emit-value
           map-options
           filled
           dense
-          aria-label="Sort videos"
+          :aria-label="$t('browse.toolbar.sortAria')"
           class="videos-page__sort"
           @update:model-value="setSort"
         >
@@ -49,8 +49,8 @@
           flat
           round
           :icon="sortDir === 'desc' ? 'arrow_downward' : 'arrow_upward'"
-          :aria-label="`Sorted ${sortDir === 'desc' ? 'descending' : 'ascending'} — reverse`"
-          :title="`Sorted ${sortDir === 'desc' ? 'descending' : 'ascending'} — click to reverse`"
+          :aria-label="sortDirAria"
+          :title="sortDirTitle"
           class="videos-page__dir"
           @click="flipDir"
         />
@@ -63,8 +63,8 @@
         <HBtn
           variant="tertiary"
           icon="share"
-          label="Share"
-          aria-label="Share these results — the link carries every filter"
+          :label="$t('common.action.share')"
+          :aria-label="$t('browse.toolbar.shareAria')"
           @click="shareResults"
         />
       </div>
@@ -75,7 +75,7 @@
           :key="chip.key"
           type="button"
           class="videos-page__chip"
-          :aria-label="`Remove filter: ${chip.label}`"
+          :aria-label="chipRemoveAria(chip)"
           @click="chip.remove()"
         >
           <HChip :icon="chip.icon">
@@ -88,15 +88,15 @@
       <div v-if="catalog.status === 'error'" class="videos-page__state">
         <HEmptyState
           icon="cloud_off"
-          title="Couldn't load the catalog"
-          body="The script index didn't answer. Check your connection and try again."
-          action-label="Try again"
+          :title="$t('common.state.catalogErrorTitle')"
+          :body="$t('common.state.catalogErrorBody')"
+          :action-label="$t('common.action.retry')"
           @action="catalog.retry()"
         />
       </div>
 
       <div v-else-if="catalog.status !== 'ready'" class="videos-page__loading">
-        <HandyLoader />
+        <HandyLoader :loading-label="$t('kit.loading')" />
       </div>
 
       <template v-else>
@@ -121,17 +121,17 @@
           <HEmptyState
             v-else-if="withoutOrientation.length"
             icon="filter_alt_off"
-            :title="`Nothing here in ${ORIENTATION_LABELS[settings.orientation]}`"
+            :title="orientationTitle"
             :body="orientationBody"
-            action-label="Show every orientation"
+            :action-label="$t('browse.empty.orientationAction')"
             @action="settings.orientation = 'all'"
           />
           <HEmptyState
             v-else
             icon="search_off"
-            title="No videos match"
-            body="Every video got filtered out. Loosen the search or remove some filters."
-            action-label="Clear all filters"
+            :title="$t('browse.empty.noneTitle')"
+            :body="$t('browse.empty.noneBody')"
+            :action-label="$t('browse.empty.noneAction')"
             @action="clearAll"
           />
         </div>
@@ -141,7 +141,12 @@
     <!-- Advanced filters — everything applies live to the URL, and every
          apply is a router.replace, so the dialog must survive route changes -->
     <q-dialog v-model="filtersOpen" no-route-dismiss>
-      <HModal title="Filters" closable class="videos-page__filters">
+      <HModal
+        :title="$t('browse.filters.title')"
+        closable
+        :close-label="$t('kit.close')"
+        class="videos-page__filters"
+      >
         <ModalScroll>
           <div class="videos-page__filters-stack">
             <q-select
@@ -153,7 +158,7 @@
               input-debounce="150"
               filled
               dense
-              label="Add tag"
+              :label="$t('browse.filters.addTag')"
               @filter="filterTags"
               @update:model-value="addTag"
             >
@@ -163,7 +168,7 @@
               <template #no-option>
                 <q-item>
                   <q-item-section class="text-body-sm">
-                    No matching tags
+                    {{ $t("browse.filters.noTags") }}
                   </q-item-section>
                 </q-item>
               </template>
@@ -178,7 +183,7 @@
               input-debounce="150"
               filled
               dense
-              label="Site"
+              :label="$t('browse.filters.site')"
               @filter="filterSites"
               @update:model-value="setPartner"
             >
@@ -188,7 +193,7 @@
               <template #no-option>
                 <q-item>
                   <q-item-section class="text-body-sm">
-                    No matching sites
+                    {{ $t("browse.filters.noSites") }}
                   </q-item-section>
                 </q-item>
               </template>
@@ -200,7 +205,7 @@
                 :key="chip.key"
                 type="button"
                 class="videos-page__chip"
-                :aria-label="`Remove filter: ${chip.label}`"
+                :aria-label="chipRemoveAria(chip)"
                 @click="chip.remove()"
               >
                 <HChip :icon="chip.icon">
@@ -218,8 +223,8 @@
               <HToggleRow
                 :model-value="vr"
                 icon="view_in_ar"
-                label="VR only"
-                caption="Only virtual-reality videos"
+                :label="$t('browse.filters.vrLabel')"
+                :caption="$t('browse.filters.vrCaption')"
                 @update:model-value="setVr"
               />
             </HList>
@@ -228,28 +233,28 @@
                  link reproduces this grid, but they stay preferences rather
                  than page filters: they don't count toward the badge, and
                  Clear filters leaves them alone. -->
-            <HList title="Orientation">
+            <HList :title="$t('browse.filters.orientation')">
               <HRadioRow
                 v-for="option in ORIENTATIONS"
                 :key="option"
                 v-model="settings.orientation"
                 :val="option"
-                :label="ORIENTATION_LABELS[option]"
+                :label="format.orientation(option)"
               />
             </HList>
 
-            <HList title="Access">
+            <HList :title="$t('browse.filters.access')">
               <HToggleRow
                 v-model="settings.showPremiumScripts"
                 icon="workspace_premium"
-                label="Premium scripts"
-                caption="Include scripts behind a partner's paywall"
+                :label="$t('browse.filters.premiumScriptsLabel')"
+                :caption="$t('browse.filters.premiumScriptsCaption')"
               />
               <HToggleRow
                 v-model="settings.showPaidVideos"
                 icon="paid"
-                label="Premium videos"
-                caption="Include videos behind a partner's paywall"
+                :label="$t('browse.filters.premiumVideosLabel')"
+                :caption="$t('browse.filters.premiumVideosCaption')"
               />
             </HList>
 
@@ -260,7 +265,7 @@
             <HList>
               <HListRow
                 icon="block"
-                label="Muted tags"
+                :label="$t('browse.filters.mutedLabel')"
                 :caption="mutedCaption"
                 :clickable="false"
               >
@@ -268,7 +273,7 @@
                   <HBtn
                     variant="tertiary"
                     size="sm"
-                    label="Manage"
+                    :label="$t('common.action.manage')"
                     @click="mutedTagsOpen = true"
                   />
                 </template>
@@ -277,7 +282,8 @@
 
             <HLabeledSlider
               :model-value="durationInput"
-              label="Duration"
+              :label="$t('browse.filters.duration')"
+              v-bind="sliderAria($t('browse.filters.duration'))"
               unit="min"
               :min="0"
               :max="DURATION_MAX"
@@ -294,11 +300,11 @@
         <template #actions>
           <HBtn
             variant="tertiary"
-            label="Clear filters"
+            :label="$t('common.action.clearFilters')"
             :disable="!advancedCount"
             @click="clearAdvanced"
           />
-          <HBtn v-close-popup label="Done" />
+          <HBtn v-close-popup :label="$t('common.action.done')" />
         </template>
       </HModal>
     </q-dialog>
@@ -315,6 +321,7 @@
 // is a straight composition of the queries.ts selectors over the gated
 // catalog.
 import { computed, onBeforeUnmount, ref, watch } from "vue";
+import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 import {
   HBtn,
@@ -334,10 +341,11 @@ import GateNotice from "@/components/GateNotice.vue";
 import ModalScroll from "@/components/ModalScroll.vue";
 import MutedTagsDialog from "@/components/MutedTagsDialog.vue";
 import VideoGrid from "@/components/VideoGrid.vue";
+import { useKitLabels } from "@/composables/useKitLabels";
+import { useFormat } from "@/composables/useFormat";
 import type { Orientation } from "@/services/script-index/queries";
 import {
   ORIENTATIONS,
-  ORIENTATION_LABELS,
   alphabetical,
   byDurationRange,
   byPartner,
@@ -386,14 +394,18 @@ const SORTERS: Record<
   title: alphabetical
 };
 
-const SORT_OPTIONS: { label: string; value: SortKey }[] = [
-  { label: "Recently added", value: "recent" },
-  { label: "Recently updated", value: "updated" },
-  { label: "Top rated", value: "top" },
-  { label: "Most played", value: "plays" },
-  { label: "Most viewed", value: "views" },
-  { label: "Longest", value: "longest" },
-  { label: "A–Z", value: "title" }
+// the order the dropdown offers them in, and nothing else: a module constant
+// is evaluated once at import, so a label parked here would keep its English
+// through a language switch. `browse.sort.*` is keyed by SortKey, so the
+// option list translates itself at render time (see `sortOptions`).
+const SORT_ORDER: SortKey[] = [
+  "recent",
+  "updated",
+  "top",
+  "plays",
+  "views",
+  "longest",
+  "title"
 ];
 
 type SortDir = "asc" | "desc";
@@ -421,6 +433,10 @@ interface FilterChip {
   remove: () => void;
 }
 
+const { t, n } = useI18n();
+const { sliderAria } = useKitLabels();
+
+const format = useFormat();
 const route = useRoute();
 const router = useRouter();
 const catalog = useCatalogStore();
@@ -458,6 +474,24 @@ const sortDir = computed<SortDir>(() => {
   const raw = firstParam(route.query.dir);
   return raw === "asc" || raw === "desc" ? raw : NATURAL_DIR[sortKey.value];
 });
+
+const sortOptions = computed(() =>
+  SORT_ORDER.map(value => ({ label: t(`browse.sort.${value}`), value }))
+);
+
+// the flip button reads out the direction the list is in; the tooltip adds
+// what a click would do
+const sortDirAria = computed(() =>
+  sortDir.value === "desc"
+    ? t("browse.toolbar.dirDescAria")
+    : t("browse.toolbar.dirAscAria")
+);
+
+const sortDirTitle = computed(() =>
+  sortDir.value === "desc"
+    ? t("browse.toolbar.dirDescTitle")
+    : t("browse.toolbar.dirAscTitle")
+);
 
 // The three global gates (orientation + the two paywalls) also ride in the
 // URL — they
@@ -678,10 +712,12 @@ const MUTED_SHOWN = 3;
 
 const mutedCaption = computed(() => {
   const tags = settings.mutedTags;
-  if (!tags.length) return "Nothing muted";
+  if (!tags.length) return t("browse.filters.mutedNone");
   const shown = tags.slice(0, MUTED_SHOWN).join(", ");
   const rest = tags.length - MUTED_SHOWN;
-  return rest > 0 ? `${shown} +${rest} more` : shown;
+  return rest > 0
+    ? t("browse.filters.mutedMore", { tags: shown, rest: n(rest) })
+    : shown;
 });
 
 /** how many advanced filters are active (search and sort don't count) */
@@ -695,7 +731,9 @@ const advancedCount = computed(
 );
 
 const filtersLabel = computed(() =>
-  advancedCount.value ? `Filters (${advancedCount.value})` : "Filters"
+  advancedCount.value
+    ? t("browse.toolbar.filtersCount", { count: n(advancedCount.value) })
+    : t("browse.toolbar.filters")
 );
 
 /** resets everything the modal owns, keeping search text and sort */
@@ -760,9 +798,11 @@ watch(
 
 const durationLabel = computed(() => {
   const { min, max } = durationInput.value;
-  if (min <= 0 && max >= DURATION_MAX) return "Any";
-  if (max >= DURATION_MAX) return `${min}+ min`;
-  return `${min}–${max} min`;
+  if (min <= 0 && max >= DURATION_MAX) return t("browse.filters.durationAny");
+  if (max >= DURATION_MAX) {
+    return t("browse.filters.durationFrom", { min: n(min) });
+  }
+  return t("browse.filters.durationRange", { min: n(min), max: n(max) });
 });
 
 function onDurationInput(value: number | HLabeledSliderRange) {
@@ -808,7 +848,10 @@ const tagOptions = computed<PickOption[]>(() =>
     )
     .slice(0, 30)
     .map(summary => ({
-      label: `${summary.tag} (${summary.count.toLocaleString()})`,
+      label: t("browse.filters.option", {
+        name: summary.tag,
+        count: n(summary.count)
+      }),
       value: summary.tag
     }))
 );
@@ -818,7 +861,10 @@ const siteOptions = computed<PickOption[]>(() =>
     .filter(summary => summary.name.toLowerCase().includes(siteNeedle.value))
     .slice(0, 30)
     .map(summary => ({
-      label: `${summary.name} (${summary.count.toLocaleString()})`,
+      label: t("browse.filters.option", {
+        name: summary.name,
+        count: n(summary.count)
+      }),
       value: summary.partnerId
     }))
 );
@@ -850,7 +896,7 @@ const partnerLabel = computed(() => {
   const id = partnerId.value;
   if (!id) return "";
   const match = catalog.videos.find(video => video.partnerId === id);
-  return match?.partnerName ?? "Partner";
+  return match?.partnerName ?? t("browse.chip.partnerFallback");
 });
 
 const chips = computed<FilterChip[]>(() => {
@@ -872,13 +918,19 @@ const chips = computed<FilterChip[]>(() => {
   if (performerId.value) {
     list.push({
       key: "performer",
-      label: performerName.value || "Performer",
+      label: performerName.value || t("browse.chip.performerFallback"),
       icon: "person",
       remove: removePerformer
     });
   }
   return list;
 });
+
+// the chip is a button whose whole job is removing the filter it names, and
+// the name is catalog data — a tag, a site, a performer
+function chipRemoveAria(chip: FilterChip): string {
+  return t("browse.chip.removeAria", { label: chip.label });
+}
 
 // --- results:
 // byTags → byPartner → byPerformer → vrOnly → duration → search → sort ---
@@ -920,16 +972,25 @@ const withoutOrientation = computed<PartnerVideo[]>(() =>
     : []
 );
 
+const orientationTitle = computed(() =>
+  t("browse.empty.orientationTitle", {
+    orientation: format.orientation(settings.orientation)
+  })
+);
+
 const orientationBody = computed(() => {
   const count = withoutOrientation.value.length;
-  const label = ORIENTATION_LABELS[settings.orientation];
-  return `${count.toLocaleString()} video${count === 1 ? "" : "s"} here match everything else you set, but not the ${label} filter.`;
+  return t(
+    "browse.empty.orientationBody",
+    {
+      count: n(count),
+      orientation: format.orientation(settings.orientation)
+    },
+    count
+  );
 });
 
-const countLabel = computed(() => {
-  const count = results.value.length;
-  return `${count.toLocaleString()} ${count === 1 ? "video" : "videos"}`;
-});
+const countLabel = computed(() => format.count("videos", results.value.length));
 
 // --- muted tags sitting in the URL filter ---
 
@@ -939,23 +1000,33 @@ const mutedActiveTags = computed(() =>
   tags.value.filter(tag => settings.mutedSet.has(tag))
 );
 
-const mutedTitle = computed(() =>
-  mutedActiveTags.value.length === 1
-    ? `“${mutedActiveTags.value[0]}” is muted`
-    : "Some of these tags are muted"
+// the single-tag copy names the tag, so it needs the tag itself and not just
+// the count — undefined here means "say it in the plural"
+const mutedOne = computed(() =>
+  mutedActiveTags.value.length === 1 ? mutedActiveTags.value[0] : undefined
 );
+
+// two separate sentences rather than one plural message: the singular carries
+// a param the plural has nowhere to put
+const mutedTitle = computed(() => {
+  const tag = mutedOne.value;
+  return tag
+    ? t("browse.empty.mutedOneTitle", { tag })
+    : t("browse.empty.mutedManyTitle");
+});
 
 const mutedBody = computed(() =>
-  mutedActiveTags.value.length === 1
-    ? "Videos with this tag are hidden everywhere. Unmute it to see these results."
-    : "Videos with these tags are hidden everywhere. Unmute them to see these results."
+  mutedOne.value
+    ? t("browse.empty.mutedOneBody")
+    : t("browse.empty.mutedManyBody")
 );
 
-const mutedAction = computed(() =>
-  mutedActiveTags.value.length === 1
-    ? `Unmute “${mutedActiveTags.value[0]}”`
-    : "Unmute them"
-);
+const mutedAction = computed(() => {
+  const tag = mutedOne.value;
+  return tag
+    ? t("browse.empty.mutedOneAction", { tag })
+    : t("browse.empty.mutedManyAction");
+});
 
 function unmuteActive() {
   for (const tag of mutedActiveTags.value) settings.unmuteTag(tag);
@@ -969,7 +1040,9 @@ function unmuteActive() {
 async function shareResults() {
   const url = window.location.href;
   const title =
-    catalog.status === "ready" ? `IVDB — ${countLabel.value}` : "IVDB videos";
+    catalog.status === "ready"
+      ? t("browse.share.title", { count: countLabel.value })
+      : t("browse.share.fallbackTitle");
   if (navigator.share) {
     try {
       await navigator.share({ title, url });
@@ -980,9 +1053,13 @@ async function shareResults() {
   }
   try {
     await navigator.clipboard.writeText(url);
-    hToast("positive", "Link copied", "It carries every filter you set.");
+    hToast(
+      "positive",
+      t("browse.share.copiedTitle"),
+      t("browse.share.copiedBody")
+    );
   } catch {
-    hToast("negative", "Couldn't copy the link");
+    hToast("negative", t("browse.share.failedTitle"));
   }
 }
 </script>

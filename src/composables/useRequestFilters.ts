@@ -14,14 +14,15 @@ import { useSettingsStore } from "@/stores/settings";
 
 export type RequestSortKey = "votes" | "newest" | "longest" | "title";
 
-export const REQUEST_SORT_OPTIONS: {
-  label: string;
-  value: RequestSortKey;
-}[] = [
-  { label: "Most votes", value: "votes" },
-  { label: "Newest", value: "newest" },
-  { label: "Longest", value: "longest" },
-  { label: "A–Z", value: "title" }
+/** The sort keys the picker offers, in the order it offers them. Keys only:
+ * a module constant carrying display text is evaluated once at import and
+ * would still be English after a language switch, so the labels are looked up
+ * where the picker renders them. */
+export const REQUEST_SORT_KEYS: readonly RequestSortKey[] = [
+  "votes",
+  "newest",
+  "longest",
+  "title"
 ];
 
 const SORTERS: Record<

@@ -4,25 +4,31 @@
       <div class="h-container history-page__center">
         <HEmptyState
           icon="cloud_off"
-          title="Couldn't load the catalog"
-          body="The script index didn't answer. Check your connection and try again."
-          action-label="Try again"
+          :title="$t('common.state.catalogErrorTitle')"
+          :body="$t('common.state.catalogErrorBody')"
+          :action-label="$t('common.action.retry')"
           @action="catalog.retry()"
         />
       </div>
     </div>
 
     <div v-else-if="catalog.status !== 'ready'" class="history-page__loading">
-      <HandyLoader />
+      <HandyLoader :loading-label="$t('kit.loading')" />
     </div>
 
     <div v-else class="h-section">
       <div class="h-container">
         <header class="history-page__header">
-          <h1 class="text-h2 history-page__title">Recently viewed</h1>
+          <h1 class="text-h2 history-page__title">
+            {{ $t("library.history.title") }}
+          </h1>
+          <!-- the count is its own dot-separated item, not part of the note
+               sentence: word order around it differs per language -->
           <p class="text-body-sm history-page__note">
-            {{ countLabel }}Only stored in this browser — your viewing history
-            is never tracked or sent anywhere.
+            <template v-if="viewed.length">
+              {{ countLabel }}<span aria-hidden="true"> · </span>
+            </template>
+            {{ $t("library.history.note") }}
             <template v-if="viewed.length">
               <span aria-hidden="true"> · </span>
               <button
@@ -30,7 +36,7 @@
                 class="history-page__clear"
                 @click="clearOpen = true"
               >
-                Clear
+                {{ $t("common.action.clear") }}
               </button>
             </template>
           </p>
@@ -39,9 +45,9 @@
         <div v-if="!viewed.length" class="history-page__center">
           <HEmptyState
             icon="history"
-            title="Nothing viewed yet"
-            body="Videos you open are remembered here, on this device only."
-            action-label="Browse videos"
+            :title="$t('library.history.emptyTitle')"
+            :body="$t('library.history.emptyBody')"
+            :action-label="$t('common.action.browseVideos')"
             @action="router.push('/videos')"
           />
         </div>
@@ -51,12 +57,22 @@
 
     <!-- one click from the header, so it asks first (same as the home shelf) -->
     <q-dialog v-model="clearOpen">
-      <HModal title="Clear recently viewed?">
-        The videos stay in the catalog — only this browser's list of what you've
-        opened goes away.
+      <HModal
+        :title="$t('library.history.clearTitle')"
+        :close-label="$t('kit.close')"
+      >
+        {{ $t("library.history.clearBody") }}
         <template #actions>
-          <HBtn variant="tertiary" label="Cancel" @click="clearOpen = false" />
-          <HBtn variant="danger" label="Clear history" @click="clearHistory" />
+          <HBtn
+            variant="tertiary"
+            :label="$t('common.action.cancel')"
+            @click="clearOpen = false"
+          />
+          <HBtn
+            variant="danger"
+            :label="$t('library.history.clearConfirm')"
+            @click="clearHistory"
+          />
         </template>
       </HModal>
     </q-dialog>
@@ -69,6 +85,7 @@
 // catalog on purpose, with muted tags as the only filter. The ids live in
 // this browser's storage and are never sent anywhere — the header says so.
 import { computed, ref } from "vue";
+import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import {
   HBtn,
@@ -78,6 +95,7 @@ import {
   hToast
 } from "@/components/handy";
 import VideoGrid from "@/components/VideoGrid.vue";
+import { useFormat } from "@/composables/useFormat";
 import { hasMutedTag, inOrder } from "@/services/script-index/queries";
 import { useCatalogStore } from "@/stores/catalog";
 import { useSettingsStore } from "@/stores/settings";
@@ -85,6 +103,8 @@ import { useSettingsStore } from "@/stores/settings";
 const router = useRouter();
 const catalog = useCatalogStore();
 const settings = useSettingsStore();
+const { t } = useI18n();
+const format = useFormat();
 
 const viewed = computed(() =>
   inOrder(catalog.videos, settings.recentlyViewed).filter(
@@ -97,14 +117,10 @@ const clearOpen = ref(false);
 function clearHistory(): void {
   clearOpen.value = false;
   settings.clearRecentlyViewed();
-  hToast("info", "Recently viewed cleared");
+  hToast("info", t("library.history.clearedToast"));
 }
 
-const countLabel = computed(() => {
-  const count = viewed.value.length;
-  if (!count) return "";
-  return `${count === 1 ? "1 video" : `${count} videos`} · `;
-});
+const countLabel = computed(() => format.count("videos", viewed.value.length));
 </script>
 
 <style scoped lang="scss">

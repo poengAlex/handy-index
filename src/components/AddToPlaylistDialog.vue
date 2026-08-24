@@ -3,7 +3,11 @@
     :model-value="modelValue"
     @update:model-value="emit('update:modelValue', $event)"
   >
-    <HModal title="Add to playlist" closable>
+    <HModal
+      :title="$t('playlists.add.title')"
+      closable
+      :close-label="$t('kit.close')"
+    >
       <HList v-if="settings.playlists.length" class="playlist-dialog__list">
         <HToggleRow
           v-for="playlist in settings.playlists"
@@ -16,7 +20,7 @@
         />
       </HList>
       <p v-else class="text-body-sm playlist-dialog__empty">
-        No playlists yet — create your first one below.
+        {{ $t("playlists.add.empty") }}
       </p>
 
       <div class="playlist-dialog__create">
@@ -24,8 +28,8 @@
           :model-value="newName"
           filled
           dense
-          label="New playlist"
-          placeholder="e.g. Weekend picks"
+          :label="$t('playlists.newLabel')"
+          :placeholder="$t('playlists.newPlaceholder')"
           maxlength="60"
           class="playlist-dialog__input"
           @update:model-value="newName = String($event ?? '')"
@@ -33,14 +37,14 @@
         />
         <HBtn
           variant="secondary"
-          label="Create"
+          :label="$t('common.action.create')"
           :disable="!newName.trim()"
           @click="create"
         />
       </div>
 
       <template #actions>
-        <HBtn v-close-popup label="Done" />
+        <HBtn v-close-popup :label="$t('common.action.done')" />
       </template>
     </HModal>
   </q-dialog>
@@ -51,6 +55,7 @@
 // or create a new playlist (which includes the video right away).
 import { ref } from "vue";
 import { HBtn, HList, HModal, HToggleRow } from "@/components/handy";
+import { useFormat } from "@/composables/useFormat";
 import { useSettingsStore, type Playlist } from "@/stores/settings";
 
 const props = defineProps<{ modelValue: boolean; videoId: string }>();
@@ -58,11 +63,11 @@ const props = defineProps<{ modelValue: boolean; videoId: string }>();
 const emit = defineEmits<{ "update:modelValue": [value: boolean] }>();
 
 const settings = useSettingsStore();
+const format = useFormat();
 const newName = ref("");
 
 function countLabel(playlist: Playlist): string {
-  const count = playlist.videoIds.length;
-  return `${count.toLocaleString()} video${count === 1 ? "" : "s"}`;
+  return format.count("videos", playlist.videoIds.length);
 }
 
 function create() {

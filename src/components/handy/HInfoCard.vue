@@ -56,12 +56,22 @@ export interface InfoItem {
   error?: boolean;
 }
 
-withDefaults(defineProps<{ title?: string; items: InfoItem[] }>(), {
-  title: ""
-});
+const props = withDefaults(
+  defineProps<{
+    title?: string;
+    items: InfoItem[];
+    /** Fallback for a `bool` item that carries no `trueLabel`. */
+    trueLabel?: string;
+    /** Fallback for a `bool` item that carries no `falseLabel`. */
+    falseLabel?: string;
+  }>(),
+  { title: "", trueLabel: "Yes", falseLabel: "No" }
+);
 
 function boolLabel(item: InfoItem): string {
-  return item.bool ? (item.trueLabel ?? "Yes") : (item.falseLabel ?? "No");
+  return item.bool
+    ? (item.trueLabel ?? props.trueLabel)
+    : (item.falseLabel ?? props.falseLabel);
 }
 
 function boolTone(item: InfoItem): string {

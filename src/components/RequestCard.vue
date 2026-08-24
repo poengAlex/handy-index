@@ -1,5 +1,5 @@
 <template>
-  <TileCard :href="href" :aria-label="`Open ${name}`">
+  <TileCard :href="href" :aria-label="$t('requests.card.openAria', { name })">
     <template #media>
       <MediaPreview
         v-if="settings.nsfw && request.thumbnail"
@@ -12,7 +12,11 @@
         <q-icon name="movie" size="32px" />
       </div>
       <!-- queue position, not the row number: it stays put while you filter -->
-      <HChip v-if="rank" :label="`#${rank}`" class="request-card__badge" />
+      <HChip
+        v-if="rank"
+        :label="$t('requests.card.rank', { rank: $n(rank) })"
+        class="request-card__badge"
+      />
       <q-icon
         v-if="href"
         name="open_in_new"
@@ -40,10 +44,11 @@
 // TileCard's footer slot, outside that link. Requests ship seven stills and
 // no roll clip, so hovering one cycles the stills.
 import { computed } from "vue";
+import { useI18n } from "vue-i18n";
 import { HChip } from "@/components/handy";
 import MediaPreview from "@/components/MediaPreview.vue";
 import TileCard from "@/components/TileCard.vue";
-import { formatDuration, relativeTime } from "@/services/format";
+import { useFormat } from "@/composables/useFormat";
 import type { VideoRequest } from "@/services/script-index/types";
 import { useSettingsStore } from "@/stores/settings";
 
@@ -57,9 +62,12 @@ const props = withDefaults(
 );
 
 const settings = useSettingsStore();
+const { t } = useI18n();
+const { duration, relative } = useFormat();
 
 const name = computed(
-  () => props.request.title ?? props.request.domain ?? "Video request"
+  () =>
+    props.request.title ?? props.request.domain ?? t("requests.card.untitled")
 );
 
 /** The request URL, if it is one we're willing to hand the browser. It comes
@@ -78,11 +86,13 @@ const href = computed(() => {
   }
 });
 
+// a metadata list, not a sentence: the domain is catalog data, the other two
+// are locale-formatted, and the separator carries no grammar
 const caption = computed(() =>
   [
     props.request.domain,
-    formatDuration(props.request.duration),
-    relativeTime(props.request.createdAt)
+    duration(props.request.duration),
+    relative(props.request.createdAt)
   ]
     .filter(Boolean)
     .join(" · ")

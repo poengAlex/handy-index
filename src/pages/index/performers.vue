@@ -5,16 +5,18 @@
         <div v-if="catalog.status === 'error'" class="performers-page__center">
           <HEmptyState
             icon="cloud_off"
-            title="Couldn't load performers"
-            body="The script index didn't answer. Check your connection and try again."
-            action-label="Try again"
+            :title="$t('performers.errorTitle')"
+            :body="$t('common.state.catalogErrorBody')"
+            :action-label="$t('common.action.retry')"
             @action="catalog.retry()"
           />
         </div>
 
         <template v-else>
           <header class="performers-page__header">
-            <h1 class="text-h2 performers-page__title">Performers</h1>
+            <h1 class="text-h2 performers-page__title">
+              {{ $t("performers.title") }}
+            </h1>
             <p
               v-if="catalog.status === 'ready'"
               class="text-body-sm performers-page__count"
@@ -28,7 +30,7 @@
             v-if="catalog.status !== 'ready'"
             class="performers-page__center"
           >
-            <HandyLoader />
+            <HandyLoader :loading-label="$t('kit.loading')" />
           </div>
 
           <template v-else>
@@ -39,8 +41,8 @@
                 dense
                 clearable
                 debounce="300"
-                placeholder="Search performers"
-                aria-label="Search performers by name"
+                :placeholder="$t('performers.search.placeholder')"
+                :aria-label="$t('performers.search.aria')"
                 class="performers-page__search"
               >
                 <template #prepend>
@@ -49,12 +51,12 @@
               </q-input>
               <q-select
                 v-model="sortKey"
-                :options="SORT_OPTIONS"
+                :options="sortOptions"
                 emit-value
                 map-options
                 filled
                 dense
-                aria-label="Sort performers"
+                :aria-label="$t('performers.sort.aria')"
                 class="performers-page__sort"
               >
                 <template #prepend>
@@ -65,8 +67,16 @@
                 flat
                 round
                 :icon="sortDir === 'desc' ? 'arrow_downward' : 'arrow_upward'"
-                :aria-label="`Sorted ${sortDir === 'desc' ? 'descending' : 'ascending'} — reverse`"
-                :title="`Sorted ${sortDir === 'desc' ? 'descending' : 'ascending'} — click to reverse`"
+                :aria-label="
+                  sortDir === 'desc'
+                    ? $t('performers.sort.descAria')
+                    : $t('performers.sort.ascAria')
+                "
+                :title="
+                  sortDir === 'desc'
+                    ? $t('performers.sort.descTitle')
+                    : $t('performers.sort.ascTitle')
+                "
                 class="performers-page__dir"
                 @click="flipDir"
               />
@@ -76,16 +86,16 @@
               <HEmptyState
                 v-if="needle"
                 icon="person_search"
-                title="No performers match"
-                :body="`Nothing in the index matches “${needle}”. Try a shorter name.`"
-                action-label="Clear search"
+                :title="$t('performers.noMatchTitle')"
+                :body="$t('performers.noMatchBody', { query: needle })"
+                :action-label="$t('common.action.clearSearch')"
                 @action="query = ''"
               />
               <HEmptyState
                 v-else
                 icon="filter_alt_off"
-                title="Nothing to show"
-                body="Your premium filter and muted tags hide every performer. Loosen them in settings."
+                :title="$t('common.state.emptyTitle')"
+                :body="$t('performers.hiddenBody')"
               />
             </div>
 
@@ -118,7 +128,11 @@
                       v-if="performer.avgRating"
                       class="performer-card__rating"
                     >
-                      ★ {{ Math.round(performer.avgRating) }}%
+                      {{
+                        $t("performers.ratingBadge", {
+                          rating: $n(Math.round(performer.avgRating))
+                        })
+                      }}
                     </span>
                   </div>
                 </TileCard>
@@ -142,10 +156,12 @@
 // filmography first. Name search narrows the list; cards reveal 48 at a time
 // via endless scroll. Cards link into /videos pre-filtered on the performer.
 import { computed, ref, watch } from "vue";
+import { useI18n } from "vue-i18n";
 import { HEmptyState, HandyLoader } from "@/components/handy";
 import GateNotice from "@/components/GateNotice.vue";
 import MediaImage from "@/components/MediaImage.vue";
 import TileCard from "@/components/TileCard.vue";
+import { useFormat } from "@/composables/useFormat";
 import { useIncrementalReveal } from "@/composables/useIncrementalReveal";
 import {
   performersOf,
@@ -158,12 +174,6 @@ const PAGE_SIZE = 48;
 
 type SortKey = "count" | "rating" | "name";
 type SortDir = "asc" | "desc";
-
-const SORT_OPTIONS: { label: string; value: SortKey }[] = [
-  { label: "Most videos", value: "count" },
-  { label: "Best rated", value: "rating" },
-  { label: "A–Z", value: "name" }
-];
 
 // the direction each sort naturally produces; flipping away reverses the list
 const NATURAL_DIR: Record<SortKey, SortDir> = {
@@ -178,11 +188,21 @@ const RATED_VIDEO_FLOOR = 3;
 
 const catalog = useCatalogStore();
 const settings = useSettingsStore();
+const { t } = useI18n();
+const { count, num, ofTotal } = useFormat();
 
 // clearable q-input emits null on clear
 const query = ref<string | null>("");
 const sortKey = ref<SortKey>("count");
 const sortDir = ref<SortDir>(NATURAL_DIR[sortKey.value]);
+
+// a computed, not a module constant: the labels have to be re-read when the
+// language changes, and a `const` at import time would freeze them in English
+const sortOptions = computed<{ label: string; value: SortKey }[]>(() => [
+  { label: t("performers.sort.count"), value: "count" },
+  { label: t("performers.sort.rating"), value: "rating" },
+  { label: t("performers.sort.name"), value: "name" }
+]);
 
 // picking a new sort resets to that sort's natural direction
 watch(sortKey, key => {
@@ -242,20 +262,19 @@ const filtered = computed(() => {
 const { shown, done, sentinel } = useIncrementalReveal(filtered, PAGE_SIZE);
 
 const countLabel = computed(() => {
-  const total = all.value.length;
-  const totalLabel = `${total.toLocaleString()} performer${total === 1 ? "" : "s"}`;
+  const total = count("performers", all.value.length);
   return needle.value
-    ? `${filtered.value.length.toLocaleString()} of ${totalLabel}`
-    : totalLabel;
+    ? ofTotal(filtered.value.length, all.value.length, "performers")
+    : total;
 });
 
 function videoLabel(performer: PerformerSummary): string {
-  const total = `${performer.count.toLocaleString()} video${performer.count === 1 ? "" : "s"}`;
+  const total = count("videos", performer.count);
   const counts = matching.value;
   // "38 of 300 videos" — the total stays the headline because that is what
   // opening the performer actually shows
   return counts
-    ? `${(counts.get(performer.performerId) ?? 0).toLocaleString()} of ${total}`
+    ? ofTotal(counts.get(performer.performerId) ?? 0, performer.count, "videos")
     : total;
 }
 

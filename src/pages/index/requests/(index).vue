@@ -4,17 +4,18 @@
       <div class="h-container">
         <header class="requests-page__header">
           <div class="requests-page__header-row">
-            <h1 class="text-h2 requests-page__title">Script requests</h1>
+            <h1 class="text-h2 requests-page__title">
+              {{ $t("requests.board.title") }}
+            </h1>
             <HBtn
               variant="tertiary"
-              label="View queue"
+              :label="$t('requests.board.queueLink')"
               icon="pending_actions"
               to="/requests/queue"
             />
           </div>
           <p class="text-body requests-page__lead">
-            Vote on which videos get scripted next — the top-voted request goes
-            first.
+            {{ $t("requests.board.lead") }}
           </p>
         </header>
 
@@ -22,9 +23,9 @@
         <div v-if="!hasKey" class="requests-page__center">
           <HEmptyState
             icon="key"
-            title="Connection key needed"
-            body="The request board is tied to your Handy. Add the connection key from the Handy app to see, submit and vote on requests."
-            action-label="Add connection key"
+            :title="$t('requests.key.title')"
+            :body="$t('requests.key.boardBody')"
+            :action-label="$t('requests.key.addAction')"
             @action="keyDialog = true"
           />
         </div>
@@ -33,11 +34,10 @@
           <!-- Submit a new request -->
           <section class="requests-page__submit">
             <h2 class="text-h5 requests-page__submit-title">
-              Request a video
+              {{ $t("requests.submit.title") }}
             </h2>
             <p class="text-body-sm requests-page__submit-hint">
-              Paste a link to a video you'd like scripted. It goes through
-              verification before it shows up for voting.
+              {{ $t("requests.submit.hint") }}
             </p>
             <div class="requests-page__submit-row">
               <q-input
@@ -45,14 +45,14 @@
                 filled
                 dense
                 clearable
-                label="Video URL"
+                :label="$t('requests.submit.urlLabel')"
                 placeholder="https://…"
                 class="requests-page__url-input"
                 @update:model-value="url = String($event ?? '')"
                 @keyup.enter="submit"
               />
               <HBtn
-                label="Request video"
+                :label="$t('requests.submit.action')"
                 :loading="submitting"
                 :disable="!validUrl"
                 @click="submit"
@@ -62,7 +62,7 @@
 
           <!-- The voting list -->
           <div v-if="listState === 'loading'" class="requests-page__loading">
-            <HandyLoader />
+            <HandyLoader :loading-label="$t('kit.loading')" />
           </div>
 
           <!-- the key can be rejected mid-session (rotated in the Handy app),
@@ -73,9 +73,9 @@
           >
             <HEmptyState
               icon="key_off"
-              title="Connection key rejected"
-              body="Either the key is wrong or your Handy isn't online. Check the key in the Handy app, make sure the device is switched on and connected, then enter it again."
-              action-label="Enter key again"
+              :title="$t('requests.key.rejectedTitle')"
+              :body="$t('requests.key.rejectedBody')"
+              :action-label="$t('requests.key.rejectedAction')"
               @action="keyDialog = true"
             />
           </div>
@@ -83,9 +83,9 @@
           <div v-else-if="listState === 'error'" class="requests-page__center">
             <HEmptyState
               icon="cloud_off"
-              title="Couldn't load requests"
-              body="The script index didn't answer. Check your connection and try again."
-              action-label="Try again"
+              :title="$t('requests.board.errorTitle')"
+              :body="$t('common.state.catalogErrorBody')"
+              :action-label="$t('common.action.retry')"
               @action="load"
             />
           </div>
@@ -93,8 +93,8 @@
           <div v-else-if="!requests.length" class="requests-page__center">
             <HEmptyState
               icon="how_to_vote"
-              title="No requests waiting"
-              body="Nothing is up for a vote right now. Request a video above to get things moving."
+              :title="$t('requests.board.emptyTitle')"
+              :body="$t('requests.board.emptyBody')"
             />
           </div>
 
@@ -117,9 +117,9 @@
             <div v-if="!results.length" class="requests-page__center">
               <HEmptyState
                 icon="search_off"
-                title="No requests match"
-                body="Nothing on the board matches those filters. Loosen them to see the rest."
-                action-label="Clear filters"
+                :title="$t('requests.filters.emptyTitle')"
+                :body="$t('requests.board.noMatchBody')"
+                :action-label="$t('common.action.clearFilters')"
                 @action="clear"
               />
             </div>
@@ -142,7 +142,9 @@
                       : 'secondary'
                   "
                   :label="
-                    settings.hasUpvoted(request.requestId) ? 'Voted' : 'Vote'
+                    settings.hasUpvoted(request.requestId)
+                      ? $t('requests.vote.voted')
+                      : $t('requests.vote.action')
                   "
                   :disable="settings.hasUpvoted(request.requestId)"
                   :loading="votingId === request.requestId"
@@ -162,8 +164,7 @@
     </div>
 
     <ConnectionKeyDialog v-model="keyDialog" @saved="loadUnlessReady">
-      The request board is bound to your Handy. Enter the connection key from
-      the Handy app to continue.
+      {{ $t("requests.key.boardDialog") }}
     </ConnectionKeyDialog>
   </q-page>
 </template>
@@ -172,10 +173,12 @@
 // The community voting board: submit a video URL, then upvote what should
 // get scripted next. Every API call here needs the Handy connection key.
 import { computed, onMounted, ref } from "vue";
+import { useI18n } from "vue-i18n";
 import { HBtn, HEmptyState, HandyLoader, hToast } from "@/components/handy";
 import ConnectionKeyDialog from "@/components/ConnectionKeyDialog.vue";
 import RequestCard from "@/components/RequestCard.vue";
 import RequestFilters from "@/components/RequestFilters.vue";
+import { useFormat } from "@/composables/useFormat";
 import { useIncrementalReveal } from "@/composables/useIncrementalReveal";
 import { useRequestFilters } from "@/composables/useRequestFilters";
 import { useVotableRequests } from "@/composables/useVotableRequests";
@@ -189,6 +192,8 @@ import type { VideoRequest } from "@/services/script-index/types";
 import { useSettingsStore } from "@/stores/settings";
 
 const settings = useSettingsStore();
+const { t, n } = useI18n();
+const { count } = useFormat();
 
 // the whole board in one load: filtering a "Load more" list would only ever
 // search the pages you happened to have opened
@@ -234,18 +239,25 @@ const validUrl = computed(() => {
 });
 
 function voteLabel(request: VideoRequest): string {
-  const votes = votesOf(request);
-  return `${votes} vote${votes === 1 ? "" : "s"}`;
+  return count("votes", votesOf(request));
 }
 
+// Four whole messages rather than a stem the render bolts suffixes onto —
+// word order is the translator's to decide. The counted noun comes from
+// common.count.requests, so its plural rule lives in exactly one place.
 const countLabel = computed(() => {
-  const total = requests.value.length;
-  const count = results.value.length;
-  const label = `${count.toLocaleString()} request${count === 1 ? "" : "s"}`;
-  const matched = activeCount.value
-    ? `${label} of ${total.toLocaleString()}`
-    : `${label} up for a vote`;
-  return capped.value ? `${matched} (board is longer than we loaded)` : matched;
+  const params = {
+    requests: count("requests", results.value.length),
+    total: n(requests.value.length)
+  };
+  if (activeCount.value) {
+    return capped.value
+      ? t("requests.board.countFilteredCapped", params)
+      : t("requests.board.countFiltered", params);
+  }
+  return capped.value
+    ? t("requests.board.countAllCapped", params)
+    : t("requests.board.countAll", params);
 });
 
 async function vote(request: VideoRequest) {
@@ -262,22 +274,22 @@ async function vote(request: VideoRequest) {
     request.votes = (request.votes ?? 0) + 1;
     hToast(
       "positive",
-      "Vote counted",
-      "Top-voted requests get scripted first."
+      t("requests.vote.successTitle"),
+      t("requests.vote.successBody")
     );
   } catch (error) {
     if (isAuthError(error)) {
       keyDialog.value = true;
       hToast(
         "negative",
-        "Vote failed",
-        "Either the key is wrong or your Handy isn't online — check both and enter it again."
+        t("requests.vote.failedTitle"),
+        t("requests.vote.failedKeyBody")
       );
     } else {
       hToast(
         "negative",
-        "Vote failed",
-        "The script index didn't accept the vote. Try again."
+        t("requests.vote.failedTitle"),
+        t("requests.vote.failedBody")
       );
     }
   } finally {
@@ -298,14 +310,14 @@ async function submit() {
     url.value = "";
     hToast(
       "positive",
-      "Request sent",
-      "It goes through verification before it shows up for voting."
+      t("requests.submit.sentTitle"),
+      t("requests.submit.sentBody")
     );
   } catch {
     hToast(
       "negative",
-      "Request failed",
-      "The script index didn't accept the URL. Try again."
+      t("requests.submit.failedTitle"),
+      t("requests.submit.failedBody")
     );
   } finally {
     submitting.value = false;

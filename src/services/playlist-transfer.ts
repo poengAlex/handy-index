@@ -17,10 +17,44 @@ interface PlaylistExportV1 {
   };
 }
 
-/** Import failure whose message is written for the user (toast body). */
-export class PlaylistImportError extends Error {}
+/**
+ * Why an import failed, as a code rather than a sentence: `services/` is
+ * framework-free by architectural rule, so it cannot reach vue-i18n and has no
+ * business deciding what language the user reads. The playlists page maps
+ * these to `playlists.import.error.<code>`.
+ *
+ * - `unreachable` — the paste host never answered the fetch
+ * - `linkDead` — the paste host answered, but not with that paste
+ * - `notJson` — the text isn't JSON at all
+ * - `notExport` — valid JSON, but not one of our envelopes
+ * - `tooNew` — a version this build has no migration for
+ * - `malformed` — our envelope, with the playlist inside it broken
+ */
+export type PlaylistImportFailure =
+  | "unreachable"
+  | "linkDead"
+  | "notJson"
+  | "notExport"
+  | "tooNew"
+  | "malformed";
+
+/** An import failure the UI can explain. `message` stays English and
+ * diagnostic — it is for devtools and never reaches a screen; `code` is the
+ * part callers are meant to read. */
+export class PlaylistImportError extends Error {
+  readonly code: PlaylistImportFailure;
+
+  constructor(code: PlaylistImportFailure) {
+    super(`Playlist import failed: ${code}`);
+    this.name = "PlaylistImportError";
+    this.code = code;
+  }
+}
 
 export interface ImportedPlaylist {
+  /** The exported name, trimmed — empty when the file carried none. The
+   * caller supplies the fallback, because a default name is UI copy and this
+   * layer has no locale to write it in. */
   name: string;
   videoIds: string[];
 }
@@ -58,9 +92,29 @@ export function exportPlaylist(playlist: Playlist): void {
   URL.revokeObjectURL(url);
 }
 
+// Norwegian letters have to survive as letters, not as separators: stripping
+// them turned "Øl og bål" into "l-og-b-l" and a name written entirely in them
+// into nothing at all. NFD splits the accented Latin letters into base +
+// combining mark so the mark can be dropped; æ/ø/å carry no mark and need the
+// explicit map. The output stays ASCII on purpose — a filename that survives
+// every filesystem is worth more than a faithful one.
+const TRANSLITERATE: Record<string, string> = {
+  æ: "ae",
+  ø: "o",
+  å: "a",
+  ß: "ss",
+  đ: "d",
+  ð: "d",
+  þ: "th",
+  ł: "l"
+};
+
 function fileSlug(name: string): string {
   const slug = name
     .toLowerCase()
+    .replace(/[æøåßđðþł]/g, char => TRANSLITERATE[char] ?? char)
+    .normalize("NFD")
+    .replace(/\p{Diacritic}/gu, "")
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
   return slug || "playlist";
@@ -104,54 +158,50 @@ export async function resolveImportText(
   try {
     fetched = await fetch(`${PASTE_API}/${pasteKey}`);
   } catch {
-    throw new PlaylistImportError("Couldn't reach the paste service.");
+    throw new PlaylistImportError("unreachable");
   }
   if (!fetched.ok) {
-    throw new PlaylistImportError(
-      "That share link doesn't answer — it may have expired."
-    );
+    throw new PlaylistImportError("linkDead");
   }
   return parsePlaylistExport(await fetched.text());
 }
 
-/** Validates an export file's text; throws PlaylistImportError with a
- * user-facing message on anything that isn't an importable playlist. */
+/** Validates an export file's text; throws PlaylistImportError with a reason
+ * code on anything that isn't an importable playlist. */
 export function parsePlaylistExport(text: string): ImportedPlaylist {
   let raw: unknown;
   try {
     raw = JSON.parse(text);
   } catch {
-    throw new PlaylistImportError("That file isn't valid JSON.");
+    throw new PlaylistImportError("notJson");
   }
   if (
     typeof raw !== "object" ||
     raw === null ||
     (raw as { format?: unknown }).format !== PLAYLIST_EXPORT_FORMAT
   ) {
-    throw new PlaylistImportError("That file isn't a playlist export.");
+    throw new PlaylistImportError("notExport");
   }
   const envelope = raw as { version?: unknown; playlist?: unknown };
   if (typeof envelope.version !== "number") {
-    throw new PlaylistImportError("That file isn't a playlist export.");
+    throw new PlaylistImportError("notExport");
   }
   if (envelope.version > PLAYLIST_EXPORT_VERSION) {
-    throw new PlaylistImportError(
-      "That file was exported by a newer version of this site. Reload the page and try again."
-    );
+    throw new PlaylistImportError("tooNew");
   }
   // version 1 — the only shape so far; future versions migrate above
   const playlist = envelope.playlist as
     | { name?: unknown; videoIds?: unknown }
     | undefined;
   if (!Array.isArray(playlist?.videoIds)) {
-    throw new PlaylistImportError("The playlist in that file is malformed.");
+    throw new PlaylistImportError("malformed");
   }
   const videoIds = playlist.videoIds.filter(
     (id): id is string => typeof id === "string" && id.length > 0
   );
   const name = typeof playlist.name === "string" ? playlist.name.trim() : "";
   return {
-    name: name || "Imported playlist",
+    name,
     videoIds: [...new Set(videoIds)]
   };
 }

@@ -1,5 +1,6 @@
 <template>
   <q-scroll-area
+    class="modal-scroll-area"
     :style="{ height }"
     :thumb-style="H_SCROLL_THUMB_STYLE"
     :bar-style="H_SCROLL_BAR_STYLE"
@@ -64,8 +65,16 @@ const height = computed(() =>
 </script>
 
 <style scoped lang="scss">
-// clears the inset thumb so the rightmost pixels of a card never sit under it
+// the thumb rides the card's own edge, not an inset 32px in from it, so the
+// bleed cancels HModal's right padding and the content pays it back — the
+// rows stay exactly where they were, only the bar moves out
+.modal-scroll-area {
+  margin-right: calc(var(--space-lg) * -1);
+}
+
+// modal padding the scroll area gave up, plus the clearance that keeps the
+// rightmost pixels of a row out from under the thumb
 .modal-scroll {
-  padding-right: var(--space-xs);
+  padding-right: calc(var(--space-lg) - var(--space-xs));
 }
 </style>

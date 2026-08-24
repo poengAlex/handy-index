@@ -116,6 +116,41 @@
 }
 
 // ------------------------------------------------------------
+// CJK font fallback
+// ------------------------------------------------------------
+// Figtree carries no CJK glyphs, so those code points fall through to the
+// generic sans-serif. That renders — but Han unification means one stack
+// cannot serve Japanese, Simplified Chinese and Korean at once: the same code
+// point wants a different glyph shape in each, and a Japanese reader handed
+// Chinese forms notices on the first character.
+//
+// `<html lang>` is set by the i18n boot file, and each chip in the language
+// picker carries its own `lang`, so a single `:lang()` rule covers both the
+// whole page and a lone foreign-script label inside an otherwise English one.
+// Figtree stays at the front of every stack: font fallback is per glyph, so
+// Latin still resolves to the brand face and only the CJK runs reach the
+// system font.
+:lang(ja) {
+  --font-brand:
+    "Figtree Variable", "Figtree", -apple-system, "Hiragino Sans",
+    "Hiragino Kaku Gothic ProN", "Yu Gothic UI", "Yu Gothic", Meiryo,
+    "Noto Sans JP", sans-serif;
+}
+
+:lang(zh) {
+  --font-brand:
+    "Figtree Variable", "Figtree", -apple-system, "PingFang SC",
+    "Hiragino Sans GB", "Microsoft YaHei UI", "Microsoft YaHei", "Noto Sans SC",
+    sans-serif;
+}
+
+:lang(ko) {
+  --font-brand:
+    "Figtree Variable", "Figtree", -apple-system, "Apple SD Gothic Neo",
+    "Malgun Gothic", "Noto Sans KR", sans-serif;
+}
+
+// ------------------------------------------------------------
 // Dark mode  [DESIGN.md §3]
 // ------------------------------------------------------------
 [data-theme="dark"] {
@@ -497,6 +532,17 @@ a {
 
 .h-section--alt {
   background: var(--color-bg-page-alt);
+}
+
+// Every page wraps its content in .h-section, and that opaque page surface
+// covers the gradient field completely — the background was only ever
+// visible in the strip behind the nav. With the field on it hands the
+// surface back. Not scoped to the layout's own stylesheet on purpose: these
+// sections live inside child components, where a scoped rule cannot reach
+// them. `--alt` keeps its fill, since a contrasting band is a deliberate
+// break in the surface rather than the surface itself.
+.app-shell--bg .h-section:not(.h-section--alt) {
+  background: transparent;
 }
 
 // ------------------------------------------------------------

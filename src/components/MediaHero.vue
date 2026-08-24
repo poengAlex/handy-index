@@ -25,8 +25,8 @@
 // is never shown stretched on wide screens: there the full-bleed layer is
 // blurred into an ambient backdrop (blur hides upscaling artifacts) and the
 // sharp copy renders small in a contained card beside the text. At phone and
-// tablet widths the backdrop is close to native resolution, so it only gets
-// a light soften and stays recognizable as the image. Slot content sits
+// tablet widths the backdrop is close to native resolution and no thumb card
+// renders, so it is left unblurred and reads as the image itself. Slot content sits
 // bottom-aligned on a mandatory scrim in always-white ink. Used by the home
 // hero and the video detail banner. Artwork only renders with NSFW on; a
 // load failure falls back to the plain surface (MediaImage, no icon).
@@ -73,10 +73,10 @@ const showArtwork = computed(() => settings.nsfw && Boolean(props.artwork));
 .media-hero__backdrop {
   position: absolute;
   inset: 0;
-  // phones/tablets sit close to the artwork's native resolution: a light
-  // soften hides compression grain while the image stays clearly visible
-  filter: blur(8px) saturate(1.1);
-  transform: scale(1.06);
+  // phones/tablets sit close to the artwork's native resolution, and the
+  // thumb card that carries the sharp copy on wide screens does not render
+  // here — so the backdrop is left unblurred and reads as the image itself
+  filter: saturate(1.1);
 
   // wide screens stretch the low-res art far past its native size, so the
   // heavy ambient blur starts where the sharp thumb card takes over

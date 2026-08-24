@@ -1,17 +1,14 @@
 <template>
   <q-dialog :model-value="open" persistent>
-    <HModal title="Before you browse">
-      IVDB catalogs interactive adult videos with scripts for The Handy. Confirm
-      you are 18 or older to browse with explicit previews. Continue without
-      confirming and previews stay hidden — you can change this any time in
-      settings. Your preferences are stored only in this browser.
+    <HModal :title="$t('settings.consent.title')">
+      {{ $t("settings.consent.body") }}
       <template #actions>
         <HBtn
           variant="tertiary"
-          label="Continue without previews"
+          :label="$t('settings.consent.decline')"
           @click="answer(false)"
         />
-        <HBtn label="I'm 18 or older" @click="answer(true)" />
+        <HBtn :label="$t('settings.consent.accept')" @click="answer(true)" />
       </template>
     </HModal>
   </q-dialog>

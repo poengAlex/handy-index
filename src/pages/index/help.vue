@@ -2,137 +2,134 @@
   <q-page class="help-page h-section">
     <div class="h-container">
       <header class="help-page__header">
-        <h1 class="text-h2 help-page__title">Help</h1>
-        <p class="text-body-sm help-page__lead">
-          Everything this site can do, in one place. Rows with an arrow take you
-          straight there.
-        </p>
+        <h1 class="text-h2 help-page__title">{{ $t("help.title") }}</h1>
+        <p class="text-body-sm help-page__lead">{{ $t("help.lead") }}</p>
       </header>
 
       <div class="help-page__stack">
-        <HList title="Finding videos">
+        <HList :title="$t('help.finding.title')">
           <HListRow
             icon="search"
-            label="Search and filter"
-            caption="Search titles, then narrow by tag, site, performer, VR and duration — every filter lives in the URL, so results are shareable"
+            :label="$t('help.finding.search.label')"
+            :caption="$t('help.finding.search.caption')"
             chevron
             to="/videos"
           />
           <HListRow
             icon="sort"
-            label="Sort any way you like"
-            caption="Recently added, top rated, most played and more — the arrow button next to the sort reverses the direction"
+            :label="$t('help.finding.sort.label')"
+            :caption="$t('help.finding.sort.caption')"
           />
           <HListRow
             icon="sell"
-            label="Tag cloud"
-            caption="Every tag in the catalog you haven't muted, searchable and sortable — one click filters the browse page"
+            :label="$t('help.finding.tags.label')"
+            :caption="$t('help.finding.tags.caption')"
             chevron
             to="/tags"
           />
           <HListRow
             icon="person"
-            label="Performers"
-            caption="Browse by performer, biggest filmography first"
+            :label="$t('help.finding.performers.label')"
+            :caption="$t('help.finding.performers.caption')"
             chevron
             to="/performers"
           />
           <HListRow
             icon="language"
-            label="Sites"
-            caption="Every partner site in the index with its video count"
+            :label="$t('help.finding.sites.label')"
+            :caption="$t('help.finding.sites.caption')"
             chevron
             to="/sites"
           />
         </HList>
 
-        <HList title="Your library">
+        <HList :title="$t('help.library.title')">
           <HListRow
             icon="favorite"
-            label="Favorites"
-            caption="Heart any video to keep it handy — stored on this device"
+            :label="$t('help.library.favorites.label')"
+            :caption="$t('help.library.favorites.caption')"
             chevron
             to="/favorites"
           />
           <HListRow
             icon="playlist_play"
-            label="Playlists"
-            caption="Create, rename and curate playlists of any videos"
+            :label="$t('help.library.playlists.label')"
+            :caption="$t('help.library.playlists.caption')"
             chevron
             to="/playlists"
           />
           <HListRow
             icon="ios_share"
-            label="Share, import & export playlists"
-            caption="Move a playlist as a file, as copyable JSON text, or as a temporary share link — and import from any of them"
+            :label="$t('help.library.transfer.label')"
+            :caption="$t('help.library.transfer.caption')"
           />
           <HListRow
             icon="download"
-            label="Get all scripts at once"
-            caption="One click on a playlist downloads every free script in it"
+            :label="$t('help.library.bulkDownload.label')"
+            :caption="$t('help.library.bulkDownload.caption')"
           />
           <HListRow
             icon="touch_app"
-            label="Quick menu"
-            caption="Right-click (or long-press) any video thumbnail for favorites, playlists, copy link and more"
+            :label="$t('help.library.quickMenu.label')"
+            :caption="$t('help.library.quickMenu.caption')"
           />
         </HList>
 
-        <HList title="Scripts & your Handy">
+        <HList :title="$t('help.scripts.title')">
           <HListRow
             icon="bolt"
-            label="Free scripts"
-            caption="Videos marked Free have a script you can download with your Handy connection key"
+            :label="$t('help.scripts.free.label')"
+            :caption="$t('help.scripts.free.caption')"
           />
           <HListRow
             icon="star"
-            label="Rate scripts"
-            caption="Star-rate any free script right on the video page"
+            :label="$t('help.scripts.rate.label')"
+            :caption="$t('help.scripts.rate.caption')"
           />
           <HListRow
             icon="chat_bubble"
-            label="Script comments"
-            caption="Read and post anonymous comments on scripts"
+            :label="$t('help.scripts.comments.label')"
+            :caption="$t('help.scripts.comments.caption')"
           />
           <HListRow
             icon="how_to_vote"
-            label="Request videos"
-            caption="Ask for a script for any video, and vote on what gets scripted next"
+            :label="$t('help.scripts.requests.label')"
+            :caption="$t('help.scripts.requests.caption')"
             chevron
             to="/requests"
           />
         </HList>
 
-        <HList title="Make it yours">
+        <HList :title="$t('help.personalize.title')">
           <HListRow
             icon="visibility"
-            label="Explicit previews"
-            caption="Off by default — turn artwork on in settings"
+            :label="$t('help.personalize.previews.label')"
+            :caption="$t('help.personalize.previews.caption')"
           />
           <HListRow
             icon="play_circle"
-            label="Embedded players"
-            caption="Off by default — watch Pornhub and xHamster videos right on the video page (playback doesn't sync with the Handy)"
+            :label="$t('help.personalize.players.label')"
+            :caption="$t('help.personalize.players.caption')"
           />
           <HListRow
             icon="filter_alt"
-            label="Orientation, script & video filters"
-            caption="Free or premium scripts, free or premium videos, and who's in them — in settings, or right in the browse filters"
+            :label="$t('help.personalize.filters.label')"
+            :caption="$t('help.personalize.filters.caption')"
           />
           <HListRow
             icon="block"
-            label="Muted tags"
-            caption="Mute a tag and every video carrying it drops out of the catalog — right-click any tag pill, or manage the list in settings"
+            :label="$t('help.personalize.mutedTags.label')"
+            :caption="$t('help.personalize.mutedTags.caption')"
           />
           <HListRow
             icon="dark_mode"
-            label="Light & dark theme"
-            caption="Toggle in the header — follows your choice everywhere"
+            :label="$t('help.personalize.theme.label')"
+            :caption="$t('help.personalize.theme.caption')"
           />
           <HListRow
             icon="share"
-            label="Share"
-            caption="Every video page and every filtered result list has a shareable link"
+            :label="$t('help.personalize.share.label')"
+            :caption="$t('help.personalize.share.caption')"
           />
         </HList>
       </div>

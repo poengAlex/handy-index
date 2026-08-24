@@ -4,22 +4,24 @@
       <div class="h-container favorites-page__center">
         <HEmptyState
           icon="cloud_off"
-          title="Couldn't load the catalog"
-          body="The script index didn't answer. Check your connection and try again."
-          action-label="Try again"
+          :title="$t('common.state.catalogErrorTitle')"
+          :body="$t('common.state.catalogErrorBody')"
+          :action-label="$t('common.action.retry')"
           @action="catalog.retry()"
         />
       </div>
     </div>
 
     <div v-else-if="catalog.status !== 'ready'" class="favorites-page__loading">
-      <HandyLoader />
+      <HandyLoader :loading-label="$t('kit.loading')" />
     </div>
 
     <div v-else class="h-section">
       <div class="h-container">
         <header class="favorites-page__header">
-          <h1 class="text-h2 favorites-page__title">My favorites</h1>
+          <h1 class="text-h2 favorites-page__title">
+            {{ $t("library.favorites.title") }}
+          </h1>
           <p v-if="favorites.length" class="text-body-sm favorites-page__count">
             {{ countLabel }}
           </p>
@@ -28,9 +30,9 @@
         <div v-if="!favorites.length" class="favorites-page__center">
           <HEmptyState
             icon="favorite"
-            title="No favorites yet"
-            body="Tap the heart button on any video page and it's saved here for quick access."
-            action-label="Browse videos"
+            :title="$t('library.favorites.emptyTitle')"
+            :body="$t('library.favorites.emptyBody')"
+            :action-label="$t('common.action.browseVideos')"
             @action="router.push('/videos')"
           />
         </div>
@@ -45,21 +47,28 @@
 // Favorites are intentionally ungated — they show regardless of the
 // orientation/premium filters (see catalog.favorites).
 import { computed } from "vue";
+import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { HEmptyState, HandyLoader } from "@/components/handy";
 import VideoGrid from "@/components/VideoGrid.vue";
+import { useFormat } from "@/composables/useFormat";
 import { recentFirst } from "@/services/script-index/queries";
 import { useCatalogStore } from "@/stores/catalog";
 
 const router = useRouter();
 const catalog = useCatalogStore();
+const { t } = useI18n();
+const format = useFormat();
 
 const favorites = computed(() => recentFirst(catalog.favorites));
 
-const countLabel = computed(() => {
-  const count = favorites.value.length;
-  return count === 1 ? "1 video saved" : `${count} videos saved`;
-});
+// the noun is pluralized by common.count.videos, so the namespace only owns
+// the "…saved" frame around it
+const countLabel = computed(() =>
+  t("library.favorites.count", {
+    count: format.count("videos", favorites.value.length)
+  })
+);
 </script>
 
 <style scoped lang="scss">

@@ -6,7 +6,7 @@ import { defineConfig } from "#q-app";
 export default defineConfig(() => {
   return {
     // app boot file (/src/boot)
-    boot: ["icons", "quasar-defaults"],
+    boot: ["i18n", "icons", "quasar-defaults"],
 
     css: ["app.scss"],
 
@@ -14,6 +14,15 @@ export default defineConfig(() => {
     extras: ["material-symbols-outlined"],
 
     build: {
+      // vue-i18n's own build flags. Left undefined they only produce console
+      // warnings, but setting them drops the Options-API runtime and the
+      // devtools hooks from the production bundle.
+      define: {
+        __VUE_I18N_FULL_INSTALL__: true,
+        __VUE_I18N_LEGACY_API__: false,
+        __INTLIFY_PROD_DEVTOOLS__: false
+      },
+
       typescript: {
         strict: true,
         vueShim: true

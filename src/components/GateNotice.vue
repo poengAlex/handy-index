@@ -30,8 +30,9 @@
 // nothing in the browsing chrome hints that it is on — so the muted figure is
 // also the click target that opens the manager.
 import { computed, ref } from "vue";
+import { useI18n } from "vue-i18n";
 import MutedTagsDialog from "@/components/MutedTagsDialog.vue";
-import { ORIENTATION_LABELS } from "@/services/script-index/queries";
+import { useFormat } from "@/composables/useFormat";
 import { useCatalogStore } from "@/stores/catalog";
 import { useSettingsStore } from "@/stores/settings";
 
@@ -41,51 +42,77 @@ defineOptions({ inheritAttrs: false });
 
 const catalog = useCatalogStore();
 const settings = useSettingsStore();
+const { t, n } = useI18n();
+const format = useFormat();
 
 const mutedOpen = ref(false);
 
-function videoCount(count: number): string {
-  return `${count.toLocaleString()} ${count === 1 ? "video" : "videos"}`;
-}
+/** Which gate did it, not what it says — the sentence is picked at render so
+ * a language switch re-phrases the line. */
+type ReasonKey = "muted" | "orientation" | "script" | "video";
 
 interface Reason {
-  key: string;
+  key: ReasonKey;
   count: number;
-  /** the "by …" clause, phrased to follow either a total or its own count */
-  by: string;
 }
 
 const reasons = computed<Reason[]>(() => {
   const gates = catalog.gates;
   const list: Reason[] = [];
   if (gates.byMutedTags) {
-    list.push({ key: "muted", count: gates.byMutedTags, by: "by muted tags" });
+    list.push({ key: "muted", count: gates.byMutedTags });
   }
   if (gates.byOrientation) {
-    list.push({
-      key: "orientation",
-      count: gates.byOrientation,
-      by: `by the ${ORIENTATION_LABELS[settings.orientation]} filter`
-    });
+    list.push({ key: "orientation", count: gates.byOrientation });
   }
   // named in full, both of them: they are different paywalls, and "hidden by
   // the premium filter" would not say which one did it
   if (gates.byScript) {
-    list.push({
-      key: "script",
-      count: gates.byScript,
-      by: "by the premium-script filter"
-    });
+    list.push({ key: "script", count: gates.byScript });
   }
   if (gates.byVideo) {
-    list.push({
-      key: "video",
-      count: gates.byVideo,
-      by: "by the premium-video filter"
-    });
+    list.push({ key: "video", count: gates.byVideo });
   }
   return list;
 });
+
+/** The whole sentence, for a reason standing on its own: it carries the noun
+ * ("7,468 videos hidden by muted tags"). */
+function soleLabel(reason: Reason): string {
+  const count = format.count("videos", reason.count);
+  switch (reason.key) {
+    case "muted":
+      return t("gates.notice.hiddenByMuted", { count });
+    case "orientation":
+      return t("gates.notice.hiddenByOrientation", {
+        count,
+        orientation: format.orientation(settings.orientation)
+      });
+    case "script":
+      return t("gates.notice.hiddenByScript", { count });
+    case "video":
+      return t("gates.notice.hiddenByVideo", { count });
+  }
+}
+
+/** The clause that follows the total, where the noun has already been said
+ * ("1,816 by the Straight filter"). */
+function clauseLabel(reason: Reason): string {
+  const count = n(reason.count);
+  switch (reason.key) {
+    case "muted":
+      return t("gates.notice.byMuted", { count });
+    case "orientation":
+      return t("gates.notice.byOrientation", {
+        count,
+        orientation: format.orientation(settings.orientation)
+      });
+    case "script":
+      return t("gates.notice.byScript", { count });
+    case "video":
+      return t("gates.notice.byVideo", { count });
+  }
+}
 
 interface NoticePart {
   key: string;
@@ -100,16 +127,16 @@ const parts = computed<NoticePart[]>(() => {
   const only = list[0];
   if (!only) return [];
   if (list.length === 1) {
-    return [
-      { key: only.key, label: `${videoCount(only.count)} hidden ${only.by}` }
-    ];
+    return [{ key: only.key, label: soleLabel(only) }];
   }
   return [
-    { key: "total", label: `${videoCount(catalog.gates.hidden)} hidden` },
-    ...list.map(reason => ({
-      key: reason.key,
-      label: `${reason.count.toLocaleString()} ${reason.by}`
-    }))
+    {
+      key: "total",
+      label: t("gates.notice.hiddenTotal", {
+        count: format.count("videos", catalog.gates.hidden)
+      })
+    },
+    ...list.map(reason => ({ key: reason.key, label: clauseLabel(reason) }))
   ];
 });
 </script>

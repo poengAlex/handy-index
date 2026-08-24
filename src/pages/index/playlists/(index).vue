@@ -2,7 +2,9 @@
   <q-page class="playlists-page h-section">
     <div class="h-container">
       <header class="playlists-page__head">
-        <h1 class="text-h2 playlists-page__title">Playlists</h1>
+        <h1 class="text-h2 playlists-page__title">
+          {{ $t("playlists.title") }}
+        </h1>
         <p
           v-if="settings.playlists.length"
           class="text-body-sm playlists-page__count"
@@ -16,7 +18,7 @@
           :model-value="newName"
           filled
           dense
-          label="New playlist"
+          :label="$t('playlists.newLabel')"
           maxlength="60"
           class="playlists-page__input"
           @update:model-value="newName = String($event ?? '')"
@@ -24,15 +26,15 @@
         />
         <HBtn
           variant="secondary"
-          label="Create"
+          :label="$t('common.action.create')"
           :disable="!newName.trim()"
           @click="create"
         />
         <HBtn
           variant="tertiary"
           icon="upload"
-          label="Import"
-          title="Import a playlist exported from this site"
+          :label="$t('common.action.import')"
+          :title="$t('playlists.importHint')"
           @click="importOpen = true"
         />
       </div>
@@ -50,31 +52,36 @@
       <div v-else class="playlists-page__empty">
         <HEmptyState
           icon="playlist_add"
-          title="No playlists yet"
-          body="Create one right here, or use the playlist button on any video page to start one from a video you like."
+          :title="$t('playlists.emptyTitle')"
+          :body="$t('playlists.emptyBody')"
         />
       </div>
     </div>
 
     <!-- Import: paste an export (or share link), or pick the .json file -->
     <q-dialog v-model="importOpen">
-      <HModal title="Import playlist" closable class="playlists-page__import">
+      <HModal
+        :title="$t('playlists.import.title')"
+        closable
+        :close-label="$t('kit.close')"
+        class="playlists-page__import"
+      >
         <q-input
           v-model="importText"
           type="textarea"
           filled
-          placeholder="Paste a playlist export (JSON) or a pastes.dev link"
-          aria-label="Playlist export text or share link"
+          :placeholder="$t('playlists.import.placeholder')"
+          :aria-label="$t('playlists.import.inputAria')"
           :input-style="{ minHeight: '140px', fontFamily: 'monospace' }"
         />
         <template #actions>
           <HBtn
             variant="tertiary"
-            label="Choose file…"
+            :label="$t('playlists.import.chooseFile')"
             @click="importInput?.click()"
           />
           <HBtn
-            label="Import"
+            :label="$t('common.action.import')"
             :loading="importing"
             :disable="!importText.trim()"
             @click="importFromText"
@@ -98,6 +105,7 @@
 // Playlist overview: everything lives in the settings store, so the page is
 // fully synchronous — no catalog dependency, no loading state.
 import { computed, ref } from "vue";
+import { useI18n } from "vue-i18n";
 import {
   HBtn,
   HEmptyState,
@@ -105,6 +113,7 @@ import {
   HNavCard,
   hToast
 } from "@/components/handy";
+import { useFormat } from "@/composables/useFormat";
 import {
   PlaylistImportError,
   parsePlaylistExport,
@@ -114,6 +123,8 @@ import {
 import { useSettingsStore, type Playlist } from "@/stores/settings";
 
 const settings = useSettingsStore();
+const { t, n } = useI18n();
+const format = useFormat();
 
 const newName = ref("");
 const importInput = ref<HTMLInputElement>();
@@ -122,24 +133,31 @@ const importText = ref("");
 const importing = ref(false);
 
 function finishImport(parsed: ImportedPlaylist): void {
-  const playlist = settings.importPlaylist(parsed.name, parsed.videoIds);
+  // an export with no name of its own still has to become a named playlist,
+  // and naming it is UI copy — the parser has no locale to write it in
+  const name = parsed.name || t("playlists.import.defaultName");
+  const playlist = settings.importPlaylist(name, parsed.videoIds);
   const count = playlist.videoIds.length;
   importOpen.value = false;
   importText.value = "";
   hToast(
     "positive",
-    "Playlist imported",
-    `'${playlist.name}' — ${count.toLocaleString()} video${count === 1 ? "" : "s"}.`
+    t("playlists.import.doneTitle"),
+    t(
+      "playlists.import.doneBody",
+      { name: playlist.name, count: n(count) },
+      count
+    )
   );
 }
 
 function toastImportError(error: unknown): void {
+  // the parser throws a code, not a sentence; the sentence lives here
+  const code = error instanceof PlaylistImportError ? error.code : "unknown";
   hToast(
     "negative",
-    "Couldn't import that",
-    error instanceof PlaylistImportError
-      ? error.message
-      : "Something went wrong reading the export."
+    t("playlists.import.failedTitle"),
+    t(`playlists.import.error.${code}`)
   );
 }
 
@@ -168,14 +186,12 @@ async function onImportFile(event: Event) {
   }
 }
 
-const countLabel = computed(() => {
-  const count = settings.playlists.length;
-  return `${count.toLocaleString()} ${count === 1 ? "playlist" : "playlists"}`;
-});
+const countLabel = computed(() =>
+  format.count("playlists", settings.playlists.length)
+);
 
 function videoCountLabel(playlist: Playlist): string {
-  const count = playlist.videoIds.length;
-  return `${count.toLocaleString()} video${count === 1 ? "" : "s"}`;
+  return format.count("videos", playlist.videoIds.length);
 }
 
 function create() {

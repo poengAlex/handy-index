@@ -6,8 +6,8 @@
         filled
         dense
         clearable
-        placeholder="Search requests"
-        aria-label="Search requests by title"
+        :placeholder="$t('requests.filters.searchPlaceholder')"
+        :aria-label="$t('requests.filters.searchAria')"
         class="request-filters__search"
         @update:model-value="emit('update:search', String($event ?? ''))"
       >
@@ -18,12 +18,12 @@
 
       <q-select
         :model-value="sort"
-        :options="REQUEST_SORT_OPTIONS"
+        :options="sortOptions"
         emit-value
         map-options
         filled
         dense
-        aria-label="Sort requests"
+        :aria-label="$t('requests.filters.sortAria')"
         class="request-filters__sort"
         @update:model-value="emit('update:sort', $event)"
       >
@@ -41,7 +41,7 @@
         input-debounce="150"
         filled
         dense
-        label="Tag"
+        :label="$t('requests.filters.tagLabel')"
         class="request-filters__tag"
         @filter="filterTags"
         @update:model-value="onAddTag"
@@ -52,7 +52,7 @@
         <template #no-option>
           <q-item>
             <q-item-section class="text-body-sm">
-              No matching tags
+              {{ $t("requests.filters.tagEmpty") }}
             </q-item-section>
           </q-item>
         </template>
@@ -61,9 +61,9 @@
       <HBtn
         :variant="hideVoted ? 'secondary' : 'tertiary'"
         icon="how_to_vote"
-        label="Hide voted"
+        :label="$t('requests.filters.hideVoted')"
         :aria-pressed="hideVoted"
-        title="Hide the requests you already voted on"
+        :title="$t('requests.filters.hideVotedTitle')"
         @click="emit('update:hideVoted', !hideVoted)"
       />
 
@@ -71,7 +71,7 @@
         v-if="activeCount"
         variant="tertiary"
         icon="filter_alt_off"
-        label="Clear"
+        :label="$t('common.action.clear')"
         @click="emit('clear')"
       />
     </div>
@@ -82,7 +82,7 @@
         :key="tag"
         type="button"
         class="request-filters__chip"
-        :aria-label="`Remove filter: ${tag}`"
+        :aria-label="$t('requests.filters.removeTagAria', { tag })"
         @click="emit('remove-tag', tag)"
       >
         <HChip icon="sell">
@@ -99,9 +99,10 @@
 // tag picker and the "hide what I've voted on" switch. Dumb on purpose —
 // state and result composition live in useRequestFilters, so both pages show
 // the same controls over their own list.
-import { ref } from "vue";
+import { computed, ref } from "vue";
+import { useI18n } from "vue-i18n";
 import { HBtn, HChip } from "@/components/handy";
-import { REQUEST_SORT_OPTIONS } from "@/composables/useRequestFilters";
+import { REQUEST_SORT_KEYS } from "@/composables/useRequestFilters";
 import type { RequestSortKey } from "@/composables/useRequestFilters";
 import type { TagSummary } from "@/services/script-index/queries";
 
@@ -124,6 +125,8 @@ const emit = defineEmits<{
   clear: [];
 }>();
 
+const { t, n } = useI18n();
+
 interface PickOption {
   label: string;
   value: string;
@@ -131,6 +134,27 @@ interface PickOption {
 
 const needle = ref("");
 const tagOptions = ref<PickOption[]>([]);
+
+/** Switched rather than built from the key with a template literal: the
+ * message paths stay greppable, and a key that never existed is a visible
+ * hole here instead of `requests.sort.votes` rendered into the picker. */
+function sortLabel(key: RequestSortKey): string {
+  switch (key) {
+    case "votes":
+      return t("requests.sort.votes");
+    case "newest":
+      return t("requests.sort.newest");
+    case "longest":
+      return t("requests.sort.longest");
+    case "title":
+      return t("requests.sort.title");
+  }
+}
+
+// a computed, not a module constant: the labels have to follow the locale
+const sortOptions = computed(() =>
+  REQUEST_SORT_KEYS.map(value => ({ label: sortLabel(value), value }))
+);
 
 // q-select's filter callback owns the update timing, so the options are
 // materialized here rather than in a computed
@@ -145,7 +169,10 @@ function filterTags(input: string, update: (fn: () => void) => void) {
       )
       .slice(0, 30)
       .map(summary => ({
-        label: `${summary.tag} (${summary.count.toLocaleString()})`,
+        label: t("requests.filters.tagOption", {
+          tag: summary.tag,
+          count: n(summary.count)
+        }),
         value: summary.tag
       }));
   });

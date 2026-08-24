@@ -3,10 +3,14 @@
     :model-value="modelValue"
     @update:model-value="emit('update:modelValue', $event)"
   >
-    <HModal title="Clear stored data" closable class="clear-data">
+    <HModal
+      :title="$t('settings.clear.title')"
+      closable
+      :close-label="$t('kit.close')"
+      class="clear-data"
+    >
       <p class="text-body-sm clear-data__lead">
-        Everything this site remembers lives in this browser. Clear pieces one
-        by one, or wipe everything at once.
+        {{ $t("settings.clear.lead") }}
       </p>
 
       <HList>
@@ -22,7 +26,7 @@
             <HBtn
               variant="tertiary"
               size="sm"
-              label="Clear"
+              :label="$t('common.action.clear')"
               :disable="row.empty"
               @click="clearRow(row)"
             />
@@ -31,8 +35,12 @@
       </HList>
 
       <template #actions>
-        <HBtn variant="danger" label="Clear all data" @click="clearAll" />
-        <HBtn v-close-popup label="Done" />
+        <HBtn
+          variant="danger"
+          :label="$t('settings.clear.clearAll')"
+          @click="clearAll"
+        />
+        <HBtn v-close-popup :label="$t('common.action.done')" />
       </template>
     </HModal>
   </q-dialog>
@@ -43,7 +51,9 @@
 // persists, clearable on its own. "Clear all data" (the old settings button)
 // lives here too and still wipes everything including consent.
 import { computed } from "vue";
+import { useI18n } from "vue-i18n";
 import { HBtn, HList, HListRow, HModal, hToast } from "@/components/handy";
+import { useFormat } from "@/composables/useFormat";
 import {
   PREVIEW_CLIP_RATE,
   PREVIEW_FRAME_MS,
@@ -59,27 +69,42 @@ const emit = defineEmits<{
 }>();
 
 const settings = useSettingsStore();
+const { t } = useI18n();
+const { count, num } = useFormat();
 
 interface ClearRow {
   key: string;
   icon: string;
   label: string;
   caption: string;
+  /** what the toast says after this row is cleared — the verb is not the
+   * same for every row, so the message can't be built from the label */
+  toast: string;
   empty: boolean;
   clear: () => void;
-}
-
-function countLabel(count: number, noun: string): string {
-  return `${count.toLocaleString()} ${noun}${count === 1 ? "" : "s"}`;
 }
 
 const rows = computed<ClearRow[]>(() => {
   const ratingCount = Object.keys(settings.scriptVotes).length;
   const upvoteCount = settings.requestUpvotes.length;
   const votes = ratingCount + upvoteCount;
+  // a list of what is stored, not a sentence — the middot is a separator and
+  // each side is a whole message
   const voteCaption = [
-    ratingCount ? countLabel(ratingCount, "script rating") : "",
-    upvoteCount ? countLabel(upvoteCount, "request vote") : ""
+    ratingCount
+      ? t(
+          "settings.clear.ratingCount",
+          { count: num(ratingCount) },
+          ratingCount
+        )
+      : "",
+    upvoteCount
+      ? t(
+          "settings.clear.requestVoteCount",
+          { count: num(upvoteCount) },
+          upvoteCount
+        )
+      : ""
   ]
     .filter(Boolean)
     .join(" · ");
@@ -95,58 +120,71 @@ const rows = computed<ClearRow[]>(() => {
     {
       key: "recent",
       icon: "history",
-      label: "Recently viewed",
-      caption: countLabel(settings.recentlyViewed.length, "video"),
+      label: t("settings.clear.recentLabel"),
+      caption: count("videos", settings.recentlyViewed.length),
+      toast: t("settings.clear.recentToast"),
       empty: !settings.recentlyViewed.length,
       clear: settings.clearRecentlyViewed
     },
     {
       key: "favorites",
       icon: "favorite",
-      label: "Favorites",
-      caption: countLabel(settings.favorites.length, "video"),
+      label: t("settings.clear.favoritesLabel"),
+      caption: count("videos", settings.favorites.length),
+      toast: t("settings.clear.favoritesToast"),
       empty: !settings.favorites.length,
       clear: settings.clearFavorites
     },
     {
       key: "playlists",
       icon: "playlist_play",
-      label: "Playlists",
-      caption: countLabel(settings.playlists.length, "playlist"),
+      label: t("settings.clear.playlistsLabel"),
+      caption: count("playlists", settings.playlists.length),
+      toast: t("settings.clear.playlistsToast"),
       empty: !settings.playlists.length,
       clear: settings.clearPlaylists
     },
     {
       key: "muted",
       icon: "block",
-      label: "Muted tags",
+      label: t("settings.muted.label"),
       caption: settings.mutedTags.length
-        ? countLabel(settings.mutedTags.length, "tag")
-        : "Nothing muted",
+        ? t(
+            "settings.muted.caption",
+            { count: num(settings.mutedTags.length) },
+            settings.mutedTags.length
+          )
+        : t("settings.muted.empty"),
+      toast: t("settings.clear.mutedToast"),
       empty: !settings.mutedTags.length,
       clear: settings.clearMutedTags
     },
     {
       key: "votes",
       icon: "star",
-      label: "Ratings & votes",
-      caption: votes ? voteCaption : "Nothing recorded",
+      label: t("settings.clear.votesLabel"),
+      caption: votes ? voteCaption : t("settings.clear.votesEmpty"),
+      toast: t("settings.clear.votesToast"),
       empty: !votes,
       clear: settings.clearVotes
     },
     {
       key: "key",
       icon: "key",
-      label: "Connection key",
-      caption: settings.connectionKey ? "Saved on this device" : "Not set",
+      label: t("settings.connectionKey.label"),
+      caption: settings.connectionKey
+        ? t("settings.clear.keySaved")
+        : t("settings.clear.keyUnset"),
+      toast: t("settings.clear.keyToast"),
       empty: !settings.connectionKey,
       clear: settings.clearConnectionKey
     },
     {
       key: "preferences",
       icon: "tune",
-      label: "Viewing preferences",
-      caption: "Explicit previews, orientation, access filters, preview speeds",
+      label: t("settings.clear.preferencesLabel"),
+      caption: t("settings.clear.preferencesCaption"),
+      toast: t("settings.clear.preferencesToast"),
       empty: !preferencesTouched,
       clear: settings.resetPreferences
     }
@@ -155,14 +193,14 @@ const rows = computed<ClearRow[]>(() => {
 
 function clearRow(row: ClearRow): void {
   row.clear();
-  hToast("info", `${row.label} cleared`);
+  hToast("info", row.toast);
 }
 
 function clearAll(): void {
   settings.clearAll();
   emit("update:modelValue", false);
   emit("cleared-all");
-  hToast("info", "All local data cleared");
+  hToast("info", t("settings.clear.allToast"));
 }
 </script>
 

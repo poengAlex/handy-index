@@ -23,7 +23,7 @@
       icon="close"
       size="sm"
       class="h-feedback__close"
-      aria-label="Dismiss"
+      :aria-label="dismissLabel"
       @click="emit('dismiss')"
     />
   </div>
@@ -46,8 +46,17 @@ const props = withDefaults(
     actionLabel?: string;
     dismissible?: boolean;
     icon?: string;
+    /** Screen-reader name for the dismiss button. */
+    dismissLabel?: string;
   }>(),
-  { severity: "info", title: "", actionLabel: "", dismissible: false, icon: "" }
+  {
+    severity: "info",
+    title: "",
+    actionLabel: "",
+    dismissible: false,
+    icon: "",
+    dismissLabel: "Dismiss"
+  }
 );
 
 const emit = defineEmits<{ action: []; dismiss: [] }>();

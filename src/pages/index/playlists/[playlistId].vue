@@ -3,9 +3,9 @@
     <div v-if="!playlist" class="h-container playlist-page__center">
       <HEmptyState
         icon="playlist_remove"
-        title="Playlist not found"
-        body="This playlist doesn't exist anymore, or the link is wrong."
-        action-label="All playlists"
+        :title="$t('playlists.detail.notFoundTitle')"
+        :body="$t('playlists.detail.notFoundBody')"
+        :action-label="$t('playlists.detail.notFoundAction')"
         @action="router.push('/playlists')"
       />
     </div>
@@ -21,26 +21,24 @@
             v-if="freeCount"
             variant="secondary"
             icon="download"
-            :label="
-              bulkBusy
-                ? `Getting ${bulkDone}/${freeCount}…`
-                : `Get all scripts (${freeCount})`
-            "
+            :label="bulkLabel"
             :disable="bulkBusy"
             @click="downloadAllScripts"
           />
           <HBtn
             v-if="videos.length"
             variant="tertiary"
-            :label="editing ? 'Done' : 'Edit'"
+            :label="
+              editing ? $t('common.action.done') : $t('playlists.detail.edit')
+            "
             @click="editing = !editing"
           />
           <q-btn
             flat
             round
             icon="ios_share"
-            aria-label="Share playlist"
-            title="Share or export this playlist"
+            :aria-label="$t('playlists.share.open')"
+            :title="$t('playlists.share.openHint')"
             class="playlist-page__icon-btn"
             @click="shareOpen = true"
           />
@@ -48,7 +46,7 @@
             flat
             round
             icon="edit"
-            aria-label="Rename"
+            :aria-label="$t('common.action.rename')"
             class="playlist-page__icon-btn"
             @click="openRename"
           />
@@ -56,7 +54,7 @@
             flat
             round
             icon="delete"
-            aria-label="Delete"
+            :aria-label="$t('common.action.delete')"
             class="playlist-page__icon-btn"
             @click="deleteOpen = true"
           />
@@ -66,9 +64,9 @@
       <div v-if="catalog.status === 'error'" class="playlist-page__center">
         <HEmptyState
           icon="cloud_off"
-          title="Couldn't load the catalog"
-          body="The script index didn't answer. Check your connection and try again."
-          action-label="Try again"
+          :title="$t('common.state.catalogErrorTitle')"
+          :body="$t('common.state.catalogErrorBody')"
+          :action-label="$t('common.action.retry')"
           @action="catalog.retry()"
         />
       </div>
@@ -77,16 +75,16 @@
         v-else-if="catalog.status !== 'ready'"
         class="playlist-page__loading"
       >
-        <HandyLoader />
+        <HandyLoader :loading-label="$t('kit.loading')" />
       </div>
 
       <template v-else>
         <div v-if="!videos.length" class="playlist-page__center">
           <HEmptyState
             icon="playlist_add"
-            title="Nothing here yet"
-            body="Use the playlist button on any video page to add videos here."
-            action-label="Browse videos"
+            :title="$t('playlists.detail.emptyTitle')"
+            :body="$t('playlists.detail.emptyBody')"
+            :action-label="$t('common.action.browseVideos')"
             @action="router.push('/videos')"
           />
         </div>
@@ -106,7 +104,7 @@
               unelevated
               icon="close"
               size="sm"
-              aria-label="Remove from playlist"
+              :aria-label="$t('playlists.detail.removeVideo')"
               class="playlist-page__remove"
               @click="
                 settings.toggleInPlaylist(playlist.id, video.partnerVideoId)
@@ -120,11 +118,15 @@
 
     <!-- Rename -->
     <q-dialog v-model="renameOpen">
-      <HModal title="Rename playlist" closable>
+      <HModal
+        :title="$t('playlists.detail.renameTitle')"
+        closable
+        :close-label="$t('kit.close')"
+      >
         <q-input
           :model-value="renameInput"
           filled
-          label="Playlist name"
+          :label="$t('playlists.nameLabel')"
           maxlength="60"
           autofocus
           @update:model-value="renameInput = String($event ?? '')"
@@ -132,7 +134,7 @@
         />
         <template #actions>
           <HBtn
-            label="Save"
+            :label="$t('common.action.save')"
             :disable="!renameInput.trim()"
             @click="saveRename"
           />
@@ -142,14 +144,19 @@
 
     <!-- Share: the export JSON as text, a file, or a temporary paste link -->
     <q-dialog v-model="shareOpen">
-      <HModal title="Share playlist" closable class="playlist-page__share">
+      <HModal
+        :title="$t('playlists.share.title')"
+        closable
+        :close-label="$t('kit.close')"
+        class="playlist-page__share"
+      >
         <div class="playlist-page__share-stack">
           <q-input
             :model-value="exportText"
             type="textarea"
             filled
             readonly
-            aria-label="Playlist export JSON"
+            :aria-label="$t('playlists.share.exportAria')"
             :input-style="{
               minHeight: '160px',
               fontFamily: 'monospace',
@@ -162,7 +169,7 @@
               filled
               dense
               readonly
-              aria-label="Share link"
+              :aria-label="$t('playlists.share.linkAria')"
             >
               <template #append>
                 <q-btn
@@ -170,22 +177,33 @@
                   round
                   dense
                   icon="content_copy"
-                  aria-label="Copy share link"
+                  :aria-label="$t('playlists.share.copyLink')"
                   @click="copyShareUrl"
                 />
               </template>
             </q-input>
             <p class="text-caption playlist-page__share-hint">
-              Anyone with the link can import this playlist. The paste is
-              temporary — it expires after about 90 days.
+              {{ $t("playlists.share.note") }}
             </p>
           </template>
         </div>
         <template #actions>
-          <HBtn variant="tertiary" label="Copy JSON" @click="copyExportText" />
-          <HBtn variant="tertiary" label="Save file" @click="exportThis" />
           <HBtn
-            :label="shareUrl ? 'New share link' : 'Create share link'"
+            variant="tertiary"
+            :label="$t('playlists.share.copyJson')"
+            @click="copyExportText"
+          />
+          <HBtn
+            variant="tertiary"
+            :label="$t('playlists.share.saveFile')"
+            @click="exportThis"
+          />
+          <HBtn
+            :label="
+              shareUrl
+                ? $t('playlists.share.newLink')
+                : $t('playlists.share.createLink')
+            "
             :loading="sharing"
             @click="createShareLink"
           />
@@ -195,19 +213,26 @@
 
     <!-- Connection key prompt for the bulk script download -->
     <ConnectionKeyDialog v-model="keyDialog" @saved="downloadAllScripts">
-      Scripts are bound to your Handy. Enter the connection key from the Handy
-      app to continue.
+      {{ $t("playlists.bulk.keyPrompt") }}
     </ConnectionKeyDialog>
 
     <!-- Delete confirm -->
     <q-dialog v-model="deleteOpen">
-      <HModal :title="`Delete '${playlist?.name ?? ''}'?`">
-        The videos stay in the catalog — only the playlist goes away.
+      <HModal
+        :title="
+          $t('playlists.detail.deleteTitle', { name: playlist?.name ?? '' })
+        "
+      >
+        {{ $t("playlists.detail.deleteBody") }}
         <template #actions>
-          <HBtn variant="tertiary" label="Cancel" @click="deleteOpen = false" />
+          <HBtn
+            variant="tertiary"
+            :label="$t('common.action.cancel')"
+            @click="deleteOpen = false"
+          />
           <HBtn
             variant="danger"
-            label="Delete playlist"
+            :label="$t('playlists.detail.deleteConfirm')"
             @click="confirmDelete"
           />
         </template>
@@ -221,6 +246,7 @@
 // rename/delete and an edit mode for pulling videos out. Playlists are
 // intentionally ungated, like favorites — you curated them yourself.
 import { computed, ref, watch } from "vue";
+import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 import {
   HBtn,
@@ -232,12 +258,17 @@ import {
 import ConnectionKeyDialog from "@/components/ConnectionKeyDialog.vue";
 import VideoCard from "@/components/VideoCard.vue";
 import VideoGrid from "@/components/VideoGrid.vue";
+import { useFormat } from "@/composables/useFormat";
 import {
   exportPlaylist,
   playlistExportText,
   uploadPlaylistPaste
 } from "@/services/playlist-transfer";
-import { downloadFreeScript } from "@/services/script-download";
+import {
+  downloadFreeScript,
+  scriptDownloadCode,
+  type ScriptDownloadFailure
+} from "@/services/script-download";
 import { inOrder } from "@/services/script-index/queries";
 import { useCatalogStore } from "@/stores/catalog";
 import { useSettingsStore } from "@/stores/settings";
@@ -246,6 +277,8 @@ const route = useRoute("//playlists/[playlistId]");
 const router = useRouter();
 const catalog = useCatalogStore();
 const settings = useSettingsStore();
+const { t, n } = useI18n();
+const format = useFormat();
 
 const playlist = computed(() =>
   settings.playlists.find(item => item.id === route.params.playlistId)
@@ -257,13 +290,14 @@ const videos = computed(() =>
     : []
 );
 
-const countLabel = computed(() => {
-  const count =
+const countLabel = computed(() =>
+  format.count(
+    "videos",
     catalog.status === "ready"
       ? videos.value.length
-      : (playlist.value?.videoIds.length ?? 0);
-  return `${count.toLocaleString()} ${count === 1 ? "video" : "videos"}`;
-});
+      : (playlist.value?.videoIds.length ?? 0)
+  )
+);
 
 // --- edit mode (remove videos) ---
 
@@ -291,18 +325,18 @@ function exportThis() {
 async function copyExportText() {
   try {
     await navigator.clipboard.writeText(exportText.value);
-    hToast("positive", "JSON copied");
+    hToast("positive", t("playlists.share.jsonCopied"));
   } catch {
-    hToast("negative", "Couldn't copy the JSON");
+    hToast("negative", t("playlists.share.jsonCopyFailed"));
   }
 }
 
 async function copyShareUrl() {
   try {
     await navigator.clipboard.writeText(shareUrl.value);
-    hToast("positive", "Share link copied");
+    hToast("positive", t("playlists.share.linkCopied"));
   } catch {
-    hToast("negative", "Couldn't copy the link");
+    hToast("negative", t("playlists.share.linkCopyFailed"));
   }
 }
 
@@ -316,17 +350,17 @@ async function createShareLink() {
       await navigator.clipboard.writeText(shareUrl.value);
       hToast(
         "positive",
-        "Share link copied",
-        "Anyone with the link can import this playlist."
+        t("playlists.share.linkCopied"),
+        t("playlists.share.linkCopiedBody")
       );
     } catch {
-      hToast("positive", "Share link created");
+      hToast("positive", t("playlists.share.linkCreated"));
     }
   } catch {
     hToast(
       "negative",
-      "Couldn't create a share link",
-      "The paste service didn't answer. Copy the JSON instead."
+      t("playlists.share.linkFailedTitle"),
+      t("playlists.share.linkFailedBody")
     );
   } finally {
     sharing.value = false;
@@ -346,6 +380,15 @@ const freeVideos = computed(() =>
 
 const freeCount = computed(() => freeVideos.value.length);
 
+const bulkLabel = computed(() =>
+  bulkBusy.value
+    ? t("playlists.bulk.progress", {
+        done: n(bulkDone.value),
+        total: n(freeCount.value)
+      })
+    : t("playlists.bulk.label", { count: n(freeCount.value) })
+);
+
 async function downloadAllScripts() {
   if (bulkBusy.value || !freeCount.value) return;
   const key = settings.connectionKey.trim();
@@ -356,11 +399,15 @@ async function downloadAllScripts() {
   bulkBusy.value = true;
   bulkDone.value = 0;
   let failed = 0;
+  // when every one of them fails they have almost always failed for the same
+  // reason, so the last code is the one worth explaining
+  let lastFailure: ScriptDownloadFailure = "failed";
   for (const video of freeVideos.value) {
     try {
       await downloadFreeScript(video, key);
-    } catch {
+    } catch (error) {
       failed += 1;
+      lastFailure = scriptDownloadCode(error);
     }
     bulkDone.value += 1;
   }
@@ -369,20 +416,20 @@ async function downloadAllScripts() {
   if (!saved) {
     hToast(
       "negative",
-      "Couldn't get the scripts",
-      "Either the connection key is wrong or your Handy isn't online. Check both, then try again."
+      t("playlists.bulk.failedTitle"),
+      t(`services.scriptDownload.${lastFailure}`)
     );
   } else if (failed) {
     hToast(
       "info",
-      "Scripts downloaded",
-      `${saved.toLocaleString()} saved, ${failed.toLocaleString()} failed.`
+      t("playlists.bulk.doneTitle"),
+      t("playlists.bulk.partialBody", { saved: n(saved), failed: n(failed) })
     );
   } else {
     hToast(
       "positive",
-      "Scripts downloaded",
-      `${saved.toLocaleString()} script${saved === 1 ? "" : "s"} saved.`
+      t("playlists.bulk.doneTitle"),
+      t("playlists.bulk.doneBody", { count: n(saved) }, saved)
     );
   }
 }
@@ -415,7 +462,11 @@ function confirmDelete() {
   deleteOpen.value = false;
   settings.deletePlaylist(current.id);
   void router.replace("/playlists");
-  hToast("positive", "Playlist deleted", `'${current.name}' is gone.`);
+  hToast(
+    "positive",
+    t("playlists.detail.deletedTitle"),
+    t("playlists.detail.deletedBody", { name: current.name })
+  );
 }
 </script>
 

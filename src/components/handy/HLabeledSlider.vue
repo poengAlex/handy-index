@@ -5,7 +5,7 @@
         v-if="reset !== undefined"
         type="button"
         class="text-body-compact h-lslider__label-btn"
-        :aria-label="`Reset ${label}`"
+        :aria-label="aria.reset"
         @click="emit('update:modelValue', reset)"
       >
         {{ label }}
@@ -25,7 +25,7 @@
                 inputmode="decimal"
                 class="h-lslider__input"
                 :style="{ width: `${Math.max(draft.length, 1)}ch` }"
-                :aria-label="`${label} value`"
+                :aria-label="aria.value"
                 @input="onDraftInput"
                 @keydown.enter.prevent="commitEdit"
                 @keydown.esc.prevent="cancelEdit"
@@ -36,7 +36,7 @@
               v-else
               type="button"
               class="h-lslider__value-btn"
-              :aria-label="`Edit ${label} value`"
+              :aria-label="aria.editValue"
               @click="startEdit('single')"
             >
               <HTabularNum :value="valueText" />
@@ -51,7 +51,7 @@
               inputmode="decimal"
               class="h-lslider__input"
               :style="{ width: `${Math.max(draft.length, 1)}ch` }"
-              :aria-label="`${label} minimum value`"
+              :aria-label="aria.min"
               @input="onDraftInput"
               @keydown.enter.prevent="commitEdit"
               @keydown.esc.prevent="cancelEdit"
@@ -61,7 +61,7 @@
               v-else
               type="button"
               class="h-lslider__value-btn"
-              :aria-label="`Edit ${label} minimum`"
+              :aria-label="aria.editMin"
               @click="startEdit('min')"
             >
               <HTabularNum
@@ -77,7 +77,7 @@
               inputmode="decimal"
               class="h-lslider__input"
               :style="{ width: `${Math.max(draft.length, 1)}ch` }"
-              :aria-label="`${label} maximum value`"
+              :aria-label="aria.max"
               @input="onDraftInput"
               @keydown.enter.prevent="commitEdit"
               @keydown.esc.prevent="cancelEdit"
@@ -87,7 +87,7 @@
               v-else
               type="button"
               class="h-lslider__value-btn"
-              :aria-label="`Edit ${label} maximum`"
+              :aria-label="aria.editMax"
               @click="startEdit('max')"
             >
               <HTabularNum
@@ -182,6 +182,20 @@ const props = withDefaults(
      * undefined allowed, for wrappers that bind it conditionally) */
     reset?: number | HLabeledSliderRange | undefined;
     disable?: boolean;
+    /** Screen-reader name for the label-as-reset button. */
+    resetLabel?: string;
+    /** Screen-reader name for the value field. */
+    valueLabel?: string;
+    /** Screen-reader name for the button that opens that field. */
+    editValueLabel?: string;
+    /** Screen-reader name for the range's lower field. */
+    minValueLabel?: string;
+    /** Screen-reader name for the button that opens the lower field. */
+    editMinLabel?: string;
+    /** Screen-reader name for the range's upper field. */
+    maxValueLabel?: string;
+    /** Screen-reader name for the button that opens the upper field. */
+    editMaxLabel?: string;
   }>(),
   {
     min: 0,
@@ -191,7 +205,14 @@ const props = withDefaults(
     editable: true,
     unclamped: false,
     decimals: 0,
-    disable: false
+    disable: false,
+    resetLabel: "",
+    valueLabel: "",
+    editValueLabel: "",
+    minValueLabel: "",
+    editMinLabel: "",
+    maxValueLabel: "",
+    editMaxLabel: ""
   }
 );
 
@@ -211,6 +232,21 @@ const valueText = computed(() => {
   }
   return `${props.modelValue}${props.unit}`;
 });
+
+// Every one of these names is built around `label` ("Edit Duration
+// minimum"), so the fallbacks can't be fixed strings in withDefaults —
+// they have to follow the label. An app with more than one language
+// passes the finished name instead: English's word order is not
+// everyone's, so these can never be assembled from translated pieces.
+const aria = computed(() => ({
+  reset: props.resetLabel || `Reset ${props.label}`,
+  value: props.valueLabel || `${props.label} value`,
+  editValue: props.editValueLabel || `Edit ${props.label} value`,
+  min: props.minValueLabel || `${props.label} minimum value`,
+  editMin: props.editMinLabel || `Edit ${props.label} minimum`,
+  max: props.maxValueLabel || `${props.label} maximum value`,
+  editMax: props.editMaxLabel || `Edit ${props.label} maximum`
+}));
 
 // ── inline value editing ──
 // One shared draft/input; `editing` names the field it currently edits —

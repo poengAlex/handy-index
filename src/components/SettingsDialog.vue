@@ -3,37 +3,50 @@
     :model-value="modelValue"
     @update:model-value="emit('update:modelValue', $event)"
   >
-    <HModal title="Settings" closable class="settings-modal">
+    <HModal
+      :title="$t('settings.title')"
+      closable
+      :close-label="$t('kit.close')"
+      class="settings-modal"
+    >
       <ModalScroll>
         <div class="settings-modal__stack">
+          <LanguagePicker />
+
           <HList>
             <HToggleRow
               v-model="darkMode"
               icon="dark_mode"
-              label="Dark mode"
-              caption="Use the dark colour theme"
+              :label="$t('settings.display.darkModeLabel')"
+              :caption="$t('settings.display.darkModeCaption')"
             />
             <HToggleRow
               v-model="settings.nsfw"
               icon="visibility"
-              label="Explicit previews"
-              caption="Show real artwork instead of neutral tiles"
+              :label="$t('settings.display.nsfwLabel')"
+              :caption="$t('settings.display.nsfwCaption')"
             />
             <HToggleRow
               v-model="settings.inlinePlayers"
               icon="play_circle"
-              label="Embedded players"
-              caption="Play Pornhub and xHamster videos right on the video page"
+              :label="$t('settings.display.playersLabel')"
+              :caption="$t('settings.display.playersCaption')"
             />
             <HToggleRow
               v-model="settings.fullWidth"
               icon="fit_screen"
-              label="Full-width layout"
-              caption="Use the whole screen instead of a centered column"
+              :label="$t('settings.display.fullWidthLabel')"
+              :caption="$t('settings.display.fullWidthCaption')"
+            />
+            <HToggleRow
+              v-model="settings.background"
+              icon="blur_on"
+              :label="$t('settings.display.backgroundLabel')"
+              :caption="$t('settings.display.backgroundCaption')"
             />
             <HListRow
               icon="block"
-              label="Muted tags"
+              :label="$t('settings.muted.label')"
               :caption="mutedCaption"
               :clickable="false"
             >
@@ -41,51 +54,51 @@
                 <HBtn
                   variant="tertiary"
                   size="sm"
-                  label="Manage"
+                  :label="$t('common.action.manage')"
                   @click="mutedTagsOpen = true"
                 />
               </template>
             </HListRow>
           </HList>
 
-          <HList title="Orientation">
+          <HList :title="$t('settings.orientationTitle')">
             <HRadioRow
               v-for="option in ORIENTATIONS"
               :key="option"
               v-model="settings.orientation"
               :val="option"
-              :label="ORIENTATION_LABELS[option]"
+              :label="orientation(option)"
             />
           </HList>
 
-          <HList title="Access">
+          <HList :title="$t('settings.access.title')">
             <HToggleRow
               v-model="settings.showPremiumScripts"
               icon="workspace_premium"
-              label="Premium scripts"
-              caption="Include videos whose script is behind a partner's paywall"
+              :label="$t('settings.access.premiumScriptsLabel')"
+              :caption="$t('settings.access.premiumScriptsCaption')"
             />
             <HToggleRow
               v-model="settings.showPaidVideos"
               icon="paid"
-              label="Premium videos"
-              caption="Include videos behind a partner's paywall"
+              :label="$t('settings.access.premiumVideosLabel')"
+              :caption="$t('settings.access.premiumVideosCaption')"
             />
           </HList>
 
           <div class="settings-modal__block">
             <div class="text-body-compact settings-modal__label">
-              Card previews
+              {{ $t("settings.previews.title") }}
             </div>
             <div
               class="text-caption settings-modal__hint settings-modal__hint--lead"
             >
-              Hover a card — or drag a finger across one — to preview it. Click
-              a label to put that speed back.
+              {{ $t("settings.previews.hint") }}
             </div>
             <HLabeledSlider
               :model-value="frameSeconds"
-              label="Image speed"
+              :label="$t('settings.previews.imageSpeed')"
+              v-bind="sliderAria($t('settings.previews.imageSpeed'))"
               unit="s"
               :min="PREVIEW_FRAME_MS.min / 1000"
               :max="PREVIEW_FRAME_MS.max / 1000"
@@ -96,7 +109,8 @@
             />
             <HLabeledSlider
               v-model="settings.previewClipRate"
-              label="Clip speed"
+              :label="$t('settings.previews.clipSpeed')"
+              v-bind="sliderAria($t('settings.previews.clipSpeed'))"
               unit="×"
               :min="PREVIEW_CLIP_RATE.min"
               :max="PREVIEW_CLIP_RATE.max"
@@ -108,39 +122,31 @@
 
           <div>
             <div class="text-body-compact settings-modal__label">
-              Connection key
+              {{ $t("settings.connectionKey.label") }}
             </div>
             <q-input
               :model-value="settings.connectionKey"
               filled
               dense
               maxlength="32"
-              placeholder="e.g. a1B2c3D4e5"
-              aria-label="Connection key"
+              :placeholder="$t('settings.connectionKey.placeholder')"
+              :aria-label="$t('settings.connectionKey.label')"
               @update:model-value="onKeyInput(String($event ?? ''))"
             />
             <div class="text-caption settings-modal__hint">
-              Your Handy connection key, used when downloading scripts.
+              {{ $t("settings.connectionKey.hint") }}
             </div>
           </div>
-
-          <HNavCard
-            v-close-popup
-            icon="help"
-            label="Help & features"
-            caption="Everything you can do on this site"
-            to="/help"
-          />
         </div>
       </ModalScroll>
 
       <template #actions>
         <HBtn
           variant="tertiary"
-          label="Clear data…"
+          :label="$t('settings.clearDataAction')"
           @click="clearDataOpen = true"
         />
-        <HBtn v-close-popup label="Done" />
+        <HBtn v-close-popup :label="$t('common.action.done')" />
       </template>
     </HModal>
   </q-dialog>
@@ -155,25 +161,25 @@
 
 <script setup lang="ts">
 import { computed, nextTick, ref } from "vue";
+import { useI18n } from "vue-i18n";
 import {
   HBtn,
   HLabeledSlider,
   HList,
   HListRow,
-  HNavCard,
   HRadioRow,
   HToggleRow,
   HModal,
   useHandyTheme
 } from "@/components/handy";
 import ClearDataDialog from "@/components/ClearDataDialog.vue";
+import LanguagePicker from "@/components/LanguagePicker.vue";
 import ModalScroll from "@/components/ModalScroll.vue";
 import MutedTagsDialog from "@/components/MutedTagsDialog.vue";
+import { useFormat } from "@/composables/useFormat";
+import { useKitLabels } from "@/composables/useKitLabels";
 import { sanitizeConnectionKey } from "@/services/format";
-import {
-  ORIENTATIONS,
-  ORIENTATION_LABELS
-} from "@/services/script-index/queries";
+import { ORIENTATIONS } from "@/services/script-index/queries";
 import {
   PREVIEW_CLIP_RATE,
   PREVIEW_FRAME_MS,
@@ -184,7 +190,11 @@ defineProps<{ modelValue: boolean }>();
 
 const emit = defineEmits<{ "update:modelValue": [value: boolean] }>();
 
+const { sliderAria } = useKitLabels();
+
 const settings = useSettingsStore();
+const { t } = useI18n();
+const { num, orientation } = useFormat();
 
 // theme lives outside the settings store (it's persisted by useHandyTheme
 // under "handy-theme"), so the row proxies the shared state instead
@@ -206,10 +216,10 @@ const clearDataOpen = ref(false);
 const mutedTagsOpen = ref(false);
 
 const mutedCaption = computed(() => {
-  const count = settings.mutedTags.length;
-  return count
-    ? `${count} tag${count === 1 ? "" : "s"} muted`
-    : "Nothing muted";
+  const muted = settings.mutedTags.length;
+  return muted
+    ? t("settings.muted.caption", { count: num(muted) }, muted)
+    : t("settings.muted.empty");
 });
 
 // force a change cycle when sanitizing strips the typed char back to the

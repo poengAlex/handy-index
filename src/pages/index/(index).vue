@@ -6,9 +6,9 @@
       <div class="h-container home-error">
         <HEmptyState
           icon="cloud_off"
-          title="Couldn't load the catalog"
-          body="The script index didn't answer. Check your connection and try again."
-          action-label="Try again"
+          :title="$t('common.state.catalogErrorTitle')"
+          :body="$t('common.state.catalogErrorBody')"
+          :action-label="$t('common.action.retry')"
           @action="catalog.retry()"
         />
       </div>
@@ -19,16 +19,16 @@
       <MediaHero
         v-if="featured"
         :artwork="artworkOf(featured)"
-        :alt="featured.title ?? 'Featured video'"
+        :alt="featured.title ?? $t('home.hero.alt')"
       >
-        <p class="text-h6 home-hero__kicker">Featured</p>
+        <p class="text-h6 home-hero__kicker">{{ $t("home.hero.kicker") }}</p>
         <h1 class="text-h2 home-hero__title">{{ featured.title }}</h1>
         <div class="home-hero__chips">
           <HChip v-if="featured.partnerName" :label="featured.partnerName" />
           <HChip
             v-if="featured.duration"
             icon="schedule"
-            :label="formatDuration(featured.duration)"
+            :label="format.duration(featured.duration)"
           />
           <HChip
             v-if="featured.format?.format === 'vr'"
@@ -38,23 +38,24 @@
         </div>
         <div class="home-hero__ctas">
           <HBtn
-            label="View video"
+            :label="$t('home.hero.cta')"
             arrow
             :to="`/videos/${featured.partnerVideoId}`"
           />
         </div>
       </MediaHero>
       <section v-else-if="catalog.status !== 'ready'" class="home-hero-loading">
-        <HandyLoader />
+        <HandyLoader :loading-label="$t('kit.loading')" />
       </section>
       <!-- ready but nothing to feature (filters/mutes emptied the pool):
            without this the page opens with neither hero nor loader -->
       <section v-else class="h-section home-hero-empty">
         <div class="h-container">
-          <h1 class="text-h2 home-hero__title">Nothing to feature</h1>
+          <h1 class="text-h2 home-hero__title">
+            {{ $t("home.hero.emptyTitle") }}
+          </h1>
           <p class="text-body-sm home-hero-empty__body">
-            Your filters and muted tags hide the whole catalog. Loosen them in
-            settings.
+            {{ $t("home.filteredOutBody") }}
           </p>
         </div>
       </section>
@@ -75,8 +76,8 @@
           <div v-if="!rows.length" class="h-container home-empty">
             <HEmptyState
               icon="filter_alt_off"
-              title="Nothing to show"
-              body="Your filters and muted tags hide the whole catalog. Loosen them in settings."
+              :title="$t('common.state.emptyTitle')"
+              :body="$t('home.filteredOutBody')"
             />
           </div>
         </template>
@@ -87,18 +88,20 @@
 
       <!-- Clearing viewing history is one click from the shelf, so it asks -->
       <q-dialog v-model="clearHistoryOpen">
-        <HModal title="Clear recently viewed?">
-          The videos stay in the catalog — only this browser's list of what
-          you've opened goes away.
+        <HModal
+          :title="$t('home.clearHistory.title')"
+          :close-label="$t('kit.close')"
+        >
+          {{ $t("home.clearHistory.body") }}
           <template #actions>
             <HBtn
               variant="tertiary"
-              label="Cancel"
+              :label="$t('common.action.cancel')"
               @click="clearHistoryOpen = false"
             />
             <HBtn
               variant="danger"
-              label="Clear history"
+              :label="$t('home.clearHistory.confirm')"
               @click="clearHistory"
             />
           </template>
@@ -110,6 +113,7 @@
 
 <script setup lang="ts">
 import { computed, ref } from "vue";
+import { useI18n } from "vue-i18n";
 import {
   HBtn,
   HChip,
@@ -120,7 +124,7 @@ import {
 } from "@/components/handy";
 import CarouselRow from "@/components/CarouselRow.vue";
 import MediaHero from "@/components/MediaHero.vue";
-import { formatDuration } from "@/services/format";
+import { useFormat } from "@/composables/useFormat";
 import {
   artworkOf,
   byTag,
@@ -174,6 +178,8 @@ interface Row {
 
 const catalog = useCatalogStore();
 const settings = useSettingsStore();
+const { t } = useI18n();
+const format = useFormat();
 
 // only the recently-viewed shelf carries a clear icon, so the row event
 // needs no key check
@@ -182,7 +188,7 @@ const clearHistoryOpen = ref(false);
 function clearHistory(): void {
   clearHistoryOpen.value = false;
   settings.clearRecentlyViewed();
-  hToast("info", "Recently viewed cleared");
+  hToast("info", t("home.clearHistory.done"));
 }
 
 const featured = computed(() =>
@@ -195,6 +201,9 @@ function titleCase(tag: string): string {
   return tag.charAt(0).toUpperCase() + tag.slice(1);
 }
 
+// Shelf titles are translated here rather than in a module-level table: a
+// constant would be built once at import and keep its labels through a
+// language switch, while this computed re-runs when the locale changes.
 const rows = computed<Row[]>(() => {
   // home is a visual browse surface: a card without artwork — no link at
   // all, or a link the broken-artwork registry knows is dead — is just a
@@ -231,7 +240,7 @@ const rows = computed<Row[]>(() => {
     .slice(0, 2)
     .map(({ tag }) => ({
       key: `like-${tag}`,
-      title: `Because you like ${tag}`,
+      title: t("home.rows.becauseYouLike", { tag }),
       videos: recentFirst(byTag(pool, tag)).slice(0, ROW_SIZE),
       to: `/videos?tag=${encodeURIComponent(tag)}`
     }));
@@ -239,13 +248,13 @@ const rows = computed<Row[]>(() => {
   const allRows: Row[] = [
     {
       key: "recent",
-      title: "Recently added",
+      title: t("home.rows.recent"),
       videos: recentFirst(pool).slice(0, ROW_SIZE),
       to: "/videos"
     },
     {
       key: "favorites",
-      title: "My favorites",
+      title: t("home.rows.favorites"),
       videos: recentFirst(catalog.favorites).slice(0, ROW_SIZE),
       to: "/favorites"
     },
@@ -256,29 +265,31 @@ const rows = computed<Row[]>(() => {
       // home is the one surface you can't avoid. recordView keeps recording,
       // so unmuting restores the row intact.
       key: "recently-viewed",
-      title: "Recently viewed",
+      title: t("home.rows.recentlyViewed"),
       videos: inOrder(catalog.videos, settings.recentlyViewed)
         .filter(video => !hasMutedTag(video, settings.mutedSet))
         .slice(0, ROW_SIZE),
       to: "/history",
-      hint: "Only stored in this browser — your viewing history is never tracked or sent anywhere.",
-      clearLabel: "Clear recently viewed"
+      hint: t("home.rows.recentlyViewedHint"),
+      clearLabel: t("home.rows.recentlyViewedClear")
     },
     ...likeRows,
     {
       key: "top-rated",
-      title: "Top rated",
+      title: t("home.rows.topRated"),
       videos: topRated(pool).slice(0, ROW_SIZE),
       to: "/videos?sort=top"
     },
     {
       key: "most-played",
-      title: "Most played",
+      title: t("home.rows.mostPlayed"),
       videos: mostPlayed(pool).slice(0, ROW_SIZE),
       to: "/videos?sort=plays"
     },
     {
       key: "vr",
+      // the one shelf title that is not a message: "VR" is the same word in
+      // every locale this app ships
       title: "VR",
       videos: recentFirst(vrOnly(pool)).slice(0, ROW_SIZE),
       to: "/videos?vr=1"
@@ -286,7 +297,7 @@ const rows = computed<Row[]>(() => {
     ...tagRows,
     {
       key: "updated",
-      title: "Recently updated",
+      title: t("home.rows.updated"),
       videos: recentlyUpdatedFirst(pool).slice(0, ROW_SIZE),
       to: "/videos?sort=updated"
     }

@@ -4,16 +4,16 @@
       <div v-if="catalog.status === 'error'" class="tags-page__center">
         <HEmptyState
           icon="cloud_off"
-          title="Couldn't load tags"
-          body="The script index didn't answer. Check your connection and try again."
-          action-label="Try again"
+          :title="$t('tags.errorTitle')"
+          :body="$t('common.state.catalogErrorBody')"
+          :action-label="$t('common.action.retry')"
           @action="catalog.retry()"
         />
       </div>
 
       <template v-else>
         <header class="tags-page__header">
-          <h1 class="text-h2 tags-page__title">Tags</h1>
+          <h1 class="text-h2 tags-page__title">{{ $t("tags.title") }}</h1>
           <p
             v-if="catalog.status === 'ready'"
             class="text-body-sm tags-page__count"
@@ -25,11 +25,11 @@
 
         <div v-if="catalog.status !== 'ready'" class="tags-page__center">
           <div class="tags-page__loading">
-            <HandyLoader />
+            <HandyLoader :loading-label="$t('kit.loading')" />
             <div
               class="tags-page__bar"
               role="progressbar"
-              aria-label="Loading tags"
+              :aria-label="$t('tags.loading.barLabel')"
               aria-valuemin="0"
               aria-valuemax="100"
               :aria-valuenow="percent"
@@ -42,7 +42,7 @@
             <p class="text-body-sm tags-page__loading-line" aria-live="polite">
               <span>{{ loadingPhase }}</span>
               <HTabularNum class="tags-page__loading-pct">
-                {{ percent }}%
+                {{ $t("tags.loading.percent", { percent: $n(percent) }) }}
               </HTabularNum>
             </p>
             <p class="text-caption tags-page__loading-note">
@@ -59,8 +59,8 @@
               dense
               clearable
               debounce="300"
-              placeholder="Search tags"
-              aria-label="Search tags"
+              :placeholder="$t('tags.controls.searchPlaceholder')"
+              :aria-label="$t('tags.controls.searchLabel')"
               class="tags-page__search"
             >
               <template #prepend>
@@ -69,12 +69,12 @@
             </q-input>
             <q-select
               v-model="sortKey"
-              :options="SORT_OPTIONS"
+              :options="sortOptions"
               emit-value
               map-options
               filled
               dense
-              aria-label="Sort tags"
+              :aria-label="$t('tags.controls.sortLabel')"
               class="tags-page__sort"
             >
               <template #prepend>
@@ -85,8 +85,8 @@
               flat
               round
               :icon="sortDir === 'desc' ? 'arrow_downward' : 'arrow_upward'"
-              :aria-label="`Sorted ${sortDir === 'desc' ? 'descending' : 'ascending'} — reverse`"
-              :title="`Sorted ${sortDir === 'desc' ? 'descending' : 'ascending'} — click to reverse`"
+              :aria-label="dirLabel"
+              :title="dirTitle"
               class="tags-page__dir"
               @click="flipDir"
             />
@@ -102,17 +102,17 @@
             <HEmptyState
               v-if="needle"
               icon="search_off"
-              title="No tags match"
-              :body="`Nothing in the index matches “${needle}”.`"
-              action-label="Clear search"
+              :title="$t('tags.empty.searchTitle')"
+              :body="$t('tags.empty.searchBody', { query: needle })"
+              :action-label="$t('common.action.clearSearch')"
               @action="query = ''"
             />
             <HEmptyState
               v-else
               icon="filter_alt_off"
-              title="Nothing to show"
-              body="Your filters and muted tags hide every tag in the index. Loosen them in settings."
-              action-label="Muted tags"
+              :title="$t('common.state.emptyTitle')"
+              :body="$t('tags.empty.filteredBody')"
+              :action-label="$t('tags.empty.filteredAction')"
               @action="mutedOpen = true"
             />
           </div>
@@ -128,7 +128,7 @@
                 <HChip>
                   {{ summary.tag }}
                   <span class="tags-page__tag-count">
-                    {{ summary.count.toLocaleString() }}
+                    {{ $n(summary.count) }}
                   </span>
                 </HChip>
                 <!-- right-click / long-press, so the cloud costs no pixels -->
@@ -142,13 +142,17 @@
                       <q-item-section side>
                         <q-icon name="sell" size="20px" />
                       </q-item-section>
-                      <q-item-section>Browse this tag</q-item-section>
+                      <q-item-section>
+                        {{ $t("tags.menu.browse") }}
+                      </q-item-section>
                     </q-item>
                     <q-item v-close-popup clickable @click="mute(summary.tag)">
                       <q-item-section side>
                         <q-icon name="block" size="20px" />
                       </q-item-section>
-                      <q-item-section>Mute this tag</q-item-section>
+                      <q-item-section>
+                        {{ $t("tags.menu.mute") }}
+                      </q-item-section>
                     </q-item>
                   </q-list>
                 </q-menu>
@@ -169,6 +173,7 @@
 // first or A–Z, searchable, revealed incrementally. A pill filters the
 // browse page on that tag.
 import { computed, ref, watch } from "vue";
+import { useI18n } from "vue-i18n";
 import {
   HBtn,
   HChip,
@@ -179,6 +184,7 @@ import {
 } from "@/components/handy";
 import GateNotice from "@/components/GateNotice.vue";
 import MutedTagsDialog from "@/components/MutedTagsDialog.vue";
+import { useFormat } from "@/composables/useFormat";
 import { useIncrementalReveal } from "@/composables/useIncrementalReveal";
 import { tagsOf } from "@/services/script-index/queries";
 import { useCatalogStore } from "@/stores/catalog";
@@ -189,16 +195,21 @@ const PAGE_SIZE = 150;
 type SortKey = "count" | "name";
 type SortDir = "asc" | "desc";
 
-const SORT_OPTIONS: { label: string; value: SortKey }[] = [
-  { label: "Most videos", value: "count" },
-  { label: "A–Z", value: "name" }
-];
-
 // the direction each sort naturally produces; flipping away reverses the list
 const NATURAL_DIR: Record<SortKey, SortDir> = { count: "desc", name: "asc" };
 
+const { t, n } = useI18n();
+const fmt = useFormat();
 const catalog = useCatalogStore();
 const settings = useSettingsStore();
+
+// the options carry display text, so they're a computed rather than a module
+// constant — a module constant is built once at import and would keep the old
+// language after a switch
+const sortOptions = computed<{ label: string; value: SortKey }[]>(() => [
+  { label: t("tags.controls.sortByCount"), value: "count" },
+  { label: t("tags.controls.sortByName"), value: "name" }
+]);
 
 // The cloud can't draw a single pill until the whole index is in, and that is
 // a ~40 MB wait — long enough that a bare spinner reads as a hang. So: how
@@ -206,28 +217,38 @@ const settings = useSettingsStore();
 const percent = computed(() => Math.round(catalog.progress * 100));
 
 const loadingPhase = computed(() =>
-  catalog.parsing ? "Reading the index" : "Downloading the script index"
+  catalog.parsing ? t("tags.loading.parsing") : t("tags.loading.downloading")
 );
 
 const loadingNote = computed(() => {
-  if (catalog.parsing) return "All in — sorting it into tags now.";
+  if (catalog.parsing) return t("tags.loading.noteParsing");
   const received = megabytes(catalog.loadedBytes);
   // the total is only last visit's size; an index that grew since must not
   // print "44 of ~41 MB"
   if (catalog.loadedBytes > catalog.expectedBytes) {
-    return `${received} MB unpacked — the whole catalog, fetched once.`;
+    return t("tags.loading.noteOversize", { received });
   }
-  return `${received} of ~${megabytes(catalog.expectedBytes)} MB unpacked — the whole catalog, fetched once, so every page after this is instant.`;
+  return t("tags.loading.note", {
+    received,
+    total: megabytes(catalog.expectedBytes)
+  });
 });
 
+// one decimal, but through `$n` — toFixed() would print "41.3" in Norwegian,
+// where the decimal separator is a comma
 function megabytes(bytes: number): string {
-  return (bytes / 1_000_000).toFixed(1);
+  return n(bytes / 1_000_000, {
+    minimumFractionDigits: 1,
+    maximumFractionDigits: 1
+  });
 }
 
 const mutedOpen = ref(false);
 
 const mutedLabel = computed(() =>
-  settings.mutedTags.length ? `Muted (${settings.mutedTags.length})` : "Muted"
+  settings.mutedTags.length
+    ? t("tags.controls.mutedCount", { count: n(settings.mutedTags.length) })
+    : t("tags.controls.muted")
 );
 
 function mute(tag: string) {
@@ -236,15 +257,15 @@ function mute(tag: string) {
   if (!settings.muteTag(tag)) {
     hToast(
       "info",
-      `“${tag}” can't be muted`,
-      "Orientation tags decide which catalog you see — change that in settings."
+      t("tags.toast.refusedTitle", { tag }),
+      t("tags.toast.refusedBody")
     );
     return;
   }
   hToast(
     "info",
-    `Muted “${tag}”`,
-    "It's in your muted list — unmute any time."
+    t("tags.toast.mutedTitle", { tag }),
+    t("tags.toast.mutedBody")
   );
 }
 
@@ -270,6 +291,20 @@ function flipDir() {
   sortDir.value = sortDir.value === "desc" ? "asc" : "desc";
 }
 
+// whole sentences per direction rather than a "sorted" + direction splice —
+// the two languages don't agree on where the adjective goes
+const dirLabel = computed(() =>
+  sortDir.value === "desc"
+    ? t("tags.controls.sortedDescLabel")
+    : t("tags.controls.sortedAscLabel")
+);
+
+const dirTitle = computed(() =>
+  sortDir.value === "desc"
+    ? t("tags.controls.sortedDescTitle")
+    : t("tags.controls.sortedAscTitle")
+);
+
 const all = computed(() =>
   catalog.status === "ready" ? tagsOf(catalog.visible) : []
 );
@@ -293,10 +328,9 @@ const { shown, done, sentinel } = useIncrementalReveal(filtered, PAGE_SIZE);
 
 const countLabel = computed(() => {
   const total = all.value.length;
-  const totalLabel = `${total.toLocaleString()} tag${total === 1 ? "" : "s"}`;
   return needle.value
-    ? `${filtered.value.length.toLocaleString()} of ${totalLabel}`
-    : totalLabel;
+    ? fmt.ofTotal(filtered.value.length, total, "tags")
+    : fmt.count("tags", total);
 });
 </script>
 

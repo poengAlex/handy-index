@@ -3,11 +3,12 @@
     :model-value="modelValue"
     @update:model-value="emit('update:modelValue', $event)"
   >
-    <HModal title="Connection key needed" closable>
-      <slot>
-        This action is bound to your Handy. Enter the connection key from the
-        Handy app to continue.
-      </slot>
+    <HModal
+      :title="$t('settings.keyPrompt.title')"
+      closable
+      :close-label="$t('kit.close')"
+    >
+      <slot>{{ $t("settings.keyPrompt.body") }}</slot>
       <q-input
         ref="inputRef"
         :model-value="keyInput"
@@ -15,23 +16,24 @@
         dense
         autofocus
         maxlength="32"
-        label="Connection key"
-        placeholder="e.g. a1B2c3D4e5"
+        :label="$t('settings.connectionKey.label')"
+        :placeholder="$t('settings.connectionKey.placeholder')"
         class="key-dialog__input"
         @update:model-value="onInput(String($event ?? ''))"
         @keyup.enter="save"
       />
       <div class="text-caption key-dialog__hint">
         <q-icon name="wifi_tethering" size="16px" />
-        <span>
-          Your Handy has to be switched on and online for the key to work — an
-          offline device fails in exactly the same way a wrong key does.
-        </span>
+        <span>{{ $t("settings.keyPrompt.hint") }}</span>
       </div>
       <template #actions>
-        <HBtn v-close-popup variant="tertiary" label="Cancel" />
         <HBtn
-          label="Save and continue"
+          v-close-popup
+          variant="tertiary"
+          :label="$t('common.action.cancel')"
+        />
+        <HBtn
+          :label="$t('settings.keyPrompt.save')"
           :disable="!keyInput.trim()"
           @click="save"
         />

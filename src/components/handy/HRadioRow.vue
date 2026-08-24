@@ -16,7 +16,7 @@
       />
     </template>
     <template v-if="recommended" #suffix>
-      <span class="h-radio-row__pill">Recommended</span>
+      <span class="h-radio-row__pill">{{ recommendedLabel }}</span>
     </template>
   </HListRow>
 </template>
@@ -36,8 +36,15 @@ withDefaults(
     caption?: string;
     icon?: string;
     recommended?: boolean;
+    /** Text of the `recommended` pill. */
+    recommendedLabel?: string;
   }>(),
-  { caption: "", icon: "", recommended: false }
+  {
+    caption: "",
+    icon: "",
+    recommended: false,
+    recommendedLabel: "Recommended"
+  }
 );
 
 const emit = defineEmits<{ "update:modelValue": [value: T] }>();

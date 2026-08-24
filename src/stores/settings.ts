@@ -1,5 +1,7 @@
 import { acceptHMRUpdate, defineStore } from "pinia";
 import { computed, ref } from "vue";
+import { detectLocale, isLocale } from "@/i18n/locales";
+import type { Locale } from "@/i18n/locales";
 import { UNMUTABLE_TAGS } from "@/services/script-index/queries";
 import type { Orientation } from "@/services/script-index/queries";
 
@@ -46,6 +48,11 @@ export const useSettingsStore = defineStore(
   () => {
     /** the first-visit consent modal has been answered (either way) */
     const consentAnswered = ref(false);
+    /** the language the user *picked*. null means "no opinion" — follow the
+     * browser, and keep following it if they change their browser later.
+     * Storing the detected locale instead would freeze a first-visit guess
+     * into a permanent choice the user never actually made. */
+    const locale = ref<Locale | null>(null);
     /** show explicit thumbnails; off renders neutral placeholder tiles */
     const nsfw = ref(false);
     /** include videos whose script is behind a partner's paywall. OFF by
@@ -64,6 +71,9 @@ export const useSettingsStore = defineStore(
     const inlinePlayers = ref(false);
     /** let pages span the whole viewport instead of the 1440px column */
     const fullWidth = ref(false);
+    /** the animated gradient field behind every page. ON by default; the
+     * toggle exists for anyone who finds a moving background distracting */
+    const background = ref(true);
     const orientation = ref<Orientation>("straight");
     const connectionKey = ref("");
     const favorites = ref<string[]>([]);
@@ -84,6 +94,12 @@ export const useSettingsStore = defineStore(
       consentAnswered.value = true;
       nsfw.value = accepted;
     }
+
+    /** the locale actually in effect: the explicit pick, else whatever the
+     * browser asks for. This is what the boot file hands vue-i18n. */
+    const resolvedLocale = computed<Locale>(
+      () => locale.value ?? detectLocale()
+    );
 
     /** membership structure for the 15k-item baseline gate; a getter, so it
      * is never persisted — recomputed only when mutedTags changes */
@@ -233,6 +249,7 @@ export const useSettingsStore = defineStore(
     /** viewing prefs back to first-run defaults; consent stays answered so
      * the consent modal doesn't reappear */
     function resetPreferences(): void {
+      locale.value = null;
       nsfw.value = false;
       showPremiumScripts.value = false;
       showPaidVideos.value = true;
@@ -240,11 +257,13 @@ export const useSettingsStore = defineStore(
       previewClipRate.value = PREVIEW_CLIP_RATE.default;
       inlinePlayers.value = false;
       fullWidth.value = false;
+      background.value = true;
       orientation.value = "straight";
     }
 
     function clearAll(): void {
       consentAnswered.value = false;
+      locale.value = null;
       nsfw.value = false;
       showPremiumScripts.value = false;
       showPaidVideos.value = true;
@@ -252,6 +271,7 @@ export const useSettingsStore = defineStore(
       previewClipRate.value = PREVIEW_CLIP_RATE.default;
       inlinePlayers.value = false;
       fullWidth.value = false;
+      background.value = true;
       orientation.value = "straight";
       connectionKey.value = "";
       favorites.value = [];
@@ -266,6 +286,8 @@ export const useSettingsStore = defineStore(
 
     return {
       consentAnswered,
+      locale,
+      resolvedLocale,
       nsfw,
       showPremiumScripts,
       showPaidVideos,
@@ -273,6 +295,7 @@ export const useSettingsStore = defineStore(
       previewClipRate,
       inlinePlayers,
       fullWidth,
+      background,
       orientation,
       connectionKey,
       favorites,
@@ -342,9 +365,14 @@ export const useSettingsStore = defineStore(
         delete legacy.premiumFilter;
         delete legacy.scriptFilter;
         delete legacy.videoFilter;
+        // a retired or hand-typed locale tag must not strand the UI on a
+        // bundle that no longer exists — fall back to following the browser
+        if (!isLocale(settings.locale)) settings.locale = null;
         // a hand-edited blob can still carry a non-boolean
         settings.showPremiumScripts = Boolean(settings.showPremiumScripts);
         settings.showPaidVideos = Boolean(settings.showPaidVideos);
+        // defaults ON, so only an explicit false survives hydration
+        settings.background = settings.background !== false;
         settings.previewFrameMs = clamp(
           settings.previewFrameMs,
           PREVIEW_FRAME_MS

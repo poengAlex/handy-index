@@ -3,12 +3,13 @@
     :model-value="modelValue"
     @update:model-value="emit('update:modelValue', $event)"
   >
-    <HModal title="Muted tags" closable class="muted-tags">
-      <p class="text-body-sm muted-tags__lead">
-        Muted tags disappear from the catalog — browse, search, rows and related
-        videos all skip them. Matching is exact, so muting “gay” won’t mute “gay
-        massage”. Favorites and playlists are yours, so they stay put.
-      </p>
+    <HModal
+      :title="$t('gates.muted.title')"
+      closable
+      :close-label="$t('kit.close')"
+      class="muted-tags"
+    >
+      <p class="text-body-sm muted-tags__lead">{{ $t("gates.muted.lead") }}</p>
 
       <q-select
         :model-value="null"
@@ -19,7 +20,7 @@
         input-debounce="150"
         filled
         dense
-        label="Mute a tag"
+        :label="$t('gates.muted.pickerLabel')"
         @filter="filterTags"
         @update:model-value="mute"
       >
@@ -39,7 +40,7 @@
         <template #no-option>
           <q-item>
             <q-item-section class="text-body-sm">
-              No matching tags
+              {{ $t("gates.muted.pickerEmpty") }}
             </q-item-section>
           </q-item>
         </template>
@@ -49,13 +50,25 @@
            context for the decision -->
       <div v-if="pending" class="muted-tags__confirm">
         <p class="text-body-sm muted-tags__confirm-text">
-          “{{ pending }}” is on {{ pendingCostLabel }} — {{ pendingShare }} of
-          what you can currently see. Muting it removes them from browse,
-          search, rows and related videos everywhere.
+          {{
+            $t("gates.muted.confirmBody", {
+              tag: pending,
+              count: pendingCostLabel,
+              share: pendingShare
+            })
+          }}
         </p>
         <div class="muted-tags__confirm-actions">
-          <HBtn variant="tertiary" label="Cancel" @click="pending = ''" />
-          <HBtn variant="danger" label="Mute anyway" @click="commitMute" />
+          <HBtn
+            variant="tertiary"
+            :label="$t('common.action.cancel')"
+            @click="pending = ''"
+          />
+          <HBtn
+            variant="danger"
+            :label="$t('gates.muted.confirmMute')"
+            @click="commitMute"
+          />
         </div>
       </div>
 
@@ -65,7 +78,7 @@
           :key="tag"
           type="button"
           class="muted-tags__chip"
-          :aria-label="`Unmute tag: ${tag}`"
+          :aria-label="$t('gates.muted.chipUnmuteAria', { tag })"
           @click="settings.unmuteTag(tag)"
         >
           <HChip icon="sell">
@@ -75,18 +88,17 @@
         </button>
       </div>
       <p v-else class="text-body-sm muted-tags__empty">
-        Nothing muted yet. Pick a tag above and every video carrying it leaves
-        the catalog.
+        {{ $t("gates.muted.empty") }}
       </p>
 
       <template #actions>
         <HBtn
           variant="tertiary"
-          label="Unmute all"
+          :label="$t('gates.muted.unmuteAll')"
           :disable="!settings.mutedTags.length"
           @click="unmuteAll"
         />
-        <HBtn v-close-popup label="Done" />
+        <HBtn v-close-popup :label="$t('common.action.done')" />
       </template>
     </HModal>
   </q-dialog>
@@ -98,7 +110,9 @@
 // catalog would make a muted tag vanish from its own picker, and would hide
 // tags that only exist on the half of the catalog the script gate drops.
 import { computed, ref, watch } from "vue";
+import { useI18n } from "vue-i18n";
 import { HBtn, HChip, HModal, hToast } from "@/components/handy";
+import { useFormat } from "@/composables/useFormat";
 import { UNMUTABLE_TAGS, tagsOf } from "@/services/script-index/queries";
 import { useCatalogStore } from "@/stores/catalog";
 import { useSettingsStore } from "@/stores/settings";
@@ -109,6 +123,8 @@ const emit = defineEmits<{ "update:modelValue": [value: boolean] }>();
 
 const catalog = useCatalogStore();
 const settings = useSettingsStore();
+const { t, n, locale } = useI18n();
+const format = useFormat();
 
 const tagNeedle = ref("");
 
@@ -139,13 +155,17 @@ function shareOf(tag: string): number {
 
 function costLabel(tag: string): string {
   const cost = costOf(tag);
-  if (!cost) return "none of the videos you can see";
-  const noun = cost === 1 ? "video" : "videos";
-  return `${cost.toLocaleString()} ${noun} · ${percent(shareOf(tag))} of what you see`;
+  if (!cost) return t("gates.muted.costNone");
+  return t("gates.muted.costLine", {
+    count: format.count("videos", cost),
+    share: percent(shareOf(tag))
+  });
 }
 
 function percent(share: number): string {
-  return share >= 0.01 ? `${Math.round(share * 100)}%` : "<1%";
+  return share >= 0.01
+    ? t("gates.muted.percent", { value: n(Math.round(share * 100)) })
+    : t("gates.muted.percentTiny");
 }
 
 const tagOptions = computed(() =>
@@ -175,7 +195,7 @@ function filterTags(input: string, update: (fn: () => void) => void) {
 /** alphabetical: reading this list is a lookup ("did I already mute that?"),
  * while the store keeps insertion order */
 const mutedSorted = computed(() =>
-  [...settings.mutedTags].sort((a, b) => a.localeCompare(b))
+  [...settings.mutedTags].sort((a, b) => a.localeCompare(b, locale.value))
 );
 
 /** a tag this share of the visible catalog asks before it takes it */
@@ -183,10 +203,9 @@ const HEAVY_MUTE_SHARE = 0.1;
 
 const pending = ref("");
 
-const pendingCostLabel = computed(() => {
-  const cost = costOf(pending.value);
-  return `${cost.toLocaleString()} ${cost === 1 ? "video" : "videos"}`;
-});
+const pendingCostLabel = computed(() =>
+  format.count("videos", costOf(pending.value))
+);
 
 const pendingShare = computed(() => percent(shareOf(pending.value)));
 
@@ -215,13 +234,16 @@ function commitMute() {
   const cost = costOf(tag);
   pending.value = "";
   if (!settings.muteTag(tag)) return;
-  const noun = cost === 1 ? "video" : "videos";
-  hToast("info", `Muted “${tag}”`, `${cost.toLocaleString()} ${noun} hidden`);
+  hToast(
+    "info",
+    t("gates.muted.toastMutedTitle", { tag }),
+    t("gates.muted.toastMutedBody", { count: format.count("videos", cost) })
+  );
 }
 
 function unmuteAll() {
   settings.clearMutedTags();
-  hToast("info", "All tags unmuted");
+  hToast("info", t("gates.muted.toastUnmutedAll"));
 }
 </script>
 

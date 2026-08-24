@@ -14,10 +14,10 @@
       dense
       icon="content_copy"
       class="h-key__btn"
-      aria-label="Copy key"
+      :aria-label="copyLabel"
       @click="copy"
     >
-      <q-tooltip>Copy</q-tooltip>
+      <q-tooltip>{{ copyTooltip }}</q-tooltip>
     </q-btn>
   </div>
 </template>
@@ -43,7 +43,16 @@
 //   />
 import { computed } from "vue";
 
-const props = defineProps<{ value: string }>();
+const props = withDefaults(
+  defineProps<{
+    value: string;
+    /** Screen-reader name for the copy button. */
+    copyLabel?: string;
+    /** Hover tooltip on that button — shorter than `copyLabel`. */
+    copyTooltip?: string;
+  }>(),
+  { copyLabel: "Copy key", copyTooltip: "Copy" }
+);
 
 const emit = defineEmits<{
   /** fired after the key text lands on the clipboard */

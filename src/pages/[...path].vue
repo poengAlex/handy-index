@@ -2,9 +2,9 @@
   <div class="not-found">
     <HEmptyState
       icon="explore_off"
-      title="Nothing here"
-      body="That link doesn't match anything in the index."
-      action-label="Back to home"
+      :title="$t('errors.notFound.title')"
+      :body="$t('errors.notFound.body')"
+      :action-label="$t('common.action.backToHome')"
       @action="router.push('/')"
     />
   </div>

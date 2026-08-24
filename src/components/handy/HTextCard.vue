@@ -13,10 +13,10 @@
         'h-text-card__expand',
         { 'h-text-card__expand--faded': scrolled }
       ]"
-      aria-label="Read the full text"
+      :aria-label="expandLabel"
       @click="expanded = true"
     >
-      <q-tooltip>Read the full text</q-tooltip>
+      <q-tooltip>{{ expandLabel }}</q-tooltip>
     </q-btn>
 
     <!-- fixed height: q-scroll-area keeps the scrollbar inside the card's
@@ -42,7 +42,7 @@
     <!-- no scroll logic here on purpose: q-dialog scrolls tall content
          itself (its inner container is a scroll area) -->
     <q-dialog v-model="expanded">
-      <HModal :title="title" closable>
+      <HModal :title="title" closable :close-label="closeLabel">
         <div class="h-text-card__content text-body"><slot /></div>
       </HModal>
     </q-dialog>
@@ -73,8 +73,18 @@ const props = withDefaults(
     /** CSS length, e.g. "220px" — omit for natural (unscrolled) height */
     height?: string;
     expandable?: boolean;
+    /** Name of the expand action — screen reader and tooltip alike. */
+    expandLabel?: string;
+    /** Forwarded to the expanded view's HModal. */
+    closeLabel?: string;
   }>(),
-  { title: "", height: "", expandable: true }
+  {
+    title: "",
+    height: "",
+    expandable: true,
+    expandLabel: "Read the full text",
+    closeLabel: "Close"
+  }
 );
 
 const expanded = ref(false);

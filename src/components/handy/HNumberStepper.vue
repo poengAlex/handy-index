@@ -10,7 +10,7 @@
         icon="remove"
         class="h-stepperctl__btn"
         :disable="modelValue <= min"
-        :aria-label="`Decrease ${label || 'value'}`"
+        :aria-label="decreaseAria"
         @click="step(-1)"
       />
       <HTabularNum class="text-h4 h-stepperctl__value" :value="modelValue" />
@@ -20,7 +20,7 @@
         icon="add"
         class="h-stepperctl__btn"
         :disable="modelValue >= max"
-        :aria-label="`Increase ${label || 'value'}`"
+        :aria-label="increaseAria"
         @click="step(1)"
       />
     </div>
@@ -31,6 +31,7 @@
 // Proposed spec for a number stepper: label left, minus/value/plus right.
 // 40px icon-only round buttons on the alt surface, tabular value
 // (HTabularNum), buttons disable at the bounds instead of clamping silently.
+import { computed } from "vue";
 import HTabularNum from "@/components/handy/HTabularNum.vue";
 
 const props = withDefaults(
@@ -40,8 +41,29 @@ const props = withDefaults(
     min?: number;
     max?: number;
     stepSize?: number;
+    /** Screen-reader name for the minus button. */
+    decreaseLabel?: string;
+    /** Screen-reader name for the plus button. */
+    increaseLabel?: string;
   }>(),
-  { label: "", min: 0, max: 100, stepSize: 1 }
+  {
+    label: "",
+    min: 0,
+    max: 100,
+    stepSize: 1,
+    decreaseLabel: "",
+    increaseLabel: ""
+  }
+);
+
+// The button names read "Decrease brightness", so the fallbacks have to
+// follow `label` rather than be fixed strings. An app that translates
+// passes the whole composed name — word order is not English's everywhere.
+const decreaseAria = computed(
+  () => props.decreaseLabel || `Decrease ${props.label || "value"}`
+);
+const increaseAria = computed(
+  () => props.increaseLabel || `Increase ${props.label || "value"}`
 );
 
 const emit = defineEmits<{ "update:modelValue": [value: number] }>();

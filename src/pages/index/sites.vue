@@ -4,22 +4,22 @@
       <div class="h-container sites-page__center">
         <HEmptyState
           icon="cloud_off"
-          title="Couldn't load sites"
-          body="The script index didn't answer. Check your connection and try again."
-          action-label="Try again"
+          :title="$t('sites.errorTitle')"
+          :body="$t('common.state.catalogErrorBody')"
+          :action-label="$t('common.action.retry')"
           @action="catalog.retry()"
         />
       </div>
     </div>
 
     <div v-else-if="catalog.status !== 'ready'" class="sites-page__loading">
-      <HandyLoader />
+      <HandyLoader :loading-label="$t('kit.loading')" />
     </div>
 
     <div v-else class="h-section">
       <div class="h-container">
         <header class="sites-page__header">
-          <h1 class="text-h2 sites-page__title">Sites</h1>
+          <h1 class="text-h2 sites-page__title">{{ $t("sites.title") }}</h1>
           <p class="text-body-sm sites-page__count">{{ countLabel }}</p>
           <GateNotice />
         </header>
@@ -29,8 +29,8 @@
           filled
           dense
           clearable
-          placeholder="Search sites"
-          aria-label="Search sites"
+          :placeholder="$t('sites.search.placeholder')"
+          :aria-label="$t('sites.search.aria')"
           class="sites-page__search"
           @update:model-value="query = String($event ?? '')"
         >
@@ -42,17 +42,17 @@
         <div v-if="!partners.length" class="sites-page__center">
           <HEmptyState
             icon="inventory_2"
-            title="Nothing to show"
-            body="The index came back without a single site. Try loading it again."
-            action-label="Try again"
+            :title="$t('common.state.emptyTitle')"
+            :body="$t('sites.emptyBody')"
+            :action-label="$t('common.action.retry')"
             @action="catalog.retry()"
           />
         </div>
         <div v-else-if="!filtered.length" class="sites-page__center">
           <HEmptyState
             icon="search_off"
-            title="No sites match"
-            body="No site names match that search. Try fewer letters."
+            :title="$t('sites.noMatchTitle')"
+            :body="$t('sites.noMatchBody')"
           />
         </div>
         <div v-else class="sites-page__grid">
@@ -79,8 +79,10 @@
 // both paywalls, which is the one figure the filters don't touch (it
 // describes the site, not your view of it).
 import { computed, ref } from "vue";
+import { useI18n } from "vue-i18n";
 import { HEmptyState, HNavCard, HandyLoader } from "@/components/handy";
 import GateNotice from "@/components/GateNotice.vue";
+import { useFormat } from "@/composables/useFormat";
 import {
   partnersOf,
   type PartnerSummary
@@ -88,12 +90,10 @@ import {
 import { useCatalogStore } from "@/stores/catalog";
 
 const catalog = useCatalogStore();
+const { t } = useI18n();
+const { count, num, ofTotal } = useFormat();
 
 const query = ref("");
-
-function countOf(count: number, noun: string): string {
-  return `${count.toLocaleString()} ${noun}${count === 1 ? "" : "s"}`;
-}
 
 const partners = computed(() => partnersOf(catalog.videos));
 
@@ -120,13 +120,16 @@ const filtered = computed(() => {
 });
 
 // the totals the per-site captions add up to, in the same "x of y" shape as
-// the cards, so the header and the grid can never tell different stories
+// the cards, so the header and the grid can never tell different stories.
+// "·" joins two finished phrases rather than splicing a sentence: each half
+// is one whole message, and only the punctuation between them is code.
 const countLabel = computed(() => {
-  const sites = countOf(partners.value.length, "site");
-  const total = countOf(catalog.videos.length, "video");
-  return matching.value
-    ? `${sites} · ${catalog.visible.length.toLocaleString()} of ${total}`
-    : `${sites} · ${total} in the index`;
+  const sites = count("sites", partners.value.length);
+  const videos = count("videos", catalog.videos.length);
+  const total = matching.value
+    ? ofTotal(catalog.visible.length, catalog.videos.length, "videos")
+    : t("sites.count.totalInIndex", { total: videos });
+  return `${sites} · ${total}`;
 });
 
 // "1,234 of 2,000 videos · 500 premium videos · 300 premium scripts" — the
@@ -134,18 +137,30 @@ const countLabel = computed(() => {
 // number is what your filters leave of it. The two paywalls are named in
 // full: they are different gates, and "500 premium" would not say which.
 function videoCountLabel(partner: PartnerSummary): string {
-  const total = countOf(partner.count, "video");
+  const total = count("videos", partner.count);
   const counts = matching.value;
   const parts = [
     counts
-      ? `${(counts.get(partner.partnerId) ?? 0).toLocaleString()} of ${total}`
+      ? ofTotal(counts.get(partner.partnerId) ?? 0, partner.count, "videos")
       : total
   ];
   if (partner.paidVideoCount) {
-    parts.push(countOf(partner.paidVideoCount, "premium video"));
+    parts.push(
+      t(
+        "sites.count.premiumVideos",
+        { count: num(partner.paidVideoCount) },
+        partner.paidVideoCount
+      )
+    );
   }
   if (partner.premiumScriptCount) {
-    parts.push(countOf(partner.premiumScriptCount, "premium script"));
+    parts.push(
+      t(
+        "sites.count.premiumScripts",
+        { count: num(partner.premiumScriptCount) },
+        partner.premiumScriptCount
+      )
+    );
   }
   return parts.join(" · ");
 }
