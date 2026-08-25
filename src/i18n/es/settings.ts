@@ -35,6 +35,7 @@ const settings: typeof enUS = {
     empty: "Nada silenciado"
   },
 
+  backgroundSceneTitle: "Estilo de fondo",
   orientationTitle: "Orientación",
 
   access: {

@@ -1,6 +1,7 @@
 <template>
   <div
     :key="mountNonce"
+    ref="lensEl"
     class="lens"
     :class="mountClass"
     :style="lensStyle"
@@ -31,6 +32,21 @@
       </div>
     </div>
 
+    <!-- Grain scoped to the colour. A mirror of the field's own wrapper
+         chain, using the SAME classes, so the identical animation drives it
+         and the mask cannot drift out from under the blobs. The one thing
+         it does not copy is .lens__inner's filter, because blurring grain
+         is the one thing that reliably destroys it. -->
+    <div v-if="grainScoped" class="lens__grain">
+      <div class="lens__motion" :class="motionClass" :style="motionStyle">
+        <div class="lens__motion2" :class="motionClass2">
+          <div class="lens__inner" :style="grainMaskStyle">
+            <slot name="grain" />
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div v-if="s.haze > 0" class="lens__haze" :style="hazeStyle" />
     <div v-if="s.vignette > 0" class="lens__vignette" :style="vignetteStyle" />
     <!-- grain is NOT here on purpose — see GrainOverlay.vue -->
@@ -52,10 +68,19 @@
 // whole image rather than inside the field, and inside a stacking context
 // carrying a large blur the browser rasterises it away entirely. See
 // GrainOverlay.vue.
-import { computed, onBeforeUnmount, ref, watch, type CSSProperties } from "vue";
+import {
+  computed,
+  onBeforeUnmount,
+  onUpdated,
+  ref,
+  watch,
+  type CSSProperties
+} from "vue";
 import { darkAlpha, darkBoost, flatten, type Blob } from "./gradient-recipes";
 import { motionPreset, motionVars, mountVars, perBlobVector } from "./motion";
+import { useSpeedBurst } from "./motion-burst";
 import {
+  blobMask,
   buildBlobs,
   lerpBlobs,
   paletteColors,
@@ -99,6 +124,8 @@ const colors = computed(() => paletteColors(props.s));
 // when it arrives, the destination becomes the origin and a new destination
 // is generated. Everything else about the field — colours, alpha, hardness —
 // is unchanged, so only geometry is rewritten each frame.
+const lensEl = ref<HTMLElement | null>(null);
+
 const morphStep = ref(0);
 const morphT = ref(0);
 let raf = 0;
@@ -112,11 +139,18 @@ const morphTo = computed(() =>
 );
 
 function tick(now: number) {
+  // The clamp is on the RESTING period, so it keeps meaning "a seed step is
+  // never shorter than half a second at rest" and the burst multiplies
+  // cleanly on top. Position here is the integral of rate, so it stays
+  // continuous for any rate curve — morph is the one kind of motion that
+  // would not even need the ramp.
   const secs = Math.max(
     0.5,
     preset.value.seconds / Math.max(0.1, props.s.motion.speed)
   );
-  if (last) morphT.value += (now - last) / 1000 / secs;
+  if (last) {
+    morphT.value += ((now - last) / 1000 / secs) * burstRate.value;
+  }
   last = now;
   while (morphT.value >= 1) {
     morphT.value -= 1;
@@ -145,7 +179,35 @@ watch(
   { immediate: true }
 );
 
+// Burst — see motion-burst.ts. It lives there rather than here because the
+// version that lived here had two defects a unit test would have caught: it
+// filtered animations by NOT matching /mount/, which also swept up any
+// script-driven animation, and it restored by re-scanning the DOM, which
+// misses animations the route change has already torn out of the tree.
+const {
+  rate: burstRate,
+  surge,
+  refresh: refreshBurst,
+  stop: stopBurst
+} = useSpeedBurst(
+  lensEl,
+  computed(() => props.s.motion.speed)
+);
+
+// animations are created and destroyed by preset switches, blob-count
+// changes and the fringe toggle; a burst in flight has to catch them
+onUpdated(refreshBurst);
+
 onBeforeUnmount(stopMorph);
+
+defineExpose({
+  /** Temporarily run everything faster, then settle back. */
+  burst: surge,
+  /** Cut a burst short and return to rest. */
+  stopBurst,
+  /** The rate the morph loop multiplies by; 1 at rest. */
+  burstRate
+});
 
 const blobs = computed<Blob[]>(() => {
   if (preset.value.morph) {
@@ -186,13 +248,6 @@ function applyCanvas(base: Blob[]): Blob[] {
 const lensStyle = computed<CSSProperties>(() => ({
   opacity: String(props.s.strength),
   ...mountVars(props.s.mount),
-  // inline, so no host selector can outrank an explicit choice
-  ...(props.resolved
-    ? {
-        "--hbg-fill": `var(--fill-${props.resolved})`,
-        "--hbg-blend": props.resolved === "dark" ? "screen" : "multiply"
-      }
-    : {}),
   ...(props.surface ? { "--hbg-surface": props.surface } : {})
 }));
 
@@ -270,6 +325,22 @@ const copies = computed(() => {
   ];
 });
 
+// Grain confined to the blobs. The mask is the blobs' own falloff, so the
+// noise dies exactly where the colour does.
+//
+// Per-blob motion is the one thing this does not track: presets that animate
+// individual blobs (`blobs`, `wave`) move them under a mask that only carries
+// the GROUP animation. Measured on the house default (`morph`) the per-blob
+// residual is 0.0px, because every blob rides one shared translate.
+const grainScoped = computed(
+  () => props.s.lensScope === "blobs" && props.s.grain > 0
+);
+
+const grainMaskStyle = computed<CSSProperties>(() => {
+  const m = blobMask(blobs.value, props.s.hardness);
+  return { maskImage: m, WebkitMaskImage: m };
+});
+
 const hazeStyle = computed<CSSProperties>(() => ({
   opacity: String(props.s.haze)
 }));
@@ -312,17 +383,21 @@ function blobStyle(b: Blob, i: number): CSSProperties {
     "--delay": `${v.delay.toFixed(1)}s`,
     "--wave-delay": `${v.delay.toFixed(1)}s`
   };
-  // Pinning the blend mode has to pin the FILL too. An inline mix-blend-mode
-  // beats the --lens-blend rule, but the background-image swap lives in the
-  // same theme rule and would keep flipping — so "multiply" on a dark page
-  // would multiply the boosted dark fill, which is a look nobody asked for.
-  // Pick both or neither.
+  // Fill and blend are pinned together, inline on the blob, and they must
+  // stay a pair: "multiply" against the boosted dark fill is a look nobody
+  // asked for. This used to be routed through a custom property declared on
+  // .lens, which silently painted NOTHING for every scene that did not pin
+  // an explicit blend — see the note on .lens__blob for why. Pre-hydration
+  // `resolved` is null and the stylesheet first-paint hint takes over.
+  const lightFill = tunedFill(hex, a, h);
+  const darkFill = tunedFill(hex, darkAlpha(hex, darkBoost(a)), h);
   if (props.s.blend !== "auto") {
     style.mixBlendMode = props.s.blend;
-    style.backgroundImage =
-      props.s.blend === "screen"
-        ? tunedFill(hex, darkAlpha(hex, darkBoost(a)), h)
-        : tunedFill(hex, a, h);
+    style.backgroundImage = props.s.blend === "screen" ? darkFill : lightFill;
+  } else if (props.resolved) {
+    const dark = props.resolved === "dark";
+    style.mixBlendMode = dark ? "screen" : "multiply";
+    style.backgroundImage = dark ? darkFill : lightFill;
   }
   return style;
 }
@@ -349,37 +424,34 @@ function blobStyle(b: Blob, i: number): CSSProperties {
   inset: -28%;
 }
 
-// One property for the fill and one for the blend, both resolvable from
-// outside. `var()` inside a custom property resolves where it is USED, not
-// where it is declared, so `--hbg-fill: var(--fill-light)` set on .lens
-// picks up each blob's own fill when the blob reads it.
-.lens {
-  --hbg-fill: var(--fill-light);
-  --hbg-blend: multiply;
-}
-
+// The blob reads its OWN --fill-light/--fill-dark, which blobStyle writes
+// inline on it. Do NOT lift this into a custom property on .lens: `var()`
+// inside a custom property is substituted at the DECLARATION site, so a
+// `var(--fill-light)` declared on .lens resolves against .lens — which has
+// no --fill-light — and every blob computes background-image: none. That
+// was live for six of the seven scenes; only the one pinning an explicit
+// blend escaped, because it writes background-image inline.
 .lens__blob {
   position: absolute;
   transform: translate(-50%, -50%) rotate(var(--rot, 0deg));
-  background-image: var(--hbg-fill);
-  mix-blend-mode: var(--hbg-blend);
+  background-image: var(--fill-light);
+  mix-blend-mode: multiply;
 }
 
-// First-paint hints only. The facade resolves the theme in JS and writes
-// --hbg-fill/--hbg-blend inline on .lens, which beats every one of these —
-// so these exist purely so the field is not wrong for one frame before
-// hydration, and can never lose a specificity tie to a host selector.
-[data-theme="dark"] .lens,
-.body--dark .lens,
-.section-dark .lens {
-  --hbg-fill: var(--fill-dark);
-  --hbg-blend: screen;
+// First-paint hints only, for the frame before the theme resolves in JS.
+// After that blobStyle pins both properties inline on the blob, which beats
+// every one of these regardless of host specificity.
+[data-theme="dark"] .lens__blob,
+.body--dark .lens__blob,
+.section-dark .lens__blob {
+  background-image: var(--fill-dark);
+  mix-blend-mode: screen;
 }
 
-[data-theme="light"] .lens,
-.section-light .lens {
-  --hbg-fill: var(--fill-light);
-  --hbg-blend: multiply;
+[data-theme="light"] .lens__blob,
+.section-light .lens__blob {
+  background-image: var(--fill-light);
+  mix-blend-mode: multiply;
 }
 
 // ---- mount ----
@@ -753,6 +825,13 @@ function blobStyle(b: Blob, i: number): CSSProperties {
 // worse than none. The facade sniffs the host's real background and pins it
 // inline; these fallbacks only matter before that resolves, and they are
 // split by theme so a dark page never gets a white sheet.
+// The grain mirror. Sits above the field copies in paint order and below
+// haze/vignette, and carries no filter of its own.
+.lens__grain {
+  position: absolute;
+  inset: 0;
+}
+
 .lens__haze {
   position: absolute;
   inset: 0;
@@ -761,7 +840,14 @@ function blobStyle(b: Blob, i: number): CSSProperties {
 
 [data-theme="dark"] .lens__haze,
 .body--dark .lens__haze,
-.section-dark .lens__haze {
+.section-dark // The grain mirror. Sits above the field copies in paint order and below
+// haze/vignette, and carries no filter of its own.
+.lens__grain {
+  position: absolute;
+  inset: 0;
+}
+
+.lens__haze {
   background: var(--hbg-surface, var(--color-bg-page, #121212));
 }
 

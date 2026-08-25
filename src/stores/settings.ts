@@ -2,6 +2,7 @@ import { acceptHMRUpdate, defineStore } from "pinia";
 import { computed, ref } from "vue";
 import { detectLocale, isLocale } from "@/i18n/locales";
 import type { Locale } from "@/i18n/locales";
+import type { SceneId } from "@/components/background";
 import { UNMUTABLE_TAGS } from "@/services/script-index/queries";
 import type { Orientation } from "@/services/script-index/queries";
 
@@ -12,6 +13,21 @@ export interface Playlist {
 }
 
 const RECENTLY_VIEWED_CAP = 30;
+
+/** The background looks offered in settings. The component ships ten scenes;
+ * these are the two this app puts a switch on. Typed as SceneId so a rename
+ * upstream fails the build here rather than silently falling back to the
+ * component's own default at render. */
+export const BACKGROUND_SCENES = [
+  "handy",
+  "erin"
+] as const satisfies readonly SceneId[];
+
+export type BackgroundScene = (typeof BACKGROUND_SCENES)[number];
+
+function isBackgroundScene(value: unknown): value is BackgroundScene {
+  return BACKGROUND_SCENES.includes(value as BackgroundScene);
+}
 
 /** Bounds for the two card-preview speeds, shared by the settings sliders and
  * the hydration clamp so a hand-edited blob can't hand a card a 0 ms interval
@@ -74,6 +90,8 @@ export const useSettingsStore = defineStore(
     /** the animated gradient field behind every page. ON by default; the
      * toggle exists for anyone who finds a moving background distracting */
     const background = ref(true);
+    /** which of the offered background looks is in effect */
+    const backgroundScene = ref<BackgroundScene>("handy");
     const orientation = ref<Orientation>("straight");
     const connectionKey = ref("");
     const favorites = ref<string[]>([]);
@@ -258,6 +276,7 @@ export const useSettingsStore = defineStore(
       inlinePlayers.value = false;
       fullWidth.value = false;
       background.value = true;
+      backgroundScene.value = "handy";
       orientation.value = "straight";
     }
 
@@ -272,6 +291,7 @@ export const useSettingsStore = defineStore(
       inlinePlayers.value = false;
       fullWidth.value = false;
       background.value = true;
+      backgroundScene.value = "handy";
       orientation.value = "straight";
       connectionKey.value = "";
       favorites.value = [];
@@ -296,6 +316,7 @@ export const useSettingsStore = defineStore(
       inlinePlayers,
       fullWidth,
       background,
+      backgroundScene,
       orientation,
       connectionKey,
       favorites,
@@ -373,6 +394,11 @@ export const useSettingsStore = defineStore(
         settings.showPaidVideos = Boolean(settings.showPaidVideos);
         // defaults ON, so only an explicit false survives hydration
         settings.background = settings.background !== false;
+        // a retired scene id must not reach the component, which would fall
+        // back to its own default and leave the radio matching nothing
+        if (!isBackgroundScene(settings.backgroundScene)) {
+          settings.backgroundScene = "handy";
+        }
         settings.previewFrameMs = clamp(
           settings.previewFrameMs,
           PREVIEW_FRAME_MS

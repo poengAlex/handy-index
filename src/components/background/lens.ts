@@ -1,7 +1,7 @@
 // ============================================================
 // The playground's settings model.
 //
-// /lab/gradients answers "what is the deck doing". This answers a different
+// The playground answers a different question from the design-system docs:
 // question: "what else could it do". So nearly everything is a knob, the
 // ranges go past the tasteful zone on purpose, and the defaults land on the
 // look the source PNGs actually have — which is NOT a crisp mesh.
@@ -42,6 +42,8 @@ const CONNECTED_PURPLE = "#A121CE";
 export type BlendChoice = "auto" | "normal" | "multiply" | "screen";
 export type GrainBlend = "overlay" | "soft-light" | "multiply" | "normal";
 export type Subject = "background" | "hero" | "card";
+/** Where the grain lands. See `lensScope` on LensSettings. */
+export type LensScope = "frame" | "blobs";
 export type Attach = "pinned" | "parallax" | "travels" | "banded";
 
 export interface LensSettings {
@@ -84,6 +86,23 @@ export interface LensSettings {
   grainSize: number;
   grainRough: number;
   grainBlend: GrainBlend;
+  /**
+   * Where the grain lands. "frame" (the default, and the original
+   * behaviour) speckles the whole field box like sensor noise. "blobs"
+   * confines it to the colour, so empty page stays clean.
+   *
+   * It scopes GRAIN ONLY, and that is not an oversight:
+   *  - HAZE is already blob-scoped in effect. It paints the host's own
+   *    surface colour (`--hbg-surface`), so over empty page it is that
+   *    colour on itself — measured 0.00 change outside the blobs. It only
+   *    reads frame-wide when the field sits on a backdrop that is not the
+   *    sniffed surface.
+   *  - VIGNETTE is a property of the frame by definition. Measured, its
+   *    whole effect is where the blobs are NOT (+0.00 at a blob core,
+   *    -57 in empty pixels). Scoping it would not scope it; it would
+   *    delete it and leave a rim-darkening that `hardness` already does.
+   */
+  lensScope: LensScope;
   /** Flare: a veil of the surface colour laid over everything. */
   haze: number;
   vignette: number;
@@ -126,6 +145,7 @@ export const defaults: LensSettings = {
   grainSize: 1.1,
   grainRough: 4,
   grainBlend: "normal",
+  lensScope: "frame",
   haze: 0,
   vignette: 0,
   fringe: 0,
@@ -325,6 +345,7 @@ export function buildBlobs(s: LensSettings, seedOverride?: number): Blob[] {
 
 /** The ids an imported config is allowed to name. */
 export const paletteIds = ["slide", "deep", "brand", "hybrid"] as const;
+export const lensScopeIds = ["frame", "blobs"] as const;
 export const fieldOrderIds = [
   "aurora",
   "orb",
@@ -374,6 +395,33 @@ export function fillStops(hardness: number): [number, number][] {
     const [ph, ah] = HARD[i]!;
     return [p + (ph - p) * h, a + (ah - a) * h] as [number, number];
   });
+}
+
+/**
+ * The blob field as an alpha mask: one radial-gradient per blob, same stop
+ * table as `tunedFill`, so anything masked with it dies exactly where the
+ * colour dies.
+ *
+ * Centres are `at x% y%` rather than mask-position on purpose. The
+ * mask-position form needs `(centre - size/2) / (100 - size)`, which has a
+ * pole as a blob approaches the width of its box — and at the shipped
+ * `size: 0.75` the default field sits right on it. The `at` form is a plain
+ * position percentage with no such singularity.
+ *
+ * Caveat: a radial-gradient ellipse cannot be rotated, so a blob carrying
+ * `--rot` is masked by its axis-aligned twin. At the default `jitter: 0.15`
+ * that is under 7 degrees on an edge already metres wide in blur terms.
+ */
+export function blobMask(blobs: Blob[], hardness: number): string {
+  const stops = fillStops(hardness)
+    .map(([p, m]) => `rgba(0,0,0,${m}) ${Math.round(p * 100)}%`)
+    .join(", ");
+  return blobs
+    .map(
+      b =>
+        `radial-gradient(${(b.w / 2).toFixed(2)}% ${(b.h / 2).toFixed(2)}% at ${b.x.toFixed(2)}% ${b.y.toFixed(2)}%, ${stops})`
+    )
+    .join(", ");
 }
 
 export function tunedFill(

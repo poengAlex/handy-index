@@ -37,6 +37,7 @@ const settings: typeof enUS = {
     empty: "Nichts stummgeschaltet"
   },
 
+  backgroundSceneTitle: "Hintergrundstil",
   orientationTitle: "Orientierung",
 
   access: {

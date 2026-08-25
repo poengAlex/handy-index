@@ -27,6 +27,7 @@ const settings: typeof enUS = {
     empty: "Ingenting dempet"
   },
 
+  backgroundSceneTitle: "Bakgrunnsstil",
   orientationTitle: "Orientering",
 
   access: {

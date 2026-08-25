@@ -31,6 +31,7 @@ export default {
     empty: "Nothing muted"
   },
 
+  backgroundSceneTitle: "Background style",
   orientationTitle: "Orientation",
 
   access: {

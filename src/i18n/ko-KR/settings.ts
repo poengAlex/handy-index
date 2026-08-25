@@ -34,6 +34,7 @@ const settings: typeof enUS = {
     empty: "차단한 태그 없음"
   },
 
+  backgroundSceneTitle: "배경 스타일",
   orientationTitle: "성향",
 
   access: {

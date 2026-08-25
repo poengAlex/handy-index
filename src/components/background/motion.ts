@@ -67,7 +67,9 @@ export interface MotionSettings {
 
 export const motionDefaults: MotionSettings = {
   id: "drift",
-  speed: 1,
+  // 3x at rest. The presets' own `seconds` were tuned at 1x and are
+  // deliberately unhurried; 3 is the speed the app actually runs at.
+  speed: 3,
   amount: 1
 };
 

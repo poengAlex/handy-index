@@ -16,9 +16,11 @@
 import {
   defaults,
   fieldOrderIds,
+  lensScopeIds,
   paletteIds,
   type BlendChoice,
   type GrainBlend,
+  type LensScope,
   type LensSettings,
   type Subject
 } from "./lens";
@@ -272,6 +274,13 @@ export function parseConfig(text: string): ImportOk | ImportErr {
       ["overlay", "soft-light", "multiply", "normal"],
       d.grainBlend,
       "grainBlend",
+      notes
+    ),
+    lensScope: pick<LensScope>(
+      s.lensScope,
+      lensScopeIds,
+      d.lensScope,
+      "lensScope",
       notes
     ),
     haze: num(s.haze, d.haze, 0, 1, "haze", notes),

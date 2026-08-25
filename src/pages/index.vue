@@ -7,13 +7,16 @@
       'app-shell--bg': settings.background
     }"
   >
-    <!-- decorative gradient field behind everything; the route watcher below
-         speeds it up briefly on every page change -->
+    <!-- Decorative gradient field behind everything; the route watcher below
+         speeds it up briefly on every page change. mount="none" overrides
+         both scenes' bloom entrance — the field is simply there on arrival,
+         which is the honest choice for a tool you come back to rather than
+         a front door. Navigation is carried by the speed burst instead. -->
     <HandyBackground
       v-if="settings.background"
-      :config="BACKGROUND_CONFIG"
-      :speed="bgSpeed"
-      :strength="bgStrength"
+      ref="bg"
+      :scene="settings.backgroundScene"
+      mount="none"
     />
 
     <q-header
@@ -178,7 +181,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
+import { computed, onMounted, ref, useTemplateRef, watch } from "vue";
 import { useRoute } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { useQuasar } from "quasar";
@@ -195,7 +198,6 @@ import ConsentDialog from "@/components/ConsentDialog.vue";
 import MutedTagsDialog from "@/components/MutedTagsDialog.vue";
 import OrientationMenu from "@/components/OrientationMenu.vue";
 import SettingsDialog from "@/components/SettingsDialog.vue";
-import { BACKGROUND_CONFIG } from "@/services/background-config";
 import { useCatalogStore } from "@/stores/catalog";
 import { useSettingsStore } from "@/stores/settings";
 
@@ -234,59 +236,21 @@ const mutedLabel = computed(() => {
   return t("nav.mutedHidden", { count: n(hidden), tags: tagPart }, hidden);
 });
 
-// Navigating speeds the field up rather than restarting it. The morph tick
-// reads its speed every frame and advances a running counter, so raising the
-// speed mid-flight makes the same walk go faster — there is no reset and no
-// seam, which a mount replay could not avoid. The burst decays back to the
-// configured speed on an ease-out, so the field sprints and then settles
-// rather than dropping back to slow in one step.
-//
-// Speed is the component's own unit (a cycle-length multiplier, 0.1-24).
-// Resting comes from the config so retuning it there stays the one place
-// that decides "normal"; the burst runs at the top of the range. Nothing
-// downstream clamps a speed handed in as a prop, so 24 is the documented
-// ceiling rather than an enforced one.
-const BASE_SPEED = BACKGROUND_CONFIG.settings.motion.speed;
-const BURST_SPEED = 24;
-
-// The field also surges, not just accelerates. `strength` is its opacity;
-// motion.amount would be the obvious knob for "more animation" and is the
-// wrong one here — LensField only applies the per-blob animation for the
-// perBlob presets (wave, blobs), so under morph the amount vars are written
-// and never read. Opacity is what morph actually responds to.
-const BASE_STRENGTH = BACKGROUND_CONFIG.settings.strength;
-const BURST_STRENGTH = Math.min(1, BASE_STRENGTH * 1.75);
-
-const BURST_MS = 1400;
-
-const bgSpeed = ref(BASE_SPEED);
-const bgStrength = ref(BASE_STRENGTH);
-let burstRaf = 0;
-
-function burstBackground() {
-  cancelAnimationFrame(burstRaf);
-  // morph is JS-driven, so it has no CSS rule for the global reduced-motion
-  // override to catch — and LensField parks the loop entirely under it.
-  // Driving the field at that point would spin a rAF against a stopped one.
-  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-  const start = performance.now();
-  bgSpeed.value = BURST_SPEED;
-  bgStrength.value = BURST_STRENGTH;
-  const step = (now: number) => {
-    const t = Math.min(1, (now - start) / BURST_MS);
-    // one eased 1->0 ramp drives both, so they always arrive together
-    const p = (1 - t) ** 3;
-    bgSpeed.value = BASE_SPEED + (BURST_SPEED - BASE_SPEED) * p;
-    bgStrength.value = BASE_STRENGTH + (BURST_STRENGTH - BASE_STRENGTH) * p;
-    burstRaf = t < 1 ? requestAnimationFrame(step) : 0;
-  };
-  burstRaf = requestAnimationFrame(step);
-}
+// Navigating surges the field. This used to be hand-rolled here, driving the
+// `speed` prop down a rAF; the component now ships the same idea done
+// properly as burst(), and the difference matters as soon as a scene moves
+// with CSS rather than JS. Driving `speed` rewrites animation-duration,
+// which restarts a CSS animation mid-flight — invisible under `handy`
+// (morph is a JS loop) and a visible jump under `erin` (drift is CSS).
+// burst() pushes playbackRate instead, so every layer accelerates in phase
+// and lands back at exactly its resting rate.
+const bg = useTemplateRef<InstanceType<typeof HandyBackground>>("bg");
 
 // Path only — a query or filter change is the same page.
-watch(() => route.path, burstBackground);
-
-onBeforeUnmount(() => cancelAnimationFrame(burstRaf));
+watch(
+  () => route.path,
+  () => bg.value?.burst()
+);
 
 // Every route but the site directory gets the back-to-top button: the button
 // only surfaces two viewports down, so on the short pages it simply never

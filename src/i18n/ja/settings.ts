@@ -33,6 +33,7 @@ const settings: typeof enUS = {
     empty: "ミュートなし"
   },
 
+  backgroundSceneTitle: "背景のスタイル",
   orientationTitle: "性的指向",
 
   access: {

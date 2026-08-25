@@ -33,6 +33,7 @@ const settings: typeof enUS = {
     empty: "未屏蔽任何标签"
   },
 
+  backgroundSceneTitle: "背景样式",
   orientationTitle: "取向",
 
   access: {

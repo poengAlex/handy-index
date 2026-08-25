@@ -15,10 +15,22 @@
 // Two earlier attempts failed, and both failures are worth keeping written
 // down because both are the obvious approach.
 //
-// It began inside the field, which is where it seems to belong. A sibling
-// carrying a large blur makes the browser rasterise the whole stacking
-// context at reduced resolution, and the first thing that destroys is
-// per-pixel noise: measured 0.35 against the ~5 the source exports carry.
+// It began inside the field, which is where it seems to belong, and it was
+// measured at 0.35 against the ~5 the source exports carry — attributed at
+// the time to a sibling with a large blur forcing the whole stacking context
+// to rasterise at reduced resolution.
+//
+// That no longer reproduces. Re-measured 2026-08-24 on the live component,
+// the canvas moved inside .lens as a sibling of the blurred subtree keeps
+// 90% of its energy at the 96px cap (1.351 against 1.503 outside). Either
+// the browser changed or the original diagnosis was wrong. What IS still
+// true, and measured twice, is the ANCESTOR case: a grain child inside
+// .lens__inner, under the filter itself, retains 0.6% — and the clamp has a
+// 12px floor, so there is no defocus setting that escapes it.
+//
+// `lensScope: "blobs"` relies on the corrected version: it puts this canvas
+// inside .lens, in a mirror of the field's wrapper chain that carries the
+// same motion animation but none of its filter.
 //
 // Lifting it to its own layer as a `background-image: url(data:image/png…)`
 // did not fix it either — the overlay was provably there, fixed, at 0.85

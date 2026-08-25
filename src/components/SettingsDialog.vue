@@ -61,6 +61,21 @@
             </HListRow>
           </HList>
 
+          <!-- only while the field is on: a look picker for a background
+               nobody is rendering is a dead control -->
+          <HList
+            v-if="settings.background"
+            :title="$t('settings.backgroundSceneTitle')"
+          >
+            <HRadioRow
+              v-for="option in BACKGROUND_SCENES"
+              :key="option"
+              v-model="settings.backgroundScene"
+              :val="option"
+              :label="sceneLabel(option)"
+            />
+          </HList>
+
           <HList :title="$t('settings.orientationTitle')">
             <HRadioRow
               v-for="option in ORIENTATIONS"
@@ -180,7 +195,9 @@ import { useFormat } from "@/composables/useFormat";
 import { useKitLabels } from "@/composables/useKitLabels";
 import { sanitizeConnectionKey } from "@/services/format";
 import { ORIENTATIONS } from "@/services/script-index/queries";
+import { scene as backgroundScene } from "@/components/background";
 import {
+  BACKGROUND_SCENES,
   PREVIEW_CLIP_RATE,
   PREVIEW_FRAME_MS,
   useSettingsStore
@@ -210,6 +227,14 @@ const frameSeconds = computed(() => settings.previewFrameMs / 1000);
 
 function setFrameSeconds(value: number | { min: number; max: number }) {
   if (typeof value === "number") settings.previewFrameMs = value * 1000;
+}
+
+// Scene names are proper nouns the component already owns ("Handy", "Erin"),
+// so they come from it rather than from the message bundles — a name that is
+// the same in every language is not a translation, and duplicating it across
+// ten locales only creates ten chances to disagree with upstream.
+function sceneLabel(id: (typeof BACKGROUND_SCENES)[number]): string {
+  return backgroundScene(id).label;
 }
 
 const clearDataOpen = ref(false);

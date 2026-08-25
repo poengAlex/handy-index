@@ -3,16 +3,23 @@
     <BackdropAttach
       v-if="attachment !== 'inline'"
       :attach="attachment as Attach"
-      :band="band"
+      :band="bandVh"
     >
       <LensField
+        ref="fieldRef"
         :s="settings"
         :canvas-ratio="canvasRatio"
         :resolved="resolvedTheme"
         :surface="resolvedSurface"
         :mount-nonce="nonce"
-      />
-      <template #overlay>
+      >
+        <template v-if="grainScoped" #grain>
+          <GrainOverlay v-bind="grainProps" />
+        </template>
+      </LensField>
+      <!-- Frame grain is fixed: the sensor does not travel with the scene.
+           Scoped grain has to, so it moves inside the field instead. -->
+      <template v-if="!grainScoped" #overlay>
         <GrainOverlay v-bind="grainProps" fixed />
       </template>
     </BackdropAttach>
@@ -20,12 +27,17 @@
     <!-- inline: fills this component's own box instead of the viewport -->
     <template v-else>
       <LensField
+        ref="fieldRef"
         :s="settings"
         :resolved="resolvedTheme"
         :surface="resolvedSurface"
         :mount-nonce="nonce"
-      />
-      <GrainOverlay v-bind="grainProps" />
+      >
+        <template v-if="grainScoped" #grain>
+          <GrainOverlay v-bind="grainProps" />
+        </template>
+      </LensField>
+      <GrainOverlay v-if="!grainScoped" v-bind="grainProps" />
     </template>
   </div>
 </template>
@@ -52,7 +64,7 @@ import { parseConfig, type PlaygroundConfig } from "./config-io";
 import { defaults, type LensSettings } from "./lens";
 import type { PaletteId } from "./gradient-recipes";
 import type { MotionId, MountId } from "./motion";
-import type { Attach } from "./lens";
+import type { Attach, LensScope } from "./lens";
 import { scene as sceneById, sceneSettings, type SceneId } from "./scenes";
 import { findFixedBreaker, rootScrolls, useHost } from "./host";
 
@@ -93,10 +105,16 @@ const props = withDefaults(
 
     /** 0-1. The single knob most consumers will want. */
     strength?: number | null;
+    /** "blobs" confines the grain to the colour; "frame" is the default. */
+    lensScope?: LensScope | null;
     /** "auto" inherits the host's theme; the others pin it. */
     theme?: "auto" | "light" | "dark";
     /** `banded` only: how far down the page the band reaches, in vh. */
-    band?: number;
+    band?: number | null;
+    /** Speed a burst() reaches, as a multiple of the preset's own rate. */
+    burstSpeed?: number;
+    /** How long a burst lasts, including both ramps. */
+    burstMs?: number;
     /**
      * Bumping this replays the entrance. Usually you want the exposed
      * `play()` method on a template ref instead.
@@ -104,7 +122,7 @@ const props = withDefaults(
     mountNonce?: number;
   }>(),
   {
-    scene: "calm",
+    scene: "handy",
     config: null,
     attach: null,
     palette: null,
@@ -117,8 +135,11 @@ const props = withDefaults(
     mountMs: null,
     mountDelay: null,
     strength: null,
+    lensScope: null,
     theme: "auto",
-    band: 160,
+    band: null,
+    burstSpeed: 24,
+    burstMs: 2000,
     mountNonce: 0
   }
 );
@@ -149,6 +170,7 @@ const settings = computed<LensSettings>(() => {
   if (ownColors.value) out.custom = ownColors.value;
   if (props.alpha !== null) out.alpha = props.alpha;
   if (props.strength !== null) out.strength = props.strength;
+  if (props.lensScope) out.lensScope = props.lensScope;
 
   // ambient motion
   if (props.motion || props.speed !== null || props.amount !== null) {
@@ -215,6 +237,14 @@ const RATE: Record<Attachment, number> = {
   banded: 0,
   inline: 0
 };
+// Same precedence as everything else: prop, then config, then scene. It used
+// to be a plain prop defaulting to 160, which meant a config carrying its own
+// band was silently ignored.
+const bandVh = computed(
+  () =>
+    props.band ?? fromConfig.value?.band ?? sceneById(props.scene).band ?? 160
+);
+
 const canvasRatio = computed(() => 1 + (RATE[attachment.value] ?? 0));
 
 const rootEl = ref<HTMLElement | null>(null);
@@ -259,14 +289,51 @@ onMounted(() => {
 const replay = ref(0);
 const nonce = computed(() => props.mountNonce + replay.value);
 
+interface FieldApi {
+  burst: (o?: {
+    to?: number;
+    attack?: number;
+    hold?: number;
+    release?: number;
+  }) => void;
+  stopBurst: () => void;
+}
+
+// The shipped envelope: a quick surge and a long settle. Total 2000ms.
+const ATTACK = 180;
+const HOLD = 420;
+const RELEASE = 1400;
+const TOTAL = ATTACK + HOLD + RELEASE;
+const fieldRef = ref<FieldApi | null>(null);
+
 defineExpose({
   /** Play the entrance animation again. */
   play: () => {
     replay.value += 1;
   },
+  /**
+   * Temporarily run the ambient motion much faster, then settle back —
+   * a page-transition flourish. Defaults to 24x for two seconds.
+   */
+  burst: (o?: { speed?: number; ms?: number }) => {
+    // The friendly two-argument form outside, the envelope inside: a custom
+    // total scales all three phases so the shape is preserved rather than
+    // the hold absorbing the whole difference.
+    const k = (o?.ms ?? props.burstMs) / TOTAL;
+    fieldRef.value?.burst({
+      to: o?.speed ?? props.burstSpeed,
+      attack: ATTACK * k,
+      hold: HOLD * k,
+      release: RELEASE * k
+    });
+  },
+  /** Cut a burst short. */
+  stopBurst: () => fieldRef.value?.stopBurst(),
   /** The settings actually in effect, after every prop has been applied. */
   settings
 });
+
+const grainScoped = computed(() => settings.value.lensScope === "blobs");
 
 const grainProps = computed(() => ({
   amount: settings.value.grain,

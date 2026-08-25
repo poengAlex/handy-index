@@ -3,7 +3,7 @@
 // To reuse it in another project, copy THIS FOLDER. Nothing else. It imports
 // only "vue": no Quasar, no design tokens, no router, no store. See README.md.
 //
-//   import { HandyBackground } from "@/components/background";
+//   import { HandyBackground } from "@/components/handy/background";
 //   <HandyBackground scene="aurora" />
 
 export { default as HandyBackground } from "./HandyBackground.vue";
@@ -15,6 +15,8 @@ export { default as BackgroundAttach } from "./MeshBackdrop.vue";
 
 // Scenes — a named look with its motion already chosen
 export {
+  erinSettings,
+  handySettings,
   scene,
   scenes,
   sceneSettings,
@@ -27,8 +29,10 @@ export {
   applyPreset,
   buildBlobs,
   defaults,
+  lensScopeIds,
   paletteColors,
   presets,
+  type LensScope,
   type LensSettings,
   type Preset,
   type Subject

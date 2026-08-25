@@ -36,6 +36,7 @@ const settings: typeof enUS = {
     empty: "Ничего не заглушено"
   },
 
+  backgroundSceneTitle: "Стиль фона",
   orientationTitle: "Ориентация",
 
   access: {

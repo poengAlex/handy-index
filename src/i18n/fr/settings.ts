@@ -35,6 +35,7 @@ const settings: typeof enUS = {
     empty: "Rien en sourdine"
   },
 
+  backgroundSceneTitle: "Style de fond",
   orientationTitle: "Orientation",
 
   access: {
