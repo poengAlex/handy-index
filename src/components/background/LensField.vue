@@ -77,7 +77,15 @@ import {
   type CSSProperties
 } from "vue";
 import { darkAlpha, darkBoost, flatten, type Blob } from "./gradient-recipes";
-import { motionPreset, motionVars, mountVars, perBlobVector } from "./motion";
+import {
+  motionDefaults,
+  motionPreset,
+  motionVars,
+  mountVars,
+  perBlobVector,
+  type MotionId,
+  type MotionSettings
+} from "./motion";
 import { useSpeedBurst } from "./motion-burst";
 import {
   blobMask,
@@ -119,6 +127,41 @@ const s = computed(() => props.s);
 
 const colors = computed(() => paletteColors(props.s));
 
+// A `costly` preset (morph, wave, blobs) animates the blobs themselves,
+// INSIDE the blur — so the browser re-rasterises every full-viewport copy of
+// the field every frame. A desktop GPU absorbs that. A phone does not: the
+// work lands in the same main-thread rAF that vue3-carousel drags a shelf
+// with, and the shelf stutters for as long as your finger is down.
+//
+// So a coarse pointer gets the cheap equivalent. Tilt is the one preset that
+// moves the parts of the picture relative to each other — the corners travel
+// about three times as far as the centre — which is the quality the costly
+// presets are picked for, but as one matrix on an already-rasterised layer.
+const CHEAP_SUBSTITUTE: MotionId = "tilt";
+
+// Read once, deliberately: a device does not grow a mouse mid-session, and
+// re-resolving this would restart the field's animations under the reader.
+const coarsePointer =
+  typeof matchMedia !== "undefined" && matchMedia("(pointer: coarse)").matches;
+
+/** The scene's motion, or what this device can actually afford to run. */
+const motion = computed<MotionSettings>(() => {
+  const own = props.s.motion;
+  if (!coarsePointer || !motionPreset(own.id).costly) return own;
+  return {
+    id: CHEAP_SUBSTITUTE,
+    speed: own.speed,
+    // NOT the scene's amount. Amplitudes are tuned per preset at amount 1,
+    // and a scene carrying a costly preset has no meaningful one to lend —
+    // the house look asks for 2.5, which morph ignores entirely and tilt
+    // would read as a 22deg lean. Zero still means zero: it is documented as
+    // the way to stop a preset without changing it.
+    amount: own.amount === 0 ? 0 : motionDefaults.amount
+  };
+});
+
+const preset = computed(() => motionPreset(motion.value.id));
+
 // Morph state. The seed is an integer, so morphing between arrangements
 // means holding two of them and walking a parameter from one to the other;
 // when it arrives, the destination becomes the origin and a new destination
@@ -146,7 +189,7 @@ function tick(now: number) {
   // would not even need the ramp.
   const secs = Math.max(
     0.5,
-    preset.value.seconds / Math.max(0.1, props.s.motion.speed)
+    preset.value.seconds / Math.max(0.1, motion.value.speed)
   );
   if (last) {
     morphT.value += ((now - last) / 1000 / secs) * burstRate.value;
@@ -166,7 +209,7 @@ function stopMorph() {
 }
 
 watch(
-  () => props.s.motion.id === "morph",
+  () => motion.value.id === "morph",
   on => {
     stopMorph();
     // a JS-driven animation has no CSS rule to switch off, so the media
@@ -191,7 +234,7 @@ const {
   stop: stopBurst
 } = useSpeedBurst(
   lensEl,
-  computed(() => props.s.motion.speed)
+  computed(() => motion.value.speed)
 );
 
 // animations are created and destroyed by preset switches, blob-count
@@ -255,26 +298,24 @@ const mountClass = computed(() =>
   props.s.mount.id === "none" ? "" : `lens--mount-${props.s.mount.id}`
 );
 
-const preset = computed(() => motionPreset(props.s.motion.id));
-
 // wrapper-driven presets get a class; per-blob and morph ones do not move
 // the wrapper at all
 const motionClass = computed(() =>
-  preset.value.perBlob || preset.value.morph || props.s.motion.id === "still"
+  preset.value.perBlob || preset.value.morph || motion.value.id === "still"
     ? ""
-    : `lens__motion--${props.s.motion.id}`
+    : `lens__motion--${motion.value.id}`
 );
 
 const motionClass2 = computed(() =>
-  preset.value.nested ? `lens__motion2--${props.s.motion.id}` : ""
+  preset.value.nested ? `lens__motion2--${motion.value.id}` : ""
 );
 
 const blobMotionClass = computed(() =>
-  preset.value.perBlob ? `lens__blob--${props.s.motion.id}` : ""
+  preset.value.perBlob ? `lens__blob--${motion.value.id}` : ""
 );
 
 const motionStyle = computed<CSSProperties>(
-  () => motionVars(props.s.motion) as CSSProperties
+  () => motionVars(motion.value) as CSSProperties
 );
 
 // filter order on the field itself: colour grading, then defocus
@@ -359,13 +400,13 @@ function blobStyle(b: Blob, i: number): CSSProperties {
   // to be computed here from hardcoded constants, which meant Blobs and
   // Wave silently ignored their own amplitudes.
   const v = perBlobVector(
-    props.s.motion.id,
-    props.s.motion.amount,
-    props.s.motion.speed,
+    motion.value.id,
+    motion.value.amount,
+    motion.value.speed,
     i,
     blobs.value.length
   );
-  const amp = Math.max(0, props.s.motion.amount);
+  const amp = Math.max(0, motion.value.amount);
   const style: CSSProperties = {
     left: `${b.x}%`,
     top: `${b.y}%`,

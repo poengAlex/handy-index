@@ -2,9 +2,8 @@
   <div
     ref="root"
     class="media-preview"
-    data-preview
-    @mouseenter="start"
-    @mouseleave="stop"
+    @pointerenter="onEnter"
+    @pointerleave="stop"
   >
     <MediaImage
       :src="frames[frame] ?? poster"
@@ -33,8 +32,8 @@
 </template>
 
 <script setup lang="ts">
-// Preview for a media tile — on hover with a pointer, under your finger on
-// a touch screen. Two ways to show one:
+// Preview for a media tile — on hover, with a real pointer. Two ways to
+// show one:
 //
 // - `preview` — a short silent roll clip the partner already publishes, on
 //   7,041 of the index's 15,572 videos. Preferred when present.
@@ -46,10 +45,15 @@
 // stay mounted underneath, the clip fades in only on `canplay`, and a clip
 // that hasn't started within CLIP_TIMEOUT_MS is abandoned for cycling.
 //
-// Pointer devices preview on hover. Touch devices preview whatever card is
-// under the finger, following it as you scroll, and keep playing once you
-// lift off. Both go through usePreviewStage, which owns the touch gesture and
-// guarantees only one preview is ever running.
+// Hover only, and deliberately so. Touch used to preview whichever card was
+// under the finger: the stage hit-tested it with elementFromPoint on every
+// touchmove, then mounted a <video> for each card the finger crossed. Both
+// land on the main thread inside the same rAF that vue3-carousel drags the
+// shelf with (a forced layout, then a media pipeline spin-up, per frame), so
+// horizontal sliding stuttered on every phone. A pointerType guard keeps the
+// synthetic mouse events a tap emits from bringing it back in through the
+// hover path. usePreviewStage still guarantees only one preview runs at a
+// time.
 import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import MediaImage from "@/components/MediaImage.vue";
 import {
@@ -120,6 +124,12 @@ function startCycling() {
   cycleTimer = window.setInterval(() => {
     frame.value = (frame.value + 1) % frames.value.length;
   }, settings.previewFrameMs);
+}
+
+// touch and pen fire pointerenter too — a tap on a card would otherwise
+// mount a clip on the way to its detail page
+function onEnter(e: PointerEvent) {
+  if (e.pointerType === "mouse") start();
 }
 
 function start() {
