@@ -11,6 +11,8 @@ const nav: typeof enUS = {
   mainNavAria: "주 메뉴",
   settingsAria: "설정",
 
+  backToTop: "맨 위로",
+
   links: {
     home: "홈",
     videos: "동영상",

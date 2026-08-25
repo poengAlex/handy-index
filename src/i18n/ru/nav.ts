@@ -11,6 +11,8 @@ const nav: typeof enUS = {
   mainNavAria: "Разделы",
   settingsAria: "Настройки",
 
+  backToTop: "Наверх",
+
   links: {
     home: "Главная",
     videos: "Видео",

@@ -169,6 +169,8 @@
       </router-view>
     </q-page-container>
 
+    <BackToTop v-if="showBackToTop" :label="$t('nav.backToTop')" />
+
     <SettingsDialog v-model="settingsOpen" />
     <MutedTagsDialog v-model="mutedTagsOpen" />
     <ConsentDialog />
@@ -188,6 +190,7 @@ import {
   useHandyTheme
 } from "@/components/handy";
 import { HandyBackground } from "@/components/background";
+import BackToTop from "@/components/BackToTop.vue";
 import ConsentDialog from "@/components/ConsentDialog.vue";
 import MutedTagsDialog from "@/components/MutedTagsDialog.vue";
 import OrientationMenu from "@/components/OrientationMenu.vue";
@@ -284,6 +287,13 @@ function burstBackground() {
 watch(() => route.path, burstBackground);
 
 onBeforeUnmount(() => cancelAnimationFrame(burstRaf));
+
+// Every route but the site directory gets the back-to-top button: the button
+// only surfaces two viewports down, so on the short pages it simply never
+// appears and the list pages are what is left. The directory is the one
+// long-ish list that opts out — it is a jumping-off point you leave from a
+// card, not a feed you read to the end of.
+const showBackToTop = computed(() => route.path !== "/sites");
 
 // exact match only — design.md: "prefix matching must not light up a parent"
 function isActive(to: string): boolean {

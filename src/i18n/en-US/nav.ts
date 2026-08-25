@@ -9,6 +9,10 @@ export default {
   mainNavAria: "Main",
   settingsAria: "Settings",
 
+  // The floating back-to-top button, as both tooltip and aria-label. Shown
+  // on long list pages once you are several screens down.
+  backToTop: "Back to top",
+
   links: {
     home: "Home",
     videos: "Videos",

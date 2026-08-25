@@ -6,6 +6,8 @@ const nav: typeof enUS = {
   mainNavAria: "Hovedmeny",
   settingsAria: "Innstillinger",
 
+  backToTop: "Til toppen",
+
   links: {
     home: "Forsiden",
     videos: "Videoer",

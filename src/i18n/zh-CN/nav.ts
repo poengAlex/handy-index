@@ -11,6 +11,8 @@ const nav: typeof enUS = {
   mainNavAria: "主导航",
   settingsAria: "设置",
 
+  backToTop: "回到顶部",
+
   links: {
     home: "首页",
     videos: "视频",

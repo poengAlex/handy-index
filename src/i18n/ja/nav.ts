@@ -11,6 +11,8 @@ const nav: typeof enUS = {
   mainNavAria: "メイン",
   settingsAria: "設定",
 
+  backToTop: "トップへ戻る",
+
   links: {
     home: "ホーム",
     videos: "動画",

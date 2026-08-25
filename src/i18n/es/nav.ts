@@ -11,6 +11,8 @@ const nav: typeof enUS = {
   mainNavAria: "Principal",
   settingsAria: "Ajustes",
 
+  backToTop: "Volver arriba",
+
   links: {
     home: "Inicio",
     videos: "Vídeos",
