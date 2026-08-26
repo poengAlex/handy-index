@@ -4,7 +4,6 @@
     class="media-preview"
     @pointerenter="onEnter"
     @pointerleave="onLeave"
-    @pointerdown.passive="onDown"
   >
     <MediaImage
       :src="frames[frame] ?? poster"
@@ -46,14 +45,15 @@
 // stay mounted underneath, the clip fades in only on `canplay`, and a clip
 // that hasn't started within CLIP_TIMEOUT_MS is abandoned for cycling.
 //
-// Touch previews the card the finger LANDS on, and nothing else. Any touch
-// counts — a tap on the way to the detail page, the start of a page scroll,
-// a carousel drag — because the finger is already saying which card it is
-// interested in. It is one listener firing once per gesture: the version
-// before this one hit-tested elementFromPoint on every touchmove and mounted
-// a <video> for each card the finger crossed, both on the main thread inside
-// the same rAF vue3-carousel drags the shelf with, and sliding stuttered on
-// every phone.
+// Touch previews the card the finger LANDS on, and nothing else. The
+// listener sits on the whole tile, not this well — a finger anywhere on a
+// card is asking about that card — and it starts on contact, with no
+// threshold to clear first: any touch counts, whether it becomes a tap, a
+// page scroll or a carousel drag. That it fires once per gesture is the
+// whole trick. The version before this one hit-tested elementFromPoint on
+// every touchmove and mounted a <video> for each card the finger crossed,
+// both on the main thread inside the same rAF vue3-carousel drags the shelf
+// with, and sliding stuttered on every phone.
 //
 // A touch preview outlives the gesture (pointerleave fires the moment a
 // finger lifts, and the browser cancels the pointer outright when a scroll
@@ -86,7 +86,6 @@ const props = withDefaults(
 );
 
 const CLIP_TIMEOUT_MS = 1500;
-const TOUCH_DELAY_MS = 180;
 
 const catalog = useCatalogStore();
 // both speeds are the reader's call — how long a still holds, and how fast a
@@ -121,7 +120,8 @@ const clip = computed(() =>
 
 let cycleTimer = 0;
 let clipTimer = 0;
-let touchTimer = 0;
+/** the tile this preview lives in — where touches are listened for */
+let card: Element | null = null;
 
 function stopCycling() {
   window.clearInterval(cycleTimer);
@@ -135,26 +135,15 @@ function startCycling() {
   }, settings.previewFrameMs);
 }
 
-// Hover is the mouse's alone: touch and pen fire the enter/leave pair too,
-// and on touch it is the down/lift pair — the preview must survive the lift.
+// Hover is the mouse's alone: touch fires the enter/leave pair too, and on
+// touch the pair means "finger down / finger up" — a preview has to survive
+// the lift.
 function onEnter(e: PointerEvent) {
   if (e.pointerType === "mouse") start();
 }
 
 function onLeave(e: PointerEvent) {
   if (e.pointerType === "mouse") stop();
-}
-
-function onDown(e: PointerEvent) {
-  if (e.pointerType === "mouse" || active.value || touchTimer) return;
-  // a beat after the finger lands, not in the same frame: if this press turns
-  // out to be a scroll, the browser is busy handing the gesture off, and that
-  // is the worst possible moment to spin up a media pipeline. A tap navigates
-  // away well before it fires, which costs nothing.
-  touchTimer = window.setTimeout(() => {
-    touchTimer = 0;
-    start();
-  }, TOUCH_DELAY_MS);
 }
 
 function start() {
@@ -176,10 +165,6 @@ function stop() {
   if (root.value) releasePreview(root.value);
   window.clearTimeout(clipTimer);
   clipTimer = 0;
-  // a press that hasn't become a preview yet is cancelled too — the stage
-  // calls stop() on the card it is taking over from
-  window.clearTimeout(touchTimer);
-  touchTimer = 0;
   stopCycling();
   active.value = false;
   clipReady.value = false;
@@ -232,10 +217,16 @@ watch(
 );
 
 onMounted(() => {
-  if (root.value) registerPreview(root.value, { start, stop });
+  if (!root.value) return;
+  registerPreview(root.value, { start, stop });
+  // touchstart rather than pointerdown: it is the event iOS raises the
+  // instant a finger lands, and start() is a no-op once a preview is running
+  card = root.value.closest(".tile-card") ?? root.value;
+  card.addEventListener("touchstart", start, { passive: true });
 });
 
 onBeforeUnmount(() => {
+  card?.removeEventListener("touchstart", start);
   if (root.value) unregisterPreview(root.value);
   stop();
 });

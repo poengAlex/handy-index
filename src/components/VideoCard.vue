@@ -2,6 +2,12 @@
   <TileCard
     :to="`/videos/${video.partnerVideoId}`"
     :aria-label="video.title ?? $t('media.card.fallbackTitle')"
+    class="video-card"
+    @contextmenu.prevent="showMenu"
+    @touchstart.passive="press.start"
+    @touchmove.passive="press.move"
+    @touchend="press.end"
+    @touchcancel.passive="press.abort"
   >
     <template #media>
       <MediaPreview
@@ -17,8 +23,10 @@
       </div>
       <HChip v-if="isVr" label="VR" class="video-card__badge" />
 
-      <!-- Right-click (or long-press) quick menu, anchored to the artwork -->
-      <q-menu context-menu touch-position>
+      <!-- Right-click, or a long press anywhere on the tile: the gesture is
+           detected on the card (see showMenu) and the menu opens at the
+           pointer, so Quasar's own anchor wiring is off -->
+      <q-menu ref="menuRef" no-parent-event touch-position>
         <q-list dense class="video-card__menu">
           <q-item v-close-popup clickable @click="open">
             <q-item-section side>
@@ -124,6 +132,7 @@
 // lines. Explicit artwork only renders when the NSFW setting is on — which
 // also gates the hover preview, since that is the same artwork in motion.
 import { computed, ref } from "vue";
+import type { QMenu } from "quasar";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { HChip, hToast } from "@/components/handy";
@@ -132,6 +141,7 @@ import ConnectionKeyDialog from "@/components/ConnectionKeyDialog.vue";
 import MediaPreview from "@/components/MediaPreview.vue";
 import TileCard from "@/components/TileCard.vue";
 import { useFormat } from "@/composables/useFormat";
+import { useLongPress } from "@/composables/useLongPress";
 import { downloadFreeScript } from "@/services/script-download";
 import { artworkOf } from "@/services/script-index/queries";
 import type { PartnerVideo } from "@/services/script-index/types";
@@ -161,6 +171,18 @@ const ratingLabel = computed(() =>
 );
 
 // --- quick menu ---
+
+// The whole tile opens it, artwork or title — right-click on a pointer, hold
+// on touch. Both hand the menu the event they came from, which is what puts
+// it under the finger (`touch-position`); a second call while it is already
+// open is a no-op inside Quasar.
+const menuRef = ref<QMenu | null>(null);
+
+function showMenu(evt: Event) {
+  menuRef.value?.show(evt);
+}
+
+const press = useLongPress(showMenu);
 
 const playlistDialog = ref(false);
 
@@ -236,6 +258,15 @@ async function downloadScript() {
 </script>
 
 <style scoped lang="scss">
+// the whole tile is the long-press target, so nothing underneath may claim
+// that gesture first: no iOS callout, no selection handles dragged out of a
+// title (Chrome's own menu is cancelled in the context-menu boot file)
+.video-card {
+  -webkit-touch-callout: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
 .video-card__badge {
   position: absolute;
   top: var(--space-xs);
