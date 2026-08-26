@@ -3,11 +3,7 @@
     :to="`/videos/${video.partnerVideoId}`"
     :aria-label="video.title ?? $t('media.card.fallbackTitle')"
     class="video-card"
-    @contextmenu.prevent="showMenu"
-    @touchstart.passive="press.start"
-    @touchmove.passive="press.move"
-    @touchend="press.end"
-    @touchcancel.passive="press.abort"
+    @contextmenu.prevent="onContextMenu"
   >
     <template #media>
       <MediaPreview
@@ -23,10 +19,9 @@
       </div>
       <HChip v-if="isVr" label="VR" class="video-card__badge" />
 
-      <!-- Right-click, or a long press anywhere on the tile: the gesture is
-           detected on the card (see showMenu) and the menu opens at the
-           pointer, so Quasar's own anchor wiring is off -->
-      <q-menu ref="menuRef" no-parent-event touch-position>
+      <!-- Opened by the card's own triggers below, and placed at whatever
+           was clicked, so Quasar's anchor wiring stays off -->
+      <q-menu ref="menuRef" no-parent-event touch-position :target="menuTarget">
         <q-list dense class="video-card__menu">
           <q-item v-close-popup clickable @click="open">
             <q-item-section side>
@@ -124,6 +119,21 @@
     <ConnectionKeyDialog v-model="keyDialog" @saved="downloadScript">
       {{ $t("media.keyDialog.body") }}
     </ConnectionKeyDialog>
+
+    <!-- touch's way in: the same menu, one tap, no gesture to discover -->
+    <template v-if="!canHover" #action>
+      <q-btn
+        ref="moreBtn"
+        flat
+        round
+        dense
+        size="sm"
+        icon="more_vert"
+        class="video-card__more"
+        :aria-label="$t('media.menu.moreActions')"
+        @click="toggleMenu"
+      />
+    </template>
   </TileCard>
 </template>
 
@@ -132,6 +142,7 @@
 // lines. Explicit artwork only renders when the NSFW setting is on — which
 // also gates the hover preview, since that is the same artwork in motion.
 import { computed, ref } from "vue";
+import type { ComponentPublicInstance } from "vue";
 import type { QMenu } from "quasar";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
@@ -140,8 +151,8 @@ import AddToPlaylistDialog from "@/components/AddToPlaylistDialog.vue";
 import ConnectionKeyDialog from "@/components/ConnectionKeyDialog.vue";
 import MediaPreview from "@/components/MediaPreview.vue";
 import TileCard from "@/components/TileCard.vue";
+import { canHover } from "@/composables/useCanHover";
 import { useFormat } from "@/composables/useFormat";
-import { useLongPress } from "@/composables/useLongPress";
 import { downloadFreeScript } from "@/services/script-download";
 import { artworkOf } from "@/services/script-index/queries";
 import type { PartnerVideo } from "@/services/script-index/types";
@@ -172,17 +183,32 @@ const ratingLabel = computed(() =>
 
 // --- quick menu ---
 
-// The whole tile opens it, artwork or title — right-click on a pointer, hold
-// on touch. Both hand the menu the event they came from, which is what puts
-// it under the finger (`touch-position`); a second call while it is already
-// open is a no-op inside Quasar.
+// Two triggers, one menu: right-click anywhere on the tile where there is a
+// pointer, the corner ⋮ where there isn't. Each hands the menu its own event,
+// which is what puts the list where the click was (`touch-position`).
+//
+// Long press is deliberately not one of them. Touch has no hover to reveal an
+// affordance with, so the button says out loud what a hidden gesture only
+// hinted at — and no hold can misfire mid-scroll.
 const menuRef = ref<QMenu | null>(null);
+const moreBtn = ref<ComponentPublicInstance | null>(null);
 
-function showMenu(evt: Event) {
-  menuRef.value?.show(evt);
+// The menu anchors to the button whenever there is one. Quasar reads a click
+// on a menu's anchor as "not outside", and that is the whole difference
+// between a second tap on ⋮ closing the menu and it closing then reopening.
+const menuTarget = computed<Element | true>(() => moreBtn.value?.$el ?? true);
+
+/** the ⋮ button — a second tap on it closes the menu again */
+function toggleMenu(evt: Event) {
+  menuRef.value?.toggle(evt);
 }
 
-const press = useLongPress(showMenu);
+// A long press is what raises `contextmenu` on a phone, so it opens nothing
+// there — but it is still cancelled, or the browser answers a press on a card
+// with its own link/image menu.
+function onContextMenu(evt: Event) {
+  if (canHover.value) menuRef.value?.show(evt);
+}
 
 const playlistDialog = ref(false);
 
@@ -258,13 +284,23 @@ async function downloadScript() {
 </script>
 
 <style scoped lang="scss">
-// the whole tile is the long-press target, so nothing underneath may claim
-// that gesture first: no iOS callout, no selection handles dragged out of a
-// title (Chrome's own menu is cancelled in the context-menu boot file)
+// A press on a card is answered by nothing at all — the ⋮ is the way in — so
+// the browser's own long-press answers are suppressed too: no iOS callout,
+// no selection handles dragged out of a title. (The `contextmenu` half of
+// that is cancelled in onContextMenu, which reaches Chrome on Android.)
 .video-card {
   -webkit-touch-callout: none;
   user-select: none;
   -webkit-user-select: none;
+}
+
+// The bare glyph, no plate behind it — so it carries its own legibility over
+// artwork it can't predict: white, a shadow tight enough to read as weight
+// rather than as a halo, and dimmed until it is asked for.
+.video-card__more {
+  color: #fff;
+  opacity: 0.7;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.55));
 }
 
 .video-card__badge {

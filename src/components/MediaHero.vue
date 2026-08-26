@@ -79,10 +79,13 @@ const showArtwork = computed(() => settings.nsfw && Boolean(props.artwork));
   filter: saturate(1.1);
 
   // wide screens stretch the low-res art far past its native size, so the
-  // heavy ambient blur starts where the sharp thumb card takes over
+  // ambient blur starts where the sharp thumb card takes over — kept light
+  // enough that the backdrop still reads as the video rather than as fog
   @media (min-width: 1024px) {
-    filter: blur(24px) saturate(1.15);
-    transform: scale(1.12); // keeps the blur's soft edges outside the frame
+    filter: blur(8px) saturate(1.15);
+    // scale covers the blur's soft edges: at the hero's ~380px cap the 5%
+    // bleed is ~9px a side, just past the radius
+    transform: scale(1.05);
   }
 }
 

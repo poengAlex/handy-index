@@ -8,6 +8,7 @@ const media: typeof enUS = {
   },
 
   menu: {
+    moreActions: "Flere handlinger",
     open: "Åpne",
     openNewTab: "Åpne i ny fane",
     addFavorite: "Legg til i favoritter",

@@ -128,11 +128,18 @@ function stopCycling() {
   cycleTimer = 0;
 }
 
-function startCycling() {
+function advance() {
+  frame.value = (frame.value + 1) % frames.value.length;
+}
+
+/** `now` steps a frame before the first interval elapses — the poster is
+ * already on screen, so a preview that opens by holding it for a full beat
+ * reads as nothing having happened. Only for the stills-only path: where a
+ * clip is coming, the swap is a flicker under a video about to fade in. */
+function startCycling(now = false) {
   if (cycleTimer || frames.value.length < 2) return;
-  cycleTimer = window.setInterval(() => {
-    frame.value = (frame.value + 1) % frames.value.length;
-  }, settings.previewFrameMs);
+  if (now) advance();
+  cycleTimer = window.setInterval(advance, settings.previewFrameMs);
 }
 
 // Hover is the mouse's alone: touch fires the enter/leave pair too, and on
@@ -153,7 +160,7 @@ function start() {
   active.value = true;
   // the stills run even when a clip is loading: if the clip never plays, the
   // preview has already been showing something the whole time
-  startCycling();
+  startCycling(!clip.value);
   if (clip.value) {
     clipTimer = window.setTimeout(() => {
       if (!clipReady.value) failClip();
@@ -203,7 +210,9 @@ function failClip() {
   clipTimer = 0;
   deadClip.value = props.preview;
   clipReady.value = false;
-  startCycling();
+  // the clip is out of the picture now, so the stills owe the same instant
+  // answer they would have given on their own
+  startCycling(true);
 }
 
 // a recycled tile (carousels and the grid reuse DOM as you scroll) must not

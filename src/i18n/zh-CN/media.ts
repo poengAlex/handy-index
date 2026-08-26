@@ -13,6 +13,7 @@ const media: typeof enUS = {
   },
 
   menu: {
+    moreActions: "更多操作",
     open: "打开",
     openNewTab: "在新标签页打开",
     addFavorite: "加入收藏",

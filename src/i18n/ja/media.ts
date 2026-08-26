@@ -13,6 +13,7 @@ const media: typeof enUS = {
   },
 
   menu: {
+    moreActions: "その他の操作",
     open: "開く",
     openNewTab: "新しいタブで開く",
     addFavorite: "お気に入りに追加",

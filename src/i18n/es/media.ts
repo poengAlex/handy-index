@@ -13,6 +13,7 @@ const media: typeof enUS = {
   },
 
   menu: {
+    moreActions: "Más acciones",
     open: "Abrir",
     openNewTab: "Abrir en una pestaña nueva",
     addFavorite: "Añadir a favoritos",

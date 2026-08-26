@@ -13,6 +13,7 @@ const media: typeof enUS = {
   },
 
   menu: {
+    moreActions: "더 보기",
     open: "열기",
     openNewTab: "새 탭에서 열기",
     addFavorite: "즐겨찾기에 추가",

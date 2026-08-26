@@ -8,6 +8,11 @@
         <slot />
       </div>
     </component>
+    <!-- overlays the top corner of the media well, and sits outside the link
+         for the same reason the footer does -->
+    <div v-if="$slots.action" class="tile-card__action">
+      <slot name="action" />
+    </div>
     <!-- outside the link on purpose: a tile whose actions are buttons (vote,
          and anything after it) can't nest them inside an anchor — every click
          would also navigate, and interactive content inside a link is a
@@ -21,9 +26,9 @@
 <script setup lang="ts">
 // The shared media-tile contract (VideoCard, performer cards, requests): flat
 // card surface, fixed-ratio media well over a text body, hover lift per theme,
-// optional action footer. Slotted imagery uses .tile-card__img /
-// .tile-card__placeholder so the well owns the sizing (absolute cover —
-// content can't stretch the ratio).
+// optional corner action and action footer. Slotted imagery uses
+// .tile-card__img / .tile-card__placeholder so the well owns the sizing
+// (absolute cover — content can't stretch the ratio).
 //
 // Give it `to` for an in-app route or `href` for an external link (opened in
 // a new tab); with neither, the tile is inert markup rather than a dead link.
@@ -49,6 +54,7 @@ const linkAttrs = computed(() => {
 
 <style scoped lang="scss">
 .tile-card {
+  position: relative; // for the corner action
   display: flex;
   flex-direction: column;
   border-radius: var(--radius-lg);
@@ -92,6 +98,12 @@ const linkAttrs = computed(() => {
   align-items: center;
   justify-content: center;
   color: var(--color-text-tertiary);
+}
+
+.tile-card__action {
+  position: absolute;
+  top: var(--space-xs);
+  right: var(--space-xs);
 }
 
 .tile-card__body {

@@ -15,6 +15,7 @@ const media: typeof enUS = {
   },
 
   menu: {
+    moreActions: "Weitere Aktionen",
     open: "Öffnen",
     openNewTab: "In neuem Tab öffnen",
     addFavorite: "Zu Favoriten hinzufügen",

@@ -11,6 +11,8 @@ export default {
   },
 
   menu: {
+    // accessible name for the ⋮ button that opens this menu on touch
+    moreActions: "More actions",
     open: "Open",
     openNewTab: "Open in new tab",
     addFavorite: "Add to favorites",
