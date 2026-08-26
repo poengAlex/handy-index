@@ -111,6 +111,12 @@ const requests: typeof enUS = {
     // one row of the tag picker: the tag, then how many requests carry it
     tagOption: "{tag} ({count})",
     removeTagAria: "필터 제거: {tag}",
+    performerLabel: "출연자",
+    performerEmpty: "일치하는 출연자가 없어요",
+    // one row of the performer picker: who they are, then how many
+    // requests name them
+    performerOption: "{name} ({count})",
+    removePerformerAria: "필터 제거: {name}",
     hideVoted: "투표한 요청 숨기기",
     hideVotedTitle: "이미 투표한 요청을 목록에서 숨겨요",
     emptyTitle: "일치하는 요청이 없어요"

@@ -49,8 +49,10 @@ const browse: typeof enUS = {
     noTags: "Nenhuma tag encontrada",
     site: "Site",
     noSites: "Nenhum site encontrado",
-    // one row of either picker: the tag or site name, then how many videos
-    // picking it would leave on screen
+    performer: "Artista",
+    noPerformers: "Nenhum artista encontrado",
+    // one row of any picker: the tag, site or performer name, then how
+    // many videos picking it would leave on screen
     option: "{name} ({count})",
     vrLabel: "Apenas VR",
     vrCaption: "Somente vídeos de realidade virtual",

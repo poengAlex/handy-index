@@ -115,6 +115,12 @@ const requests: typeof enUS = {
     // one row of the tag picker: the tag, then how many requests carry it
     tagOption: "{tag} ({count})",
     removeTagAria: "Quitar filtro: {tag}",
+    performerLabel: "Intérprete",
+    performerEmpty: "Ningún intérprete coincide",
+    // one row of the performer picker: who they are, then how many
+    // requests name them
+    performerOption: "{name} ({count})",
+    removePerformerAria: "Quitar filtro: {name}",
     hideVoted: "Ocultar votadas",
     hideVotedTitle: "Ocultar las solicitudes que ya has votado",
     emptyTitle: "Ninguna solicitud coincide"

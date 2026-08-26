@@ -96,6 +96,12 @@ const requests: typeof enUS = {
     tagEmpty: "Ingen tagger traff søket",
     tagOption: "{tag} ({count})",
     removeTagAria: "Fjern filter: {tag}",
+    performerLabel: "Skuespiller",
+    performerEmpty: "Ingen skuespillere traff søket",
+    // one row of the performer picker: who they are, then how many
+    // requests name them
+    performerOption: "{name} ({count})",
+    removePerformerAria: "Fjern filter: {name}",
     // "Skjul stemte" is the English shape: you vote *på* a request in
     // Norwegian, so there is no such thing as "en stemt forespørsel". The
     // control row wraps rather than carry a phrase that doesn't exist.

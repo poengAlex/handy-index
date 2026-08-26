@@ -113,6 +113,12 @@ const requests: typeof enUS = {
     // one row of the tag picker: the tag, then how many requests carry it
     tagOption: "{tag} ({count})",
     removeTagAria: "Убрать фильтр: {tag}",
+    performerLabel: "Актёр",
+    performerEmpty: "Актёры не найдены",
+    // one row of the performer picker: who they are, then how many
+    // requests name them
+    performerOption: "{name} ({count})",
+    removePerformerAria: "Убрать фильтр: {name}",
     hideVoted: "Без моего голоса",
     hideVotedTitle: "Скрыть запросы с моим голосом",
     emptyTitle: "Запросы не найдены"

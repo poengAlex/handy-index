@@ -54,9 +54,9 @@ const settings: typeof enUS = {
   previews: {
     title: "Kartenvorschau",
     hint:
-      "Fahre mit der Maus über eine Karte — oder wische mit dem Finger " +
-      "darüber —, um sie in der Vorschau zu sehen. Klicke auf eine " +
-      "Beschriftung, um dieses Tempo zurückzusetzen.",
+      "Fahre mit der Maus über eine Karte — oder tippe sie an —, um sie in " +
+      "der Vorschau zu sehen. Klicke auf eine Beschriftung, um dieses Tempo " +
+      "zurückzusetzen.",
     imageSpeed: "Bildtempo",
     clipSpeed: "Cliptempo"
   },

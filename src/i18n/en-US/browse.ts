@@ -47,8 +47,10 @@ export default {
     noTags: "No matching tags",
     site: "Site",
     noSites: "No matching sites",
-    // one row of either picker: the tag or site name, then how many videos
-    // picking it would leave on screen
+    performer: "Performer",
+    noPerformers: "No matching performers",
+    // one row of any picker: the tag, site or performer name, then how
+    // many videos picking it would leave on screen
     option: "{name} ({count})",
     vrLabel: "VR only",
     vrCaption: "Only virtual-reality videos",

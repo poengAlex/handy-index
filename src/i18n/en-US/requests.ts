@@ -111,6 +111,12 @@ export default {
     // one row of the tag picker: the tag, then how many requests carry it
     tagOption: "{tag} ({count})",
     removeTagAria: "Remove filter: {tag}",
+    performerLabel: "Performer",
+    performerEmpty: "No matching performers",
+    // one row of the performer picker: who they are, then how many
+    // requests name them
+    performerOption: "{name} ({count})",
+    removePerformerAria: "Remove filter: {name}",
     hideVoted: "Hide voted",
     hideVotedTitle: "Hide the requests you already voted on",
     emptyTitle: "No requests match"

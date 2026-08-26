@@ -45,9 +45,9 @@ const settings: typeof enUS = {
   previews: {
     title: "Forhåndsvisning på kort",
     hint:
-      "Hold pekeren over et kort — eller dra fingeren over det — for å " +
-      "forhåndsvise det. Klikk på navnet til en glidebryter for å " +
-      "nullstille hastigheten.",
+      "Hold pekeren over et kort — eller ta på det — for å forhåndsvise " +
+      "det. Klikk på navnet til en glidebryter for å nullstille " +
+      "hastigheten.",
     imageSpeed: "Bildehastighet",
     clipSpeed: "Klipphastighet"
   },

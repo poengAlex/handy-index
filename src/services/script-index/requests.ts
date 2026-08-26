@@ -6,7 +6,7 @@
 // Deliberately absent: status and domain filters. The live set is 1,080
 // requests, every one of them `registered` and all but two from the same
 // domain; both controls would sit there filtering nothing.
-import type { TagSummary } from "./queries";
+import type { PerformerCount, TagSummary } from "./queries";
 import type { VideoRequest } from "./types";
 
 export function votesOf(request: VideoRequest): number {
@@ -51,6 +51,45 @@ export function requestTagsOf(requests: readonly VideoRequest[]): TagSummary[] {
   return [...counts.entries()]
     .map(([tag, count]) => ({ tag, count }))
     .sort((a, b) => b.count - a.count);
+}
+
+/** Requests featuring one performer. Same shape as the catalog's byPerformer,
+ * matched on id rather than name — two performers can share a stage name. */
+export function byRequestPerformer(
+  requests: readonly VideoRequest[],
+  performerId: string
+): VideoRequest[] {
+  return requests.filter(request =>
+    request.performers?.some(performer => performer.performerId === performerId)
+  );
+}
+
+/** Every performer on the board with their request count, biggest first —
+ * what the performer picker offers. Like the tag tally, a performer is counted
+ * once per request even if the partner listed them twice, and unnamed entries
+ * are dropped: the picker has nothing to print for them. */
+export function requestPerformersOf(
+  requests: readonly VideoRequest[]
+): PerformerCount[] {
+  const performers = new Map<string, PerformerCount>();
+  for (const request of requests) {
+    const seen = new Set<string>();
+    for (const performer of request.performers ?? []) {
+      if (!performer.name?.trim()) continue;
+      if (seen.has(performer.performerId)) continue;
+      seen.add(performer.performerId);
+      const existing = performers.get(performer.performerId);
+      if (existing) existing.count += 1;
+      else {
+        performers.set(performer.performerId, {
+          performerId: performer.performerId,
+          name: performer.name,
+          count: 1
+        });
+      }
+    }
+  }
+  return [...performers.values()].sort((a, b) => b.count - a.count);
 }
 
 /** Requests the user hasn't voted on yet — "what still needs me". */

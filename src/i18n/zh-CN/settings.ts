@@ -47,7 +47,7 @@ const settings: typeof enUS = {
 
   previews: {
     title: "卡片预览",
-    hint: "把鼠标悬停在卡片上，或用手指划过卡片，就能预览。点一下速度名称即可恢复默认。",
+    hint: "把鼠标悬停在卡片上，或用手指触碰卡片，就能预览。点一下速度名称即可恢复默认。",
     imageSpeed: "图片速度",
     clipSpeed: "片段速度"
   },

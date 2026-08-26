@@ -7,10 +7,9 @@
  * held the stage is stopped, which is also what keeps a preview that has
  * scrolled out of view from decoding for nobody.
  *
- * Previews are a POINTER affordance only. There was a touch gesture here
- * that hit-tested the finger on every touchmove and handed the stage to
- * whichever card was under it — see the note in MediaPreview.vue for why it
- * had to go.
+ * Touch leans on this harder than hover does: a finger has no "leave", so a
+ * touch preview runs until something here ends it — the next card claimed,
+ * or this one scrolled away. See the note in MediaPreview.vue.
  */
 
 interface PreviewTarget {

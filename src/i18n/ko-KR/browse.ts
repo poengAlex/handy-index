@@ -49,8 +49,10 @@ const browse: typeof enUS = {
     noTags: "일치하는 태그가 없어요",
     site: "사이트",
     noSites: "일치하는 사이트가 없어요",
-    // one row of either picker: the tag or site name, then how many videos
-    // picking it would leave on screen
+    performer: "출연자",
+    noPerformers: "일치하는 출연자가 없어요",
+    // one row of any picker: the tag, site or performer name, then how
+    // many videos picking it would leave on screen
     option: "{name} ({count})",
     vrLabel: "VR만",
     vrCaption: "VR 동영상만 보여줘요",

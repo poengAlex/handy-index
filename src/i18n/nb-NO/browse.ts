@@ -39,6 +39,8 @@ const browse: typeof enUS = {
     noTags: "Ingen tagger traff søket",
     site: "Nettsted",
     noSites: "Ingen nettsteder traff søket",
+    performer: "Skuespiller",
+    noPerformers: "Ingen skuespillere traff søket",
     option: "{name} ({count})",
     vrLabel: "Kun VR",
     vrCaption: "Bare videoer i virtuell virkelighet",

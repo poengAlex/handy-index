@@ -6,7 +6,7 @@ import { defineConfig } from "#q-app";
 export default defineConfig(() => {
   return {
     // app boot file (/src/boot)
-    boot: ["i18n", "icons", "quasar-defaults"],
+    boot: ["i18n", "icons", "quasar-defaults", "context-menu"],
 
     css: ["app.scss"],
 

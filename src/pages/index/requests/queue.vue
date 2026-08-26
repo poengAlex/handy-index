@@ -70,10 +70,14 @@
             v-model:hide-voted="hideVoted"
             :tags="tags"
             :all-tags="allTags"
+            :performer-id="performerId"
+            :performer-name="performerName"
+            :all-performers="allPerformers"
             :active-count="activeCount"
             class="queue-page__filters"
             @add-tag="addTag"
             @remove-tag="removeTag"
+            @set-performer="setPerformer"
             @clear="clear"
           />
 
@@ -162,11 +166,15 @@ const {
   sortKey,
   tags,
   hideVoted,
+  performerId,
+  performerName,
   allTags,
+  allPerformers,
   results,
   activeCount,
   addTag,
   removeTag,
+  setPerformer,
   clear
 } = useRequestFilters(requests);
 

@@ -1,10 +1,12 @@
 import { computed, ref, type Ref } from "vue";
 import {
   alphabeticalRequests,
+  byRequestPerformer,
   byRequestTags,
   longestRequests,
   mostVoted,
   newestRequests,
+  requestPerformersOf,
   requestTagsOf,
   searchRequests,
   withoutVoted
@@ -51,11 +53,17 @@ export function useRequestFilters(source: Ref<readonly VideoRequest[]>) {
   const sortKey = ref<RequestSortKey>("votes");
   const tags = ref<string[]>([]);
   const hideVoted = ref(false);
+  // id is what filters; the name rides along so the chip and the picker have
+  // something to print without a second pass over the board
+  const performerId = ref("");
+  const performerName = ref("");
 
   const allTags = computed(() => requestTagsOf(source.value));
+  const allPerformers = computed(() => requestPerformersOf(source.value));
 
   const results = computed<VideoRequest[]>(() => {
     let pool = byRequestTags(source.value, tags.value);
+    if (performerId.value) pool = byRequestPerformer(pool, performerId.value);
     if (hideVoted.value) pool = withoutVoted(pool, settings.requestUpvotes);
     pool = searchRequests(pool, search.value);
     return SORTERS[sortKey.value](pool);
@@ -66,6 +74,7 @@ export function useRequestFilters(source: Ref<readonly VideoRequest[]>) {
     () =>
       tags.value.length +
       (search.value.trim() ? 1 : 0) +
+      (performerId.value ? 1 : 0) +
       (hideVoted.value ? 1 : 0)
   );
 
@@ -78,10 +87,22 @@ export function useRequestFilters(source: Ref<readonly VideoRequest[]>) {
     tags.value = tags.value.filter(entry => entry !== tag);
   }
 
+  /** One performer at a time: unlike tags, an AND across two of them matches
+   * only the rare request that lists both, so a second pick replaces the
+   * first. Passing "" clears the filter. */
+  function setPerformer(id: string): void {
+    performerId.value = id;
+    performerName.value = id
+      ? (allPerformers.value.find(entry => entry.performerId === id)?.name ??
+        "")
+      : "";
+  }
+
   function clear(): void {
     search.value = "";
     tags.value = [];
     hideVoted.value = false;
+    setPerformer("");
   }
 
   return {
@@ -89,11 +110,15 @@ export function useRequestFilters(source: Ref<readonly VideoRequest[]>) {
     sortKey,
     tags,
     hideVoted,
+    performerId,
+    performerName,
     allTags,
+    allPerformers,
     results,
     activeCount,
     addTag,
     removeTag,
+    setPerformer,
     clear
   };
 }

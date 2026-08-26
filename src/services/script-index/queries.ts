@@ -430,11 +430,17 @@ export function partnersOf(videos: readonly PartnerVideo[]): PartnerSummary[] {
   return [...partners.values()].sort((a, b) => b.count - a.count);
 }
 
-export interface PerformerSummary {
+/** What every performer picker needs: who they are and how many rows a pick
+ * would leave on screen. The request board tallies its own (see
+ * requestPerformersOf), so the pickers on both sides share one shape. */
+export interface PerformerCount {
   performerId: string;
   name: string;
-  avatar?: string | undefined;
   count: number;
+}
+
+export interface PerformerSummary extends PerformerCount {
+  avatar?: string | undefined;
   /** mean rating (0–100) across their rated videos; 0 when none are rated */
   avgRating: number;
   /** how many of their videos carry a rating */

@@ -49,8 +49,10 @@ const browse: typeof enUS = {
     noTags: "一致するタグがありません",
     site: "サイト",
     noSites: "一致するサイトがありません",
-    // one row of either picker: the tag or site name, then how many videos
-    // picking it would leave on screen
+    performer: "出演者",
+    noPerformers: "一致する出演者がいません",
+    // one row of any picker: the tag, site or performer name, then how
+    // many videos picking it would leave on screen
     option: "{name}（{count}）",
     vrLabel: "VRのみ",
     vrCaption: "VR動画だけを表示します",

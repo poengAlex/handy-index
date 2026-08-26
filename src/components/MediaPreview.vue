@@ -3,7 +3,8 @@
     ref="root"
     class="media-preview"
     @pointerenter="onEnter"
-    @pointerleave="stop"
+    @pointerleave="onLeave"
+    @pointerdown.passive="onDown"
   >
     <MediaImage
       :src="frames[frame] ?? poster"
@@ -32,8 +33,8 @@
 </template>
 
 <script setup lang="ts">
-// Preview for a media tile — on hover, with a real pointer. Two ways to
-// show one:
+// Preview for a media tile — on hover with a pointer, on touch with a
+// finger. Two ways to show one:
 //
 // - `preview` — a short silent roll clip the partner already publishes, on
 //   7,041 of the index's 15,572 videos. Preferred when present.
@@ -45,15 +46,21 @@
 // stay mounted underneath, the clip fades in only on `canplay`, and a clip
 // that hasn't started within CLIP_TIMEOUT_MS is abandoned for cycling.
 //
-// Hover only, and deliberately so. Touch used to preview whichever card was
-// under the finger: the stage hit-tested it with elementFromPoint on every
-// touchmove, then mounted a <video> for each card the finger crossed. Both
-// land on the main thread inside the same rAF that vue3-carousel drags the
-// shelf with (a forced layout, then a media pipeline spin-up, per frame), so
-// horizontal sliding stuttered on every phone. A pointerType guard keeps the
-// synthetic mouse events a tap emits from bringing it back in through the
-// hover path. usePreviewStage still guarantees only one preview runs at a
-// time.
+// Touch previews the card the finger LANDS on, and nothing else. Any touch
+// counts — a tap on the way to the detail page, the start of a page scroll,
+// a carousel drag — because the finger is already saying which card it is
+// interested in. It is one listener firing once per gesture: the version
+// before this one hit-tested elementFromPoint on every touchmove and mounted
+// a <video> for each card the finger crossed, both on the main thread inside
+// the same rAF vue3-carousel drags the shelf with, and sliding stuttered on
+// every phone.
+//
+// A touch preview outlives the gesture (pointerleave fires the moment a
+// finger lifts, and the browser cancels the pointer outright when a scroll
+// takes over — stopping there would leave a fling showing nothing). It runs
+// until another card claims the stage, until it scrolls out of view, or until
+// the tile is recycled. usePreviewStage guarantees exactly one runs at a
+// time, whatever started it.
 import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import MediaImage from "@/components/MediaImage.vue";
 import {
@@ -79,6 +86,7 @@ const props = withDefaults(
 );
 
 const CLIP_TIMEOUT_MS = 1500;
+const TOUCH_DELAY_MS = 180;
 
 const catalog = useCatalogStore();
 // both speeds are the reader's call — how long a still holds, and how fast a
@@ -113,6 +121,7 @@ const clip = computed(() =>
 
 let cycleTimer = 0;
 let clipTimer = 0;
+let touchTimer = 0;
 
 function stopCycling() {
   window.clearInterval(cycleTimer);
@@ -126,10 +135,26 @@ function startCycling() {
   }, settings.previewFrameMs);
 }
 
-// touch and pen fire pointerenter too — a tap on a card would otherwise
-// mount a clip on the way to its detail page
+// Hover is the mouse's alone: touch and pen fire the enter/leave pair too,
+// and on touch it is the down/lift pair — the preview must survive the lift.
 function onEnter(e: PointerEvent) {
   if (e.pointerType === "mouse") start();
+}
+
+function onLeave(e: PointerEvent) {
+  if (e.pointerType === "mouse") stop();
+}
+
+function onDown(e: PointerEvent) {
+  if (e.pointerType === "mouse" || active.value || touchTimer) return;
+  // a beat after the finger lands, not in the same frame: if this press turns
+  // out to be a scroll, the browser is busy handing the gesture off, and that
+  // is the worst possible moment to spin up a media pipeline. A tap navigates
+  // away well before it fires, which costs nothing.
+  touchTimer = window.setTimeout(() => {
+    touchTimer = 0;
+    start();
+  }, TOUCH_DELAY_MS);
 }
 
 function start() {
@@ -151,6 +176,10 @@ function stop() {
   if (root.value) releasePreview(root.value);
   window.clearTimeout(clipTimer);
   clipTimer = 0;
+  // a press that hasn't become a preview yet is cancelled too — the stage
+  // calls stop() on the card it is taking over from
+  window.clearTimeout(touchTimer);
+  touchTimer = 0;
   stopCycling();
   active.value = false;
   clipReady.value = false;

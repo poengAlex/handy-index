@@ -199,6 +199,33 @@
               </template>
             </q-select>
 
+            <q-select
+              :model-value="performerId || null"
+              :display-value="performerDisplay"
+              :options="performerOptions"
+              emit-value
+              map-options
+              use-input
+              clearable
+              input-debounce="150"
+              filled
+              dense
+              :label="$t('browse.filters.performer')"
+              @filter="filterPerformers"
+              @update:model-value="setPerformer"
+            >
+              <template #prepend>
+                <q-icon name="person" />
+              </template>
+              <template #no-option>
+                <q-item>
+                  <q-item-section class="text-body-sm">
+                    {{ $t("browse.filters.noPerformers") }}
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
+
             <div v-if="chips.length" class="videos-page__chips">
               <button
                 v-for="chip in chips"
@@ -355,6 +382,7 @@ import {
   mostPlayed,
   mostViewed,
   partnersOf,
+  performersOf,
   recentFirst,
   recentlyUpdatedFirst,
   searchTitle,
@@ -818,7 +846,8 @@ function commitDuration() {
   });
 }
 
-// --- pickers: add a tag / choose a site without leaving the page ---
+// --- pickers: add a tag / choose a site or performer without leaving the
+// page ---
 
 interface PickOption {
   label: string;
@@ -827,6 +856,7 @@ interface PickOption {
 
 const tagNeedle = ref("");
 const siteNeedle = ref("");
+const performerNeedle = ref("");
 
 const allTags = computed(() =>
   catalog.status === "ready" ? tagsOf(catalog.visible) : []
@@ -837,6 +867,13 @@ const allTags = computed(() =>
 // and discloses "0 of 1,211" for a site your gates empty.
 const allSites = computed(() =>
   catalog.status === "ready" ? partnersOf(catalog.visible) : []
+);
+
+// same rule as the sites picker: what a pick would actually show. The
+// /performers directory is the full roster instead, and lifts the
+// orientation gate — a performer is a person in the index, not a preference.
+const allPerformers = computed(() =>
+  catalog.status === "ready" ? performersOf(catalog.visible) : []
 );
 
 const tagOptions = computed<PickOption[]>(() =>
@@ -869,6 +906,21 @@ const siteOptions = computed<PickOption[]>(() =>
     }))
 );
 
+const performerOptions = computed<PickOption[]>(() =>
+  allPerformers.value
+    .filter(summary =>
+      summary.name.toLowerCase().includes(performerNeedle.value)
+    )
+    .slice(0, 30)
+    .map(summary => ({
+      label: t("browse.filters.option", {
+        name: summary.name,
+        count: n(summary.count)
+      }),
+      value: summary.performerId
+    }))
+);
+
 function filterTags(input: string, update: (fn: () => void) => void) {
   update(() => {
     tagNeedle.value = input.trim().toLowerCase();
@@ -886,8 +938,30 @@ function addTag(tag: string | null) {
   apply({ ...currentFilters(), tags: [...tags.value, tag] });
 }
 
+function filterPerformers(input: string, update: (fn: () => void) => void) {
+  update(() => {
+    performerNeedle.value = input.trim().toLowerCase();
+  });
+}
+
 function setPartner(id: string | null) {
   apply({ ...currentFilters(), partnerId: id ?? "" });
+}
+
+// The name rides in the URL beside the id (same as the links in from the
+// performers page and a video's cast list), so the chip has something to
+// print without scanning the catalog for the id.
+function setPerformer(id: string | null) {
+  if (!id) {
+    removePerformer();
+    return;
+  }
+  const match = allPerformers.value.find(entry => entry.performerId === id);
+  apply({
+    ...currentFilters(),
+    performerId: id,
+    performerName: match?.name ?? ""
+  });
 }
 
 // --- active filter chips ---
@@ -898,6 +972,15 @@ const partnerLabel = computed(() => {
   const match = catalog.videos.find(video => video.partnerId === id);
   return match?.partnerName ?? t("browse.chip.partnerFallback");
 });
+
+// The picker offers the 30 biggest matches, so a performer picked earlier
+// (or arriving in a shared link) is usually not among them — without this the
+// closed control would print the raw id.
+const performerDisplay = computed(() =>
+  performerId.value
+    ? performerName.value || t("browse.chip.performerFallback")
+    : undefined
+);
 
 const chips = computed<FilterChip[]>(() => {
   const list: FilterChip[] = tags.value.map(tag => ({

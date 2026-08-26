@@ -75,6 +75,12 @@ const linkAttrs = computed(() => {
 .tile-card__media {
   position: relative;
   background: var(--color-bg-page-alt);
+  // a long press on the artwork is the app's quick-menu gesture: no iOS
+  // callout, no selection handles dragged out of the image underneath it
+  // (Android's own menu is cancelled in the context-menu boot file)
+  -webkit-touch-callout: none;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 :slotted(.tile-card__img) {

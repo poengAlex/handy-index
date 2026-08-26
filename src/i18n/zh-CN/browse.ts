@@ -49,8 +49,10 @@ const browse: typeof enUS = {
     noTags: "没有匹配的标签",
     site: "网站",
     noSites: "没有匹配的网站",
-    // one row of either picker: the tag or site name, then how many videos
-    // picking it would leave on screen
+    performer: "演员",
+    noPerformers: "没有匹配的演员",
+    // one row of any picker: the tag, site or performer name, then how
+    // many videos picking it would leave on screen
     option: "{name}（{count}）",
     vrLabel: "仅 VR",
     vrCaption: "只显示 VR 视频",

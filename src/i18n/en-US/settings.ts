@@ -48,8 +48,8 @@ export default {
   previews: {
     title: "Card previews",
     hint:
-      "Hover a card — or drag a finger across one — to preview it. Click a " +
-      "label to put that speed back.",
+      "Hover a card — or touch one — to preview it. Click a label to put " +
+      "that speed back.",
     imageSpeed: "Image speed",
     clipSpeed: "Clip speed"
   },

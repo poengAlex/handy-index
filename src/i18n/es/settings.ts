@@ -52,7 +52,7 @@ const settings: typeof enUS = {
   previews: {
     title: "Vistas previas de las tarjetas",
     hint:
-      "Pasa el cursor por una tarjeta — o desliza un dedo sobre ella — para " +
+      "Pasa el cursor por una tarjeta — o tócala con el dedo — para " +
       "previsualizarla. Haz clic en el nombre de una velocidad para " +
       "restablecerla.",
     imageSpeed: "Velocidad de imagen",

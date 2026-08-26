@@ -106,6 +106,12 @@ const requests: typeof enUS = {
     // one row of the tag picker: the tag, then how many requests carry it
     tagOption: "{tag}（{count}）",
     removeTagAria: "移除筛选：{tag}",
+    performerLabel: "演员",
+    performerEmpty: "没有匹配的演员",
+    // one row of the performer picker: who they are, then how many
+    // requests name them
+    performerOption: "{name}（{count}）",
+    removePerformerAria: "移除筛选：{name}",
     hideVoted: "隐藏已投票",
     hideVotedTitle: "隐藏你已经投过票的请求",
     emptyTitle: "没有匹配的请求"

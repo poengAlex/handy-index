@@ -51,9 +51,8 @@ const settings: typeof enUS = {
   previews: {
     title: "Aperçus des cartes",
     hint:
-      "Survole une carte — ou fais glisser un doigt dessus — pour la " +
-      "prévisualiser. Clique sur un libellé pour rétablir la vitesse " +
-      "d'origine.",
+      "Survole une carte — ou touche-la du doigt — pour la prévisualiser. " +
+      "Clique sur un libellé pour rétablir la vitesse d'origine.",
     imageSpeed: "Vitesse des images",
     clipSpeed: "Vitesse des clips"
   },

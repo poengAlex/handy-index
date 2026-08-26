@@ -115,6 +115,12 @@ const requests: typeof enUS = {
     // one row of the tag picker: the tag, then how many requests carry it
     tagOption: "{tag}（{count}）",
     removeTagAria: "フィルターを解除：{tag}",
+    performerLabel: "出演者",
+    performerEmpty: "一致する出演者がいません",
+    // one row of the performer picker: who they are, then how many
+    // requests name them
+    performerOption: "{name}（{count}）",
+    removePerformerAria: "フィルターを解除：{name}",
     hideVoted: "投票済みを隠す",
     hideVotedTitle: "すでに投票したリクエストを隠します",
     emptyTitle: "一致するリクエストがありません"

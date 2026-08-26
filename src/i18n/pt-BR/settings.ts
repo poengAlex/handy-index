@@ -51,7 +51,7 @@ const settings: typeof enUS = {
   previews: {
     title: "Prévias nas miniaturas",
     hint:
-      "Passe o mouse sobre uma miniatura — ou arraste o dedo por ela — para " +
+      "Passe o mouse sobre uma miniatura — ou toque nela com o dedo — para " +
       "ver a prévia. Clique no nome de um controle para restaurar aquela " +
       "velocidade.",
     imageSpeed: "Velocidade da imagem",
