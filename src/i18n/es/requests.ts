@@ -1,28 +1,22 @@
 import type enUS from "../en-US/requests";
 
-// The community side of the catalog: the voting board (submit a video URL,
-// upvote what should get scripted next) and the queue that shows the same
-// requests in scripting order. Both are gated on the Handy connection key,
-// which is why `key.*` carries a body per surface — the sentence names the
-// thing you were trying to reach.
+// The community side of the catalog: one voting board that is also the
+// queue — submit a video URL, upvote what should get scripted next, and read
+// each tile's rank as its place in the scripting order. The board is gated on
+// the Handy connection key, which is what `key.*` covers.
 const requests: typeof enUS = {
-  // Connection-key gate and the two failure states behind it. Shown by both
-  // pages; only the body differs.
+  // Connection-key gate and the two failure states behind it.
   key: {
     title: "Hace falta la connection key",
     boardBody:
       "El tablero de solicitudes está vinculado a tu Handy. Añade la connection key de la app de Handy para ver, enviar y votar solicitudes.",
-    queueBody:
-      "La cola está vinculada a tu Handy. Añade la connection key de la app de Handy para verla.",
     addAction: "Añadir la connection key",
     rejectedTitle: "Connection key rechazada",
     rejectedBody:
       "O la clave es incorrecta o tu Handy no está en línea. Revisa la clave en la app de Handy, comprueba que el dispositivo está encendido y conectado, y escríbela otra vez.",
     rejectedAction: "Escribir la clave otra vez",
     boardDialog:
-      "El tablero de solicitudes está vinculado a tu Handy. Escribe la connection key de la app de Handy para continuar.",
-    queueDialog:
-      "La cola está vinculada a tu Handy. Escribe la connection key de la app de Handy para continuar."
+      "El tablero de solicitudes está vinculado a tu Handy. Escribe la connection key de la app de Handy para continuar."
   },
 
   // The voting board page. There are four count messages rather than one
@@ -34,7 +28,6 @@ const requests: typeof enUS = {
   board: {
     title: "Solicitudes de scripts",
     lead: "Vota qué vídeos tendrán script a continuación — la solicitud más votada va primero.",
-    queueLink: "Ver la cola",
     emptyTitle: "No hay solicitudes esperando",
     emptyBody:
       "Ahora mismo no hay nada en votación. Solicita un vídeo aquí arriba para poner esto en marcha.",
@@ -47,26 +40,6 @@ const requests: typeof enUS = {
     countFiltered: "{requests} de {total}",
     countFilteredCapped:
       "{requests} de {total} (el tablero es más largo de lo que cargamos)"
-  },
-
-  // The queue page: the same requests, ranked, read-only.
-  queue: {
-    title: "Cola de solicitudes",
-    lead: "El orden en que se hacen los scripts: la solicitud más votada recibe el suyo primero.",
-    boardLink: "Tablero de votación",
-    emptyTitle: "La cola está vacía",
-    emptyBody:
-      "Ahora mismo no hay nada esperando script. Solicita un vídeo desde el tablero de votación para poner esto en marcha.",
-    emptyAction: "Ir a las solicitudes",
-    errorTitle: "No se ha podido cargar la cola",
-    noMatchBody:
-      "Nada de la cola coincide con esos filtros. Quita alguno para ver el resto.",
-    countWaiting: "{requests} esperando",
-    countWaitingCapped:
-      "{requests} esperando (la cola es más larga de lo que cargamos)",
-    countFiltered: "{requests} de {total} esperando",
-    countFilteredCapped:
-      "{requests} de {total} (la cola es más larga de lo que cargamos)"
   },
 
   // The submit row on the board, plus the two toasts it can raise.
@@ -105,7 +78,7 @@ const requests: typeof enUS = {
     rank: "#{rank}"
   },
 
-  // The control row shared by both pages.
+  // The control row above the list.
   filters: {
     searchPlaceholder: "Buscar solicitudes",
     searchAria: "Buscar solicitudes por título",

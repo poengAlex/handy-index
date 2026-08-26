@@ -430,17 +430,11 @@ export function partnersOf(videos: readonly PartnerVideo[]): PartnerSummary[] {
   return [...partners.values()].sort((a, b) => b.count - a.count);
 }
 
-/** What every performer picker needs: who they are and how many rows a pick
- * would leave on screen. The request board tallies its own (see
- * requestPerformersOf), so the pickers on both sides share one shape. */
-export interface PerformerCount {
+export interface PerformerSummary {
   performerId: string;
   name: string;
-  count: number;
-}
-
-export interface PerformerSummary extends PerformerCount {
   avatar?: string | undefined;
+  count: number;
   /** mean rating (0–100) across their rated videos; 0 when none are rated */
   avgRating: number;
   /** how many of their videos carry a rating */
@@ -488,14 +482,99 @@ export function performersOf(
     .sort((a, b) => b.count - a.count);
 }
 
-/** Hero candidate: fresh, decently rated and has artwork that loads. */
+/** How many of the strongest candidates the hero draws from. Wide enough
+ * that coming back to home shows something else, narrow enough that every
+ * entry deserves the slot. */
+const FEATURED_POOL = 24;
+
+/** Days after publication at which a video keeps half its freshness weight. */
+const FEATURED_HALF_LIFE_DAYS = 120;
+
+/** Exponent on the draw weights — above 1 tilts the roll toward the pool's
+ * best entries without ever locking the weaker ones out. */
+const FEATURED_BIAS = 3;
+
+const DAY_MS = 86_400_000;
+
+/** Neutral rating (0–1) a video is pulled toward while its votes are thin,
+ * so a lone 100% vote can't outrank an established favourite. */
+const FEATURED_RATING_BASELINE = 0.7;
+
+function confidentRating(video: PartnerVideo): number {
+  const rating = (video.rating ?? 0) / 100;
+  // unrated sits just under the baseline: unproven, not disqualified
+  if (rating <= 0) return FEATURED_RATING_BASELINE - 0.1;
+  const votes = voteCount(video);
+  const confidence = votes / (votes + RATING_VOTE_FLOOR);
+  return (
+    FEATURED_RATING_BASELINE + (rating - FEATURED_RATING_BASELINE) * confidence
+  );
+}
+
+/** Hero worthiness, 0–1: mostly how well it's rated, then how many people
+ * reached it, then how fresh it is. Freshness only tilts the odds — on its
+ * own it used to pin the hero to whatever landed last night. */
+function featuredScore(video: PartnerVideo, now: number): number {
+  const published = time(video.publishedAt);
+  const ageDays = published ? Math.max(0, (now - published) / DAY_MS) : 3650;
+  const freshness = 0.5 ** (ageDays / FEATURED_HALF_LIFE_DAYS);
+  // plays count quadruple — running the script is a stronger signal than
+  // opening the page — and the log keeps one runaway hit from owning the slot
+  const reach =
+    Math.log10(1 + (video.scriptPlays ?? 0) * 4 + (video.views ?? 0)) / 6;
+  return (
+    0.5 * confidentRating(video) + 0.3 * Math.min(1, reach) + 0.2 * freshness
+  );
+}
+
+/** Spreads an arbitrary seed number into a well-distributed 0–1 (mulberry32's
+ * mixing step). The caller owns the seed so the hero re-rolls once per visit
+ * rather than on every re-render. */
+function seededUnit(seed: number): number {
+  let t = (Math.trunc(seed * 0x1_0000_0000) ^ 0x9e37_79b9) >>> 0;
+  t = Math.imul(t ^ (t >>> 15), t | 1);
+  t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+  return ((t ^ (t >>> 14)) >>> 0) / 0x1_0000_0000;
+}
+
+export interface FeaturedOptions {
+  /** any number; the same seed always yields the same pick, so pass a fresh
+   * one per page visit and hold it steady for the visit's lifetime. Omit for
+   * the deterministic top scorer. */
+  seed?: number;
+  /** partnerVideoId to skip — the previous visit's hero, so a return trip
+   * can't land on it twice */
+  exclude?: string | undefined;
+}
+
+/** Hero candidate: drawn at random from the videos that score best on
+ * rating, reach and freshness, and that have artwork known to load. */
 export function featuredPick(
   videos: readonly PartnerVideo[],
-  brokenArtwork?: ReadonlySet<string>
+  brokenArtwork?: ReadonlySet<string>,
+  options?: FeaturedOptions
 ): PartnerVideo | undefined {
-  const candidates = recentFirst(withThumbnail(videos, brokenArtwork)).slice(
-    0,
-    50
-  );
-  return topRated(candidates)[0] ?? candidates[0];
+  const now = Date.now();
+  const scored = withThumbnail(videos, brokenArtwork)
+    .map(video => ({ video, score: featuredScore(video, now) }))
+    .sort((a, b) => b.score - a.score);
+
+  let pool = scored.slice(0, FEATURED_POOL);
+  if (options?.exclude) {
+    const trimmed = pool.filter(
+      entry => entry.video.partnerVideoId !== options.exclude
+    );
+    // only honour the exclusion while something else is left to show
+    if (trimmed.length) pool = trimmed;
+  }
+  if (!pool.length) return undefined;
+  if (options?.seed === undefined) return pool[0]!.video;
+
+  const weights = pool.map(entry => entry.score ** FEATURED_BIAS);
+  let ticket = seededUnit(options.seed) * weights.reduce((a, b) => a + b, 0);
+  for (const [index, weight] of weights.entries()) {
+    ticket -= weight;
+    if (ticket <= 0) return pool[index]!.video;
+  }
+  return pool[pool.length - 1]!.video;
 }

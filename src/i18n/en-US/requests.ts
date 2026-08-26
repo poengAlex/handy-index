@@ -1,26 +1,20 @@
-// The community side of the catalog: the voting board (submit a video URL,
-// upvote what should get scripted next) and the queue that shows the same
-// requests in scripting order. Both are gated on the Handy connection key,
-// which is why `key.*` carries a body per surface — the sentence names the
-// thing you were trying to reach.
+// The community side of the catalog: one voting board that is also the
+// queue — submit a video URL, upvote what should get scripted next, and read
+// each tile's rank as its place in the scripting order. The board is gated on
+// the Handy connection key, which is what `key.*` covers.
 export default {
-  // Connection-key gate and the two failure states behind it. Shown by both
-  // pages; only the body differs.
+  // Connection-key gate and the two failure states behind it.
   key: {
     title: "Connection key needed",
     boardBody:
       "The request board is tied to your Handy. Add the connection key from the Handy app to see, submit and vote on requests.",
-    queueBody:
-      "The queue is tied to your Handy. Add the connection key from the Handy app to see it.",
     addAction: "Add connection key",
     rejectedTitle: "Connection key rejected",
     rejectedBody:
       "Either the key is wrong or your Handy isn't online. Check the key in the Handy app, make sure the device is switched on and connected, then enter it again.",
     rejectedAction: "Enter key again",
     boardDialog:
-      "The request board is bound to your Handy. Enter the connection key from the Handy app to continue.",
-    queueDialog:
-      "The queue is bound to your Handy. Enter the connection key from the Handy app to continue."
+      "The request board is bound to your Handy. Enter the connection key from the Handy app to continue."
   },
 
   // The voting board page. There are four count messages rather than one
@@ -32,7 +26,6 @@ export default {
   board: {
     title: "Script requests",
     lead: "Vote on which videos get scripted next — the top-voted request goes first.",
-    queueLink: "View queue",
     emptyTitle: "No requests waiting",
     emptyBody:
       "Nothing is up for a vote right now. Request a video above to get things moving.",
@@ -45,26 +38,6 @@ export default {
     countFiltered: "{requests} of {total}",
     countFilteredCapped:
       "{requests} of {total} (the board is longer than we loaded)"
-  },
-
-  // The queue page: the same requests, ranked, read-only.
-  queue: {
-    title: "Request queue",
-    lead: "The scripting order: the top-voted request gets scripted first.",
-    boardLink: "Voting board",
-    emptyTitle: "The queue is empty",
-    emptyBody:
-      "Nothing is waiting for a script right now. Request a video from the voting board to get things moving.",
-    emptyAction: "Go to requests",
-    errorTitle: "Couldn't load the queue",
-    noMatchBody:
-      "Nothing in the queue matches those filters. Loosen them to see the rest.",
-    countWaiting: "{requests} waiting",
-    countWaitingCapped:
-      "{requests} waiting (the queue is longer than we loaded)",
-    countFiltered: "{requests} of {total} waiting",
-    countFilteredCapped:
-      "{requests} of {total} (the queue is longer than we loaded)"
   },
 
   // The submit row on the board, plus the two toasts it can raise.
@@ -101,7 +74,7 @@ export default {
     rank: "#{rank}"
   },
 
-  // The control row shared by both pages.
+  // The control row above the list.
   filters: {
     searchPlaceholder: "Search requests",
     searchAria: "Search requests by title",

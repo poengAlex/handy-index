@@ -39,12 +39,12 @@ const SORTERS: Record<
 
 /**
  * The board's filter/sort state and the composed result list — the same shape
- * the browse page gives the catalog, minus the URL plumbing: both request
- * surfaces are bound to your connection key, so there is no shared link to
- * reproduce and no reason to make every keystroke a router.replace.
+ * the browse page gives the catalog, minus the URL plumbing: the board is
+ * bound to your connection key, so there is no shared link to reproduce and no
+ * reason to make every keystroke a router.replace.
  *
- * Sorting defaults to votes on both surfaces, which is the scripting order
- * the copy promises (the endpoint serves neither that nor any other order).
+ * Sorting defaults to votes, which is the scripting order the copy promises
+ * (the endpoint serves neither that nor any other order).
  */
 export function useRequestFilters(source: Ref<readonly VideoRequest[]>) {
   const settings = useSettingsStore();
@@ -53,17 +53,16 @@ export function useRequestFilters(source: Ref<readonly VideoRequest[]>) {
   const sortKey = ref<RequestSortKey>("votes");
   const tags = ref<string[]>([]);
   const hideVoted = ref(false);
-  // id is what filters; the name rides along so the chip and the picker have
-  // something to print without a second pass over the board
-  const performerId = ref("");
-  const performerName = ref("");
+  // the name IS the identity on this board — requests carry no performerId
+  // (see byRequestPerformer), so there is nothing else to hold onto
+  const performer = ref("");
 
   const allTags = computed(() => requestTagsOf(source.value));
   const allPerformers = computed(() => requestPerformersOf(source.value));
 
   const results = computed<VideoRequest[]>(() => {
     let pool = byRequestTags(source.value, tags.value);
-    if (performerId.value) pool = byRequestPerformer(pool, performerId.value);
+    if (performer.value) pool = byRequestPerformer(pool, performer.value);
     if (hideVoted.value) pool = withoutVoted(pool, settings.requestUpvotes);
     pool = searchRequests(pool, search.value);
     return SORTERS[sortKey.value](pool);
@@ -74,7 +73,7 @@ export function useRequestFilters(source: Ref<readonly VideoRequest[]>) {
     () =>
       tags.value.length +
       (search.value.trim() ? 1 : 0) +
-      (performerId.value ? 1 : 0) +
+      (performer.value ? 1 : 0) +
       (hideVoted.value ? 1 : 0)
   );
 
@@ -87,22 +86,11 @@ export function useRequestFilters(source: Ref<readonly VideoRequest[]>) {
     tags.value = tags.value.filter(entry => entry !== tag);
   }
 
-  /** One performer at a time: unlike tags, an AND across two of them matches
-   * only the rare request that lists both, so a second pick replaces the
-   * first. Passing "" clears the filter. */
-  function setPerformer(id: string): void {
-    performerId.value = id;
-    performerName.value = id
-      ? (allPerformers.value.find(entry => entry.performerId === id)?.name ??
-        "")
-      : "";
-  }
-
   function clear(): void {
     search.value = "";
     tags.value = [];
     hideVoted.value = false;
-    setPerformer("");
+    performer.value = "";
   }
 
   return {
@@ -110,15 +98,13 @@ export function useRequestFilters(source: Ref<readonly VideoRequest[]>) {
     sortKey,
     tags,
     hideVoted,
-    performerId,
-    performerName,
+    performer,
     allTags,
     allPerformers,
     results,
     activeCount,
     addTag,
     removeTag,
-    setPerformer,
     clear
   };
 }

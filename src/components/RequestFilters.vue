@@ -59,12 +59,15 @@
       </q-select>
 
       <!-- Only when the board actually names people: requests carry whatever
-           performer list the source partner published, and a picker with
-           nothing in it is a control that filters nothing. -->
+           cast list the source page published, and a picker with nothing in
+           it is a control that filters nothing.
+           display-value is the bare name — the option labels carry a count,
+           and the picker only lists 30 at a time, so neither the label nor a
+           map-options lookup can be relied on once the input clears. -->
       <q-select
         v-if="allPerformers.length"
-        :model-value="performerId || null"
-        :display-value="performerDisplay"
+        :model-value="performer || null"
+        :display-value="performer || undefined"
         :options="performerOptions"
         emit-value
         map-options
@@ -76,7 +79,7 @@
         :label="$t('requests.filters.performerLabel')"
         class="request-filters__performer"
         @filter="filterPerformers"
-        @update:model-value="onSetPerformer"
+        @update:model-value="emit('update:performer', String($event ?? ''))"
       >
         <template #prepend>
           <q-icon name="person" />
@@ -108,7 +111,7 @@
       />
     </div>
 
-    <div v-if="tags.length || performerId" class="request-filters__chips">
+    <div v-if="tags.length || performer" class="request-filters__chips">
       <button
         v-for="tag in tags"
         :key="tag"
@@ -124,16 +127,16 @@
       </button>
 
       <button
-        v-if="performerId"
+        v-if="performer"
         type="button"
         class="request-filters__chip"
         :aria-label="
-          $t('requests.filters.removePerformerAria', { name: performerLabel })
+          $t('requests.filters.removePerformerAria', { name: performer })
         "
-        @click="emit('set-performer', '')"
+        @click="emit('update:performer', '')"
       >
         <HChip icon="person">
-          {{ performerLabel }}
+          {{ performer }}
           <q-icon name="close" size="16px" class="request-filters__chip-x" />
         </HChip>
       </button>
@@ -142,19 +145,16 @@
 </template>
 
 <script setup lang="ts">
-// The control row shared by the voting board and the queue: search, sort, a
-// tag picker, a performer picker and the "hide what I've voted on" switch.
-// Dumb on purpose — state and result composition live in useRequestFilters,
-// so both pages show the same controls over their own list.
+// The control row above the voting board: search, sort, a tag picker, a
+// performer picker and the "hide what I've voted on" switch. Dumb on purpose
+// — state and result composition live in useRequestFilters.
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { HBtn, HChip } from "@/components/handy";
 import { REQUEST_SORT_KEYS } from "@/composables/useRequestFilters";
 import type { RequestSortKey } from "@/composables/useRequestFilters";
-import type {
-  PerformerCount,
-  TagSummary
-} from "@/services/script-index/queries";
+import type { TagSummary } from "@/services/script-index/queries";
+import type { RequestPerformerSummary } from "@/services/script-index/requests";
 
 const props = defineProps<{
   search: string;
@@ -163,12 +163,10 @@ const props = defineProps<{
   hideVoted: boolean;
   /** every tag on the board, most-used first */
   allTags: TagSummary[];
-  /** the performer being filtered on, "" for none */
-  performerId: string;
-  /** their name, for the chip and the closed picker */
-  performerName: string;
+  /** the performer being filtered on by name, "" for none */
+  performer: string;
   /** every performer on the board, most-requested first */
-  allPerformers: PerformerCount[];
+  allPerformers: RequestPerformerSummary[];
   activeCount: number;
 }>();
 
@@ -176,10 +174,9 @@ const emit = defineEmits<{
   "update:search": [value: string];
   "update:sort": [value: RequestSortKey];
   "update:hideVoted": [value: boolean];
+  "update:performer": [value: string];
   "add-tag": [tag: string];
   "remove-tag": [tag: string];
-  /** the picked performer's id, or "" to drop the filter */
-  "set-performer": [performerId: string];
   clear: [];
 }>();
 
@@ -243,18 +240,6 @@ function onAddTag(tag: string | null) {
 const performerNeedle = ref("");
 const performerOptions = ref<PickOption[]>([]);
 
-/** The picker lists the 30 biggest matches, so the pick itself is often not
- * among them once the input clears — without this the closed control would
- * fall back to printing the raw id. The stand-in is the browse page's, which
- * exists for this same case: an id with no name to print. */
-const performerLabel = computed(
-  () => props.performerName || t("browse.chip.performerFallback")
-);
-
-const performerDisplay = computed(() =>
-  props.performerId ? performerLabel.value : undefined
-);
-
 function filterPerformers(input: string, update: (fn: () => void) => void) {
   update(() => {
     performerNeedle.value = input.trim().toLowerCase();
@@ -268,14 +253,9 @@ function filterPerformers(input: string, update: (fn: () => void) => void) {
           name: summary.name,
           count: n(summary.count)
         }),
-        value: summary.performerId
+        value: summary.name
       }));
   });
-}
-
-// clearable q-select emits null; the composable reads "" as "no performer"
-function onSetPerformer(performerId: string | null) {
-  emit("set-performer", performerId ?? "");
 }
 </script>
 

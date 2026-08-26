@@ -3,17 +3,9 @@
     <div class="h-section">
       <div class="h-container">
         <header class="requests-page__header">
-          <div class="requests-page__header-row">
-            <h1 class="text-h2 requests-page__title">
-              {{ $t("requests.board.title") }}
-            </h1>
-            <HBtn
-              variant="tertiary"
-              :label="$t('requests.board.queueLink')"
-              icon="pending_actions"
-              to="/requests/queue"
-            />
-          </div>
+          <h1 class="text-h2 requests-page__title">
+            {{ $t("requests.board.title") }}
+          </h1>
           <p class="text-body requests-page__lead">
             {{ $t("requests.board.lead") }}
           </p>
@@ -103,16 +95,14 @@
               v-model:search="search"
               v-model:sort="sortKey"
               v-model:hide-voted="hideVoted"
+              v-model:performer="performer"
               :tags="tags"
               :all-tags="allTags"
-              :performer-id="performerId"
-              :performer-name="performerName"
               :all-performers="allPerformers"
               :active-count="activeCount"
               class="requests-page__filters"
               @add-tag="addTag"
               @remove-tag="removeTag"
-              @set-performer="setPerformer"
               @clear="clear"
             />
 
@@ -129,10 +119,14 @@
             </div>
 
             <div v-else class="requests-page__grid">
+              <!-- rank is the request's real place in the scripting order,
+                   from the whole set: filtering or re-sorting must not
+                   renumber it -->
               <RequestCard
                 v-for="request in shown"
                 :key="request.requestId"
                 :request="request"
+                :rank="ranks.get(request.requestId) ?? 0"
               >
                 <span class="text-caption requests-page__votes">
                   {{ voteLabel(request) }}
@@ -175,7 +169,8 @@
 
 <script setup lang="ts">
 // The community voting board: submit a video URL, then upvote what should
-// get scripted next. Every API call here needs the Handy connection key.
+// get scripted next, with each tile carrying its place in the scripting
+// order. Every API call here needs the Handy connection key.
 import { computed, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { HBtn, HEmptyState, HandyLoader, hToast } from "@/components/handy";
@@ -191,7 +186,7 @@ import {
   isAuthError,
   voteForRequest
 } from "@/services/script-index/client";
-import { votesOf } from "@/services/script-index/requests";
+import { rankByVotes, votesOf } from "@/services/script-index/requests";
 import type { VideoRequest } from "@/services/script-index/types";
 import { useSettingsStore } from "@/stores/settings";
 
@@ -215,17 +210,19 @@ const {
   sortKey,
   tags,
   hideVoted,
-  performerId,
-  performerName,
+  performer,
   allTags,
   allPerformers,
   results,
   activeCount,
   addTag,
   removeTag,
-  setPerformer,
   clear
 } = useRequestFilters(requests);
+
+// positions come from the whole set, so a filtered view still shows where
+// each request actually sits in the queue
+const ranks = computed(() => rankByVotes(requests.value));
 
 const { shown, done, sentinel } = useIncrementalReveal(results, 30);
 
@@ -344,14 +341,6 @@ onMounted(() => {
 
 .requests-page__header {
   margin-bottom: var(--space-lg);
-}
-
-.requests-page__header-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: var(--space-xs);
 }
 
 .requests-page__title {

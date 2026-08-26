@@ -1,28 +1,22 @@
 import type enUS from "../en-US/requests";
 
-// The community side of the catalog: the voting board (submit a video URL,
-// upvote what should get scripted next) and the queue that shows the same
-// requests in scripting order. Both are gated on the Handy connection key,
-// which is why `key.*` carries a body per surface — the sentence names the
-// thing you were trying to reach.
+// The community side of the catalog: one voting board that is also the
+// queue — submit a video URL, upvote what should get scripted next, and read
+// each tile's rank as its place in the scripting order. The board is gated on
+// the Handy connection key, which is what `key.*` covers.
 const requests: typeof enUS = {
-  // Connection-key gate and the two failure states behind it. Shown by both
-  // pages; only the body differs.
+  // Connection-key gate and the two failure states behind it.
   key: {
     title: "Connection key 값이 필요해요",
     boardBody:
       "요청 게시판은 Handy와 연결돼 있어요. 요청을 보고, 올리고, 투표하려면 Handy 앱에 있는 connection key 값을 추가하세요.",
-    queueBody:
-      "대기열은 Handy와 연결돼 있어요. 확인하려면 Handy 앱에 있는 connection key 값을 추가하세요.",
     addAction: "Connection key 추가",
     rejectedTitle: "Connection key 값이 거부됐어요",
     rejectedBody:
       "키가 틀렸거나 Handy가 온라인 상태가 아니에요. Handy 앱에서 키를 확인하고, 기기가 켜져 있고 연결됐는지 본 다음 다시 입력하세요.",
     rejectedAction: "키 다시 입력",
     boardDialog:
-      "요청 게시판은 Handy와 연결돼 있어요. 계속하려면 Handy 앱에 있는 connection key 값을 입력하세요.",
-    queueDialog:
-      "대기열은 Handy와 연결돼 있어요. 계속하려면 Handy 앱에 있는 connection key 값을 입력하세요."
+      "요청 게시판은 Handy와 연결돼 있어요. 계속하려면 Handy 앱에 있는 connection key 값을 입력하세요."
   },
 
   // The voting board page. There are four count messages rather than one
@@ -34,7 +28,6 @@ const requests: typeof enUS = {
   board: {
     title: "Script 요청",
     lead: "다음에 어떤 동영상에 script를 만들지 투표하세요 — 표를 가장 많이 받은 요청부터 만들어요.",
-    queueLink: "대기열 보기",
     emptyTitle: "기다리는 요청이 없어요",
     emptyBody:
       "지금은 투표할 요청이 없어요. 위에서 동영상을 요청하면 시작돼요.",
@@ -46,25 +39,6 @@ const requests: typeof enUS = {
     countFiltered: "전체 {total}건 중 {requests}",
     countFilteredCapped:
       "전체 {total}건 중 {requests} (불러온 것보다 요청이 더 많아요)"
-  },
-
-  // The queue page: the same requests, ranked, read-only.
-  queue: {
-    title: "요청 대기열",
-    lead: "Script 제작 순서예요. 표를 가장 많이 받은 요청부터 만들어요.",
-    boardLink: "투표 게시판",
-    emptyTitle: "대기열이 비어 있어요",
-    emptyBody:
-      "지금은 script를 기다리는 동영상이 없어요. 투표 게시판에서 동영상을 요청하면 시작돼요.",
-    emptyAction: "요청 페이지로 가기",
-    errorTitle: "대기열을 불러오지 못했어요",
-    noMatchBody:
-      "대기열에 그 필터와 맞는 요청이 없어요. 조건을 풀면 나머지가 보여요.",
-    countWaiting: "{requests} 대기 중",
-    countWaitingCapped: "{requests} 대기 중 (불러온 것보다 요청이 더 많아요)",
-    countFiltered: "대기 중인 {total}건 중 {requests}",
-    countFilteredCapped:
-      "대기 중인 {total}건 중 {requests} (불러온 것보다 요청이 더 많아요)"
   },
 
   // The submit row on the board, plus the two toasts it can raise.
@@ -101,7 +75,7 @@ const requests: typeof enUS = {
     rank: "#{rank}"
   },
 
-  // The control row shared by both pages.
+  // The control row above the list.
   filters: {
     searchPlaceholder: "요청 검색",
     searchAria: "제목으로 요청 검색",

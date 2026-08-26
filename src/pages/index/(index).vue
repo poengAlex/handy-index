@@ -112,7 +112,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import {
   HBtn,
@@ -143,6 +143,10 @@ import {
 import type { PartnerVideo } from "@/services/script-index/types";
 import { useCatalogStore } from "@/stores/catalog";
 import { useSettingsStore } from "@/stores/settings";
+
+// survives navigation away from home so the next visit can pick something
+// else — a page-local ref would reset with the component
+let lastFeaturedId: string | undefined;
 
 const ROW_SIZE = 20;
 const MIN_ROW_VIDEOS = 5;
@@ -191,11 +195,26 @@ function clearHistory(): void {
   hToast("info", t("home.clearHistory.done"));
 }
 
+// Re-rolled once per visit: rolling inside the computed instead would swap
+// the hero mid-view every time a mute, a filter or a broken-artwork report
+// changed the candidate list.
+const heroSeed = ref(Math.random());
+// captured at setup, so this visit knows the last one without depending on
+// the value it is about to write
+const previousFeaturedId = lastFeaturedId;
+
 const featured = computed(() =>
   catalog.status === "ready"
-    ? featuredPick(catalog.visible, catalog.brokenArtwork)
+    ? featuredPick(catalog.visible, catalog.brokenArtwork, {
+        seed: heroSeed.value,
+        exclude: previousFeaturedId
+      })
     : undefined
 );
+
+watch(featured, video => {
+  if (video) lastFeaturedId = video.partnerVideoId;
+});
 
 function titleCase(tag: string): string {
   return tag.charAt(0).toUpperCase() + tag.slice(1);

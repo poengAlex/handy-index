@@ -1,12 +1,12 @@
 // Pure selectors over the request board, mirroring queries.ts for the
 // catalog. The votable endpoint takes take/skip and nothing else — no filter,
 // no sort, and the order it serves is neither — so every control on the board
-// and the queue is a composition of these over the whole loaded set.
+// is a composition of these over the whole loaded set.
 //
 // Deliberately absent: status and domain filters. The live set is 1,080
 // requests, every one of them `registered` and all but two from the same
 // domain; both controls would sit there filtering nothing.
-import type { PerformerCount, TagSummary } from "./queries";
+import type { TagSummary } from "./queries";
 import type { VideoRequest } from "./types";
 
 export function votesOf(request: VideoRequest): number {
@@ -53,43 +53,52 @@ export function requestTagsOf(requests: readonly VideoRequest[]): TagSummary[] {
     .sort((a, b) => b.count - a.count);
 }
 
-/** Requests featuring one performer. Same shape as the catalog's byPerformer,
- * matched on id rather than name — two performers can share a stage name. */
+/** Requests featuring one performer, matched on the exact name.
+ *
+ * The catalog's byPerformer matches on performerId, which is the right
+ * identity there — two people can share a stage name. The board has no such
+ * id to match on: a request is scraped from the source page before it is
+ * registered, and not one of the 1,351 performer entries on the live board
+ * carries a performerId (see RequestPerformer). The name is the identity, so
+ * the name is what filters. */
 export function byRequestPerformer(
   requests: readonly VideoRequest[],
-  performerId: string
+  name: string
 ): VideoRequest[] {
+  if (!name) return [...requests];
+  // trimmed on both sides: the tally keys on the trimmed name, so an entry
+  // padded by the source page must still match the option it produced
   return requests.filter(request =>
-    request.performers?.some(performer => performer.performerId === performerId)
+    request.performers?.some(performer => performer.name?.trim() === name)
   );
 }
 
-/** Every performer on the board with their request count, biggest first —
- * what the performer picker offers. Like the tag tally, a performer is counted
- * once per request even if the partner listed them twice, and unnamed entries
- * are dropped: the picker has nothing to print for them. */
+export interface RequestPerformerSummary {
+  name: string;
+  count: number;
+}
+
+/** Every performer on the board with their request count, most-requested
+ * first — what the performer picker offers. Keyed by name for the reason
+ * byRequestPerformer is; like the tag tally, a performer counts once per
+ * request even if the source page listed them twice, and nameless entries are
+ * dropped since there would be nothing to print or match on. */
 export function requestPerformersOf(
   requests: readonly VideoRequest[]
-): PerformerCount[] {
-  const performers = new Map<string, PerformerCount>();
+): RequestPerformerSummary[] {
+  const counts = new Map<string, number>();
   for (const request of requests) {
     const seen = new Set<string>();
     for (const performer of request.performers ?? []) {
-      if (!performer.name?.trim()) continue;
-      if (seen.has(performer.performerId)) continue;
-      seen.add(performer.performerId);
-      const existing = performers.get(performer.performerId);
-      if (existing) existing.count += 1;
-      else {
-        performers.set(performer.performerId, {
-          performerId: performer.performerId,
-          name: performer.name,
-          count: 1
-        });
-      }
+      const name = performer.name?.trim();
+      if (!name || seen.has(name)) continue;
+      seen.add(name);
+      counts.set(name, (counts.get(name) ?? 0) + 1);
     }
   }
-  return [...performers.values()].sort((a, b) => b.count - a.count);
+  return [...counts.entries()]
+    .map(([name, count]) => ({ name, count }))
+    .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
 }
 
 /** Requests the user hasn't voted on yet — "what still needs me". */

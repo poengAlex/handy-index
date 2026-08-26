@@ -1,28 +1,22 @@
 import type enUS from "../en-US/requests";
 
-// The community side of the catalog: the voting board (submit a video URL,
-// upvote what should get scripted next) and the queue that shows the same
-// requests in scripting order. Both are gated on the Handy connection key,
-// which is why `key.*` carries a body per surface — the sentence names the
-// thing you were trying to reach.
+// The community side of the catalog: one voting board that is also the
+// queue — submit a video URL, upvote what should get scripted next, and read
+// each tile's rank as its place in the scripting order. The board is gated on
+// the Handy connection key, which is what `key.*` covers.
 const requests: typeof enUS = {
-  // Connection-key gate and the two failure states behind it. Shown by both
-  // pages; only the body differs.
+  // Connection-key gate and the two failure states behind it.
   key: {
     title: "Нужен connection key",
     boardBody:
       "Доска запросов привязана к твоему Handy. Добавь connection key из приложения Handy, чтобы смотреть запросы, отправлять свои и голосовать.",
-    queueBody:
-      "Очередь привязана к твоему Handy. Добавь connection key из приложения Handy, чтобы её увидеть.",
     addAction: "Добавить connection key",
     rejectedTitle: "Твой connection key отклонён",
     rejectedBody:
       "Либо ключ неверный, либо Handy не в сети. Проверь ключ в приложении Handy, убедись, что устройство включено и подключено, и введи ключ снова.",
     rejectedAction: "Ввести ключ снова",
     boardDialog:
-      "Доска запросов привязана к твоему Handy. Введи connection key из приложения Handy, чтобы продолжить.",
-    queueDialog:
-      "Очередь привязана к твоему Handy. Введи connection key из приложения Handy, чтобы продолжить."
+      "Доска запросов привязана к твоему Handy. Введи connection key из приложения Handy, чтобы продолжить."
   },
 
   // The voting board page. There are four count messages rather than one
@@ -34,7 +28,6 @@ const requests: typeof enUS = {
   board: {
     title: "Запросы на scripts",
     lead: "Голосуй за то, для каких видео сделают scripts дальше — первым идёт запрос с наибольшим числом голосов.",
-    queueLink: "Смотреть очередь",
     emptyTitle: "Запросов нет",
     emptyBody:
       "Сейчас голосовать не за что. Отправь запрос на видео выше — и дело сдвинется.",
@@ -47,26 +40,6 @@ const requests: typeof enUS = {
     countFiltered: "{requests} из {total}",
     countFilteredCapped:
       "{requests} из {total} (доска длиннее, чем мы загрузили)"
-  },
-
-  // The queue page: the same requests, ranked, read-only.
-  queue: {
-    title: "Очередь запросов",
-    lead: "Порядок работы: запрос с наибольшим числом голосов получает script первым.",
-    boardLink: "Доска голосования",
-    emptyTitle: "Очередь пуста",
-    emptyBody:
-      "Сейчас ни одно видео не ждёт script. Отправь запрос с доски голосования — и дело сдвинется.",
-    emptyAction: "Перейти к запросам",
-    errorTitle: "Не удалось загрузить очередь",
-    noMatchBody:
-      "В очереди нет запросов под эти фильтры. Ослабь их, чтобы увидеть остальные.",
-    countWaiting: "{requests} в очереди",
-    countWaitingCapped:
-      "{requests} в очереди (очередь длиннее, чем мы загрузили)",
-    countFiltered: "{requests} из {total} в очереди",
-    countFilteredCapped:
-      "{requests} из {total} (очередь длиннее, чем мы загрузили)"
   },
 
   // The submit row on the board, plus the two toasts it can raise.
@@ -103,7 +76,7 @@ const requests: typeof enUS = {
     rank: "№{rank}"
   },
 
-  // The control row shared by both pages.
+  // The control row above the list.
   filters: {
     searchPlaceholder: "Поиск запросов",
     searchAria: "Поиск запросов по названию",

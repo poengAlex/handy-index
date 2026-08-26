@@ -37,7 +37,7 @@
 </template>
 
 <script setup lang="ts">
-// One request tile (voting board + queue), in the same shape as a catalog
+// One request tile on the voting board, in the same shape as a catalog
 // video card: NSFW-gated 16:9 well, title over a meta line, page-supplied
 // actions in the footer. The tile links out to the source video — a request
 // is a video you can go and look at — which is why the vote controls sit in

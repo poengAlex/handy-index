@@ -45,7 +45,6 @@ declare module 'vue-router/auto-routes' {
       | '//playlists/[playlistId]'
       | '//privacy'
       | '//requests/(index)'
-      | '//requests/queue'
       | '//sites'
       | '//tags'
       | '//videos/(index)'
@@ -114,13 +113,6 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
-    '//requests/queue': RouteRecordInfo<
-      '//requests/queue',
-      '/requests/queue',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
     '//sites': RouteRecordInfo<
       '//sites',
       '/sites',
@@ -181,7 +173,6 @@ declare module 'vue-router/auto-routes' {
         | '//playlists/[playlistId]'
         | '//privacy'
         | '//requests/(index)'
-        | '//requests/queue'
         | '//sites'
         | '//tags'
         | '//videos/(index)'
@@ -258,14 +249,6 @@ declare module 'vue-router/auto-routes' {
     'src/pages/index/requests/(index).vue': {
       routes:
         | '//requests/(index)'
-      views:
-        | never
-      pathParamNames:
-        | never
-    }
-    'src/pages/index/requests/queue.vue': {
-      routes:
-        | '//requests/queue'
       views:
         | never
       pathParamNames:

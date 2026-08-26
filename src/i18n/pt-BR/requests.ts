@@ -1,28 +1,22 @@
 import type enUS from "../en-US/requests";
 
-// The community side of the catalog: the voting board (submit a video URL,
-// upvote what should get scripted next) and the queue that shows the same
-// requests in scripting order. Both are gated on the Handy connection key,
-// which is why `key.*` carries a body per surface — the sentence names the
-// thing you were trying to reach.
+// The community side of the catalog: one voting board that is also the
+// queue — submit a video URL, upvote what should get scripted next, and read
+// each tile's rank as its place in the scripting order. The board is gated on
+// the Handy connection key, which is what `key.*` covers.
 const requests: typeof enUS = {
-  // Connection-key gate and the two failure states behind it. Shown by both
-  // pages; only the body differs.
+  // Connection-key gate and the two failure states behind it.
   key: {
     title: "Connection key necessária",
     boardBody:
       "O quadro de pedidos está vinculado ao seu Handy. Adicione a connection key do app do Handy para ver, enviar e votar em pedidos.",
-    queueBody:
-      "A fila está vinculada ao seu Handy. Adicione a connection key do app do Handy para vê-la.",
     addAction: "Adicionar connection key",
     rejectedTitle: "Connection key recusada",
     rejectedBody:
       "Ou a chave está errada, ou o seu Handy não está online. Verifique a chave no app do Handy, veja se o dispositivo está ligado e conectado e digite-a de novo.",
     rejectedAction: "Digitar a chave de novo",
     boardDialog:
-      "O quadro de pedidos está vinculado ao seu Handy. Digite a connection key do app do Handy para continuar.",
-    queueDialog:
-      "A fila está vinculada ao seu Handy. Digite a connection key do app do Handy para continuar."
+      "O quadro de pedidos está vinculado ao seu Handy. Digite a connection key do app do Handy para continuar."
   },
 
   // The voting board page. There are four count messages rather than one
@@ -34,7 +28,6 @@ const requests: typeof enUS = {
   board: {
     title: "Pedidos de script",
     lead: "Vote nos vídeos que devem ganhar script — o pedido mais votado vem primeiro.",
-    queueLink: "Ver fila",
     emptyTitle: "Nenhum pedido esperando",
     emptyBody:
       "Nada está em votação no momento. Peça um vídeo acima para as coisas andarem.",
@@ -47,26 +40,6 @@ const requests: typeof enUS = {
     countFiltered: "{requests} de {total}",
     countFilteredCapped:
       "{requests} de {total} (o quadro é maior do que carregamos)"
-  },
-
-  // The queue page: the same requests, ranked, read-only.
-  queue: {
-    title: "Fila de pedidos",
-    lead: "A ordem de criação dos scripts: o pedido mais votado ganha script primeiro.",
-    boardLink: "Quadro de votação",
-    emptyTitle: "A fila está vazia",
-    emptyBody:
-      "Nada está esperando script no momento. Peça um vídeo no quadro de votação para as coisas andarem.",
-    emptyAction: "Ir para os pedidos",
-    errorTitle: "Não foi possível carregar a fila",
-    noMatchBody:
-      "Nada na fila corresponde a esses filtros. Remova alguns filtros para ver o resto.",
-    countWaiting: "{requests} esperando",
-    countWaitingCapped:
-      "{requests} esperando (a fila é maior do que carregamos)",
-    countFiltered: "{requests} de {total} esperando",
-    countFilteredCapped:
-      "{requests} de {total} (a fila é maior do que carregamos)"
   },
 
   // The submit row on the board, plus the two toasts it can raise.
@@ -103,7 +76,7 @@ const requests: typeof enUS = {
     rank: "#{rank}"
   },
 
-  // The control row shared by both pages.
+  // The control row above the list.
   filters: {
     searchPlaceholder: "Buscar pedidos",
     searchAria: "Buscar pedidos por título",

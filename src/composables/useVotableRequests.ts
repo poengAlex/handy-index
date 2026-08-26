@@ -14,10 +14,10 @@ const MAX_REQUESTS = 2000;
 export type RequestsState = "idle" | "loading" | "ready" | "error" | "rejected";
 
 /**
- * The whole votable set, in one load. Both request surfaces need every row in
- * memory rather than a page at a time: the endpoint can only take/skip, so
- * filtering, sorting and ranking all have to happen here — and a control that
- * searched only the pages you had scrolled past would be lying.
+ * The whole votable set, in one load. The board needs every row in memory
+ * rather than a page at a time: the endpoint can only take/skip, so filtering,
+ * sorting and ranking all have to happen here — and a control that searched
+ * only the pages you had scrolled past would be lying.
  */
 export function useVotableRequests() {
   const settings = useSettingsStore();

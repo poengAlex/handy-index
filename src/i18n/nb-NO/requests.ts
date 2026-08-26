@@ -5,23 +5,18 @@ const requests: typeof enUS = {
     title: "Du trenger en connection key",
     boardBody:
       "Avstemningen er knyttet til din Handy. Legg inn connection key fra Handy-appen for å se forespørsler, sende inn nye og stemme.",
-    queueBody:
-      "Køen er knyttet til din Handy. Legg inn connection key fra Handy-appen for å se den.",
     addAction: "Legg inn connection key",
     rejectedTitle: "Connection key ble avvist",
     rejectedBody:
       "Enten er nøkkelen feil, eller så er ikke din Handy på nett. Sjekk nøkkelen i Handy-appen, pass på at enheten er slått på og tilkoblet, og skriv den inn på nytt.",
     rejectedAction: "Skriv inn nøkkelen på nytt",
     boardDialog:
-      "Avstemningen er bundet til din Handy. Skriv inn connection key fra Handy-appen for å fortsette.",
-    queueDialog:
-      "Køen er bundet til din Handy. Skriv inn connection key fra Handy-appen for å fortsette."
+      "Avstemningen er bundet til din Handy. Skriv inn connection key fra Handy-appen for å fortsette."
   },
 
   board: {
     title: "Script-forespørsler",
     lead: "Stem på hvilke videoer som skal få script neste gang — forespørselen med flest stemmer går først.",
-    queueLink: "Se køen",
     emptyTitle: "Ingen forespørsler venter",
     emptyBody:
       "Ingenting er til avstemning akkurat nå. Be om en video i feltet over, så kommer det i gang.",
@@ -36,26 +31,6 @@ const requests: typeof enUS = {
     countFiltered: "{requests} av {total}",
     countFilteredCapped:
       "{requests} av {total} (vi har ikke lastet inn hele listen)"
-  },
-
-  queue: {
-    title: "Forespørselskø",
-    lead: "Rekkefølgen videoene får script i: forespørselen med flest stemmer kommer først.",
-    boardLink: "Se avstemningen",
-    emptyTitle: "Køen er tom",
-    emptyBody:
-      "Ingenting venter på et script akkurat nå. Gå til avstemningen og be om en video, så kommer køen i gang.",
-    // it goes to the voting board, so it is named after the destination —
-    // the same word the button at the top of the page uses
-    emptyAction: "Gå til avstemningen",
-    errorTitle: "Kunne ikke laste køen",
-    noMatchBody:
-      "Ingenting i køen passer med filtrene. Fjern noen av dem for å se resten.",
-    countWaiting: "{requests} venter",
-    countWaitingCapped: "{requests} venter (vi har ikke lastet inn hele køen)",
-    countFiltered: "{requests} av {total} venter",
-    countFilteredCapped:
-      "{requests} av {total} venter (vi har ikke lastet inn hele køen)"
   },
 
   submit: {

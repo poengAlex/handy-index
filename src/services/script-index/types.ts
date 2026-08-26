@@ -25,6 +25,19 @@ export interface Performer {
   avatar?: string;
 }
 
+/** The request board's cast is NOT the index's. A request is scraped from the
+ * source partner's page before anything is registered, so its performers
+ * carry a name and a link to their profile on that site and nothing else —
+ * every one of the 1,351 entries on the live board is missing performerId,
+ * and only three carry an avatar. Name is the only identity there is, which
+ * is what the board filters on (see byRequestPerformer). */
+export interface RequestPerformer {
+  name: string;
+  /** the performer's page on the source site */
+  url?: string;
+  avatar?: string;
+}
+
 export interface PartnerVideo {
   partnerVideoId: string;
   partnerId: string;
@@ -117,7 +130,7 @@ export interface VideoRequest {
   tags?: string[];
   images?: string[];
   thumbnail?: string;
-  performers?: Performer[];
+  performers?: RequestPerformer[];
   createdAt?: string;
   updatedAt?: string;
 }
