@@ -16,9 +16,7 @@ const settings: typeof enUS = {
     playersLabel: "内嵌播放器",
     playersCaption: "直接在视频页播放 Pornhub 和 xHamster 的视频",
     fullWidthLabel: "全宽布局",
-    fullWidthCaption: "铺满整个屏幕，而不是居中单栏",
-    backgroundLabel: "动态背景",
-    backgroundCaption: "在每个页面背后显示柔和的流动渐变"
+    fullWidthCaption: "铺满整个屏幕，而不是居中单栏"
   },
 
   // The muted-tags row. `caption` pluralizes over the count itself rather
@@ -34,6 +32,9 @@ const settings: typeof enUS = {
   },
 
   backgroundSceneTitle: "背景样式",
+  backgroundSceneOff: "关闭",
+  backgroundMotionLabel: "动效",
+  backgroundMotionCaption: "让背景缓缓流动，切换页面时短暂加速",
   orientationTitle: "取向",
 
   access: {

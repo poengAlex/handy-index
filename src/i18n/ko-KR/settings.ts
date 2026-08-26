@@ -16,10 +16,7 @@ const settings: typeof enUS = {
     playersLabel: "내장 플레이어",
     playersCaption: "Pornhub와 xHamster 동영상을 상세 페이지에서 바로 재생해요",
     fullWidthLabel: "전체 너비 보기",
-    fullWidthCaption: "가운데 정렬된 단 대신 화면 전체를 사용해요",
-    backgroundLabel: "애니메이션 배경",
-    backgroundCaption:
-      "모든 페이지 뒤에 부드럽게 움직이는 그라데이션을 보여줘요"
+    fullWidthCaption: "가운데 정렬된 단 대신 화면 전체를 사용해요"
   },
 
   // The muted-tags row. `caption` pluralizes over the count itself rather
@@ -35,6 +32,10 @@ const settings: typeof enUS = {
   },
 
   backgroundSceneTitle: "배경 스타일",
+  backgroundSceneOff: "끄기",
+  backgroundMotionLabel: "움직임",
+  backgroundMotionCaption:
+    "배경이 천천히 움직이고, 페이지를 바꿀 때 잠깐 빨라져요",
   orientationTitle: "성향",
 
   access: {

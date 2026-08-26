@@ -17,10 +17,7 @@ const settings: typeof enUS = {
     playersCaption:
       "Reproducir los vídeos de Pornhub y xHamster en la propia página del vídeo",
     fullWidthLabel: "Diseño a ancho completo",
-    fullWidthCaption: "Usar toda la pantalla en lugar de una columna centrada",
-    backgroundLabel: "Fondo animado",
-    backgroundCaption:
-      "Mostrar el degradado suave en movimiento detrás de cada página"
+    fullWidthCaption: "Usar toda la pantalla en lugar de una columna centrada"
   },
 
   // The muted-tags row. `caption` pluralizes over the count itself rather
@@ -36,6 +33,10 @@ const settings: typeof enUS = {
   },
 
   backgroundSceneTitle: "Estilo de fondo",
+  backgroundSceneOff: "Desactivado",
+  backgroundMotionLabel: "Movimiento",
+  backgroundMotionCaption:
+    "Dejar que el fondo se mueva, con un impulso breve al cambiar de página",
   orientationTitle: "Orientación",
 
   access: {

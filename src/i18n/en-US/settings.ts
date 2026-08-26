@@ -14,9 +14,7 @@ export default {
     playersLabel: "Embedded players",
     playersCaption: "Play Pornhub and xHamster videos right on the video page",
     fullWidthLabel: "Full-width layout",
-    fullWidthCaption: "Use the whole screen instead of a centered column",
-    backgroundLabel: "Animated background",
-    backgroundCaption: "Show the soft moving gradient behind every page"
+    fullWidthCaption: "Use the whole screen instead of a centered column"
   },
 
   // The muted-tags row. `caption` pluralizes over the count itself rather
@@ -32,6 +30,10 @@ export default {
   },
 
   backgroundSceneTitle: "Background style",
+  backgroundSceneOff: "Off",
+  backgroundMotionLabel: "Motion",
+  backgroundMotionCaption:
+    "Let the background drift, and surge briefly when you change page",
   orientationTitle: "Orientation",
 
   access: {

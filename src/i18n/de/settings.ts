@@ -18,10 +18,7 @@ const settings: typeof enUS = {
       "Pornhub- und xHamster-Videos direkt auf der Videoseite abspielen",
     fullWidthLabel: "Volle Breite",
     fullWidthCaption:
-      "Den ganzen Bildschirm nutzen statt einer zentrierten Spalte",
-    backgroundLabel: "Animierter Hintergrund",
-    backgroundCaption:
-      "Den sanften, bewegten Farbverlauf hinter jeder Seite anzeigen"
+      "Den ganzen Bildschirm nutzen statt einer zentrierten Spalte"
   },
 
   // The muted-tags row. `caption` pluralizes over the count itself rather
@@ -38,6 +35,10 @@ const settings: typeof enUS = {
   },
 
   backgroundSceneTitle: "Hintergrundstil",
+  backgroundSceneOff: "Aus",
+  backgroundMotionLabel: "Bewegung",
+  backgroundMotionCaption:
+    "Den Hintergrund treiben lassen — und beim Seitenwechsel kurz auflodern",
   orientationTitle: "Orientierung",
 
   access: {

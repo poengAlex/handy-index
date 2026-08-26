@@ -38,12 +38,6 @@
               :label="$t('settings.display.fullWidthLabel')"
               :caption="$t('settings.display.fullWidthCaption')"
             />
-            <HToggleRow
-              v-model="settings.background"
-              icon="blur_on"
-              :label="$t('settings.display.backgroundLabel')"
-              :caption="$t('settings.display.backgroundCaption')"
-            />
             <HListRow
               icon="block"
               :label="$t('settings.muted.label')"
@@ -138,18 +132,22 @@
             </div>
           </div>
 
-          <!-- only while the field is on: a look picker for a background
-               nobody is rendering is a dead control -->
-          <HList
-            v-if="settings.background"
-            :title="$t('settings.backgroundSceneTitle')"
-          >
+          <HList :title="$t('settings.backgroundSceneTitle')">
             <HRadioRow
-              v-for="option in BACKGROUND_SCENES"
+              v-for="option in BACKGROUND_STYLES"
               :key="option"
               v-model="settings.backgroundScene"
               :val="option"
-              :label="BACKGROUND_SCENE_LABELS[option]"
+              :label="styleLabel(option)"
+            />
+            <!-- only once something is rendering: a motion switch for a
+                 background nobody is drawing is a dead control -->
+            <HToggleRow
+              v-if="settings.backgroundScene !== 'off'"
+              v-model="settings.backgroundMotion"
+              icon="animation"
+              :label="$t('settings.backgroundMotionLabel')"
+              :caption="$t('settings.backgroundMotionCaption')"
             />
           </HList>
         </div>
@@ -196,8 +194,9 @@ import { useKitLabels } from "@/composables/useKitLabels";
 import { sanitizeConnectionKey } from "@/services/format";
 import { ORIENTATIONS } from "@/services/script-index/queries";
 import {
-  BACKGROUND_SCENES,
   BACKGROUND_SCENE_LABELS,
+  BACKGROUND_STYLES,
+  type BackgroundStyle,
   PREVIEW_CLIP_RATE,
   PREVIEW_FRAME_MS,
   useSettingsStore
@@ -227,6 +226,13 @@ const frameSeconds = computed(() => settings.previewFrameMs / 1000);
 
 function setFrameSeconds(value: number | { min: number; max: number }) {
   if (typeof value === "number") settings.previewFrameMs = value * 1000;
+}
+
+// "Off" is a word and gets translated; the looks are names and do not.
+function styleLabel(option: BackgroundStyle): string {
+  return option === "off"
+    ? t("settings.backgroundSceneOff")
+    : BACKGROUND_SCENE_LABELS[option];
 }
 
 const clearDataOpen = ref(false);

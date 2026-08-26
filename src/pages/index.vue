@@ -4,18 +4,22 @@
     class="app-shell"
     :class="{
       'app-shell--full-width': settings.fullWidth,
-      'app-shell--bg': settings.background
+      'app-shell--bg': bgScene !== null
     }"
   >
-    <!-- Decorative gradient field behind everything; the route watcher below
-         speeds it up briefly on every page change. mount="none" overrides
+    <!-- Decorative gradient field behind everything. mount="none" overrides
          both scenes' bloom entrance — the field is simply there on arrival,
          which is the honest choice for a tool you come back to rather than
-         a front door. Navigation is carried by the speed burst instead. -->
+         a front door.
+
+         motion="still" is how the motion switch is spent: the look stays
+         exactly as tuned and only the movement stops. Passing null instead
+         leaves the scene's own motion alone. -->
     <HandyBackground
-      v-if="settings.background"
+      v-if="bgScene"
       ref="bg"
-      :scene="settings.backgroundScene"
+      :scene="bgScene"
+      :motion="settings.backgroundMotion ? null : 'still'"
       mount="none"
     />
 
@@ -246,10 +250,20 @@ const mutedLabel = computed(() => {
 // and lands back at exactly its resting rate.
 const bg = useTemplateRef<InstanceType<typeof HandyBackground>>("bg");
 
-// Path only — a query or filter change is the same page.
+// null when the field is switched off, which is also what keeps `scene`
+// narrowed to a SceneId the component will accept.
+const bgScene = computed(() =>
+  settings.backgroundScene === "off" ? null : settings.backgroundScene
+);
+
+// Path only — a query or filter change is the same page. Skipped while the
+// motion switch is off: with motion="still" there is nothing to accelerate,
+// so a burst would only spin a rAF for two seconds to no effect.
 watch(
   () => route.path,
-  () => bg.value?.burst()
+  () => {
+    if (settings.backgroundMotion) bg.value?.burst();
+  }
 );
 
 // Every route but the site directory gets the back-to-top button: the button

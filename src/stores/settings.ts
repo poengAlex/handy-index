@@ -42,8 +42,18 @@ export const BACKGROUND_SCENE_LABELS: Record<BackgroundScene, string> = {
   erin: "Aurora"
 };
 
-function isBackgroundScene(value: unknown): value is BackgroundScene {
-  return BACKGROUND_SCENES.includes(value as BackgroundScene);
+/**
+ * What the style selector offers. "off" is ours, not the component's — it
+ * always renders something, so switching the field off is not-mounting it
+ * rather than a scene. Kept in the same list as the looks because to a
+ * reader they are one choice: what the background is.
+ */
+export const BACKGROUND_STYLES = ["off", ...BACKGROUND_SCENES] as const;
+
+export type BackgroundStyle = (typeof BACKGROUND_STYLES)[number];
+
+function isBackgroundStyle(value: unknown): value is BackgroundStyle {
+  return BACKGROUND_STYLES.includes(value as BackgroundStyle);
 }
 
 /** Bounds for the two card-preview speeds, shared by the settings sliders and
@@ -104,11 +114,12 @@ export const useSettingsStore = defineStore(
     const inlinePlayers = ref(false);
     /** let pages span the whole viewport instead of the 1440px column */
     const fullWidth = ref(false);
-    /** the animated gradient field behind every page. ON by default; the
-     * toggle exists for anyone who finds a moving background distracting */
-    const background = ref(true);
-    /** which of the offered background looks is in effect */
-    const backgroundScene = ref<BackgroundScene>("handy");
+    /** which look sits behind every page, or "off" for none */
+    const backgroundScene = ref<BackgroundStyle>("handy");
+    /** whether that field moves. OFF by default: the look is the point, and
+     * motion behind a catalog you scroll is a taste that wears out on the
+     * second visit — this is opt-in rather than opt-out */
+    const backgroundMotion = ref(false);
     const orientation = ref<Orientation>("straight");
     const connectionKey = ref("");
     const favorites = ref<string[]>([]);
@@ -292,8 +303,8 @@ export const useSettingsStore = defineStore(
       previewClipRate.value = PREVIEW_CLIP_RATE.default;
       inlinePlayers.value = false;
       fullWidth.value = false;
-      background.value = true;
       backgroundScene.value = "handy";
+      backgroundMotion.value = false;
       orientation.value = "straight";
     }
 
@@ -307,8 +318,8 @@ export const useSettingsStore = defineStore(
       previewClipRate.value = PREVIEW_CLIP_RATE.default;
       inlinePlayers.value = false;
       fullWidth.value = false;
-      background.value = true;
       backgroundScene.value = "handy";
+      backgroundMotion.value = false;
       orientation.value = "straight";
       connectionKey.value = "";
       favorites.value = [];
@@ -332,8 +343,8 @@ export const useSettingsStore = defineStore(
       previewClipRate,
       inlinePlayers,
       fullWidth,
-      background,
       backgroundScene,
+      backgroundMotion,
       orientation,
       connectionKey,
       favorites,
@@ -409,11 +420,19 @@ export const useSettingsStore = defineStore(
         // a hand-edited blob can still carry a non-boolean
         settings.showPremiumScripts = Boolean(settings.showPremiumScripts);
         settings.showPaidVideos = Boolean(settings.showPaidVideos);
-        // defaults ON, so only an explicit false survives hydration
-        settings.background = settings.background !== false;
-        // a retired scene id must not reach the component, which would fall
+        // `background` was a single boolean meaning "render the field at
+        // all". That question now lives in backgroundScene ("off"), and the
+        // boolean was reused for a different one — whether the field moves.
+        // Carrying it over verbatim would silently turn motion on for
+        // everyone who had a background, so only the OFF half migrates: a
+        // retired switch may remove something, never add it.
+        if (legacy.background === false) settings.backgroundScene = "off";
+        delete legacy.background;
+        // motion defaults OFF, so only an explicit true survives hydration
+        settings.backgroundMotion = settings.backgroundMotion === true;
+        // a retired style must not reach the component, which would fall
         // back to its own default and leave the radio matching nothing
-        if (!isBackgroundScene(settings.backgroundScene)) {
+        if (!isBackgroundStyle(settings.backgroundScene)) {
           settings.backgroundScene = "handy";
         }
         settings.previewFrameMs = clamp(

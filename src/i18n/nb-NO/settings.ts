@@ -16,9 +16,7 @@ const settings: typeof enUS = {
     playersLabel: "Innebygde spillere",
     playersCaption: "Spill av Pornhub- og xHamster-videoer rett på videosiden",
     fullWidthLabel: "Full bredde",
-    fullWidthCaption: "Bruk hele skjermen i stedet for en midtstilt kolonne",
-    backgroundLabel: "Animert bakgrunn",
-    backgroundCaption: "Vis den myke, bevegelige gradienten bak hver side"
+    fullWidthCaption: "Bruk hele skjermen i stedet for en midtstilt kolonne"
   },
 
   muted: {
@@ -28,6 +26,10 @@ const settings: typeof enUS = {
   },
 
   backgroundSceneTitle: "Bakgrunnsstil",
+  backgroundSceneOff: "Av",
+  backgroundMotionLabel: "Bevegelse",
+  backgroundMotionCaption:
+    "La bakgrunnen drive, med et kort byks når du bytter side",
   orientationTitle: "Orientering",
 
   access: {

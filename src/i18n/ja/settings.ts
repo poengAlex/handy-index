@@ -16,9 +16,7 @@ const settings: typeof enUS = {
     playersLabel: "埋め込みプレーヤー",
     playersCaption: "PornhubとxHamsterの動画を動画ページ上で直接再生します",
     fullWidthLabel: "全幅レイアウト",
-    fullWidthCaption: "中央寄せの列ではなく画面全体を使います",
-    backgroundLabel: "アニメーション背景",
-    backgroundCaption: "各ページの背後にゆっくり動くグラデーションを表示します"
+    fullWidthCaption: "中央寄せの列ではなく画面全体を使います"
   },
 
   // The muted-tags row. `caption` pluralizes over the count itself rather
@@ -34,6 +32,10 @@ const settings: typeof enUS = {
   },
 
   backgroundSceneTitle: "背景のスタイル",
+  backgroundSceneOff: "オフ",
+  backgroundMotionLabel: "動き",
+  backgroundMotionCaption:
+    "背景をゆっくり動かし、ページを切り替えたときに少しだけ速めます",
   orientationTitle: "性的指向",
 
   access: {

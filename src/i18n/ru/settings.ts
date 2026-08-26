@@ -17,10 +17,7 @@ const settings: typeof enUS = {
     playersCaption:
       "Воспроизводить видео Pornhub и xHamster прямо на странице видео",
     fullWidthLabel: "Во всю ширину",
-    fullWidthCaption: "Использовать весь экран вместо колонки по центру",
-    backgroundLabel: "Анимированный фон",
-    backgroundCaption:
-      "Показывать мягкий движущийся градиент позади каждой страницы"
+    fullWidthCaption: "Использовать весь экран вместо колонки по центру"
   },
 
   // The muted-tags row. `caption` pluralizes over the count itself rather
@@ -37,6 +34,10 @@ const settings: typeof enUS = {
   },
 
   backgroundSceneTitle: "Стиль фона",
+  backgroundSceneOff: "Выключено",
+  backgroundMotionLabel: "Движение",
+  backgroundMotionCaption:
+    "Фон медленно движется и ненадолго ускоряется при смене страницы",
   orientationTitle: "Ориентация",
 
   access: {
