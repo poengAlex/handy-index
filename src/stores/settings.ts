@@ -25,6 +25,23 @@ export const BACKGROUND_SCENES = [
 
 export type BackgroundScene = (typeof BACKGROUND_SCENES)[number];
 
+/**
+ * What each look is called in our UI. Not translated: these are names, and
+ * a name that is identical in ten languages is not a translation.
+ *
+ * These deliberately do NOT come from the component's own `scene().label`
+ * any more, because one of them disagrees with it. Heads-up for anyone
+ * reading the ids: the scene whose id is `erin` is shown as **Aurora**, and
+ * the component separately ships a different scene actually named `aurora`
+ * (brand blue into purple, orbit motion) which this app does not offer. The
+ * id stays `erin` so it keeps matching upstream and so stored preferences
+ * survive; only the display name is ours.
+ */
+export const BACKGROUND_SCENE_LABELS: Record<BackgroundScene, string> = {
+  handy: "Handy",
+  erin: "Aurora"
+};
+
 function isBackgroundScene(value: unknown): value is BackgroundScene {
   return BACKGROUND_SCENES.includes(value as BackgroundScene);
 }

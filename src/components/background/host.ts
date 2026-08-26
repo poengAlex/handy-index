@@ -118,10 +118,30 @@ export function findFixedBreaker(el: HTMLElement | null): string | null {
 }
 
 /** Is the document root actually the thing that scrolls? */
-export function rootScrolls(): boolean {
-  if (typeof document === "undefined") return true;
-  const se = document.scrollingElement;
-  return !se || se.scrollHeight > se.clientHeight + 1;
+/**
+ * The nearest ancestor that scrolls INSTEAD of the document — a
+ * `<q-layout container>` scroller, a scroll area, any `overflow-y: auto`
+ * box that actually overflows. Null when the document is the scroller,
+ * which is the normal case.
+ *
+ * This is the only host condition the scroll-driven attachments genuinely
+ * cannot survive, and unlike "does the page scroll yet" it is structural:
+ * it does not depend on how much content has arrived.
+ */
+export function scrollingAncestor(el: HTMLElement | null): HTMLElement | null {
+  if (typeof getComputedStyle === "undefined") return null;
+  let node: HTMLElement | null = el?.parentElement ?? null;
+  while (node && node !== document.documentElement) {
+    const cs = getComputedStyle(node);
+    if (
+      /auto|scroll/.test(cs.overflowY) &&
+      node.scrollHeight > node.clientHeight + 1
+    ) {
+      return node;
+    }
+    node = node.parentElement;
+  }
+  return null;
 }
 
 export interface HostEnv {

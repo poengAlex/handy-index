@@ -56,7 +56,7 @@
 // Precedence, loosest to tightest: defaults, then `scene`, then `config`,
 // then any individual prop. So a config exported from the playground can be
 // dropped in whole and still have one thing tweaked at the call site.
-import { computed, onMounted, ref, toRef } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref, toRef } from "vue";
 import GrainOverlay from "./GrainOverlay.vue";
 import LensField from "./LensField.vue";
 import BackdropAttach from "./MeshBackdrop.vue";
@@ -66,7 +66,7 @@ import type { PaletteId } from "./gradient-recipes";
 import type { MotionId, MountId } from "./motion";
 import type { Attach, LensScope } from "./lens";
 import { scene as sceneById, sceneSettings, type SceneId } from "./scenes";
-import { findFixedBreaker, rootScrolls, useHost } from "./host";
+import { findFixedBreaker, scrollingAncestor, useHost } from "./host";
 
 const props = withDefaults(
   defineProps<{
@@ -257,6 +257,23 @@ const { theme: resolvedTheme, surface: resolvedSurface } = useHost(
 // Quasar hits both: `<q-layout container>` puts transform on its scroller
 // (so position: fixed stops being fixed) and scrolls inside itself rather
 // than at the document root (so scroll-driven parallax never runs).
+// Layout has to settle before either question can be answered, so this looks
+// again a few times and stops at the first real answer.
+let rivalTimer: ReturnType<typeof setTimeout> | null = null;
+function watchForRivalScroller(check: () => boolean, tries = 10) {
+  let n = 0;
+  const tick = () => {
+    rivalTimer = null;
+    if (check()) return;
+    if (++n < tries) rivalTimer = setTimeout(tick, 150);
+  };
+  rivalTimer = setTimeout(tick, 150);
+}
+
+onBeforeUnmount(() => {
+  if (rivalTimer) clearTimeout(rivalTimer);
+});
+
 onMounted(() => {
   if (!import.meta.env.DEV) return;
   if (attachment.value !== "inline") {
@@ -267,13 +284,27 @@ onMounted(() => {
       );
     }
   }
-  if (
-    (attachment.value === "parallax" || attachment.value === "travels") &&
-    !rootScrolls()
-  ) {
-    console.warn(
-      `[HandyBackground] attach="${attachment.value}" follows the document scroll, but the document root is not what scrolls here (a q-layout container or a scroll area is). It will behave like "pinned".`
-    );
+  // The scroll-driven attachments run on `scroll(root block)` — the DOCUMENT
+  // scroller. `scroll(nearest block)` is not an alternative: measured, it
+  // resolves to .backdrop itself, which is overflow:hidden and never moves.
+  //
+  // This used to warn whenever the document did not currently overflow, and
+  // that accused almost every app: the root has nothing in it for the first
+  // frames of a route change — measured ~250ms here — so the check ran before
+  // there was anything to scroll. A page that is merely short is not a fault
+  // either; the timeline just has no range yet and gains one when content
+  // arrives. The one genuinely broken host is a layout that scrolls INSIDE an
+  // element, and that is structural rather than a race.
+  if (attachment.value === "parallax" || attachment.value === "travels") {
+    watchForRivalScroller(() => {
+      const sc = scrollingAncestor(rootEl.value);
+      if (!sc) return false;
+      const name = `${sc.tagName.toLowerCase()}${sc.className ? `.${String(sc.className).split(" ")[0]}` : ""}`;
+      console.warn(
+        `[HandyBackground] attach="${attachment.value}" is driven by the document scroll, but the page scrolls inside <${name}> instead (a q-layout container or scroll area). The field will sit still. Use attach="pinned" or "banded", or let the document scroll.`
+      );
+      return true;
+    });
   }
   const box = rootEl.value?.getBoundingClientRect();
   if (attachment.value === "inline" && box && (!box.width || !box.height)) {
