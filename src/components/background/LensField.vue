@@ -127,6 +127,12 @@ const s = computed(() => props.s);
 
 const colors = computed(() => paletteColors(props.s));
 
+// ---- LOCAL PATCH (not upstream) ----------------------------------------
+// Reapply on every re-sync. See the MORPH_HZ block below, which fixes the
+// same problem from the other end and may well make this redundant — it
+// caps how often the blurred layer is invalidated, where this avoids
+// invalidating it at all.
+//
 // A `costly` preset (morph, wave, blobs) animates the blobs themselves,
 // INSIDE the blur — so the browser re-rasterises every full-viewport copy of
 // the field every frame. A desktop GPU absorbs that. A phone does not: the
@@ -159,8 +165,7 @@ const motion = computed<MotionSettings>(() => {
     amount: own.amount === 0 ? 0 : motionDefaults.amount
   };
 });
-
-const preset = computed(() => motionPreset(motion.value.id));
+// ---- end local patch ---------------------------------------------------
 
 // Morph state. The seed is an integer, so morphing between arrangements
 // means holding two of them and walking a parameter from one to the other;
@@ -181,6 +186,32 @@ const morphTo = computed(() =>
   buildBlobs(props.s, props.s.seed + morphStep.value + 1)
 );
 
+// Morph is the one motion that changes the CONTENTS of the blurred layer
+// instead of transforming it, so every write to these refs re-rasterises the
+// blur. On a software rasteriser that is the whole performance story:
+// measured over an 8s window at 4x CPU throttle, morph cost 29,665ms of
+// raster CPU while drift cost 78ms and orbit 36ms — the same field, the same
+// 96px blur, a 380x difference. Halving the blur radius did NOT help
+// (29,701ms); only cutting how OFTEN the layer is invalidated does.
+//
+// A seed step lasts at least half a second and the result is behind a blur of
+// up to 96px, so the eye cannot resolve updates at frame rate anyway.
+//
+// 6 is not arbitrary: the relationship between publish rate and frame rate is
+// a cliff, not a slope. Measured at 4x CPU throttle on the house default —
+// uncapped 9.3fps, 12Hz 19.1fps, 6Hz 74.2fps, 3Hz 74.6fps, and the same field
+// with no morph at all 76.5fps. Below about 6Hz the raster of the blurred
+// layer finishes before the next invalidation arrives, so it stops being
+// saturated and the page gets its frames back. Raising this number is not a
+// smoothness improvement; it is a cliff edge.
+const MORPH_HZ = 6;
+
+// Advanced every frame so the timing stays exact; only published to the
+// reactive refs at MORPH_HZ.
+let morphPos = 0;
+let morphSeed = 0;
+let published = 0;
+
 function tick(now: number) {
   // The clamp is on the RESTING period, so it keeps meaning "a seed step is
   // never shorter than half a second at rest" and the burst multiplies
@@ -192,12 +223,20 @@ function tick(now: number) {
     preset.value.seconds / Math.max(0.1, motion.value.speed)
   );
   if (last) {
-    morphT.value += ((now - last) / 1000 / secs) * burstRate.value;
+    morphPos += ((now - last) / 1000 / secs) * burstRate.value;
   }
   last = now;
-  while (morphT.value >= 1) {
-    morphT.value -= 1;
-    morphStep.value += 1;
+  while (morphPos >= 1) {
+    morphPos -= 1;
+    morphSeed += 1;
+  }
+  // A burst is meant to be seen moving, so let it publish more often rather
+  // than turning the flourish into a slideshow.
+  const hz = MORPH_HZ * Math.max(1, Math.min(4, burstRate.value));
+  if (now - published >= 1000 / hz) {
+    published = now;
+    morphT.value = morphPos;
+    morphStep.value = morphSeed;
   }
   raf = requestAnimationFrame(tick);
 }
@@ -297,6 +336,8 @@ const lensStyle = computed<CSSProperties>(() => ({
 const mountClass = computed(() =>
   props.s.mount.id === "none" ? "" : `lens--mount-${props.s.mount.id}`
 );
+
+const preset = computed(() => motionPreset(motion.value.id));
 
 // wrapper-driven presets get a class; per-blob and morph ones do not move
 // the wrapper at all
