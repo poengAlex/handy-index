@@ -11,6 +11,7 @@ import {
   pluralRules
 } from "@/i18n";
 import type { Locale } from "@/i18n";
+import { setKitLabelResolver } from "@/components/handy";
 import { useSettingsStore } from "@/stores/settings";
 
 // Quasar's own copy — the date picker's month names, the table's "Records per
@@ -99,8 +100,35 @@ async function applyLocale(locale: Locale): Promise<void> {
   document.documentElement.setAttribute("lang", locale);
 }
 
+/**
+ * Hand the brand kit this app's translator.
+ *
+ * The kit can't import vue-i18n (it is copied verbatim between projects and
+ * has to build in all of them), so it holds its own English and asks for a
+ * resolver instead. Keys it doesn't find here keep the kit's English — that
+ * is the designed fallback, not a failure, so `te` decides rather than
+ * letting vue-i18n echo a missing path back as the label.
+ *
+ * `{label}` / `{value}` are the KIT's slots and it fills them itself, but
+ * vue-i18n would consume them first and leave a hole. Passing each through
+ * as its own literal makes vue-i18n's interpolation a no-op over them.
+ *
+ * Not reactive by design: the kit calls this on every render, so a component
+ * that re-renders on a language change picks the new words up with everything
+ * else on screen.
+ */
+const KIT_SLOTS = { label: "{label}", value: "{value}" };
+
+function installKitLabels(): void {
+  setKitLabelResolver((key, fallback) => {
+    const path = `kit.${key}`;
+    return i18n.global.te(path) ? i18n.global.t(path, KIT_SLOTS) : fallback;
+  });
+}
+
 export default defineBoot(async ({ app, store }) => {
   app.use(i18n);
+  installKitLabels();
 
   const settings = useSettingsStore(store);
 

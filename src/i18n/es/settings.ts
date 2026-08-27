@@ -37,6 +37,14 @@ const settings: typeof enUS = {
   backgroundMotionLabel: "Movimiento",
   backgroundMotionCaption:
     "Dejar que el fondo se mueva, con un impulso breve al cambiar de página",
+
+  backgroundScroll: {
+    title: "Fondo al desplazarte",
+    pinned: "Se queda quieto",
+    parallax: "Se mueve más lento que la página",
+    travels: "Se mueve con la página",
+    banded: "Solo en la parte superior"
+  },
   orientationTitle: "Orientación",
 
   access: {

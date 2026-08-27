@@ -31,6 +31,11 @@
 // it: it keeps the on-fill white while the fill or the passing handle
 // still touches it, and only goes muted once both are all the way clear
 // of the glyph. `iconOff` swaps the symbol at zero (volume_up → volume_off).
+//
+// Room for the handle is the parent's job — see the long note in
+// HLabeledSlider. This control's handle is FATTER than the standard 40px, so
+// a scrolling ancestor needs to give back more than the usual 20px: measure
+// it rather than copying the number.
 import { computed, onMounted, onUnmounted, ref } from "vue";
 
 const props = withDefaults(
@@ -177,10 +182,12 @@ const FAT_THUMB_H =
   border-radius: 2px var(--radius-lg) var(--radius-lg) 2px;
 }
 
-// press: same slim-on-use as every slider, but the vertical slider's bar is
+// press (and keyboard focus, which shares the press treatment): same
+// slim-on-use as every slider, but the vertical slider's bar is
 // horizontal — slim its thickness (scaleY), not its length. The horizontal
-// slider's bar is vertical, so the global scaleX rule already applies.
-.h-fat--v .h-fat__slider.q-slider--active :deep(.q-slider__thumb-shape path) {
+// slider's bar is vertical, so the global scaleX rules already apply.
+.h-fat--v .h-fat__slider.q-slider--active :deep(.q-slider__thumb-shape path),
+.h-fat--v .h-fat__slider.q-slider--focus :deep(.q-slider__thumb-shape path) {
   transform: scaleY(0.55);
 }
 </style>

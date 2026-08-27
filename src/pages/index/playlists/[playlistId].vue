@@ -75,7 +75,7 @@
         v-else-if="catalog.status !== 'ready'"
         class="playlist-page__loading"
       >
-        <HandyLoader :loading-label="$t('kit.loading')" />
+        <HandyLoader />
       </div>
 
       <template v-else>
@@ -118,11 +118,7 @@
 
     <!-- Rename -->
     <q-dialog v-model="renameOpen">
-      <HModal
-        :title="$t('playlists.detail.renameTitle')"
-        closable
-        :close-label="$t('kit.close')"
-      >
+      <HModal :title="$t('playlists.detail.renameTitle')" closable>
         <q-input
           :model-value="renameInput"
           filled
@@ -147,7 +143,6 @@
       <HModal
         :title="$t('playlists.share.title')"
         closable
-        :close-label="$t('kit.close')"
         class="playlist-page__share"
       >
         <div class="playlist-page__share-stack">

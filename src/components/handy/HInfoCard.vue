@@ -1,6 +1,11 @@
 <template>
   <div class="h-info">
-    <div v-if="title" class="h-info__title text-h5">{{ title }}</div>
+    <div v-if="title || $slots.action" class="h-info__head">
+      <div v-if="title" class="h-info__title text-h5">{{ title }}</div>
+      <div v-if="$slots.action" class="h-info__action">
+        <slot name="action" />
+      </div>
+    </div>
     <slot />
     <dl class="h-info__list">
       <div v-for="item in items" :key="item.label" class="h-info__row">
@@ -14,7 +19,13 @@
           <span
             v-if="item.value !== undefined"
             :class="{ 'h-info__value--highlight': item.highlight }"
-            >{{ item.value }}</span
+            >{{ item.value
+            }}<q-tooltip
+              v-if="item.tooltip"
+              class="h-info__tooltip"
+              max-width="min(90vw, 420px)"
+              >{{ item.tooltip }}</q-tooltip
+            ></span
           >
           <span
             v-if="item.bool !== undefined"
@@ -41,11 +52,18 @@
 // body-compact. Hairline dividers only because rows are dense (§7 Lists).
 // Booleans render as state pills, never raw true/false: on-and-good =
 // positive, on-and-bad (error flag) = negative, off = muted. Highlighted
-// values use the success text token. Slot above the list hosts gauges.
+// values use the success text token. Slot above the list hosts gauges; the
+// "action" slot puts one icon-only control on the title row's right edge
+// (refresh and friends) — it never grows the row, so a card with an action
+// lines up with one without.
+import { kitLabel } from "@/components/handy/labels";
+
 export interface InfoItem {
   label: string;
   value?: string;
   note?: string;
+  /** hover/long-press reveal for the untruncated form of a long value */
+  tooltip?: string;
   highlight?: boolean;
   badge?: string;
   badgeColor?: "primary" | "positive" | "negative" | "warning" | "muted";
@@ -56,22 +74,14 @@ export interface InfoItem {
   error?: boolean;
 }
 
-const props = withDefaults(
-  defineProps<{
-    title?: string;
-    items: InfoItem[];
-    /** Fallback for a `bool` item that carries no `trueLabel`. */
-    trueLabel?: string;
-    /** Fallback for a `bool` item that carries no `falseLabel`. */
-    falseLabel?: string;
-  }>(),
-  { title: "", trueLabel: "Yes", falseLabel: "No" }
-);
+withDefaults(defineProps<{ title?: string; items: InfoItem[] }>(), {
+  title: ""
+});
 
 function boolLabel(item: InfoItem): string {
   return item.bool
-    ? (item.trueLabel ?? props.trueLabel)
-    : (item.falseLabel ?? props.falseLabel);
+    ? (item.trueLabel ?? kitLabel("yes"))
+    : (item.falseLabel ?? kitLabel("no"));
 }
 
 function boolTone(item: InfoItem): string {
@@ -87,8 +97,22 @@ function boolTone(item: InfoItem): string {
   padding: var(--space-md);
 }
 
-.h-info__title {
+.h-info__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
   margin-bottom: var(--space-sm);
+}
+
+// the action hugs the card's corner: pulled out by its own padding so the
+// icon sits on the card's inner margin, and zero-height so it can't push
+// the title row taller than the text
+.h-info__action {
+  display: flex;
+  align-items: center;
+  height: 0;
+  margin-right: calc(var(--space-xs) * -1);
 }
 
 .h-info__list {
@@ -129,6 +153,13 @@ function boolTone(item: InfoItem): string {
 
 .h-info__value--highlight {
   color: var(--color-text-success);
+}
+
+// long identifiers (hashes, uids) tooltip their full form; monospace wrap
+:global(.h-info__tooltip) {
+  font-family:
+    ui-monospace, "SF Mono", "Cascadia Mono", "Roboto Mono", Menlo, monospace;
+  word-break: break-all;
 }
 
 .h-info__pill {

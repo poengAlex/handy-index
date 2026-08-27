@@ -38,6 +38,14 @@ const settings: typeof enUS = {
   backgroundMotionLabel: "Движение",
   backgroundMotionCaption:
     "Фон медленно движется и ненадолго ускоряется при смене страницы",
+
+  backgroundScroll: {
+    title: "Фон при прокрутке",
+    pinned: "Остаётся на месте",
+    parallax: "Движется медленнее страницы",
+    travels: "Движется вместе со страницей",
+    banded: "Только вверху страницы"
+  },
   orientationTitle: "Ориентация",
 
   access: {

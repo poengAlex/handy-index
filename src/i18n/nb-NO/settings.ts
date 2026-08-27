@@ -30,6 +30,14 @@ const settings: typeof enUS = {
   backgroundMotionLabel: "Bevegelse",
   backgroundMotionCaption:
     "La bakgrunnen drive, med et kort byks når du bytter side",
+
+  backgroundScroll: {
+    title: "Bakgrunn ved rulling",
+    pinned: "Står stille",
+    parallax: "Driver saktere enn siden",
+    travels: "Følger siden",
+    banded: "Bare øverst på siden"
+  },
   orientationTitle: "Orientering",
 
   access: {

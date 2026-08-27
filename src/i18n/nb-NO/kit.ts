@@ -10,15 +10,13 @@ const kit: typeof enUS = {
   // control; "Bildehastighet verdi" reads as a translation bug. The two ends
   // of a range are a matched pair — "laveste"/"høyeste", not the lopsided
   // "minsteverdi"/"maksverdi".
-  slider: {
-    reset: "Nullstill {label}",
-    value: "Verdi for {label}",
-    editValue: "Endre verdien for {label}",
-    min: "Laveste verdi for {label}",
-    editMin: "Endre laveste verdi for {label}",
-    max: "Høyeste verdi for {label}",
-    editMax: "Endre høyeste verdi for {label}"
-  }
+  sliderReset: "Nullstill {label}",
+  sliderValue: "Verdi for {label}",
+  sliderEditValue: "Endre verdien for {label}",
+  sliderMin: "Laveste verdi for {label}",
+  sliderEditMin: "Endre laveste verdi for {label}",
+  sliderMax: "Høyeste verdi for {label}",
+  sliderEditMax: "Endre høyeste verdi for {label}"
 };
 
 export default kit;

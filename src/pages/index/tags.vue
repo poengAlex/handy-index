@@ -25,7 +25,7 @@
 
         <div v-if="catalog.status !== 'ready'" class="tags-page__center">
           <div class="tags-page__loading">
-            <HandyLoader :loading-label="$t('kit.loading')" />
+            <HandyLoader />
             <div
               class="tags-page__bar"
               role="progressbar"

@@ -90,9 +90,12 @@ const props = withDefaults(
     badge?: string;
     rating?: number;
     ratingCount?: number;
-    /** Pre-formatted rating ("4,6") — overrides `rating` on screen. */
+    /**
+     * Pre-formatted rating / count, for an app that knows its own locale.
+     * Without them the kit falls back to the browser's locale, which is the
+     * right guess only when nobody has a better one.
+     */
     ratingLabel?: string;
-    /** Pre-formatted review count ("15 000") — overrides `ratingCount`. */
     ratingCountLabel?: string;
     to?: string;
   }>(),
@@ -107,12 +110,13 @@ const props = withDefaults(
   }
 );
 
-// The count used to run through `.toLocaleString()`, which formats in the
-// *browser's* locale — not necessarily the app's. The kit has no locale of
-// its own, so numbers now arrive pre-formatted from the caller instead.
+// A bare toLocaleString() reads navigator.language, not the app's locale — a
+// Norwegian app in a US browser prints "15,000" beside "15 000" everywhere
+// else. So the caller's own formatting wins; the browser's is only the guess
+// we fall back to when nobody has expressed an opinion.
 const ratingText = computed(() => props.ratingLabel || `${props.rating}`);
 const ratingCountText = computed(
-  () => props.ratingCountLabel || `${props.ratingCount}`
+  () => props.ratingCountLabel || props.ratingCount?.toLocaleString()
 );
 
 const attrs = useAttrs();
@@ -231,5 +235,15 @@ function onKeydown(e: KeyboardEvent) {
 [data-theme="dark"] .h-product--interactive:hover,
 .section-dark .h-product--interactive:hover {
   box-shadow: 0 0 0 1px var(--color-stroke-default);
+}
+
+// --color-action-primary is a FILL token — #0064e0 in both themes, sized for
+// a button carrying a white label. As a foreground on --color-bg-card it
+// computes to 2.74:1, under WCAG 1.4.11's 3:1 for graphical objects. The link
+// tint is the correction design.md already applies to the active tab label
+// and the focused field label, for exactly this reason.
+[data-theme="dark"] .h-product__star--full,
+.section-dark .h-product__star--full {
+  color: var(--color-text-link);
 }
 </style>

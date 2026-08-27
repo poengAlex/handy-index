@@ -2,7 +2,7 @@ import { acceptHMRUpdate, defineStore } from "pinia";
 import { computed, ref } from "vue";
 import { detectLocale, isLocale } from "@/i18n/locales";
 import type { Locale } from "@/i18n/locales";
-import type { SceneId } from "@/components/background";
+import type { Attach, SceneId } from "@/components/background";
 import { UNMUTABLE_TAGS } from "@/services/script-index/queries";
 import type { Orientation } from "@/services/script-index/queries";
 
@@ -52,8 +52,40 @@ export const BACKGROUND_STYLES = ["off", ...BACKGROUND_SCENES] as const;
 
 export type BackgroundStyle = (typeof BACKGROUND_STYLES)[number];
 
+/** What a first visit sees, and what both resets and the hydration fallback
+ * land on. `erin` is the one shown as **Aurora** — see the label map above. */
+export const BACKGROUND_STYLE_DEFAULT: BackgroundStyle = "erin";
+
 function isBackgroundStyle(value: unknown): value is BackgroundStyle {
   return BACKGROUND_STYLES.includes(value as BackgroundStyle);
+}
+
+/**
+ * How the field behaves as the page scrolls. The component ships a fifth
+ * attachment, `inline`, which fills its parent box rather than the viewport —
+ * that has no meaning for a field mounted behind the whole app, so it is not
+ * offered. Typed as Attach for the same reason the scene list is typed as
+ * SceneId: a rename upstream should fail the build here.
+ */
+export const BACKGROUND_ATTACHMENTS = [
+  "pinned",
+  "parallax",
+  "travels",
+  "banded"
+] as const satisfies readonly Attach[];
+
+export type BackgroundAttachment = (typeof BACKGROUND_ATTACHMENTS)[number];
+
+/**
+ * Pinned: the field holds still while the page moves over it. Both scenes
+ * carry `parallax` as their own attachment, and passing this overrides that
+ * on purpose — how the background answers the scroll is the user's call, not
+ * the look's.
+ */
+export const BACKGROUND_ATTACHMENT_DEFAULT: BackgroundAttachment = "pinned";
+
+function isBackgroundAttachment(value: unknown): value is BackgroundAttachment {
+  return BACKGROUND_ATTACHMENTS.includes(value as BackgroundAttachment);
 }
 
 /** Bounds for the two card-preview speeds, shared by the settings sliders and
@@ -115,7 +147,13 @@ export const useSettingsStore = defineStore(
     /** let pages span the whole viewport instead of the 1440px column */
     const fullWidth = ref(false);
     /** which look sits behind every page, or "off" for none */
-    const backgroundScene = ref<BackgroundStyle>("handy");
+    const backgroundScene = ref<BackgroundStyle>(BACKGROUND_STYLE_DEFAULT);
+    /** how that field answers the scroll — held still, or travelling at one
+     * of three rates. Separate from backgroundMotion: this is what the scroll
+     * does to it, that is what it does on its own */
+    const backgroundAttach = ref<BackgroundAttachment>(
+      BACKGROUND_ATTACHMENT_DEFAULT
+    );
     /** whether that field moves. OFF by default: the look is the point, and
      * motion behind a catalog you scroll is a taste that wears out on the
      * second visit — this is opt-in rather than opt-out */
@@ -303,7 +341,8 @@ export const useSettingsStore = defineStore(
       previewClipRate.value = PREVIEW_CLIP_RATE.default;
       inlinePlayers.value = false;
       fullWidth.value = false;
-      backgroundScene.value = "handy";
+      backgroundScene.value = BACKGROUND_STYLE_DEFAULT;
+      backgroundAttach.value = BACKGROUND_ATTACHMENT_DEFAULT;
       backgroundMotion.value = false;
       orientation.value = "straight";
     }
@@ -318,7 +357,8 @@ export const useSettingsStore = defineStore(
       previewClipRate.value = PREVIEW_CLIP_RATE.default;
       inlinePlayers.value = false;
       fullWidth.value = false;
-      backgroundScene.value = "handy";
+      backgroundScene.value = BACKGROUND_STYLE_DEFAULT;
+      backgroundAttach.value = BACKGROUND_ATTACHMENT_DEFAULT;
       backgroundMotion.value = false;
       orientation.value = "straight";
       connectionKey.value = "";
@@ -344,6 +384,7 @@ export const useSettingsStore = defineStore(
       inlinePlayers,
       fullWidth,
       backgroundScene,
+      backgroundAttach,
       backgroundMotion,
       orientation,
       connectionKey,
@@ -433,7 +474,13 @@ export const useSettingsStore = defineStore(
         // a retired style must not reach the component, which would fall
         // back to its own default and leave the radio matching nothing
         if (!isBackgroundStyle(settings.backgroundScene)) {
-          settings.backgroundScene = "handy";
+          settings.backgroundScene = BACKGROUND_STYLE_DEFAULT;
+        }
+        // same for the attachment, plus the case that matters more here: a
+        // blob written before this switch existed carries no attachment at
+        // all, and undefined would let each scene's own parallax back in
+        if (!isBackgroundAttachment(settings.backgroundAttach)) {
+          settings.backgroundAttach = BACKGROUND_ATTACHMENT_DEFAULT;
         }
         settings.previewFrameMs = clamp(
           settings.previewFrameMs,

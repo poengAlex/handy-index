@@ -37,6 +37,14 @@ const settings: typeof enUS = {
   backgroundMotionLabel: "Mouvement",
   backgroundMotionCaption:
     "Laisser le fond dériver, avec une brève accélération au changement de page",
+
+  backgroundScroll: {
+    title: "Fond au défilement",
+    pinned: "Reste immobile",
+    parallax: "Défile plus lentement que la page",
+    travels: "Défile avec la page",
+    banded: "Seulement en haut de la page"
+  },
   orientationTitle: "Orientation",
 
   access: {

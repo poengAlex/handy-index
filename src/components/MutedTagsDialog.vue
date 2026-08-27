@@ -3,12 +3,7 @@
     :model-value="modelValue"
     @update:model-value="emit('update:modelValue', $event)"
   >
-    <HModal
-      :title="$t('gates.muted.title')"
-      closable
-      :close-label="$t('kit.close')"
-      class="muted-tags"
-    >
+    <HModal :title="$t('gates.muted.title')" closable class="muted-tags">
       <p class="text-body-sm muted-tags__lead">{{ $t("gates.muted.lead") }}</p>
 
       <q-select

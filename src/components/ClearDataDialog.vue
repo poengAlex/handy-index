@@ -3,12 +3,7 @@
     :model-value="modelValue"
     @update:model-value="emit('update:modelValue', $event)"
   >
-    <HModal
-      :title="$t('settings.clear.title')"
-      closable
-      :close-label="$t('kit.close')"
-      class="clear-data"
-    >
+    <HModal :title="$t('settings.clear.title')" closable class="clear-data">
       <p class="text-body-sm clear-data__lead">
         {{ $t("settings.clear.lead") }}
       </p>

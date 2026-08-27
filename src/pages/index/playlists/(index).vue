@@ -63,7 +63,6 @@
       <HModal
         :title="$t('playlists.import.title')"
         closable
-        :close-label="$t('kit.close')"
         class="playlists-page__import"
       >
         <q-input

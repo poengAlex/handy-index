@@ -3,11 +3,7 @@
     :model-value="modelValue"
     @update:model-value="emit('update:modelValue', $event)"
   >
-    <HModal
-      :title="$t('playlists.add.title')"
-      closable
-      :close-label="$t('kit.close')"
-    >
+    <HModal :title="$t('playlists.add.title')" closable>
       <HList v-if="settings.playlists.length" class="playlist-dialog__list">
         <HToggleRow
           v-for="playlist in settings.playlists"

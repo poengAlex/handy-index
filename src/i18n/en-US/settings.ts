@@ -34,6 +34,17 @@ export default {
   backgroundMotionLabel: "Motion",
   backgroundMotionCaption:
     "Let the background drift, and surge briefly when you change page",
+
+  // What the scroll does to the background. Described rather than named —
+  // the component calls these pinned/parallax/travels/banded, which is the
+  // right vocabulary for the prop and the wrong one for a settings row.
+  backgroundScroll: {
+    title: "Background scroll",
+    pinned: "Stays put",
+    parallax: "Drifts slower than the page",
+    travels: "Moves with the page",
+    banded: "Only at the top of the page"
+  },
   orientationTitle: "Orientation",
 
   access: {

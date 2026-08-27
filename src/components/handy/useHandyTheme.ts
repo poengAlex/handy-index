@@ -12,17 +12,24 @@ const STORAGE_KEY = "handy-theme";
 const dark = ref(false);
 
 const systemQuery = () =>
-  typeof window.matchMedia === "function"
-    ? window.matchMedia("(prefers-color-scheme: dark)")
+  typeof matchMedia !== "undefined"
+    ? matchMedia("(prefers-color-scheme: dark)")
     : null;
 
-/** true once the OS listener is attached — module-scoped, so only once */
+// Module-scoped so the OS listener is attached once, not once per shell that
+// calls init() — this repo alone calls it from four page shells.
 let following = false;
 
 export function useHandyTheme() {
   const $q = useQuasar();
 
-  /** paint a theme without claiming it as the user's choice */
+  /**
+   * Paint a theme WITHOUT claiming it as the user's choice.
+   *
+   * The split from apply() is the whole point: the old init() wrote storage on
+   * first paint, which permanently opted a user who had never touched the
+   * toggle out of ever following their OS again.
+   */
   function set(value: boolean) {
     dark.value = value;
     $q.dark.set(value);
@@ -32,6 +39,7 @@ export function useHandyTheme() {
     );
   }
 
+  /** paint a theme AND record it as the user's explicit choice */
   function apply(value: boolean) {
     set(value);
     localStorage.setItem(STORAGE_KEY, value ? "dark" : "light");
@@ -52,8 +60,8 @@ export function useHandyTheme() {
       set(query?.matches ?? false);
     }
 
-    // Track the OS for as long as no explicit choice is stored; apply() wins
-    // from the moment the user toggles.
+    // Track the OS for as long as no explicit choice is stored; the first
+    // apply() ends the tracking by writing the key.
     if (query && !following) {
       following = true;
       query.addEventListener("change", event => {

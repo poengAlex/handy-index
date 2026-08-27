@@ -36,6 +36,14 @@ const settings: typeof enUS = {
   backgroundMotionLabel: "움직임",
   backgroundMotionCaption:
     "배경이 천천히 움직이고, 페이지를 바꿀 때 잠깐 빨라져요",
+
+  backgroundScroll: {
+    title: "스크롤할 때 배경",
+    pinned: "그대로 있기",
+    parallax: "페이지보다 느리게 움직이기",
+    travels: "페이지와 함께 움직이기",
+    banded: "페이지 위쪽에만"
+  },
   orientationTitle: "성향",
 
   access: {

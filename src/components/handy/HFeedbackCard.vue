@@ -23,7 +23,7 @@
       icon="close"
       size="sm"
       class="h-feedback__close"
-      :aria-label="dismissLabel"
+      :aria-label="kitLabel('dismiss')"
       @click="emit('dismiss')"
     />
   </div>
@@ -38,6 +38,7 @@
 // optional secondary action. Severity color + icon, never color alone (§11).
 import { computed } from "vue";
 import HBtn from "./HBtn.vue";
+import { kitLabel } from "@/components/handy/labels";
 
 const props = withDefaults(
   defineProps<{
@@ -46,17 +47,8 @@ const props = withDefaults(
     actionLabel?: string;
     dismissible?: boolean;
     icon?: string;
-    /** Screen-reader name for the dismiss button. */
-    dismissLabel?: string;
   }>(),
-  {
-    severity: "info",
-    title: "",
-    actionLabel: "",
-    dismissible: false,
-    icon: "",
-    dismissLabel: "Dismiss"
-  }
+  { severity: "info", title: "", actionLabel: "", dismissible: false, icon: "" }
 );
 
 const emit = defineEmits<{ action: []; dismiss: [] }>();

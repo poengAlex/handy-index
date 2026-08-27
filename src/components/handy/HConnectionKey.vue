@@ -14,10 +14,10 @@
       dense
       icon="content_copy"
       class="h-key__btn"
-      :aria-label="copyLabel"
+      :aria-label="kitLabel('copyKey')"
       @click="copy"
     >
-      <q-tooltip>{{ copyTooltip }}</q-tooltip>
+      <q-tooltip>{{ kitLabel("copy") }}</q-tooltip>
     </q-btn>
   </div>
 </template>
@@ -42,17 +42,9 @@
 //     @copy-error="hToast('negative', 'Couldn’t copy — select it instead.')"
 //   />
 import { computed } from "vue";
+import { kitLabel } from "@/components/handy/labels";
 
-const props = withDefaults(
-  defineProps<{
-    value: string;
-    /** Screen-reader name for the copy button. */
-    copyLabel?: string;
-    /** Hover tooltip on that button — shorter than `copyLabel`. */
-    copyTooltip?: string;
-  }>(),
-  { copyLabel: "Copy key", copyTooltip: "Copy" }
-);
+const props = defineProps<{ value: string }>();
 
 const emit = defineEmits<{
   /** fired after the key text lands on the clipboard */

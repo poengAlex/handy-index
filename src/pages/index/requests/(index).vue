@@ -54,7 +54,7 @@
 
           <!-- The voting list -->
           <div v-if="listState === 'loading'" class="requests-page__loading">
-            <HandyLoader :loading-label="$t('kit.loading')" />
+            <HandyLoader />
           </div>
 
           <!-- the key can be rejected mid-session (rotated in the Handy app),

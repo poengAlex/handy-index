@@ -4,7 +4,14 @@
 // components lean on), then `import { HBtn, hToast } from "@/components/handy"`.
 // Peer deps: Quasar (components + Notify plugin for toast.ts, Dark plugin
 // for useHandyTheme), vue-router (to-capable components), vue3-carousel
-// (HPeekCarousel only).
+// (HPeekCarousel only), uplot + uplot-vue (HGraph only — it also needs two
+// build flags; see README.md in this folder before copying it).
+//
+// NOTE (handy-index): HGraph and its graph-* helpers need uplot + uplot-vue,
+// which are not dependencies here; HHoldBtn, HSegmented, HSliderMenu and the
+// background sub-kit are simply unused. Those exports are the ONLY things
+// removed; everything else is verbatim. Add the deps upstream of a resync if
+// this app ever needs graphs. Re-copy from brand-ux; never edit here.
 
 // Actions
 export { default as HBtn } from "./HBtn.vue";
@@ -14,6 +21,7 @@ export { default as HBtnGroup } from "./HBtnGroup.vue";
 export { default as HNumberStepper } from "./HNumberStepper.vue";
 export { default as HFatSlider } from "./HFatSlider.vue";
 export { default as HLabeledSlider } from "./HLabeledSlider.vue";
+export { default as HHelpTip } from "./HHelpTip.vue";
 
 // Containers & surfaces
 export { default as HInfoCard } from "./HInfoCard.vue";
@@ -56,13 +64,27 @@ export { default as HPeekCarousel } from "./HPeekCarousel.vue";
 export type { HLogoVariant } from "./handy-logo-art";
 
 // Utils & composables
-export { hToast, hNotify, type ToastSeverity } from "./toast";
-export { generateKey } from "./keys";
+export {
+  hToast,
+  hNotify,
+  type ToastSeverity,
+  type ToastOptions
+} from "./toast";
+export { generateKey, sanitizeKey, KEY_MAX_LENGTH } from "./keys";
 export {
   H_SCROLL_BAR_STYLE,
   H_SCROLL_BAR_STYLE_HORIZONTAL,
   H_SCROLL_THUMB_STYLE,
   H_SCROLL_THUMB_STYLE_HORIZONTAL
 } from "./scroll";
+export {
+  kitLabel,
+  kitLabelFor,
+  kitLabelWith,
+  setKitLabelResolver
+} from "./labels";
+export type { KitLabel, KitLabelResolver, KitLabelWithLabel } from "./labels";
+export { formatSliderValue, sliderDecimals } from "./slider-format";
 export { useHandyTheme } from "./useHandyTheme";
 export { useGlassOnScroll } from "./useGlassOnScroll";
+export { usePinnableTip } from "./usePinnableTip";

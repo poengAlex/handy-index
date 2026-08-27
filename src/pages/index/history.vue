@@ -13,7 +13,7 @@
     </div>
 
     <div v-else-if="catalog.status !== 'ready'" class="history-page__loading">
-      <HandyLoader :loading-label="$t('kit.loading')" />
+      <HandyLoader />
     </div>
 
     <div v-else class="h-section">
@@ -57,10 +57,7 @@
 
     <!-- one click from the header, so it asks first (same as the home shelf) -->
     <q-dialog v-model="clearOpen">
-      <HModal
-        :title="$t('library.history.clearTitle')"
-        :close-label="$t('kit.close')"
-      >
+      <HModal :title="$t('library.history.clearTitle')">
         {{ $t("library.history.clearBody") }}
         <template #actions>
           <HBtn

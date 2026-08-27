@@ -55,4 +55,12 @@ function answer(accepted: boolean) {
 .consent-dialog__body {
   margin: 0;
 }
+
+@media (max-width: 599px) {
+  // Stack the actions; reversed so Accept (last in DOM, primary) sits on top.
+  :deep(.h-modal__actions) {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+}
 </style>

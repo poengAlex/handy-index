@@ -36,6 +36,14 @@ const settings: typeof enUS = {
   backgroundMotionLabel: "動き",
   backgroundMotionCaption:
     "背景をゆっくり動かし、ページを切り替えたときに少しだけ速めます",
+
+  backgroundScroll: {
+    title: "スクロール時の背景",
+    pinned: "動かさない",
+    parallax: "ページよりゆっくり動く",
+    travels: "ページと一緒に動く",
+    banded: "ページ上部だけ"
+  },
   orientationTitle: "性的指向",
 
   access: {

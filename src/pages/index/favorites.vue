@@ -13,7 +13,7 @@
     </div>
 
     <div v-else-if="catalog.status !== 'ready'" class="favorites-page__loading">
-      <HandyLoader :loading-label="$t('kit.loading')" />
+      <HandyLoader />
     </div>
 
     <div v-else class="h-section">

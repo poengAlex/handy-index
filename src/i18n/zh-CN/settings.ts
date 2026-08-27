@@ -35,6 +35,14 @@ const settings: typeof enUS = {
   backgroundSceneOff: "关闭",
   backgroundMotionLabel: "动效",
   backgroundMotionCaption: "让背景缓缓流动，切换页面时短暂加速",
+
+  backgroundScroll: {
+    title: "滚动时的背景",
+    pinned: "保持不动",
+    parallax: "比页面移动得慢",
+    travels: "跟随页面移动",
+    banded: "只在页面顶部"
+  },
   orientationTitle: "取向",
 
   access: {

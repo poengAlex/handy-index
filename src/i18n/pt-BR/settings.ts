@@ -37,6 +37,14 @@ const settings: typeof enUS = {
   backgroundMotionLabel: "Movimento",
   backgroundMotionCaption:
     "Deixar o plano de fundo se mover, com um impulso rápido ao mudar de página",
+
+  backgroundScroll: {
+    title: "Plano de fundo ao rolar",
+    pinned: "Fica parado",
+    parallax: "Move mais devagar que a página",
+    travels: "Move junto com a página",
+    banded: "Só no topo da página"
+  },
   orientationTitle: "Orientação",
 
   access: {

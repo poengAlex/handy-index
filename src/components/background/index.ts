@@ -32,6 +32,7 @@ export {
   lensScopeIds,
   paletteColors,
   presets,
+  type Attach,
   type LensScope,
   type LensSettings,
   type Preset,

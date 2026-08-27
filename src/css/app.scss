@@ -871,3 +871,83 @@ input[type="number"] {
     scroll-behavior: auto;
   }
 }
+
+// ------------------------------------------------------------
+// Synced from brand-ux/src/css/app.scss
+// ------------------------------------------------------------
+// HModal and the other kit components delegate their scrollbar skin to
+// these rules, but app.scss is hand-merged per repo rather than copied —
+// so a kit sync alone leaves them relying on styles that aren't here.
+// Keep this block in step with upstream when the kit is resynced.
+
+// Scrollbars
+// ------------------------------------------------------------
+// No native OS bar anywhere in the app. In-app scroll regions use
+// q-scroll-area with the shared skin (components/handy/scroll.ts); the
+// surfaces Quasar scrolls natively — the window, q-menu / q-select popups,
+// a dialog taller than the viewport — get the same slim token-coloured
+// thumb on an invisible track here. Both rules are specificity 0, so
+// Quasar's own `.hide-scrollbar` (which is how q-scroll-area suppresses the
+// native bar behind its custom thumb) still wins inside a scroll area.
+* {
+  scrollbar-width: thin; // Firefox
+  scrollbar-color: color-mix(
+      in srgb,
+      var(--color-stroke-default) 65%,
+      transparent
+    )
+    transparent;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track,
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+// the transparent border + content-box clip leave a 4px visible thumb —
+// the same width as the q-scroll-area skin, with breathing room around it
+::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--color-stroke-default) 65%, transparent);
+  background-clip: content-box;
+  border: 2px solid transparent;
+  border-radius: var(--radius-full);
+}
+
+// ------------------------------------------------------------
+// Room for a slider handle inside a scroll region
+// ------------------------------------------------------------
+// THE FIX for a panel or dialog that is "slightly too wide" and has grown a
+// horizontal scrollbar it can only scroll by a hair.
+//
+// Quasar's slider handle is a 40px box centred on its own position, so a
+// slider sitting at either END of its track hangs 20px outside the width it
+// was given. On an ordinary surface nobody notices — the overhang lands in
+// the parent's padding. Inside a scroll container it is scrollable overflow,
+// and because `overflow-y: auto` computes `overflow-x` to `auto` as well (the
+// spec will not let one axis stay visible while the other scrolls), the whole
+// region grows a horizontal scrollbar with exactly 20px of travel.
+//
+// It bites where the scroll box's width is FIXED rather than shrink-to-fit —
+// a dialog body, most often, because the card caps at 560px. A menu that
+// sizes to its content simply comes out 20px wider and shows nothing.
+//
+// Clipping it (`overflow-x: clip`) is the wrong fix: it slices the handle in
+// half at both ends of the track, which is exactly where a value of 0 or 100
+// puts it. Instead, pad the scroll box by the overhang and take the same
+// amount back off the outside — content lands precisely where it did, and
+// only the scrollbar moves outwards, into padding the parent already had.
+//
+// Goes on the SCROLLING element, and only where the parent has that much to
+// give back (an HModal card has 32px of padding). A control with a fatter
+// handle overrides the token rather than the rule.
+.slider-thumb-room {
+  --slider-thumb-overhang: 20px;
+
+  padding-inline: var(--slider-thumb-overhang);
+  margin-inline: calc(-1 * var(--slider-thumb-overhang));
+}

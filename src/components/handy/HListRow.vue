@@ -25,6 +25,9 @@
       <q-item-label v-if="caption" class="h-list-row__caption text-body-sm">{{
         caption
       }}</q-item-label>
+      <div v-if="$slots.below" class="h-list-row__below">
+        <slot name="below" />
+      </div>
     </q-item-section>
 
     <q-item-section
@@ -36,6 +39,11 @@
         <q-icon name="chevron_right" size="20px" class="h-list-row__chevron" />
       </slot>
     </q-item-section>
+
+    <!-- attaches to the row itself — a q-tooltip passed here hovers the
+         whole tap target, not one of its sections. Out-of-flow children
+         only; anything with layout would land inside the row's flex line. -->
+    <slot />
   </q-item>
 </template>
 
@@ -44,7 +52,10 @@
 // Card rules, row-list form). Card surface, hover tint, 52px min target;
 // HList draws the inset hairline when grouped. The #leading slot takes a
 // radio, the #trailing slot a toggle/value; otherwise a chevron
-// promises the forward page transition. The whole row is the tap target.
+// promises the forward page transition. The #below slot takes supplementary
+// content under the caption (a spec line, chips) — the row grows for it, so
+// keep it quiet. The default slot is for out-of-flow children — a
+// q-tooltip for the row's shortcut, say. The whole row is the tap target.
 const props = withDefaults(
   defineProps<{
     label: string;
@@ -79,7 +90,10 @@ function onClick() {
   min-height: 52px;
   padding: var(--space-sm) var(--space-md);
   color: var(--color-text-primary);
-  // rows with `to` render as anchors — no link underline (same as HNavCard)
+  // `to` renders the row as a router-link <a>, which app.scss's global
+  // `a:hover { text-decoration: underline }` (0,1,1) then claims. !important
+  // rather than a heavier selector, matching HNavCard / HDrawerItem /
+  // HProductCard, which all solved this the same way.
   text-decoration: none !important;
 }
 
@@ -110,6 +124,13 @@ function onClick() {
 }
 
 .h-list-row__caption {
+  color: var(--color-text-secondary);
+}
+
+// supplementary block under the caption — quiet by default, its own content
+// decides the type scale
+.h-list-row__below {
+  margin-top: 4px;
   color: var(--color-text-secondary);
 }
 

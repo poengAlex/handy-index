@@ -1,7 +1,7 @@
 <template>
   <q-page class="video-page">
     <div v-if="state === 'loading'" class="video-page__loading">
-      <HandyLoader :loading-label="$t('kit.loading')" />
+      <HandyLoader />
     </div>
 
     <div v-else-if="state === 'missing'" class="h-section">
@@ -325,7 +325,7 @@
               v-if="commentsState === 'loading' || commentsState === 'idle'"
               class="video-page__comments-loading"
             >
-              <HandyLoader :size="32" :loading-label="$t('kit.loading')" />
+              <HandyLoader :size="32" />
             </div>
             <p
               v-else-if="commentsState === 'error'"

@@ -96,7 +96,7 @@
       </div>
 
       <div v-else-if="catalog.status !== 'ready'" class="videos-page__loading">
-        <HandyLoader :loading-label="$t('kit.loading')" />
+        <HandyLoader />
       </div>
 
       <template v-else>
@@ -144,185 +144,181 @@
       <HModal
         :title="$t('browse.filters.title')"
         closable
-        :close-label="$t('kit.close')"
         class="videos-page__filters"
       >
-        <ModalScroll>
-          <div class="videos-page__filters-stack">
-            <q-select
-              :model-value="null"
-              :options="tagOptions"
-              emit-value
-              map-options
-              use-input
-              input-debounce="150"
-              filled
-              dense
-              :label="$t('browse.filters.addTag')"
-              @filter="filterTags"
-              @update:model-value="addTag"
+        <div class="videos-page__filters-stack">
+          <q-select
+            :model-value="null"
+            :options="tagOptions"
+            emit-value
+            map-options
+            use-input
+            input-debounce="150"
+            filled
+            dense
+            :label="$t('browse.filters.addTag')"
+            @filter="filterTags"
+            @update:model-value="addTag"
+          >
+            <template #prepend>
+              <q-icon name="sell" />
+            </template>
+            <template #no-option>
+              <q-item>
+                <q-item-section class="text-body-sm">
+                  {{ $t("browse.filters.noTags") }}
+                </q-item-section>
+              </q-item>
+            </template>
+          </q-select>
+
+          <q-select
+            :model-value="partnerId || null"
+            :options="siteOptions"
+            emit-value
+            map-options
+            use-input
+            input-debounce="150"
+            filled
+            dense
+            :label="$t('browse.filters.site')"
+            @filter="filterSites"
+            @update:model-value="setPartner"
+          >
+            <template #prepend>
+              <q-icon name="language" />
+            </template>
+            <template #no-option>
+              <q-item>
+                <q-item-section class="text-body-sm">
+                  {{ $t("browse.filters.noSites") }}
+                </q-item-section>
+              </q-item>
+            </template>
+          </q-select>
+
+          <q-select
+            :model-value="performerId || null"
+            :display-value="performerDisplay"
+            :options="performerOptions"
+            emit-value
+            map-options
+            use-input
+            clearable
+            input-debounce="150"
+            filled
+            dense
+            :label="$t('browse.filters.performer')"
+            @filter="filterPerformers"
+            @update:model-value="setPerformer"
+          >
+            <template #prepend>
+              <q-icon name="person" />
+            </template>
+            <template #no-option>
+              <q-item>
+                <q-item-section class="text-body-sm">
+                  {{ $t("browse.filters.noPerformers") }}
+                </q-item-section>
+              </q-item>
+            </template>
+          </q-select>
+
+          <div v-if="chips.length" class="videos-page__chips">
+            <button
+              v-for="chip in chips"
+              :key="chip.key"
+              type="button"
+              class="videos-page__chip"
+              :aria-label="chipRemoveAria(chip)"
+              @click="chip.remove()"
             >
-              <template #prepend>
-                <q-icon name="sell" />
-              </template>
-              <template #no-option>
-                <q-item>
-                  <q-item-section class="text-body-sm">
-                    {{ $t("browse.filters.noTags") }}
-                  </q-item-section>
-                </q-item>
-              </template>
-            </q-select>
-
-            <q-select
-              :model-value="partnerId || null"
-              :options="siteOptions"
-              emit-value
-              map-options
-              use-input
-              input-debounce="150"
-              filled
-              dense
-              :label="$t('browse.filters.site')"
-              @filter="filterSites"
-              @update:model-value="setPartner"
-            >
-              <template #prepend>
-                <q-icon name="language" />
-              </template>
-              <template #no-option>
-                <q-item>
-                  <q-item-section class="text-body-sm">
-                    {{ $t("browse.filters.noSites") }}
-                  </q-item-section>
-                </q-item>
-              </template>
-            </q-select>
-
-            <q-select
-              :model-value="performerId || null"
-              :display-value="performerDisplay"
-              :options="performerOptions"
-              emit-value
-              map-options
-              use-input
-              clearable
-              input-debounce="150"
-              filled
-              dense
-              :label="$t('browse.filters.performer')"
-              @filter="filterPerformers"
-              @update:model-value="setPerformer"
-            >
-              <template #prepend>
-                <q-icon name="person" />
-              </template>
-              <template #no-option>
-                <q-item>
-                  <q-item-section class="text-body-sm">
-                    {{ $t("browse.filters.noPerformers") }}
-                  </q-item-section>
-                </q-item>
-              </template>
-            </q-select>
-
-            <div v-if="chips.length" class="videos-page__chips">
-              <button
-                v-for="chip in chips"
-                :key="chip.key"
-                type="button"
-                class="videos-page__chip"
-                :aria-label="chipRemoveAria(chip)"
-                @click="chip.remove()"
-              >
-                <HChip :icon="chip.icon">
-                  {{ chip.label }}
-                  <q-icon
-                    name="close"
-                    size="16px"
-                    class="videos-page__chip-close"
-                  />
-                </HChip>
-              </button>
-            </div>
-
-            <HList>
-              <HToggleRow
-                :model-value="vr"
-                icon="view_in_ar"
-                :label="$t('browse.filters.vrLabel')"
-                :caption="$t('browse.filters.vrCaption')"
-                @update:model-value="setVr"
-              />
-            </HList>
-
-            <!-- The global settings gates. They ride in the URL so a shared
-                 link reproduces this grid, but they stay preferences rather
-                 than page filters: they don't count toward the badge, and
-                 Clear filters leaves them alone. -->
-            <HList :title="$t('browse.filters.orientation')">
-              <HRadioRow
-                v-for="option in ORIENTATIONS"
-                :key="option"
-                v-model="settings.orientation"
-                :val="option"
-                :label="format.orientation(option)"
-              />
-            </HList>
-
-            <HList :title="$t('browse.filters.access')">
-              <HToggleRow
-                v-model="settings.showPremiumScripts"
-                icon="workspace_premium"
-                :label="$t('browse.filters.premiumScriptsLabel')"
-                :caption="$t('browse.filters.premiumScriptsCaption')"
-              />
-              <HToggleRow
-                v-model="settings.showPaidVideos"
-                icon="paid"
-                :label="$t('browse.filters.premiumVideosLabel')"
-                :caption="$t('browse.filters.premiumVideosCaption')"
-              />
-            </HList>
-
-            <!-- the third gate, and the only one with no control in the
-                 browsing chrome: a single common tag can carry half the
-                 index, so it is listed here with the others rather than
-                 living solely behind the hidden-count notice -->
-            <HList>
-              <HListRow
-                icon="block"
-                :label="$t('browse.filters.mutedLabel')"
-                :caption="mutedCaption"
-                :clickable="false"
-              >
-                <template #trailing>
-                  <HBtn
-                    variant="tertiary"
-                    size="sm"
-                    :label="$t('common.action.manage')"
-                    @click="mutedTagsOpen = true"
-                  />
-                </template>
-              </HListRow>
-            </HList>
-
-            <HLabeledSlider
-              :model-value="durationInput"
-              :label="$t('browse.filters.duration')"
-              v-bind="sliderAria($t('browse.filters.duration'))"
-              unit="min"
-              :min="0"
-              :max="DURATION_MAX"
-              :step="1"
-              :editable="false"
-              @update:model-value="onDurationInput"
-              @change="commitDuration"
-            >
-              <template #value>{{ durationLabel }}</template>
-            </HLabeledSlider>
+              <HChip :icon="chip.icon">
+                {{ chip.label }}
+                <q-icon
+                  name="close"
+                  size="16px"
+                  class="videos-page__chip-close"
+                />
+              </HChip>
+            </button>
           </div>
-        </ModalScroll>
+
+          <HList>
+            <HToggleRow
+              :model-value="vr"
+              icon="view_in_ar"
+              :label="$t('browse.filters.vrLabel')"
+              :caption="$t('browse.filters.vrCaption')"
+              @update:model-value="setVr"
+            />
+          </HList>
+
+          <!-- The global settings gates. They ride in the URL so a shared
+               link reproduces this grid, but they stay preferences rather
+               than page filters: they don't count toward the badge, and
+               Clear filters leaves them alone. -->
+          <HList :title="$t('browse.filters.orientation')">
+            <HRadioRow
+              v-for="option in ORIENTATIONS"
+              :key="option"
+              v-model="settings.orientation"
+              :val="option"
+              :label="format.orientation(option)"
+            />
+          </HList>
+
+          <HList :title="$t('browse.filters.access')">
+            <HToggleRow
+              v-model="settings.showPremiumScripts"
+              icon="workspace_premium"
+              :label="$t('browse.filters.premiumScriptsLabel')"
+              :caption="$t('browse.filters.premiumScriptsCaption')"
+            />
+            <HToggleRow
+              v-model="settings.showPaidVideos"
+              icon="paid"
+              :label="$t('browse.filters.premiumVideosLabel')"
+              :caption="$t('browse.filters.premiumVideosCaption')"
+            />
+          </HList>
+
+          <!-- the third gate, and the only one with no control in the
+               browsing chrome: a single common tag can carry half the
+               index, so it is listed here with the others rather than
+               living solely behind the hidden-count notice -->
+          <HList>
+            <HListRow
+              icon="block"
+              :label="$t('browse.filters.mutedLabel')"
+              :caption="mutedCaption"
+              :clickable="false"
+            >
+              <template #trailing>
+                <HBtn
+                  variant="tertiary"
+                  size="sm"
+                  :label="$t('common.action.manage')"
+                  @click="mutedTagsOpen = true"
+                />
+              </template>
+            </HListRow>
+          </HList>
+
+          <HLabeledSlider
+            :model-value="durationInput"
+            :label="$t('browse.filters.duration')"
+            unit="min"
+            :min="0"
+            :max="DURATION_MAX"
+            :step="1"
+            :editable="false"
+            @update:model-value="onDurationInput"
+            @change="commitDuration"
+          >
+            <template #value>{{ durationLabel }}</template>
+          </HLabeledSlider>
+        </div>
 
         <template #actions>
           <HBtn
@@ -365,10 +361,8 @@ import {
 } from "@/components/handy";
 import type { HLabeledSliderRange } from "@/components/handy/HLabeledSlider.vue";
 import GateNotice from "@/components/GateNotice.vue";
-import ModalScroll from "@/components/ModalScroll.vue";
 import MutedTagsDialog from "@/components/MutedTagsDialog.vue";
 import VideoGrid from "@/components/VideoGrid.vue";
-import { useKitLabels } from "@/composables/useKitLabels";
 import { useFormat } from "@/composables/useFormat";
 import type { Orientation } from "@/services/script-index/queries";
 import {
@@ -462,8 +456,6 @@ interface FilterChip {
 }
 
 const { t, n } = useI18n();
-const { sliderAria } = useKitLabels();
-
 const format = useFormat();
 const route = useRoute();
 const router = useRouter();

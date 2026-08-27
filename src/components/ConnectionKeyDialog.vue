@@ -3,11 +3,7 @@
     :model-value="modelValue"
     @update:model-value="emit('update:modelValue', $event)"
   >
-    <HModal
-      :title="$t('settings.keyPrompt.title')"
-      closable
-      :close-label="$t('kit.close')"
-    >
+    <HModal :title="$t('settings.keyPrompt.title')" closable>
       <slot>{{ $t("settings.keyPrompt.body") }}</slot>
       <q-input
         ref="inputRef"

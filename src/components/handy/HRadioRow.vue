@@ -16,7 +16,7 @@
       />
     </template>
     <template v-if="recommended" #suffix>
-      <span class="h-radio-row__pill">{{ recommendedLabel }}</span>
+      <span class="h-radio-row__pill">{{ kitLabel("recommended") }}</span>
     </template>
   </HListRow>
 </template>
@@ -27,6 +27,7 @@
 // `recommended` rides a quiet pill next to the label. Group the options in
 // one HList — picking a boot mode is one choice, so it's one card (§6).
 import HListRow from "@/components/handy/HListRow.vue";
+import { kitLabel } from "@/components/handy/labels";
 
 withDefaults(
   defineProps<{
@@ -36,15 +37,8 @@ withDefaults(
     caption?: string;
     icon?: string;
     recommended?: boolean;
-    /** Text of the `recommended` pill. */
-    recommendedLabel?: string;
   }>(),
-  {
-    caption: "",
-    icon: "",
-    recommended: false,
-    recommendedLabel: "Recommended"
-  }
+  { caption: "", icon: "", recommended: false }
 );
 
 const emit = defineEmits<{ "update:modelValue": [value: T] }>();

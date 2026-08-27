@@ -23,15 +23,13 @@ const kit: typeof enUS = {
   // in front instead, where the bare form is just as safe.
   // "Mindestwert"/"Höchstwert" are a matched pair the way
   // "minimum"/"maximum" are.
-  slider: {
-    reset: "{label} zurücksetzen",
-    value: "Wert für {label}",
-    editValue: "Wert für {label} ändern",
-    min: "Mindestwert für {label}",
-    editMin: "Mindestwert für {label} ändern",
-    max: "Höchstwert für {label}",
-    editMax: "Höchstwert für {label} ändern"
-  }
+  sliderReset: "{label} zurücksetzen",
+  sliderValue: "Wert für {label}",
+  sliderEditValue: "Wert für {label} ändern",
+  sliderMin: "Mindestwert für {label}",
+  sliderEditMin: "Mindestwert für {label} ändern",
+  sliderMax: "Höchstwert für {label}",
+  sliderEditMax: "Höchstwert für {label} ändern"
 };
 
 export default kit;

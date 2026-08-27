@@ -14,11 +14,16 @@
 
          motion="still" is how the motion switch is spent: the look stays
          exactly as tuned and only the movement stops. Passing null instead
-         leaves the scene's own motion alone. -->
+         leaves the scene's own motion alone.
+
+         attach is always passed rather than left to the scene, because it is
+         a setting now: both scenes say parallax, and a user who picked
+         "stays put" must get it whichever look is on. -->
     <HandyBackground
       v-if="bgScene"
       ref="bg"
       :scene="bgScene"
+      :attach="settings.backgroundAttach"
       :motion="settings.backgroundMotion ? null : 'still'"
       mount="none"
     />

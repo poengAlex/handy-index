@@ -3,155 +3,162 @@
     :model-value="modelValue"
     @update:model-value="emit('update:modelValue', $event)"
   >
-    <HModal
-      :title="$t('settings.title')"
-      closable
-      :close-label="$t('kit.close')"
-      class="settings-modal"
-    >
-      <ModalScroll>
-        <div class="settings-modal__stack">
-          <LanguagePicker />
+    <HModal :title="$t('settings.title')" closable class="settings-modal">
+      <div class="settings-modal__stack">
+        <LanguagePicker />
 
-          <HList>
-            <HToggleRow
-              v-model="darkMode"
-              icon="dark_mode"
-              :label="$t('settings.display.darkModeLabel')"
-              :caption="$t('settings.display.darkModeCaption')"
-            />
-            <HToggleRow
-              v-model="settings.nsfw"
-              icon="visibility"
-              :label="$t('settings.display.nsfwLabel')"
-              :caption="$t('settings.display.nsfwCaption')"
-            />
-            <HToggleRow
-              v-model="settings.inlinePlayers"
-              icon="play_circle"
-              :label="$t('settings.display.playersLabel')"
-              :caption="$t('settings.display.playersCaption')"
-            />
-            <HToggleRow
-              v-model="settings.fullWidth"
-              icon="fit_screen"
-              :label="$t('settings.display.fullWidthLabel')"
-              :caption="$t('settings.display.fullWidthCaption')"
-            />
-            <HListRow
-              icon="block"
-              :label="$t('settings.muted.label')"
-              :caption="mutedCaption"
-              :clickable="false"
-            >
-              <template #trailing>
-                <HBtn
-                  variant="tertiary"
-                  size="sm"
-                  :label="$t('common.action.manage')"
-                  @click="mutedTagsOpen = true"
-                />
-              </template>
-            </HListRow>
-          </HList>
+        <HList>
+          <HToggleRow
+            v-model="darkMode"
+            icon="dark_mode"
+            :label="$t('settings.display.darkModeLabel')"
+            :caption="$t('settings.display.darkModeCaption')"
+          />
+          <HToggleRow
+            v-model="settings.nsfw"
+            icon="visibility"
+            :label="$t('settings.display.nsfwLabel')"
+            :caption="$t('settings.display.nsfwCaption')"
+          />
+          <HToggleRow
+            v-model="settings.inlinePlayers"
+            icon="play_circle"
+            :label="$t('settings.display.playersLabel')"
+            :caption="$t('settings.display.playersCaption')"
+          />
+          <HToggleRow
+            v-model="settings.fullWidth"
+            icon="fit_screen"
+            :label="$t('settings.display.fullWidthLabel')"
+            :caption="$t('settings.display.fullWidthCaption')"
+          />
+          <HListRow
+            icon="block"
+            :label="$t('settings.muted.label')"
+            :caption="mutedCaption"
+            :clickable="false"
+          >
+            <template #trailing>
+              <HBtn
+                variant="tertiary"
+                size="sm"
+                :label="$t('common.action.manage')"
+                @click="mutedTagsOpen = true"
+              />
+            </template>
+          </HListRow>
+        </HList>
 
-          <HList :title="$t('settings.orientationTitle')">
-            <HRadioRow
-              v-for="option in ORIENTATIONS"
-              :key="option"
-              v-model="settings.orientation"
-              :val="option"
-              :label="orientation(option)"
-            />
-          </HList>
+        <HList :title="$t('settings.orientationTitle')">
+          <HRadioRow
+            v-for="option in ORIENTATIONS"
+            :key="option"
+            v-model="settings.orientation"
+            :val="option"
+            :label="orientation(option)"
+          />
+        </HList>
 
-          <HList :title="$t('settings.access.title')">
-            <HToggleRow
-              v-model="settings.showPremiumScripts"
-              icon="workspace_premium"
-              :label="$t('settings.access.premiumScriptsLabel')"
-              :caption="$t('settings.access.premiumScriptsCaption')"
-            />
-            <HToggleRow
-              v-model="settings.showPaidVideos"
-              icon="paid"
-              :label="$t('settings.access.premiumVideosLabel')"
-              :caption="$t('settings.access.premiumVideosCaption')"
-            />
-          </HList>
+        <HList :title="$t('settings.access.title')">
+          <HToggleRow
+            v-model="settings.showPremiumScripts"
+            icon="workspace_premium"
+            :label="$t('settings.access.premiumScriptsLabel')"
+            :caption="$t('settings.access.premiumScriptsCaption')"
+          />
+          <HToggleRow
+            v-model="settings.showPaidVideos"
+            icon="paid"
+            :label="$t('settings.access.premiumVideosLabel')"
+            :caption="$t('settings.access.premiumVideosCaption')"
+          />
+        </HList>
 
-          <div class="settings-modal__block">
-            <div class="text-body-compact settings-modal__label">
-              {{ $t("settings.previews.title") }}
-            </div>
-            <div
-              class="text-caption settings-modal__hint settings-modal__hint--lead"
-            >
-              {{ $t("settings.previews.hint") }}
-            </div>
-            <HLabeledSlider
-              :model-value="frameSeconds"
-              :label="$t('settings.previews.imageSpeed')"
-              v-bind="sliderAria($t('settings.previews.imageSpeed'))"
-              unit="s"
-              :min="PREVIEW_FRAME_MS.min / 1000"
-              :max="PREVIEW_FRAME_MS.max / 1000"
-              :step="PREVIEW_FRAME_MS.step / 1000"
-              :decimals="1"
-              :reset="PREVIEW_FRAME_MS.default / 1000"
-              @update:model-value="setFrameSeconds"
-            />
-            <HLabeledSlider
-              v-model="settings.previewClipRate"
-              :label="$t('settings.previews.clipSpeed')"
-              v-bind="sliderAria($t('settings.previews.clipSpeed'))"
-              unit="×"
-              :min="PREVIEW_CLIP_RATE.min"
-              :max="PREVIEW_CLIP_RATE.max"
-              :step="PREVIEW_CLIP_RATE.step"
-              :decimals="2"
-              :reset="PREVIEW_CLIP_RATE.default"
-            />
+        <div class="settings-modal__block">
+          <div class="text-body-compact settings-modal__label">
+            {{ $t("settings.previews.title") }}
           </div>
-
-          <div>
-            <div class="text-body-compact settings-modal__label">
-              {{ $t("settings.connectionKey.label") }}
-            </div>
-            <q-input
-              :model-value="settings.connectionKey"
-              filled
-              dense
-              maxlength="32"
-              :placeholder="$t('settings.connectionKey.placeholder')"
-              :aria-label="$t('settings.connectionKey.label')"
-              @update:model-value="onKeyInput(String($event ?? ''))"
-            />
-            <div class="text-caption settings-modal__hint">
-              {{ $t("settings.connectionKey.hint") }}
-            </div>
+          <div
+            class="text-caption settings-modal__hint settings-modal__hint--lead"
+          >
+            {{ $t("settings.previews.hint") }}
           </div>
-
-          <HList :title="$t('settings.backgroundSceneTitle')">
-            <HRadioRow
-              v-for="option in BACKGROUND_STYLES"
-              :key="option"
-              v-model="settings.backgroundScene"
-              :val="option"
-              :label="styleLabel(option)"
-            />
-            <!-- only once something is rendering: a motion switch for a
-                 background nobody is drawing is a dead control -->
-            <HToggleRow
-              v-if="settings.backgroundScene !== 'off'"
-              v-model="settings.backgroundMotion"
-              icon="animation"
-              :label="$t('settings.backgroundMotionLabel')"
-              :caption="$t('settings.backgroundMotionCaption')"
-            />
-          </HList>
+          <HLabeledSlider
+            :model-value="frameSeconds"
+            :label="$t('settings.previews.imageSpeed')"
+            unit="s"
+            :min="PREVIEW_FRAME_MS.min / 1000"
+            :max="PREVIEW_FRAME_MS.max / 1000"
+            :step="PREVIEW_FRAME_MS.step / 1000"
+            :decimals="1"
+            :reset="PREVIEW_FRAME_MS.default / 1000"
+            @update:model-value="setFrameSeconds"
+          />
+          <HLabeledSlider
+            v-model="settings.previewClipRate"
+            :label="$t('settings.previews.clipSpeed')"
+            unit="×"
+            :min="PREVIEW_CLIP_RATE.min"
+            :max="PREVIEW_CLIP_RATE.max"
+            :step="PREVIEW_CLIP_RATE.step"
+            :decimals="2"
+            :reset="PREVIEW_CLIP_RATE.default"
+          />
         </div>
-      </ModalScroll>
+
+        <div>
+          <div class="text-body-compact settings-modal__label">
+            {{ $t("settings.connectionKey.label") }}
+          </div>
+          <q-input
+            :model-value="settings.connectionKey"
+            filled
+            dense
+            maxlength="32"
+            :placeholder="$t('settings.connectionKey.placeholder')"
+            :aria-label="$t('settings.connectionKey.label')"
+            @update:model-value="onKeyInput(String($event ?? ''))"
+          />
+          <div class="text-caption settings-modal__hint">
+            {{ $t("settings.connectionKey.hint") }}
+          </div>
+        </div>
+
+        <HList :title="$t('settings.backgroundSceneTitle')">
+          <HRadioRow
+            v-for="option in BACKGROUND_STYLES"
+            :key="option"
+            v-model="settings.backgroundScene"
+            :val="option"
+            :label="styleLabel(option)"
+          />
+          <!-- only once something is rendering: a motion switch for a
+               background nobody is drawing is a dead control -->
+          <HToggleRow
+            v-if="settings.backgroundScene !== 'off'"
+            v-model="settings.backgroundMotion"
+            icon="animation"
+            :label="$t('settings.backgroundMotionLabel')"
+            :caption="$t('settings.backgroundMotionCaption')"
+          />
+        </HList>
+
+        <!-- same reasoning as the motion switch: hidden while nothing is
+             being drawn, because how a background answers the scroll is not
+             a question about a background that isn't there -->
+        <HList
+          v-if="settings.backgroundScene !== 'off'"
+          :title="$t('settings.backgroundScroll.title')"
+        >
+          <HRadioRow
+            v-for="option in BACKGROUND_ATTACHMENTS"
+            :key="option"
+            v-model="settings.backgroundAttach"
+            :val="option"
+            :label="scrollLabel(option)"
+          />
+        </HList>
+      </div>
 
       <template #actions>
         <HBtn
@@ -187,15 +194,15 @@ import {
 } from "@/components/handy";
 import ClearDataDialog from "@/components/ClearDataDialog.vue";
 import LanguagePicker from "@/components/LanguagePicker.vue";
-import ModalScroll from "@/components/ModalScroll.vue";
 import MutedTagsDialog from "@/components/MutedTagsDialog.vue";
 import { useFormat } from "@/composables/useFormat";
-import { useKitLabels } from "@/composables/useKitLabels";
 import { sanitizeConnectionKey } from "@/services/format";
 import { ORIENTATIONS } from "@/services/script-index/queries";
 import {
+  BACKGROUND_ATTACHMENTS,
   BACKGROUND_SCENE_LABELS,
   BACKGROUND_STYLES,
+  type BackgroundAttachment,
   type BackgroundStyle,
   PREVIEW_CLIP_RATE,
   PREVIEW_FRAME_MS,
@@ -205,8 +212,6 @@ import {
 defineProps<{ modelValue: boolean }>();
 
 const emit = defineEmits<{ "update:modelValue": [value: boolean] }>();
-
-const { sliderAria } = useKitLabels();
 
 const settings = useSettingsStore();
 const { t } = useI18n();
@@ -233,6 +238,24 @@ function styleLabel(option: BackgroundStyle): string {
   return option === "off"
     ? t("settings.backgroundSceneOff")
     : BACKGROUND_SCENE_LABELS[option];
+}
+
+// The attachments, unlike the looks, are behaviours rather than names — so
+// they translate, and they are described rather than named: "parallax" and
+// "banded" are the component's vocabulary, not a word to put in front of
+// someone changing a setting. Spelled out as a switch, not a lookup built
+// from the ids, so every key is a literal the i18n gate can see.
+function scrollLabel(option: BackgroundAttachment): string {
+  switch (option) {
+    case "pinned":
+      return t("settings.backgroundScroll.pinned");
+    case "parallax":
+      return t("settings.backgroundScroll.parallax");
+    case "travels":
+      return t("settings.backgroundScroll.travels");
+    case "banded":
+      return t("settings.backgroundScroll.banded");
+  }
 }
 
 const clearDataOpen = ref(false);

@@ -16,15 +16,13 @@ const kit: typeof enUS = {
   // name ("Reset image speed"). It can't assemble them from pieces — English
   // word order isn't Norwegian's — so it takes each finished name as a prop
   // and this is where they're written.
-  slider: {
-    reset: "{label}をリセット",
-    value: "{label}の値",
-    editValue: "{label}の値を編集",
-    min: "{label}の最小値",
-    editMin: "{label}の最小値を編集",
-    max: "{label}の最大値",
-    editMax: "{label}の最大値を編集"
-  }
+  sliderReset: "{label}をリセット",
+  sliderValue: "{label}の値",
+  sliderEditValue: "{label}の値を編集",
+  sliderMin: "{label}の最小値",
+  sliderEditMin: "{label}の最小値を編集",
+  sliderMax: "{label}の最大値",
+  sliderEditMax: "{label}の最大値を編集"
 };
 
 export default kit;

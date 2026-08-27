@@ -7,7 +7,7 @@
       round
       icon="close"
       class="h-modal__close"
-      :aria-label="closeLabel"
+      :aria-label="kitLabel('close')"
       @click="emit('close')"
     />
     <h3 v-if="title" class="text-h4">{{ title }}</h3>
@@ -33,25 +33,23 @@
 //       </template>
 //     </HModal>
 //   </q-dialog>
-// `closeLabel` — and every other label prop across this folder — is what
-// keeps the kit portable: the components carry their own English, and an
-// app with more than one language hands them a translated string instead
-// of forking the folder (ARCHITECTURE.md: the kit is never forked).
-withDefaults(
-  defineProps<{
-    title?: string;
-    closable?: boolean;
-    /** Screen-reader name for the close button. */
-    closeLabel?: string;
-  }>(),
-  { title: "", closable: false, closeLabel: "Close" }
-);
+import { kitLabel } from "@/components/handy/labels";
+
+withDefaults(defineProps<{ title?: string; closable?: boolean }>(), {
+  title: "",
+  closable: false
+});
 
 const emit = defineEmits<{ close: [] }>();
 </script>
 
 <style scoped lang="scss">
 .h-modal {
+  // a slider handle paints its gap in the host surface's colour, and this
+  // surface is a card, not the page — on dark the two genuinely differ, so
+  // without this the handle wears a page-coloured halo
+  --h-slider-gap: var(--color-bg-card);
+
   position: relative;
   background: var(--color-bg-card);
   color: var(--color-text-primary);
@@ -60,6 +58,11 @@ const emit = defineEmits<{ close: [] }>();
   width: 100%;
   max-width: 560px;
   box-shadow: var(--shadow-xl);
+  // cap the card to the viewport and let the BODY scroll (below) instead of
+  // the dialog's default outer scroller — title + actions stay pinned
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100dvh - 2 * var(--space-lg));
 
   h3 {
     margin: 0;
@@ -77,6 +80,30 @@ const emit = defineEmits<{ close: [] }>();
 .h-modal__body {
   color: var(--color-text-secondary);
   margin: var(--space-sm) 0 var(--space-md);
+  // the body absorbs overflow so the card never grows a default outer scroller
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  // the slim scrollbar skin is global now (app.scss, "Scrollbars")
+
+  // A modal must never scroll sideways, and the usual reason it does is a
+  // slider: Quasar's handle is a 40px box centred on its position, so at
+  // either end of the track it hangs 20px past the width it was given. That
+  // overhang is scrollable overflow, and since `overflow-y: auto` forces the
+  // other axis to compute to `auto` too, the body grows a horizontal bar with
+  // about 20px of travel. Clipping is the wrong answer — it slices the handle
+  // in half exactly at 0 and 100 — so instead the box is padded by the
+  // overhang and given the same amount back as negative margin. Content lands
+  // where it always did; only the scrollbar moves outward, into padding the
+  // card already had (--space-lg is 32px, so 12px still remains).
+  //
+  // This is the app.scss `.slider-thumb-room` utility, inlined: HModal owes
+  // the guarantee to every project that copies it, and app.scss is
+  // hand-merged per repo rather than synced.
+  --slider-thumb-overhang: 20px;
+
+  padding-inline: var(--slider-thumb-overhang);
+  margin-inline: calc(-1 * var(--slider-thumb-overhang));
 }
 
 .h-modal__actions {

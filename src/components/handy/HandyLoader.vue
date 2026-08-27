@@ -3,7 +3,7 @@
     class="handy-loader"
     :style="{ width: `${size}px`, height: `${size}px` }"
     role="status"
-    :aria-label="loadingLabel"
+    :aria-label="kitLabel('loading')"
   >
     <svg
       viewBox="0 0 24 24"
@@ -30,14 +30,9 @@
 // asset extracted from handy-playground/public/brand. Hero moments only:
 // full-page route loads and splash screens. Color follows
 // --color-text-primary per the brand playground's .loader-handy.
-withDefaults(
-  defineProps<{
-    size?: number;
-    /** Screen-reader name for the spinner. */
-    loadingLabel?: string;
-  }>(),
-  { size: 48, loadingLabel: "Loading" }
-);
+import { kitLabel } from "@/components/handy/labels";
+
+withDefaults(defineProps<{ size?: number }>(), { size: 48 });
 </script>
 
 <style scoped lang="scss">

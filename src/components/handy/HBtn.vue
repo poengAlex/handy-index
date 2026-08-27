@@ -36,6 +36,15 @@ withDefaults(
 
 <style scoped lang="scss">
 .h-btn {
+  // `to` / `href` fall through to q-btn, which then renders an <a> — and
+  // app.scss's global `a:hover { text-decoration: underline }` (0,1,1) beats
+  // Quasar's own `.q-btn { text-decoration: none }` (0,1,0), so a button
+  // that navigates grows an underline the moment you point at it. A button
+  // is never a text link: the shape is the affordance. !important rather
+  // than a heavier selector, matching HNavCard / HDrawerItem / HListRow /
+  // HProductCard, which all solved this the same way.
+  text-decoration: none !important;
+
   border-radius: var(--radius-full);
   font-size: 14px;
   line-height: 143%;

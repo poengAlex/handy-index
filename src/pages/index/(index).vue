@@ -45,7 +45,7 @@
         </div>
       </MediaHero>
       <section v-else-if="catalog.status !== 'ready'" class="home-hero-loading">
-        <HandyLoader :loading-label="$t('kit.loading')" />
+        <HandyLoader />
       </section>
       <!-- ready but nothing to feature (filters/mutes emptied the pool):
            without this the page opens with neither hero nor loader -->
@@ -88,10 +88,7 @@
 
       <!-- Clearing viewing history is one click from the shelf, so it asks -->
       <q-dialog v-model="clearHistoryOpen">
-        <HModal
-          :title="$t('home.clearHistory.title')"
-          :close-label="$t('kit.close')"
-        >
+        <HModal :title="$t('home.clearHistory.title')">
           {{ $t("home.clearHistory.body") }}
           <template #actions>
             <HBtn

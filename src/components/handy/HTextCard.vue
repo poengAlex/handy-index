@@ -13,10 +13,10 @@
         'h-text-card__expand',
         { 'h-text-card__expand--faded': scrolled }
       ]"
-      :aria-label="expandLabel"
+      :aria-label="kitLabel('readFullText')"
       @click="expanded = true"
     >
-      <q-tooltip>{{ expandLabel }}</q-tooltip>
+      <q-tooltip>{{ kitLabel("readFullText") }}</q-tooltip>
     </q-btn>
 
     <!-- fixed height: q-scroll-area keeps the scrollbar inside the card's
@@ -42,7 +42,7 @@
     <!-- no scroll logic here on purpose: q-dialog scrolls tall content
          itself (its inner container is a scroll area) -->
     <q-dialog v-model="expanded">
-      <HModal :title="title" closable :close-label="closeLabel">
+      <HModal :title="title" closable>
         <div class="h-text-card__content text-body"><slot /></div>
       </HModal>
     </q-dialog>
@@ -62,6 +62,7 @@
 import { nextTick, onMounted, onUnmounted, ref, watch } from "vue";
 import type { QScrollArea } from "quasar";
 import HModal from "@/components/handy/HModal.vue";
+import { kitLabel } from "@/components/handy/labels";
 import {
   H_SCROLL_BAR_STYLE,
   H_SCROLL_THUMB_STYLE
@@ -73,18 +74,8 @@ const props = withDefaults(
     /** CSS length, e.g. "220px" — omit for natural (unscrolled) height */
     height?: string;
     expandable?: boolean;
-    /** Name of the expand action — screen reader and tooltip alike. */
-    expandLabel?: string;
-    /** Forwarded to the expanded view's HModal. */
-    closeLabel?: string;
   }>(),
-  {
-    title: "",
-    height: "",
-    expandable: true,
-    expandLabel: "Read the full text",
-    closeLabel: "Close"
-  }
+  { title: "", height: "", expandable: true }
 );
 
 const expanded = ref(false);

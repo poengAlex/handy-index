@@ -30,7 +30,7 @@
             v-if="catalog.status !== 'ready'"
             class="performers-page__center"
           >
-            <HandyLoader :loading-label="$t('kit.loading')" />
+            <HandyLoader />
           </div>
 
           <template v-else>
