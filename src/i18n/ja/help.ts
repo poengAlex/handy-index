@@ -119,6 +119,13 @@ const help: typeof enUS = {
       caption:
         "すべての動画ページと、絞り込んだ結果の一覧に、共有できるリンクがあります"
     }
+  },
+
+  about: {
+    title: "このサイトについて",
+    appCaption: "このサイトの説明、作っている人、使用中のバージョン",
+    changelogCaption: "サイトで変わったことすべて、新しい順に",
+    privacyCaption: "保存される内容、ブラウザーの外に出るもの、年齢の条件"
   }
 };
 

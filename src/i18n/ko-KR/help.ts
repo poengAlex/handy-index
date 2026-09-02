@@ -117,6 +117,14 @@ const help: typeof enUS = {
       caption:
         "모든 동영상 페이지와 필터를 건 결과 목록에는 공유할 수 있는 링크가 있어요"
     }
+  },
+
+  about: {
+    title: "이 사이트 소개",
+    appCaption: "이 사이트가 무엇인지, 누가 만드는지, 사용 중인 버전",
+    changelogCaption: "사이트에서 바뀐 모든 내용, 최신순",
+    privacyCaption:
+      "무엇이 저장되는지, 무엇이 브라우저를 떠나는지, 그리고 연령 제한"
   }
 };
 

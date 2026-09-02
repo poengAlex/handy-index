@@ -13,3 +13,9 @@
  * }
  */
 interface ImportMetaEnv {}
+
+/** Injected by quasar.config.ts — the version in package.json, and the
+ * moment this bundle was built (ISO). Both are shown in the About box and in
+ * the help-page footer; see src/services/build-info.ts. */
+declare const __APP_VERSION__: string;
+declare const __BUILD_DATE__: string;

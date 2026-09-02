@@ -26,6 +26,10 @@ export function useFormat() {
     () => new Intl.RelativeTimeFormat(locale.value, { numeric: "auto" })
   );
 
+  const dateFormat = computed(
+    () => new Intl.DateTimeFormat(locale.value, { dateStyle: "long" })
+  );
+
   /** A localized integer: "15,000" in English, "15 000" in Norwegian. */
   function num(value: number): string {
     return n(value);
@@ -102,5 +106,13 @@ export function useFormat() {
     return relativeFormat.value.format(span.value, span.unit);
   }
 
-  return { num, count, ofTotal, duration, orientation, relative };
+  /** "2 September 2026" / "2. september 2026" — a spelled-out date for the
+   * places a reader wants to read it rather than compare it (the build date
+   * under Help). Empty when there is nothing to show. */
+  function date(value?: Date): string {
+    if (!value || Number.isNaN(value.getTime())) return "";
+    return dateFormat.value.format(value);
+  }
+
+  return { num, count, ofTotal, duration, orientation, relative, date };
 }

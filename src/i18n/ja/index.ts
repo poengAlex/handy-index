@@ -1,3 +1,4 @@
+import about from "./about";
 import browse from "./browse";
 import common from "./common";
 import errors from "./errors";
@@ -22,6 +23,7 @@ import type enUSMessages from "../en-US";
 // Each namespace file is individually typed against its English twin;
 // this re-assertion catches a whole namespace going missing.
 const ja: typeof enUSMessages = {
+  about,
   browse,
   common,
   errors,

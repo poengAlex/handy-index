@@ -118,6 +118,15 @@ const help: typeof enUS = {
       caption:
         "Cada página de vídeo y cada lista de resultados filtrada tiene un enlace que se puede compartir"
     }
+  },
+
+  about: {
+    title: "Sobre este sitio",
+    appCaption: "Qué es este sitio, quién lo hace y qué versión estás usando",
+    changelogCaption:
+      "Todo lo que ha cambiado en el sitio, lo más reciente primero",
+    privacyCaption:
+      "Qué se guarda, qué sale de tu navegador y el requisito de edad"
   }
 };
 

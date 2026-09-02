@@ -121,6 +121,15 @@ const help: typeof enUS = {
       caption:
         "Hver videoside og hver filtrert resultatliste har en lenke du kan dele"
     }
+  },
+
+  about: {
+    title: "Om nettstedet",
+    appCaption:
+      "Hva nettstedet er, hvem som lager det, og hvilken versjon du bruker",
+    changelogCaption: "Alt som har endret seg på nettstedet, nyeste først",
+    privacyCaption:
+      "Hva som lagres, hva som forlater nettleseren din, og aldersgrensen"
   }
 };
 

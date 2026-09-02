@@ -15,6 +15,7 @@ import performers from "./performers";
 import playlists from "./playlists";
 import requests from "./requests";
 import help from "./help";
+import about from "./about";
 import privacy from "./privacy";
 import services from "./services";
 
@@ -40,6 +41,7 @@ const enUS = {
   playlists,
   requests,
   help,
+  about,
   privacy,
   services
 };

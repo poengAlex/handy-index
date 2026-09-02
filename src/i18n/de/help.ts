@@ -118,6 +118,16 @@ const help: typeof enUS = {
       caption:
         "Jede Videoseite und jede gefilterte Ergebnisliste hat einen Link zum Teilen"
     }
+  },
+
+  about: {
+    title: "Über diese Seite",
+    appCaption:
+      "Was diese Seite ist, wer sie macht und welche Version du benutzt",
+    changelogCaption:
+      "Alles, was sich auf der Seite geändert hat, das Neueste zuerst",
+    privacyCaption:
+      "Was gespeichert wird, was deinen Browser verlässt und die Altersgrenze"
   }
 };
 

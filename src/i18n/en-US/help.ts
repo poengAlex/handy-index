@@ -112,5 +112,16 @@ export default {
       caption:
         "Every video page and every filtered result list has a shareable link"
     }
+  },
+
+  // The last group on the page: the site talking about itself. Every row
+  // opens a dialog, so these captions say what is inside one — the labels
+  // are borrowed from the dialogs' own titles and are not repeated here.
+  about: {
+    title: "About this site",
+    appCaption: "What this site is, who makes it, and which version you're on",
+    changelogCaption: "Everything that has changed on the site, newest first",
+    privacyCaption:
+      "What's stored, what leaves your browser, and the age requirement"
   }
 };

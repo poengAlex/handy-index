@@ -45,8 +45,10 @@ homepage, real search, a personal library, and a proper video page.
 - Live result count, plus a **"hidden by" notice** spelling out exactly why the
   catalog is smaller than the index — e.g. "7,468 videos hidden by muted tags ·
   1,816 by the Straight filter".
-- Picking a site or a performer now overrides the ambient orientation filter.
-  In v1 the sites list could send you straight to an empty page.
+- Every filter applies to every surface, orientation included — picking a site
+  or performer no longer lifts the gate. When a pick comes back empty, the
+  empty state says which filter did it and offers to lift it, so the sites
+  list can't silently send you to an empty page like v1 did.
 
 ## 3. Your library (mostly new)
 

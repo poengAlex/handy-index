@@ -111,6 +111,13 @@ const help: typeof enUS = {
       label: "分享",
       caption: "每个视频页、每份筛选结果，都有一个可以分享的链接"
     }
+  },
+
+  about: {
+    title: "关于本站",
+    appCaption: "本站是什么、由谁制作，以及你正在使用的版本",
+    changelogCaption: "网站的所有改动，最新的在最前面",
+    privacyCaption: "哪些内容会被保存、哪些会离开浏览器，以及年龄要求"
   }
 };
 

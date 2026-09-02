@@ -132,15 +132,57 @@
             :caption="$t('help.personalize.share.caption')"
           />
         </HList>
+
+        <HList :title="$t('help.about.title')">
+          <HListRow
+            icon="info"
+            :label="$t('about.title')"
+            :caption="$t('help.about.appCaption')"
+            @click="aboutOpen = true"
+          />
+          <HListRow
+            icon="new_releases"
+            :label="$t('about.changelog.title')"
+            :caption="$t('help.about.changelogCaption')"
+            @click="changelogOpen = true"
+          />
+          <HListRow
+            icon="shield"
+            :label="$t('privacy.title')"
+            :caption="$t('help.about.privacyCaption')"
+            @click="privacyOpen = true"
+          />
+        </HList>
+
+        <!-- Small print, and the only place the build announces itself
+             without being asked. -->
+        <footer class="text-caption help-page__footer">{{ buildMeta }}</footer>
       </div>
     </div>
+
+    <AboutDialog v-model="aboutOpen" />
+    <ChangelogDialog v-model="changelogOpen" />
+    <PrivacyDialog v-model="privacyOpen" />
   </q-page>
 </template>
 
 <script setup lang="ts">
 // The feature tour: one page listing everything the site can do, grouped the
-// way people use it. Reached from the settings dialog.
+// way people use it. Reached from the settings dialog. The last group is the
+// site talking about itself — about, changelog and privacy, each in a dialog
+// so reading one doesn't take you off the page.
+import { ref } from "vue";
+import AboutDialog from "@/components/AboutDialog.vue";
+import ChangelogDialog from "@/components/ChangelogDialog.vue";
+import PrivacyDialog from "@/components/PrivacyDialog.vue";
 import { HList, HListRow } from "@/components/handy";
+import { useBuildMeta } from "@/composables/useBuildMeta";
+
+const aboutOpen = ref(false);
+const changelogOpen = ref(false);
+const privacyOpen = ref(false);
+
+const { line: buildMeta } = useBuildMeta();
 </script>
 
 <style scoped lang="scss">
@@ -161,6 +203,15 @@ import { HList, HListRow } from "@/components/handy";
 .help-page__lead {
   color: var(--color-text-tertiary);
   margin: var(--space-xs) 0 0;
+}
+
+// quiet enough to be ignored, present enough to answer "which version is
+// this?" without opening anything
+.help-page__footer {
+  max-width: 720px;
+  margin: var(--space-xl) auto 0;
+  color: var(--color-text-tertiary);
+  text-align: center;
 }
 
 .help-page__stack {

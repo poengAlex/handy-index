@@ -120,6 +120,15 @@ const help: typeof enUS = {
       caption:
         "Chaque page vidéo et chaque liste de résultats filtrée a son lien partageable"
     }
+  },
+
+  about: {
+    title: "À propos du site",
+    appCaption: "Ce qu'est ce site, qui le fait et quelle version tu utilises",
+    changelogCaption:
+      "Tout ce qui a changé sur le site, du plus récent au plus ancien",
+    privacyCaption:
+      "Ce qui est stocké, ce qui quitte ton navigateur et la condition d'âge"
   }
 };
 

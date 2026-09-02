@@ -707,10 +707,11 @@ const related = computed(() => {
 const moreFromPartner = computed(() => {
   const current = video.value;
   if (!current || catalog.status !== "ready") return [];
-  // partner-scoped like /videos?partnerId=, so the same rule applies: the site
-  // you're already looking at outranks the orientation filter. `related` above
-  // stays gated — that's a recommendation, not a site you asked for.
-  return recentFirst(byPartner(catalog.anyOrientation, current.partnerId))
+  // gated like every other listing surface: /videos?partnerId= stopped
+  // lifting the orientation filter (an ungated site row under a Straight
+  // filter reads as a broken filter, not a deliberate override), and this
+  // shelf is the same query in carousel form.
+  return recentFirst(byPartner(catalog.visible, current.partnerId))
     .filter(item => item.partnerVideoId !== current.partnerVideoId)
     .slice(0, 20);
 });

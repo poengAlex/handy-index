@@ -38,6 +38,18 @@ npm run typecheck
 npm run build
 ```
 
+## Changing something users can see
+
+Every user-visible change bumps `version` in `package.json` and adds lines to
+`public/CHANGELOG.md`. That file is what the "What's new" dialog under Help
+shows, and the version it is written against is the one in the About box and
+the help-page footer.
+
+It is a log for visitors, not for developers: only what someone notices on
+screen, in plain words. `## <version> — <date>`, then `### <group>` headings
+and `- ` lines, newest on top, English only — `src/services/changelog.ts`
+parses exactly that.
+
 ## Serve a production build
 
 ```bash
