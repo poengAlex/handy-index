@@ -132,6 +132,26 @@
 
         <div class="video-page__columns">
           <div>
+            <!-- The activity strip leads the column so it lines up with the
+                 details card opposite it. Absent entirely when the script
+                 carries no measurements — a strip drawn from the span-based
+                 fallback would read ~32% slow and mean something different
+                 from every other video page. -->
+            <ScriptHeatmap
+              v-if="heat"
+              :bins="heat.bins"
+              :total-seconds="heat.totalSeconds"
+              :title="heatTitle"
+              :summary="heatSummary"
+              :spoken-label="heatAria"
+              class="video-page__heat"
+            />
+            <p
+              v-else-if="heatUnmeasured"
+              class="text-caption video-page__heat-none"
+            >
+              {{ $t("video.heat.none") }}
+            </p>
             <div v-if="video.performers?.length" class="video-page__performers">
               <router-link
                 v-for="performer in video.performers"
@@ -472,6 +492,7 @@ import CarouselRow from "@/components/CarouselRow.vue";
 import ConnectionKeyDialog from "@/components/ConnectionKeyDialog.vue";
 import MediaHero from "@/components/MediaHero.vue";
 import MediaImage from "@/components/MediaImage.vue";
+import ScriptHeatmap from "@/components/ScriptHeatmap.vue";
 import { useFormat } from "@/composables/useFormat";
 import {
   getPublishedComments,
@@ -482,6 +503,7 @@ import {
   postScriptComment,
   rateScript
 } from "@/services/script-index/client";
+import { scriptHeat } from "@/services/script-heat";
 import {
   artworkOf,
   byPartner,
@@ -639,6 +661,60 @@ const freeScript = computed(() =>
 
 const hasKey = computed(() => settings.connectionKey.trim().length > 0);
 
+// --- script activity: the speed/quiet figures and the strip ---
+
+/** The script the measurements describe: the free one when there is one,
+ * since that is the one the reader can actually download, otherwise the
+ * first that carries measurements at all — a premium script's shape still
+ * describes this video. */
+const heatScript = computed(() =>
+  [freeScript.value, ...scripts.value].find(
+    script => script?.metadata?.segment_distances?.distances?.length
+  )
+);
+
+/** Padded to the video's own duration, so a script that stops early draws
+ * the remaining rest instead of being stretched over it. */
+const heat = computed(() =>
+  scriptHeat(heatScript.value?.metadata, {
+    spanSeconds: video.value?.duration ?? 0
+  })
+);
+
+/** Scripts exist but none carries measurements — the un-enriched metadata
+ * shape everything published in the last few weeks still has. Worth one
+ * quiet line: silence here reads as a missing feature. */
+const heatUnmeasured = computed(
+  () => scripts.value.length > 0 && heat.value === null
+);
+
+/** The two numbers, localized once — the strip's standing line, its spoken
+ * description and the details card all print the same pair. */
+const heatNumbers = computed(() => {
+  const measured = heat.value;
+  if (!measured) return null;
+  return {
+    spm: n(Math.round(measured.strokesPerMinute)),
+    percent: n(Math.round(measured.density * 100))
+  };
+});
+
+// only named when there is a second script to confuse it with
+const heatTitle = computed(() => {
+  const scripter = heatScript.value?.scripter?.name;
+  return scripts.value.length > 1 && scripter
+    ? t("video.heat.titleBy", { scripter })
+    : t("video.heat.title");
+});
+
+const heatSummary = computed(() =>
+  heatNumbers.value ? t("video.heat.summary", heatNumbers.value) : ""
+);
+
+const heatAria = computed(() =>
+  heatNumbers.value ? t("video.heat.aria", heatNumbers.value) : ""
+);
+
 const details = computed<InfoItem[]>(() => {
   const current = video.value;
   if (!current) return [];
@@ -661,6 +737,19 @@ const details = computed<InfoItem[]>(() => {
     items.push({
       label: t("video.details.duration"),
       value: format.duration(current.duration)
+    });
+  }
+  // how long / how fast / how busy, read together
+  if (heatNumbers.value) {
+    items.push({
+      label: t("video.details.speed"),
+      value: t("video.details.speedValue", { spm: heatNumbers.value.spm })
+    });
+    items.push({
+      label: t("video.details.activity"),
+      value: t("video.details.activityValue", {
+        percent: heatNumbers.value.percent
+      })
     });
   }
   items.push({
@@ -1190,6 +1279,15 @@ async function submitComment() {
 .video-page__side {
   display: grid;
   gap: var(--space-md);
+}
+
+.video-page__heat {
+  margin-bottom: var(--space-md);
+}
+
+.video-page__heat-none {
+  color: var(--color-text-tertiary);
+  margin: 0 0 var(--space-md);
 }
 
 .video-page__rate {

@@ -76,12 +76,58 @@ export interface Scripter {
   description?: string;
 }
 
+/** Per-second travel distance for a script, run-length encoded: a NEGATIVE
+ * entry is a run of that many idle seconds, a non-negative entry is one
+ * second carrying that much movement. Decoded, the array is exactly
+ * `ceil(endTime / 1000)` long and aligned to the video's own clock — see
+ * `decodeSegments` in services/script-heat.ts.
+ *
+ * `non_zero_segment_count` does NOT describe the encoded array (it counts
+ * neither entries nor decoded seconds); nothing here reads it. */
+export interface SegmentDistances {
+  distances?: number[];
+  max_value?: number;
+  min_value?: number;
+  /** milliseconds per segment — 1000 on every script observed */
+  resolution?: number;
+  /** summed |change in position| over the whole script, 0-100 scale */
+  total_distance?: number;
+  non_zero_segment_count?: number;
+}
+
+/** Script analytics the API returns but the OpenAPI spec doesn't document.
+ * Two shapes are live: an enriched one carrying `points` and
+ * `segment_distances`, and an un-enriched one (everything published in the
+ * last few weeks) carrying only `relativeDistance` /
+ * `relativeActionSpeedSum`. Every field is optional because a caller must
+ * handle both — `scriptHeat()` returns null rather than guess. */
+export interface ScriptMetadata {
+  bytes?: number;
+  points?: number;
+  /** direction changes in the script; one stroke is two of them */
+  actions?: number;
+  /** milliseconds from the video's start to the last action */
+  endTime?: number;
+  /** milliseconds to the first action; absent on ~35% of scripts */
+  startTime?: number;
+  relative_total_distance?: number;
+  relative_total_speed?: number;
+  relative_average_speed?: number;
+  segment_distances?: SegmentDistances;
+  /** un-enriched shape only — a span-based total, not comparable to
+   * `relative_total_distance` */
+  relativeDistance?: number;
+  /** un-enriched shape only */
+  relativeActionSpeedSum?: number;
+}
+
 export interface Script {
   scriptId: string;
   scripter?: Scripter;
   tags?: string[];
   /** 0–100 */
   rating?: number;
+  metadata?: ScriptMetadata;
   access?: ScriptAccess;
   plays?: number;
   publishedAt?: string;

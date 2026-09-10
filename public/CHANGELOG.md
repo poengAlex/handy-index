@@ -5,6 +5,31 @@
      words. Newest release on top. Format: "## <version> — <date>", then
      "### <group>" headings and "- " lines. Keep it English-only. -->
 
+## 2.3.0 — 10 September 2026
+
+### Loading
+
+- The catalog is now kept on your device after the first visit, so opening
+  IVDB in a new tab, or coming back later in the day, shows the videos
+  straight away instead of downloading the whole catalog again.
+- A stored catalog older than an hour is still shown immediately, and a fresh
+  copy is fetched quietly in the background. Once it is more than a day old it
+  is downloaded properly again, so you are never browsing stale rankings.
+
+## 2.2.0 — 8 September 2026
+
+### Video pages
+
+- Every video now shows how fast its script strokes, in strokes per minute,
+  and how much of the runtime is actually moving rather than resting. A slow
+  script can be busy the whole way through and a fast one can be mostly
+  pauses, so both numbers are given instead of one average.
+- New activity strip on the video page: a bar per moment of the video showing
+  where the busy and the quiet stretches fall. Hover or drag along it to read
+  the time and the speed at that point.
+- Videos added in the last few weeks have not been measured yet and say so
+  instead of showing a blank chart.
+
 ## 2.1.0 — 2 September 2026
 
 ### Help

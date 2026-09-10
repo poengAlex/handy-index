@@ -55,6 +55,10 @@ const video: typeof enUS = {
     premium: "Premium",
     published: "Veröffentlicht",
     duration: "Dauer",
+    speed: "Tempo",
+    speedValue: "{spm} Hübe/Min.",
+    activity: "Aktivität",
+    activityValue: "{percent} % in Bewegung",
     format: "Format",
     // the non-VR case: an ordinary 2D video
     formatFlat: "2D",
@@ -65,6 +69,22 @@ const video: typeof enUS = {
     // {votes} arrives already pluralized from useFormat().count("votes", n)
     ratingWithVotes: "{percent} % · {votes}",
     scriptPlays: "Script-Wiedergaben"
+  },
+
+  heat: {
+    title: "Script-Aktivität",
+
+    titleBy: "Script-Aktivität — {scripter}",
+
+    summary: "{spm} Hübe/Min. · {percent} % in Bewegung",
+
+    readout: "{at} · {spm} Hübe/Min.",
+
+    readoutRest: "{at} · Pause",
+
+    aria: "Aktivitätsverlauf dieses Scripts: {spm} Hübe pro Minute in Bewegung, {percent} % der Laufzeit in Bewegung.",
+
+    none: "Für dieses Video gibt es noch keine Tempomessungen."
   },
 
   rate: {

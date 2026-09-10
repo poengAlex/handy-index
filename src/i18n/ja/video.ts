@@ -55,6 +55,10 @@ const video: typeof enUS = {
     premium: "有料",
     published: "公開日",
     duration: "再生時間",
+    speed: "速度",
+    speedValue: "毎分{spm}ストローク",
+    activity: "稼働率",
+    activityValue: "再生時間の{percent}%",
     format: "形式",
     // the non-VR case: an ordinary 2D video
     formatFlat: "2D",
@@ -65,6 +69,22 @@ const video: typeof enUS = {
     // {votes} arrives already pluralized from useFormat().count("votes", n)
     ratingWithVotes: "{percent}%・{votes}",
     scriptPlays: "Script再生数"
+  },
+
+  heat: {
+    title: "Scriptの動き",
+
+    titleBy: "Scriptの動き — {scripter}",
+
+    summary: "毎分{spm}ストローク・再生時間の{percent}%",
+
+    readout: "{at}・毎分{spm}ストローク",
+
+    readoutRest: "{at}・停止中",
+
+    aria: "このscriptの動きのグラフ：動いている間は毎分{spm}ストローク、再生時間の{percent}%が動作中です。",
+
+    none: "この動画の速度はまだ計測されていません。"
   },
 
   rate: {

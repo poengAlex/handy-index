@@ -52,6 +52,14 @@ export default {
     premium: "Premium",
     published: "Published",
     duration: "Duration",
+    // How fast it strokes while it is moving, and how much of the runtime
+    // that is. Two orthogonal numbers — a slow script can be busy throughout
+    // and a fast one can be mostly pauses — so both are printed, never
+    // averaged into one.
+    speed: "Speed",
+    speedValue: "{spm} strokes/min",
+    activity: "Activity",
+    activityValue: "{percent}% moving",
     format: "Format",
     // the non-VR case: an ordinary 2D video
     formatFlat: "Flat",
@@ -62,6 +70,22 @@ export default {
     // {votes} arrives already pluralized from useFormat().count("votes", n)
     ratingWithVotes: "{percent}% · {votes}",
     scriptPlays: "Script plays"
+  },
+
+  heat: {
+    title: "Script activity",
+
+    titleBy: "Script activity — {scripter}",
+
+    summary: "{spm} strokes/min · {percent}% moving",
+
+    readout: "{at} · {spm} strokes/min",
+
+    readoutRest: "{at} · resting",
+
+    aria: "Activity strip for this script: {spm} strokes per minute while moving, moving for {percent}% of the runtime.",
+
+    none: "This video has no speed measurements yet."
   },
 
   rate: {

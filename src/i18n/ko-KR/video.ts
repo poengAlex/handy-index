@@ -54,6 +54,10 @@ const video: typeof enUS = {
     premium: "유료",
     published: "공개일",
     duration: "길이",
+    speed: "속도",
+    speedValue: "분당 {spm}회",
+    activity: "활동",
+    activityValue: "{percent}% 작동",
     format: "형식",
     // the non-VR case: an ordinary 2D video
     formatFlat: "일반",
@@ -64,6 +68,22 @@ const video: typeof enUS = {
     // {votes} arrives already pluralized from useFormat().count("votes", n)
     ratingWithVotes: "{percent}% · {votes}",
     scriptPlays: "Script 재생 수"
+  },
+
+  heat: {
+    title: "Script 활동",
+
+    titleBy: "Script 활동 — {scripter}",
+
+    summary: "분당 {spm}회 · {percent}% 작동",
+
+    readout: "{at} · 분당 {spm}회",
+
+    readoutRest: "{at} · 정지",
+
+    aria: "이 script의 활동 그래프: 작동 중에는 분당 {spm}회, 전체 재생 시간의 {percent}% 동안 작동합니다.",
+
+    none: "이 영상은 아직 속도가 측정되지 않았습니다."
   },
 
   rate: {

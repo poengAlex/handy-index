@@ -3,6 +3,11 @@
 // flow and the video-request board. List queries (/videos, /tags, …) are
 // deliberately absent: the API cannot sort, so every listing derives from
 // the index via queries.ts.
+import {
+  dropCachedIndex,
+  readCachedIndex,
+  writeCachedIndex
+} from "./index-cache";
 import type {
   PartnerVideo,
   Script,
@@ -71,18 +76,49 @@ export interface IndexProgress {
   parsing: boolean;
 }
 
+/** A snapshot plus how old the copy is: 0 straight off the network, or the
+ * age of the disk copy when it came from the cache. */
+export interface IndexSnapshot {
+  videos: PartnerVideo[];
+  age: number;
+}
+
+/** The snapshot kept on disk by an earlier load, or null if there is none
+ * younger than `maxAge`. `onParsing` fires the moment before the (blocking)
+ * JSON.parse, same as the download path's parse tick. */
+export async function getCachedIndex(
+  maxAge: number,
+  onParsing?: () => void
+): Promise<IndexSnapshot | null> {
+  const hit = await readCachedIndex(maxAge);
+  if (!hit) return null;
+
+  onParsing?.();
+  await nextPaint();
+  try {
+    return { videos: JSON.parse(hit.text) as PartnerVideo[], age: hit.age };
+  } catch {
+    // a truncated write survives as unparseable text — bin it and download
+    void dropCachedIndex();
+    return null;
+  }
+}
+
 /** The full catalog snapshot (~15k videos, ~40 MB of JSON — fetch once).
  * Pass `onProgress` to read the body as a stream and get byte counts as they
- * land; without it this is a plain one-shot request. */
+ * land; without it this is a plain one-shot request. Either way the result is
+ * written to the disk cache, so the next tab does not repeat the download. */
 export async function getIndex(
   onProgress?: (progress: IndexProgress) => void
 ): Promise<PartnerVideo[]> {
-  if (!onProgress) return request<PartnerVideo[]>("/index");
-
   const response = await fetch(`${BASE_URL}/index`);
   if (!response.ok) throw new ScriptIndexError(response.status, "/index");
   // no streams (old browser, or a body-less mock) — fall back to one shot
-  if (!response.body) return (await response.json()) as PartnerVideo[];
+  if (!response.body || !onProgress) {
+    const text = await response.text();
+    void writeCachedIndex(text);
+    return JSON.parse(text) as PartnerVideo[];
+  }
 
   const reader = response.body.getReader();
   const decoder = new TextDecoder();
@@ -104,7 +140,12 @@ export async function getIndex(
   // only renders after the freeze never says "parsing" — yield past one paint
   // so the message the user waits on is the one on screen
   await nextPaint();
-  return JSON.parse(chunks.join("")) as PartnerVideo[];
+  const text = chunks.join("");
+  // written before the parse, not after: the parse is the one step that can
+  // still fail, and a snapshot that reached us intact is worth keeping either
+  // way. Not awaited — a 40 MB disk write must not hold up the first render.
+  void writeCachedIndex(text);
+  return JSON.parse(text) as PartnerVideo[];
 }
 
 /** Resolves after the next frame has been painted; off-DOM (tests) it is just

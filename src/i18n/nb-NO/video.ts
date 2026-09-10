@@ -56,6 +56,10 @@ const video: typeof enUS = {
     premium: "Premium",
     published: "Publisert",
     duration: "Varighet",
+    speed: "Tempo",
+    speedValue: "{spm} tak/min",
+    activity: "Aktivitet",
+    activityValue: "{percent} % i bevegelse",
     format: "Format",
     // the counterpart to "VR 180°" in the same field: "flat" says nothing in
     // Norwegian, "2D" says it at once
@@ -69,6 +73,22 @@ const video: typeof enUS = {
     // "Avspillinger" alone reads as video plays; `script` is protected, so
     // the label keeps it and the Norwegian head carries the compound
     scriptPlays: "Script-avspillinger"
+  },
+
+  heat: {
+    title: "Script-aktivitet",
+
+    titleBy: "Script-aktivitet — {scripter}",
+
+    summary: "{spm} tak/min · {percent} % i bevegelse",
+
+    readout: "{at} · {spm} tak/min",
+
+    readoutRest: "{at} · hviler",
+
+    aria: "Aktivitetsstripe for dette scriptet: {spm} tak per minutt når det beveger seg, i bevegelse {percent} % av tiden.",
+
+    none: "Denne videoen har ingen tempomålinger ennå."
   },
 
   rate: {

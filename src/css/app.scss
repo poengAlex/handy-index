@@ -703,6 +703,34 @@ input[type="number"] {
   --h-slider-gap: var(--color-bg-page);
 }
 
+// Script activity strip [ScriptHeatmap.vue] — a single-hue sequential ramp,
+// not a rainbow: the quantity is one-directional (strokes per minute), and a
+// hue ramp would invent categories the data doesn't have. The decorative
+// accent rather than the action blue, so a chart never reads as clickable.
+// Intensity rides fill-opacity, which keeps one ink working on both themes;
+// the resting track is the subtle stroke so a quiet stretch still shows a
+// baseline. Declared per scope for the same var()-resolves-where-declared
+// reason as the slider gap above.
+:root,
+[data-theme="dark"],
+.section-dark,
+.section-light {
+  --heat-ink: var(--color-accent);
+  --heat-ground: var(--color-stroke-subtle);
+}
+
+// the hovered bar goes to a lighter tint on dark, where full-saturation
+// purple against the card is the dimmest thing in the row, not the brightest
+:root,
+.section-light {
+  --heat-ink-strong: var(--color-accent);
+}
+
+[data-theme="dark"],
+.section-dark {
+  --heat-ink-strong: #c86ee8;
+}
+
 // Mobile drag fix. Quasar's slider (use-slider.js) binds TouchPan with
 // `prevent: true` and relies on preventDefault-ing the FIRST touchmove to
 // win the gesture — but ships no touch-action, so the browser usually

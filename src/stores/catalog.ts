@@ -1,6 +1,6 @@
 import { acceptHMRUpdate, defineStore } from "pinia";
 import { computed, ref, shallowRef } from "vue";
-import { getIndex } from "@/services/script-index/client";
+import { getCachedIndex, getIndex } from "@/services/script-index/client";
 import {
   byIds,
   gateBreakdown,
@@ -17,6 +17,17 @@ export type CatalogStatus = "idle" | "loading" | "ready" | "error";
  * measured figure, so even a first visit gets a bar that tracks reality. */
 const SIZE_KEY = "ivdb.index-bytes";
 const SIZE_SEED = 43_000_000;
+
+/** How long a disk copy counts as current, matching the endpoint's own
+ * `max-age`. Past this the snapshot still renders straight away — waiting on
+ * 9 MB to see a catalog we already hold would be the wrong trade — and a fresh
+ * one downloads behind it. */
+const FRESH_MS = 60 * 60 * 1000;
+
+/** …but only up to here. A copy this old is from a different browsing session
+ * entirely, and quietly serving day-old rankings and script counts is worse
+ * than one honest progress bar. */
+const MAX_STALE_MS = 24 * 60 * 60 * 1000;
 
 /** The stream hands back ~6k chunks for one index. A 4 px bar does not need
  * 6k re-renders — and each one competes with the download for the main
@@ -78,6 +89,10 @@ export const useCatalogStore = defineStore("catalog", () => {
   const loadedBytes = ref(0);
   const expectedBytes = ref(SIZE_SEED);
   const parsing = ref(false);
+
+  /** A stale disk copy is on screen while a current one downloads behind it.
+   * Never an error state and never a spinner: the catalog is usable. */
+  const refreshing = ref(false);
 
   /** 0–1, and never quite 1 while bytes are still arriving: a bar that sits
    * full through the last chunk is the same lie as a spinner. */
@@ -165,6 +180,25 @@ export const useCatalogStore = defineStore("catalog", () => {
     parsing.value = false;
     expectedBytes.value = rememberedSize();
     let drawn = 0;
+
+    // Disk first. The guard above only dedupes within one tab, so without
+    // this every new tab pays the full 9 MB download again — and the endpoint
+    // answers conditional requests with a full 200, so the browser's own
+    // cache cannot spare us either.
+    const cached = await getCachedIndex(MAX_STALE_MS, () => {
+      // the parse still freezes the main thread for a beat; say so
+      loadedBytes.value = expectedBytes.value;
+      parsing.value = true;
+    });
+    if (cached) {
+      videos.value = Object.freeze(cached.videos);
+      status.value = "ready";
+      parsing.value = false;
+      if (cached.age > FRESH_MS) void refresh();
+      return;
+    }
+    parsing.value = false;
+
     try {
       videos.value = Object.freeze(
         await getIndex(({ received, parsing: isParsing }) => {
@@ -185,6 +219,21 @@ export const useCatalogStore = defineStore("catalog", () => {
     }
   }
 
+  /** Replace a stale copy with a current one, without disturbing what is on
+   * screen. A failure here is not worth surfacing: the catalog the user is
+   * already browsing stays exactly as it was. */
+  async function refresh(): Promise<void> {
+    if (refreshing.value) return;
+    refreshing.value = true;
+    try {
+      videos.value = Object.freeze(await getIndex());
+    } catch {
+      // next load tries again; the stale snapshot remains serviceable
+    } finally {
+      refreshing.value = false;
+    }
+  }
+
   async function retry(): Promise<void> {
     status.value = "idle";
     await load();
@@ -196,6 +245,7 @@ export const useCatalogStore = defineStore("catalog", () => {
     loadedBytes,
     expectedBytes,
     parsing,
+    refreshing,
     progress,
     visible,
     anyOrientation,
@@ -204,6 +254,7 @@ export const useCatalogStore = defineStore("catalog", () => {
     brokenArtwork,
     markArtworkBroken,
     load,
+    refresh,
     retry
   };
 });

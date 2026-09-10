@@ -53,6 +53,10 @@ const video: typeof enUS = {
     premium: "付费",
     published: "发布时间",
     duration: "时长",
+    speed: "速度",
+    speedValue: "每分钟 {spm} 次",
+    activity: "活跃度",
+    activityValue: "{percent}% 在运动",
     format: "格式",
     // the non-VR case: an ordinary 2D video
     formatFlat: "平面",
@@ -63,6 +67,22 @@ const video: typeof enUS = {
     // {votes} arrives already pluralized from useFormat().count("votes", n)
     ratingWithVotes: "{percent}% · {votes}",
     scriptPlays: "Script 播放次数"
+  },
+
+  heat: {
+    title: "Script 活跃度",
+
+    titleBy: "Script 活跃度 — {scripter}",
+
+    summary: "每分钟 {spm} 次 · {percent}% 在运动",
+
+    readout: "{at} · 每分钟 {spm} 次",
+
+    readoutRest: "{at} · 静止",
+
+    aria: "该 script 的活跃度条：运动时每分钟 {spm} 次，运动时间占总时长的 {percent}%。",
+
+    none: "这个视频还没有速度测量数据。"
   },
 
   rate: {
