@@ -63,7 +63,6 @@ const video: typeof enUS = {
     // the non-VR case: an ordinary 2D video
     formatFlat: "일반",
     site: "사이트",
-    scriptBy: "Script 제작자",
     rating: "평점",
     ratingValue: "{percent}%",
     // {votes} arrives already pluralized from useFormat().count("votes", n)
@@ -74,6 +73,11 @@ const video: typeof enUS = {
     longestRest: "가장 긴 멈춤",
     views: "조회수",
     scriptPlays: "Script 재생 수"
+  },
+
+  scripter: {
+    label: "Script 제작자",
+    aria: "{name} 님이 제작한 Script 동영상 보기"
   },
 
   heat: {

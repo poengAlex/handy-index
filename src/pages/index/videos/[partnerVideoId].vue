@@ -152,6 +152,41 @@
             >
               {{ $t("video.heat.none") }}
             </p>
+            <!-- The script's author, sitting under the strip their work
+                 drew: on an index of scripts that is the credit worth
+                 reading, and the name doubles as the way into the rest of
+                 what they have scripted. It used to be one row of the details
+                 card opposite, where it read as just another field and could
+                 not be clicked. -->
+            <router-link
+              v-if="video.scripterName"
+              :to="scripterLink"
+              :aria-label="scripterAria"
+              class="video-page__scripter"
+            >
+              <span class="video-page__scripter-icon">
+                <q-icon name="edit_note" size="22px" />
+              </span>
+              <span class="video-page__scripter-text">
+                <span class="text-caption video-page__scripter-label">
+                  {{ $t("video.scripter.label") }}
+                </span>
+                <span class="text-h5 video-page__scripter-name">
+                  {{ video.scripterName }}
+                </span>
+              </span>
+              <span
+                v-if="scripterCount"
+                class="text-body-sm video-page__scripter-count"
+              >
+                {{ scripterCount }}
+              </span>
+              <q-icon
+                name="chevron_right"
+                size="20px"
+                class="video-page__scripter-chevron"
+              />
+            </router-link>
             <div v-if="video.performers?.length" class="video-page__performers">
               <router-link
                 v-for="performer in video.performers"
@@ -507,6 +542,7 @@ import { scriptHeat } from "@/services/script-heat";
 import {
   artworkOf,
   byPartner,
+  byScripter,
   embedUrlOf,
   recentFirst,
   relatedTo
@@ -670,6 +706,33 @@ const watchLabel = computed(() =>
   t("video.action.watchOn", {
     site: video.value?.partnerName ?? t("video.fallback.site")
   })
+);
+
+/** The scripter's own slice of the browse page. Matched on the name because
+ * that is the only handle the index carries for them (see `byScripter`), and
+ * encoded here for the same reason the tag links are: a name with an
+ * ampersand or a slash in it has to survive the query string. */
+const scripterLink = computed(
+  () =>
+    `/videos?scripter=${encodeURIComponent(video.value?.scripterName ?? "")}`
+);
+
+/** "12 videos" — what is on the other side of the link, so the row reads as
+ * a destination rather than a byline. Counted off the same gated list the
+ * browse page will filter, so the number matches the page that opens; empty
+ * until the snapshot lands, which is also when `scripterName` appears. */
+const scripterCount = computed(() => {
+  const name = video.value?.scripterName;
+  if (!name || catalog.status !== "ready") return "";
+  return format.count("videos", byScripter(catalog.visible, name).length);
+});
+
+/** The visible row reads "Script by / Name / 12 videos", which says nothing
+ * about where it goes — the spoken label does. */
+const scripterAria = computed(() =>
+  video.value?.scripterName
+    ? t("video.scripter.aria", { name: video.value.scripterName })
+    : ""
 );
 
 const partnerRowTitle = computed(() =>
@@ -842,12 +905,9 @@ const details = computed<InfoItem[]>(() => {
   if (current.partnerName) {
     items.push({ label: t("video.details.site"), value: current.partnerName });
   }
-  if (current.scripterName) {
-    items.push({
-      label: t("video.details.scriptBy"),
-      value: current.scripterName
-    });
-  }
+  // no "Script by" row here: the scripter is the link above the performers
+  // now, and the same name printed twice on one screen left the copy nobody
+  // could click sitting in the more prominent column
   if (current.rating) {
     const votes = (current.upVotes ?? 0) + (current.downVotes ?? 0);
     const percent = n(Math.round(current.rating));
@@ -1320,6 +1380,75 @@ async function submitComment() {
   align-items: center;
   justify-content: center;
   flex: none;
+}
+
+// The lead credit on the page: the same pill recipe as a performer, one
+// size up, so it reads as the head of the cast list under it rather than a
+// sixth member of it. Chip surface, not card — bg-card is the page surface
+// in light theme, and an invisible bar is not a highlight.
+.video-page__scripter {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  max-width: 100%;
+  padding: var(--space-xs) var(--space-md) var(--space-xs) var(--space-xs);
+  margin-bottom: var(--space-md);
+  background: var(--h-chip-bg);
+  border-radius: var(--radius-full);
+  color: var(--color-text-primary);
+  text-decoration: none !important;
+  transition: box-shadow 180ms ease;
+
+  &:hover {
+    box-shadow: 0 0 0 1px var(--color-stroke-default);
+  }
+
+  &:hover .video-page__scripter-name {
+    color: var(--color-text-link);
+  }
+}
+
+.video-page__scripter-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  // page surface so the well reads inside the pill on both themes, same as
+  // the performer avatar fallback
+  background: var(--color-bg-page);
+  color: var(--color-text-link);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+}
+
+.video-page__scripter-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.video-page__scripter-label {
+  color: var(--color-text-tertiary);
+}
+
+// a long name ellipses rather than wrapping the pill into two lines
+.video-page__scripter-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: color 180ms ease;
+}
+
+.video-page__scripter-count {
+  color: var(--color-text-secondary);
+  flex: none;
+}
+
+.video-page__scripter-chevron {
+  color: var(--color-text-tertiary);
+  flex: none;
+  margin-left: calc(var(--space-xs) * -1);
 }
 
 .video-page__columns {

@@ -63,7 +63,6 @@ const video: typeof enUS = {
     // the non-VR case: an ordinary 2D video
     formatFlat: "2D",
     site: "Сайт",
-    scriptBy: "Автор script",
     rating: "Рейтинг",
     ratingValue: "{percent}%",
     // {votes} arrives already pluralized from useFormat().count("votes", n)
@@ -74,6 +73,11 @@ const video: typeof enUS = {
     longestRest: "Самая долгая пауза",
     views: "Просмотры",
     scriptPlays: "Запуски script"
+  },
+
+  scripter: {
+    label: "Автор script",
+    aria: "Смотреть видео со script от {name}"
   },
 
   heat: {

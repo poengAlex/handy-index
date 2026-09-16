@@ -66,7 +66,6 @@ const video: typeof enUS = {
     // Norwegian, "2D" says it at once
     formatFlat: "2D",
     site: "Nettsted",
-    scriptBy: "Script av",
     rating: "Vurdering",
     // Norwegian sets a space before the percent sign
     ratingValue: "{percent} %",
@@ -79,6 +78,11 @@ const video: typeof enUS = {
     longestRest: "Lengste pause",
     views: "Visninger",
     scriptPlays: "Script-avspillinger"
+  },
+
+  scripter: {
+    label: "Script av",
+    aria: "Se videoer med script av {name}"
   },
 
   heat: {

@@ -68,7 +68,6 @@ export default {
     // the non-VR case: an ordinary 2D video
     formatFlat: "Flat",
     site: "Site",
-    scriptBy: "Script by",
     rating: "Rating",
     ratingValue: "{percent}%",
     // {votes} arrives already pluralized from useFormat().count("votes", n)
@@ -83,6 +82,14 @@ export default {
     longestRest: "Longest pause",
     views: "Views",
     scriptPlays: "Script plays"
+  },
+
+  // The person who made the script, now a link of its own on the page rather
+  // than a row in the details card — `aria` is what it says out loud, since
+  // the row itself never names its destination.
+  scripter: {
+    label: "Script by",
+    aria: "Browse videos scripted by {name}"
   },
 
   heat: {
