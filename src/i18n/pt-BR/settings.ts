@@ -73,6 +73,18 @@ const settings: typeof enUS = {
     hint: "A connection key do seu Handy, usada para baixar scripts."
   },
 
+  catalog: {
+    title: "Catálogo",
+    label: "Catálogo guardado",
+    captionUpdated: "Baixado {when}",
+    captionPending: "Ainda não baixado",
+    captionUpdating: "Buscando uma cópia nova…",
+    action: "Atualizar agora",
+    doneToast: "Catálogo atualizado",
+    failedToast:
+      "Não foi possível acessar o catálogo. Tente de novo daqui a pouco."
+  },
+
   clearDataAction: "Limpar dados…",
 
   // ClearDataDialog. Every row names its own toast instead of sharing one

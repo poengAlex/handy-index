@@ -32,6 +32,7 @@ const browse: typeof enUS = {
     plays: "Script再生数順",
     views: "視聴数順",
     longest: "再生時間が長い順",
+    speed: "速い順",
     title: "タイトル順"
   },
 
@@ -45,6 +46,12 @@ const browse: typeof enUS = {
 
   filters: {
     title: "フィルター",
+    sectionContent: "内容",
+    sectionVideo: "動画",
+    sectionScript: "Script",
+    sectionAlways: "常に適用",
+    sectionAlwaysCaption:
+      "常時有効な設定です。サイト全体に適用され、フィルターを消去しても変わりません。",
     addTag: "タグを追加",
     noTags: "一致するタグがありません",
     site: "サイト",
@@ -66,6 +73,21 @@ const browse: typeof enUS = {
     mutedNone: "ミュートなし",
     // {tags} is a comma-joined list of the first few muted tags
     mutedMore: "{tags} 他{rest}個",
+    scripter: "Script作成者",
+    noScripters: "該当するScript作成者はいません",
+    published: "追加時期",
+    publishedAny: "すべての期間",
+    publishedWeek: "過去1週間",
+    publishedMonth: "過去1か月",
+    publishedYear: "過去1年",
+    clipLabel: "プレビュー動画あり",
+    clipCaption: "短い無音クリップがある動画のみ",
+    speed: "速度",
+    speedAny: "すべて",
+    speedFrom: "{min}以上",
+    speedRange: "{min}〜{max}",
+    speedUnmeasured:
+      "{count}本の動画は速度が計測されていないため、この設定の間は表示されません。",
     duration: "再生時間",
     durationAny: "指定なし",
     durationFrom: "{min}分以上",

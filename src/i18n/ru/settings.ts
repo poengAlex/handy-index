@@ -73,6 +73,17 @@ const settings: typeof enUS = {
     hint: "Твой connection key от Handy — нужен для скачивания scripts."
   },
 
+  catalog: {
+    title: "Каталог",
+    label: "Сохранённый каталог",
+    captionUpdated: "Загружен {when}",
+    captionPending: "Ещё не загружен",
+    captionUpdating: "Загружается свежая копия…",
+    action: "Обновить сейчас",
+    doneToast: "Каталог обновлён",
+    failedToast: "Не удалось получить каталог. Попробуйте ещё раз чуть позже."
+  },
+
   clearDataAction: "Очистить данные…",
 
   // ClearDataDialog. Every row names its own toast instead of sharing one

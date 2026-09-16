@@ -71,6 +71,17 @@ const settings: typeof enUS = {
     hint: "Script를 다운로드할 때 쓰는 Handy connection key 값이에요."
   },
 
+  catalog: {
+    title: "카탈로그",
+    label: "저장된 카탈로그",
+    captionUpdated: "내려받음: {when}",
+    captionPending: "아직 내려받지 않음",
+    captionUpdating: "최신 사본을 가져오는 중…",
+    action: "지금 업데이트",
+    doneToast: "카탈로그를 업데이트했습니다",
+    failedToast: "카탈로그에 연결하지 못했습니다. 잠시 후 다시 시도해 주세요."
+  },
+
   clearDataAction: "데이터 지우기…",
 
   // ClearDataDialog. Every row names its own toast instead of sharing one

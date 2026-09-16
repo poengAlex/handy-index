@@ -76,6 +76,18 @@ const settings: typeof enUS = {
     hint: "Scriptのダウンロードに使う、Handyのconnection keyです。"
   },
 
+  catalog: {
+    title: "カタログ",
+    label: "保存されたカタログ",
+    captionUpdated: "取得: {when}",
+    captionPending: "まだ取得されていません",
+    captionUpdating: "最新のカタログを取得中…",
+    action: "今すぐ更新",
+    doneToast: "カタログを更新しました",
+    failedToast:
+      "カタログに接続できませんでした。しばらくしてからもう一度お試しください。"
+  },
+
   clearDataAction: "データを消去…",
 
   // ClearDataDialog. Every row names its own toast instead of sharing one

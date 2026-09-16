@@ -59,6 +59,26 @@
           />
         </HList>
 
+        <HList :title="$t('settings.catalog.title')">
+          <HListRow
+            icon="cloud_download"
+            :label="$t('settings.catalog.label')"
+            :caption="catalogCaption"
+            :clickable="false"
+          >
+            <template #trailing>
+              <HBtn
+                variant="tertiary"
+                size="sm"
+                :label="$t('settings.catalog.action')"
+                :loading="catalog.refreshing"
+                :disable="catalog.status !== 'ready'"
+                @click="updateCatalog()"
+              />
+            </template>
+          </HListRow>
+        </HList>
+
         <HList :title="$t('settings.access.title')">
           <HToggleRow
             v-model="settings.showPremiumScripts"
@@ -184,6 +204,7 @@ import { computed, nextTick, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import {
   HBtn,
+  hToast,
   HLabeledSlider,
   HList,
   HListRow,
@@ -198,6 +219,7 @@ import MutedTagsDialog from "@/components/MutedTagsDialog.vue";
 import { useFormat } from "@/composables/useFormat";
 import { sanitizeConnectionKey } from "@/services/format";
 import { ORIENTATIONS } from "@/services/script-index/queries";
+import { useCatalogStore } from "@/stores/catalog";
 import {
   BACKGROUND_ATTACHMENTS,
   BACKGROUND_SCENE_LABELS,
@@ -214,8 +236,9 @@ defineProps<{ modelValue: boolean }>();
 const emit = defineEmits<{ "update:modelValue": [value: boolean] }>();
 
 const settings = useSettingsStore();
+const catalog = useCatalogStore();
 const { t } = useI18n();
-const { num, orientation } = useFormat();
+const { num, orientation, relative } = useFormat();
 
 // theme lives outside the settings store (it's persisted by useHandyTheme
 // under "handy-theme"), so the row proxies the shared state instead
@@ -256,6 +279,23 @@ function scrollLabel(option: BackgroundAttachment): string {
     case "banded":
       return t("settings.backgroundScroll.banded");
   }
+}
+
+// How old the copy on this device is. The row exists because the catalog is
+// stored locally and tops itself up only once an hour — anyone who knows a
+// video was just added needs a way to say "no, fetch it now".
+const catalogCaption = computed(() => {
+  if (catalog.refreshing) return t("settings.catalog.captionUpdating");
+  if (!catalog.fetchedAt) return t("settings.catalog.captionPending");
+  return t("settings.catalog.captionUpdated", {
+    when: relative(new Date(catalog.fetchedAt).toISOString())
+  });
+});
+
+async function updateCatalog() {
+  const ok = await catalog.refresh();
+  if (ok) hToast("positive", t("settings.catalog.doneToast"));
+  else hToast("negative", t("settings.catalog.failedToast"));
 }
 
 const clearDataOpen = ref(false);

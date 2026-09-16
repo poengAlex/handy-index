@@ -54,6 +54,7 @@ const video: typeof enUS = {
     premium: "Premium",
     published: "Publicado",
     duration: "Duración",
+    speedNote: "en movimiento",
     speed: "Velocidad",
     speedValue: "{spm} movimientos/min",
     activity: "Actividad",
@@ -67,6 +68,11 @@ const video: typeof enUS = {
     ratingValue: "{percent}%",
     // {votes} arrives already pluralized from useFormat().count("votes", n)
     ratingWithVotes: "{percent}% · {votes}",
+    peak: "Velocidad máxima",
+    peakValue: "{spm} golpes/min",
+    strokes: "Golpes",
+    longestRest: "Pausa más larga",
+    views: "Visualizaciones",
     scriptPlays: "Reproducciones del script"
   },
 

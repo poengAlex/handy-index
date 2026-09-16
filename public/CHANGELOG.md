@@ -5,6 +5,28 @@
      words. Newest release on top. Format: "## <version> — <date>", then
      "### <group>" headings and "- " lines. Keep it English-only. -->
 
+## 2.4.0 — 10 September 2026
+
+### Video pages
+
+- The details card now shows peak speed, the total number of strokes and the
+  longest pause in the script. These come out of the same measurements the
+  activity strip already uses, so nothing extra is downloaded for them.
+- Videos now show their view count.
+- Opening a video straight from a link used to leave out the rating, the vote
+  count, the views and who made the script, because the single-video lookup
+  does not return any of them. Those now fill themselves in as soon as the
+  catalog is ready.
+
+### Browsing
+
+- New filter: script maker. Pick one of the people who script for the site and
+  see only their videos.
+- New filter: published in the past week, month or year.
+- New filter: only videos that come with a short preview clip.
+- All three ride in the address bar like the rest, so a filtered list stays
+  shareable.
+
 ## 2.3.0 — 10 September 2026
 
 ### Loading
@@ -15,6 +37,37 @@
 - A stored catalog older than an hour is still shown immediately, and a fresh
   copy is fetched quietly in the background. Once it is more than a day old it
   is downloaded properly again, so you are never browsing stale rankings.
+- Settings now shows when the stored catalog was downloaded, with an "Update
+  now" button next to it, for when you know something has been added and do
+  not want to wait for the automatic refresh.
+
+## 2.5.0 — 15 September 2026
+
+### Finding videos
+
+- Filter by script speed. The slider picks a range in strokes per minute, and
+  there is a "Fastest" sort to go with it. Most scripts sit between 80 and 110.
+- A small number of videos have never had their script measured. They are
+  listed plainly rather than quietly dropped, and only disappear while the
+  speed filter is actually narrowed.
+- The "Added" filter now uses the date a video really arrived. It used to read
+  a date the index stamps in batches, so "past week" was handing back videos
+  that were closer to three weeks old. Expect the counts to be smaller now —
+  that is the fix, not a loss.
+- "Recently added" rows are ordered by that same real date, so a batch of a
+  thousand videos no longer lands in arbitrary order.
+- The filters panel is grouped into sections — Content, Video, Script and
+  Added — and on a wide screen it opens as two columns instead of one long
+  scroll. The three settings that apply everywhere (orientation, paywalls,
+  muted tags) now sit in their own column, which says plainly that Clear
+  filters does not touch them.
+
+### Video pages
+
+- Speed now says "while moving" under the label, because that is what it
+  measures: the pauses are already taken out. The same figure now comes from
+  the same place the filters read, so a video can never show one speed and be
+  filtered as another.
 
 ## 2.2.0 — 8 September 2026
 

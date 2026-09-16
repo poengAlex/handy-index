@@ -56,6 +56,10 @@ export default {
     // that is. Two orthogonal numbers — a slow script can be busy throughout
     // and a fast one can be mostly pauses — so both are printed, never
     // averaged into one.
+    // Caption under the Speed label. Load-bearing, not decoration: the rate
+    // is averaged over the seconds that actually move, so without this the
+    // row reads as a whole-runtime average and looks ~30% too high.
+    speedNote: "while moving",
     speed: "Speed",
     speedValue: "{spm} strokes/min",
     activity: "Activity",
@@ -69,6 +73,15 @@ export default {
     ratingValue: "{percent}%",
     // {votes} arrives already pluralized from useFormat().count("votes", n)
     ratingWithVotes: "{percent}% · {votes}",
+    // Three more numbers out of the same segment data the strip is drawn
+    // from — nothing extra is fetched for them. "Peak" is the busiest bar on
+    // the strip, not the script's one-second maximum, which no stretch of the
+    // video actually sustains.
+    peak: "Peak speed",
+    peakValue: "{spm} strokes/min",
+    strokes: "Strokes",
+    longestRest: "Longest pause",
+    views: "Views",
     scriptPlays: "Script plays"
   },
 

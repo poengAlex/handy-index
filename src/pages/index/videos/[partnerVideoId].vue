@@ -527,7 +527,9 @@ const settings = useSettingsStore();
 const { t, n } = useI18n();
 const format = useFormat();
 
-const video = ref<PartnerVideo>();
+/** What `/videos/{id}` answered with, and only for an id the catalog has no
+ * entry for. See `video` below for why it is the second choice. */
+const fetchedVideo = ref<PartnerVideo>();
 const scripts = ref<Script[]>([]);
 const state = ref<"loading" | "ready" | "missing">("loading");
 const gettingScript = ref(false);
@@ -620,6 +622,31 @@ function stillAlt(index: number): string {
 
 const videoId = computed(() => route.params.partnerVideoId);
 
+/**
+ * The video, from whichever source has the most of it.
+ *
+ * The index entry is the richer record, which is not obvious: `/videos/{id}`
+ * returns neither `rating`, `upVotes`, `downVotes`, `views` nor the scripter,
+ * and the index carries the last two on every single entry. Sampled over 20
+ * videos the single-video endpoint was missing the scripter on 20, the rating
+ * on 17 and the vote counts on 11. So a page reached before the catalog
+ * landed used to show no rating, no votes, no views and no scripter — and
+ * kept showing none of them for the rest of the visit, because nothing went
+ * back once the snapshot arrived. Recomputing off `catalog.videos` is what
+ * fixes that: the moment the index lands, the missing rows appear.
+ *
+ * Merged rather than swapped, so anything only the endpoint returns (`gifs`)
+ * survives the upgrade.
+ */
+const video = computed<PartnerVideo | undefined>(() => {
+  const id = videoId.value;
+  const entry = id
+    ? catalog.videos.find(item => item.partnerVideoId === id)
+    : undefined;
+  if (!entry) return fetchedVideo.value;
+  return fetchedVideo.value ? { ...fetchedVideo.value, ...entry } : entry;
+});
+
 const favorite = computed(() =>
   video.value ? settings.isFavorite(video.value.partnerVideoId) : false
 );
@@ -663,29 +690,46 @@ const hasKey = computed(() => settings.connectionKey.trim().length > 0);
 
 // --- script activity: the speed/quiet figures and the strip ---
 
-/** The script the measurements describe: the free one when there is one,
- * since that is the one the reader can actually download, otherwise the
- * first that carries measurements at all — a premium script's shape still
- * describes this video. */
+/** The script the measurements describe — only used to name the scripter
+ * when a video carries more than one. The numbers themselves come from the
+ * index (below), not from here. */
 const heatScript = computed(() =>
   [freeScript.value, ...scripts.value].find(
     script => script?.metadata?.segment_distances?.distances?.length
   )
 );
 
-/** Padded to the video's own duration, so a script that stops early draws
- * the remaining rest instead of being stretched over it. */
+/**
+ * Padded to the video's own duration, so a script that stops early draws the
+ * remaining rest instead of being stretched over it.
+ *
+ * Read off `video.scriptMetadata` — the copy the index now carries inline —
+ * and NOT off the per-video endpoint, even though this page has already
+ * fetched that and its segments are finer (1 s against a median 7 s). One
+ * reason: the browse page filters and sorts on the index copy, which reads
+ * about 8% lower, so displaying the finer figure here would let a video show
+ * "111" while a "100+" filter excluded it. One number per video everywhere
+ * beats a more precise number that disagrees with the grid. It also covers
+ * 98.8% of the catalog against the endpoint's ~93%, and needs no request.
+ */
 const heat = computed(() =>
-  scriptHeat(heatScript.value?.metadata, {
+  scriptHeat(video.value?.scriptMetadata, {
     spanSeconds: video.value?.duration ?? 0
   })
 );
 
-/** Scripts exist but none carries measurements — the un-enriched metadata
- * shape everything published in the last few weeks still has. Worth one
- * quiet line: silence here reads as a missing feature. */
+/** The video is here but carries no measurement — 1.2% of the catalog, and
+ * scattered by age rather than all recent (median 81 days). Worth one quiet
+ * line: silence here reads as a missing feature.
+ *
+ * Gated on the catalog, not on `state`: a page opened before the snapshot
+ * lands renders from `/videos/{id}`, which carries no `scriptMetadata` at
+ * all, so without this every video would claim to be unmeasured for the
+ * first 15 seconds of a cold visit. `video` recomputes when the index
+ * arrives, so the row fills itself in. */
 const heatUnmeasured = computed(
-  () => scripts.value.length > 0 && heat.value === null
+  () =>
+    catalog.status === "ready" && Boolean(video.value) && heat.value === null
 );
 
 /** The two numbers, localized once — the strip's standing line, its spoken
@@ -696,6 +740,26 @@ const heatNumbers = computed(() => {
   return {
     spm: n(Math.round(measured.strokesPerMinute)),
     percent: n(Math.round(measured.density * 100))
+  };
+});
+
+/** The rest of what the same measurement already holds. Split from
+ * `heatNumbers` because those two are the pair the strip speaks and this is
+ * detail-card material — nobody needs "longest pause" read aloud under a
+ * chart. Nothing here costs a request: it all comes out of the segment data
+ * the page already fetched to draw the strip. */
+const heatExtras = computed(() => {
+  const measured = heat.value;
+  if (!measured) return null;
+  return {
+    strokes: format.num(measured.strokes),
+    peak: n(Math.round(measured.peakStrokesPerMinute)),
+    // only worth a row when there is a pause anyone would notice; a script
+    // that never rests for more than a beat should not print "0:03"
+    longestRest:
+      measured.longestRestSeconds >= 10
+        ? format.duration(measured.longestRestSeconds)
+        : ""
   };
 });
 
@@ -743,6 +807,9 @@ const details = computed<InfoItem[]>(() => {
   if (heatNumbers.value) {
     items.push({
       label: t("video.details.speed"),
+      // the rate counts only the seconds that move; unqualified it reads as a
+      // whole-runtime average, which is a different and ~30% lower number
+      note: t("video.details.speedNote"),
       value: t("video.details.speedValue", { spm: heatNumbers.value.spm })
     });
     items.push({
@@ -751,6 +818,22 @@ const details = computed<InfoItem[]>(() => {
         percent: heatNumbers.value.percent
       })
     });
+  }
+  if (heatExtras.value) {
+    items.push({
+      label: t("video.details.peak"),
+      value: t("video.details.peakValue", { spm: heatExtras.value.peak })
+    });
+    items.push({
+      label: t("video.details.strokes"),
+      value: heatExtras.value.strokes
+    });
+    if (heatExtras.value.longestRest) {
+      items.push({
+        label: t("video.details.longestRest"),
+        value: heatExtras.value.longestRest
+      });
+    }
   }
   items.push({
     label: t("video.details.format"),
@@ -776,6 +859,12 @@ const details = computed<InfoItem[]>(() => {
             votes: format.count("votes", votes)
           })
         : t("video.details.ratingValue", { percent })
+    });
+  }
+  if (current.views) {
+    items.push({
+      label: t("video.details.views"),
+      value: format.num(current.views)
     });
   }
   if (current.scriptPlays) {
@@ -817,15 +906,14 @@ async function load(id: string) {
   commentsState.value = "idle";
   commentDraft.value = "";
   pendingAction.value = null;
-  const fromCatalog = catalog.videos.find(item => item.partnerVideoId === id);
-  if (fromCatalog) {
-    video.value = fromCatalog;
+  fetchedVideo.value = undefined;
+  if (catalog.videos.some(item => item.partnerVideoId === id)) {
     state.value = "ready";
   } else {
     try {
       const fetched = await getVideo(id);
       if (videoId.value !== id) return;
-      video.value = fetched;
+      fetchedVideo.value = fetched;
       state.value = "ready";
     } catch {
       if (videoId.value !== id) return;

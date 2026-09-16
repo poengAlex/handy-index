@@ -64,6 +64,12 @@ export interface PartnerVideo {
   downVotes?: number;
   performers?: Performer[];
   scripterName?: string;
+  /** Script analytics carried inline on every index entry since the API
+   * started shipping them (all 16,493 videos; `segment_distances` on 98.8%).
+   * Downsampled relative to `/videos/{id}/scripts` — see ScriptMetadata —
+   * but it needs no request, which is what makes a catalog-wide speed filter
+   * possible at all. */
+  scriptMetadata?: ScriptMetadata;
   scriptPlays?: number;
   createdAt?: string;
   updatedAt?: string;

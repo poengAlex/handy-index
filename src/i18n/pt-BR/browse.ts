@@ -32,6 +32,7 @@ const browse: typeof enUS = {
     plays: "Mais reproduzidos",
     views: "Mais vistos",
     longest: "Mais longos",
+    speed: "Mais rápidos",
     title: "A–Z"
   },
 
@@ -45,6 +46,12 @@ const browse: typeof enUS = {
 
   filters: {
     title: "Filtros",
+    sectionContent: "Conteúdo",
+    sectionVideo: "Vídeo",
+    sectionScript: "Script",
+    sectionAlways: "Sempre aplicado",
+    sectionAlwaysCaption:
+      "Suas preferências fixas. Valem em todo o site e Limpar filtros não as altera.",
     addTag: "Adicionar tag",
     noTags: "Nenhuma tag encontrada",
     site: "Site",
@@ -68,6 +75,21 @@ const browse: typeof enUS = {
     mutedNone: "Nada silenciado",
     // {tags} is a comma-joined list of the first few muted tags
     mutedMore: "{tags} +{rest} outras",
+    scripter: "Scripter",
+    noScripters: "Nenhum Scripter corresponde",
+    published: "Adicionado",
+    publishedAny: "Qualquer data",
+    publishedWeek: "Última semana",
+    publishedMonth: "Último mês",
+    publishedYear: "Último ano",
+    clipLabel: "Com clipe de prévia",
+    clipCaption: "Só vídeos com um clipe curto e sem som",
+    speed: "Velocidade",
+    speedAny: "Qualquer",
+    speedFrom: "{min}+ mpm",
+    speedRange: "{min}–{max} mpm",
+    speedUnmeasured:
+      "{count} vídeos não têm velocidade medida e ficam ocultos enquanto isto estiver ativo.",
     duration: "Duração",
     durationAny: "Qualquer",
     durationFrom: "{min}+ min",

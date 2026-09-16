@@ -72,6 +72,20 @@ export default {
     hint: "Your Handy connection key, used when downloading scripts."
   },
 
+  // The catalog row. IVDB keeps the whole video list on your device so the
+  // site opens instantly; this says how old that copy is and lets you replace
+  // it without waiting for the automatic refresh.
+  catalog: {
+    title: "Catalog",
+    label: "Stored catalog",
+    captionUpdated: "Downloaded {when}",
+    captionPending: "Not downloaded yet",
+    captionUpdating: "Fetching a fresh copy…",
+    action: "Update now",
+    doneToast: "Catalog updated",
+    failedToast: "Could not reach the catalog. Try again in a moment."
+  },
+
   clearDataAction: "Clear data…",
 
   // ClearDataDialog. Every row names its own toast instead of sharing one

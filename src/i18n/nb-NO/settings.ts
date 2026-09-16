@@ -66,6 +66,17 @@ const settings: typeof enUS = {
     hint: "Connection key til din Handy. Den brukes når du laster ned scripts."
   },
 
+  catalog: {
+    title: "Katalog",
+    label: "Lagret katalog",
+    captionUpdated: "Lastet ned {when}",
+    captionPending: "Ikke lastet ned ennå",
+    captionUpdating: "Henter en ny kopi …",
+    action: "Oppdater nå",
+    doneToast: "Katalogen er oppdatert",
+    failedToast: "Fikk ikke tak i katalogen. Prøv igjen om litt."
+  },
+
   clearDataAction: "Slett data…",
 
   clear: {

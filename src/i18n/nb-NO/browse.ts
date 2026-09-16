@@ -23,6 +23,7 @@ const browse: typeof enUS = {
     plays: "Mest spilt",
     views: "Mest sett",
     longest: "Lengst",
+    speed: "Raskest",
     // the Norwegian alphabet ends at Å, so the A–Z shorthand does too
     title: "A–Å"
   },
@@ -35,6 +36,12 @@ const browse: typeof enUS = {
 
   filters: {
     title: "Filtre",
+    sectionContent: "Innhold",
+    sectionVideo: "Video",
+    sectionScript: "Script",
+    sectionAlways: "Alltid aktiv",
+    sectionAlwaysCaption:
+      "Dine faste innstillinger. De gjelder overalt, og Tøm filtre rører dem ikke.",
     addTag: "Legg til tagg",
     noTags: "Ingen tagger traff søket",
     site: "Nettsted",
@@ -54,6 +61,21 @@ const browse: typeof enUS = {
     mutedLabel: "Dempede tagger",
     mutedNone: "Ingenting dempet",
     mutedMore: "{tags} +{rest} til",
+    scripter: "Scripter",
+    noScripters: "Ingen Scripter passer",
+    published: "Lagt til",
+    publishedAny: "Når som helst",
+    publishedWeek: "Siste uke",
+    publishedMonth: "Siste måned",
+    publishedYear: "Siste år",
+    clipLabel: "Har forhåndsvisning",
+    clipCaption: "Bare videoer med et kort, lydløst klipp",
+    speed: "Tempo",
+    speedAny: "Alle",
+    speedFrom: "{min}+ tak/min",
+    speedRange: "{min}–{max} tak/min",
+    speedUnmeasured:
+      "{count} videoer har ikke målt tempo og forblir skjult mens dette er valgt.",
     duration: "Varighet",
     // the slider's "no limit" readout: a bare "Alle" would read as a count,
     // so the Norwegian names what there is no limit on

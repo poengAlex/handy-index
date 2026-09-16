@@ -56,6 +56,7 @@ const video: typeof enUS = {
     premium: "Premium",
     published: "Publisert",
     duration: "Varighet",
+    speedNote: "i bevegelse",
     speed: "Tempo",
     speedValue: "{spm} tak/min",
     activity: "Aktivitet",
@@ -72,6 +73,11 @@ const video: typeof enUS = {
     ratingWithVotes: "{percent} % · {votes}",
     // "Avspillinger" alone reads as video plays; `script` is protected, so
     // the label keeps it and the Norwegian head carries the compound
+    peak: "Topphastighet",
+    peakValue: "{spm} slag/min",
+    strokes: "Slag",
+    longestRest: "Lengste pause",
+    views: "Visninger",
     scriptPlays: "Script-avspillinger"
   },
 

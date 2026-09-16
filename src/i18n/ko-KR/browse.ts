@@ -32,6 +32,7 @@ const browse: typeof enUS = {
     plays: "재생 많은 순",
     views: "조회 많은 순",
     longest: "길이 긴 순",
+    speed: "빠른 순",
     title: "제목순"
   },
 
@@ -45,6 +46,12 @@ const browse: typeof enUS = {
 
   filters: {
     title: "필터",
+    sectionContent: "콘텐츠",
+    sectionVideo: "영상",
+    sectionScript: "Script",
+    sectionAlways: "항상 적용",
+    sectionAlwaysCaption:
+      "고정 설정입니다. 사이트 전체에 적용되며 필터 지우기로도 바뀌지 않습니다.",
     addTag: "태그 추가",
     noTags: "일치하는 태그가 없어요",
     site: "사이트",
@@ -66,6 +73,21 @@ const browse: typeof enUS = {
     mutedNone: "차단한 태그 없음",
     // {tags} is a comma-joined list of the first few muted tags
     mutedMore: "{tags} 외 {rest}개",
+    scripter: "Script 제작자",
+    noScripters: "일치하는 Script 제작자가 없습니다",
+    published: "추가 시기",
+    publishedAny: "전체 기간",
+    publishedWeek: "지난 1주",
+    publishedMonth: "지난 1개월",
+    publishedYear: "지난 1년",
+    clipLabel: "미리보기 클립 있음",
+    clipCaption: "짧은 무음 클립이 있는 영상만",
+    speed: "속도",
+    speedAny: "전체",
+    speedFrom: "{min} 이상",
+    speedRange: "{min}~{max}",
+    speedUnmeasured:
+      "{count}개 영상은 속도가 측정되지 않아 이 설정이 켜진 동안 표시되지 않습니다.",
     duration: "길이",
     durationAny: "전체",
     durationFrom: "{min}분 이상",

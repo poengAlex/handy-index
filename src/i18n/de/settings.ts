@@ -76,6 +76,18 @@ const settings: typeof enUS = {
     hint: "Dein connection key für The Handy, nötig beim Herunterladen von scripts."
   },
 
+  catalog: {
+    title: "Katalog",
+    label: "Gespeicherter Katalog",
+    captionUpdated: "Heruntergeladen {when}",
+    captionPending: "Noch nicht heruntergeladen",
+    captionUpdating: "Neue Kopie wird geholt …",
+    action: "Jetzt aktualisieren",
+    doneToast: "Katalog aktualisiert",
+    failedToast:
+      "Der Katalog war nicht erreichbar. Versuche es gleich noch einmal."
+  },
+
   clearDataAction: "Daten löschen…",
 
   // ClearDataDialog. Every row names its own toast instead of sharing one

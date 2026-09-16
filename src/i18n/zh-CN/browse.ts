@@ -32,6 +32,7 @@ const browse: typeof enUS = {
     plays: "播放最多",
     views: "观看最多",
     longest: "时长最长",
+    speed: "最快",
     title: "A–Z"
   },
 
@@ -45,6 +46,11 @@ const browse: typeof enUS = {
 
   filters: {
     title: "筛选",
+    sectionContent: "内容",
+    sectionVideo: "视频",
+    sectionScript: "Script",
+    sectionAlways: "始终生效",
+    sectionAlwaysCaption: "你的固定偏好。在全站生效，清除筛选不会改动它们。",
     addTag: "添加标签",
     noTags: "没有匹配的标签",
     site: "网站",
@@ -66,6 +72,20 @@ const browse: typeof enUS = {
     mutedNone: "未屏蔽任何标签",
     // {tags} is a comma-joined list of the first few muted tags
     mutedMore: "{tags} 等另外 {rest} 个",
+    scripter: "Script 作者",
+    noScripters: "没有匹配的 Script 作者",
+    published: "添加时间",
+    publishedAny: "不限时间",
+    publishedWeek: "最近一周",
+    publishedMonth: "最近一个月",
+    publishedYear: "最近一年",
+    clipLabel: "有预览片段",
+    clipCaption: "仅显示带有无声短片的视频",
+    speed: "速度",
+    speedAny: "全部",
+    speedFrom: "{min} 以上",
+    speedRange: "{min}–{max}",
+    speedUnmeasured: "{count} 个视频没有测得速度，启用此筛选时将不显示。",
     duration: "时长",
     durationAny: "不限",
     durationFrom: "{min} 分钟以上",

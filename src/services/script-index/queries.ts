@@ -1,6 +1,7 @@
 // Pure selectors over the in-memory catalog. Every listing in the app (rows,
 // filters, search) is a composition of these — components never sort or
 // filter PartnerVideo[] themselves.
+import { scriptHeat } from "../script-heat";
 import type { PartnerVideo } from "./types";
 
 export type Orientation = "straight" | "gay" | "trans" | "all";
@@ -165,8 +166,17 @@ function time(value?: string): number {
   return parsed;
 }
 
+/** Newest first, on `createdAt`.
+ *
+ * NOT `publishedAt`: that is a batch-ingest stamp, so it cannot order a list.
+ * The live index holds 1,858 distinct `publishedAt` values for 16,493 videos
+ * and 996 of them share the single instant 2025-04-22T07:21:04 — a "recently
+ * added" row sorted on it puts a thousand videos in arbitrary order and shows
+ * whichever the engine happened to emit first. `createdAt` is unique per
+ * video (16,493 distinct for 16,493 entries). Same field `addedWithin` cuts
+ * on, so the shelf and the filter finally agree. */
 export function recentFirst(videos: readonly PartnerVideo[]): PartnerVideo[] {
-  return [...videos].sort((a, b) => time(b.publishedAt) - time(a.publishedAt));
+  return [...videos].sort((a, b) => time(b.createdAt) - time(a.createdAt));
 }
 
 export function recentlyUpdatedFirst(
@@ -243,6 +253,113 @@ export function byPerformer(
   return videos.filter(video =>
     video.performers?.some(performer => performer.performerId === performerId)
   );
+}
+
+/** Videos scripted by one person. Matched on `scripterName` rather than
+ * `scripteId` (the API's own spelling) because the name is what a shareable
+ * URL can carry and what a chip can print — and there are only 17 distinct
+ * scripters across the whole catalog, so collisions are not a live concern. */
+export function byScripter(
+  videos: readonly PartnerVideo[],
+  scripter: string
+): PartnerVideo[] {
+  return videos.filter(video => video.scripterName === scripter);
+}
+
+/**
+ * Added within the last `days`, measured on `createdAt`.
+ *
+ * NOT `publishedAt`, which is a batch-ingest stamp and cannot answer a
+ * recency question: the live index carries only 1,858 distinct `publishedAt`
+ * values across 16,493 videos, 996 of them share the single instant
+ * 2025-04-22T07:21:04, and a "past week" cut on it returned 140 videos whose
+ * `createdAt` was a median 20 days old — 92% of them older than a fortnight.
+ * `createdAt` is unique per video (16,493 distinct for 16,493 entries, no
+ * cluster above 1), which is the only thing here that can carry a date range.
+ *
+ * Videos with no `createdAt` drop out rather than passing through: an undated
+ * entry is not evidence of being recent. (Every live entry carries one.)
+ */
+export function addedWithin(
+  videos: readonly PartnerVideo[],
+  days: number
+): PartnerVideo[] {
+  if (!(days > 0)) return [...videos];
+  const cutoff = Date.now() - days * 24 * 60 * 60 * 1000;
+  return videos.filter(video => {
+    const at = video.createdAt ? Date.parse(video.createdAt) : NaN;
+    return Number.isFinite(at) && at >= cutoff;
+  });
+}
+
+/**
+ * Strokes per minute while the script is moving, or `null` when this video
+ * carries no usable measurement (1.2% of the catalog).
+ *
+ * Read off the `scriptMetadata` the index now ships inline, so this costs no
+ * request and covers videos the per-video endpoint has not enriched yet. That
+ * copy is downsampled — a median 7 s segment, against the endpoint's 1 s — and
+ * because a segment holding one second of motion counts as a full segment of
+ * active time, the figure reads slightly low: measured against the endpoint on
+ * 50 videos the ratio is p50 0.923, within 10% on 32 and within 20% on 47. The
+ * bias is one-directional and the ordering is preserved, which is what a
+ * filter and a sort need. Every surface reads THIS function so one video can
+ * never show two speeds.
+ *
+ * Memoised on the video object: the catalog is frozen and long-lived, while
+ * a filter pass re-runs on every keystroke, and decoding 16k run-length
+ * arrays per pass is the one thing here that would be felt.
+ */
+const speedCache = new WeakMap<PartnerVideo, number | null>();
+
+export function scriptSpeed(video: PartnerVideo): number | null {
+  const cached = speedCache.get(video);
+  if (cached !== undefined) return cached;
+  const heat = scriptHeat(video.scriptMetadata);
+  const speed = heat ? heat.strokesPerMinute : null;
+  speedCache.set(video, speed);
+  return speed;
+}
+
+/** Inclusive strokes-per-minute window; pass Infinity for an open end.
+ * Videos with no measurement drop out whenever the filter is narrowed at all
+ * — an unmeasured script is not evidence of being in range — so the caller
+ * discloses how many that cost (see the browse page's count line). */
+export function bySpeedRange(
+  videos: readonly PartnerVideo[],
+  minSpm: number,
+  maxSpm: number
+): PartnerVideo[] {
+  if (minSpm <= 0 && maxSpm === Infinity) return [...videos];
+  return videos.filter(video => {
+    const speed = scriptSpeed(video);
+    return speed !== null && speed >= minSpm && speed <= maxSpm;
+  });
+}
+
+/** How many of these carry no speed measurement — the number behind the
+ * "N not measured" note the range filter shows. */
+export function unmeasuredCount(videos: readonly PartnerVideo[]): number {
+  let count = 0;
+  for (const video of videos) {
+    if (scriptSpeed(video) === null) count += 1;
+  }
+  return count;
+}
+
+/** Fastest first. Unmeasured videos are DROPPED rather than parked at the
+ * end: the browse page reverses the sorted array in place to flip direction,
+ * which would otherwise float every unmeasured video to the top of an
+ * ascending sort. Same rule topRated and mostPlayed already follow. */
+export function fastestFirst(videos: readonly PartnerVideo[]): PartnerVideo[] {
+  return videos
+    .filter(video => scriptSpeed(video) !== null)
+    .sort((a, b) => (scriptSpeed(b) ?? 0) - (scriptSpeed(a) ?? 0));
+}
+
+/** Videos shipping a short silent roll clip — 46.7% of the catalog. */
+export function withPreview(videos: readonly PartnerVideo[]): PartnerVideo[] {
+  return videos.filter(video => Boolean(video.preview));
 }
 
 /** AND-match: the video must carry every requested tag. */
@@ -428,6 +545,28 @@ export function partnersOf(videos: readonly PartnerVideo[]): PartnerSummary[] {
     }
   }
   return [...partners.values()].sort((a, b) => b.count - a.count);
+}
+
+export interface ScripterSummary {
+  name: string;
+  count: number;
+}
+
+/** Every scripter in the catalog with their video count, biggest first.
+ * A small facet — the live index has 17 of them — so the picker can list
+ * the lot without a search box doing any real work. */
+export function scriptersOf(
+  videos: readonly PartnerVideo[]
+): ScripterSummary[] {
+  const scripters = new Map<string, number>();
+  for (const video of videos) {
+    const name = video.scripterName;
+    if (!name) continue;
+    scripters.set(name, (scripters.get(name) ?? 0) + 1);
+  }
+  return [...scripters]
+    .map(([name, count]) => ({ name, count }))
+    .sort((a, b) => b.count - a.count);
 }
 
 export interface PerformerSummary {

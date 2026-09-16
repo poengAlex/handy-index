@@ -67,6 +67,17 @@ const settings: typeof enUS = {
     hint: "你的 Handy connection key，下载 scripts 时使用。"
   },
 
+  catalog: {
+    title: "目录",
+    label: "已保存的目录",
+    captionUpdated: "下载于 {when}",
+    captionPending: "尚未下载",
+    captionUpdating: "正在获取最新副本…",
+    action: "立即更新",
+    doneToast: "目录已更新",
+    failedToast: "无法连接目录，请稍后再试。"
+  },
+
   clearDataAction: "清除数据…",
 
   // ClearDataDialog. Every row names its own toast instead of sharing one

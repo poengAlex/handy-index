@@ -94,6 +94,11 @@ export const useCatalogStore = defineStore("catalog", () => {
    * Never an error state and never a spinner: the catalog is usable. */
   const refreshing = ref(false);
 
+  /** When the snapshot in memory was downloaded, epoch ms; 0 before the first
+   * load. Off a disk copy this is the original download, not the read — the
+   * question the settings row answers is how old the data is. */
+  const fetchedAt = ref(0);
+
   /** 0–1, and never quite 1 while bytes are still arriving: a bar that sits
    * full through the last chunk is the same lie as a spinner. */
   const progress = computed(() => {
@@ -192,6 +197,7 @@ export const useCatalogStore = defineStore("catalog", () => {
     });
     if (cached) {
       videos.value = Object.freeze(cached.videos);
+      fetchedAt.value = Date.now() - cached.age;
       status.value = "ready";
       parsing.value = false;
       if (cached.age > FRESH_MS) void refresh();
@@ -209,6 +215,7 @@ export const useCatalogStore = defineStore("catalog", () => {
           parsing.value = isParsing;
         })
       );
+      fetchedAt.value = Date.now();
       status.value = "ready";
       // only a completed load is worth remembering as the size
       if (loadedBytes.value > 0) rememberSize(loadedBytes.value);
@@ -219,16 +226,26 @@ export const useCatalogStore = defineStore("catalog", () => {
     }
   }
 
-  /** Replace a stale copy with a current one, without disturbing what is on
-   * screen. A failure here is not worth surfacing: the catalog the user is
-   * already browsing stays exactly as it was. */
-  async function refresh(): Promise<void> {
-    if (refreshing.value) return;
+  /** Replace whatever is in memory with a current download, skipping the disk
+   * copy entirely, and without disturbing what is on screen. Used both by the
+   * automatic top-up behind a stale snapshot and by the manual button in
+   * settings. Answers whether it worked: the automatic caller ignores that —
+   * the catalog the user is browsing stays exactly as it was, so a silent
+   * failure is the honest outcome — while the manual one has someone waiting
+   * on a reply and says so.
+   *
+   * Refuses while a first load is still running: there is nothing to top up
+   * yet, and a second 9 MB download alongside the first helps no one. */
+  async function refresh(): Promise<boolean> {
+    if (refreshing.value || status.value !== "ready") return false;
     refreshing.value = true;
     try {
       videos.value = Object.freeze(await getIndex());
+      fetchedAt.value = Date.now();
+      return true;
     } catch {
       // next load tries again; the stale snapshot remains serviceable
+      return false;
     } finally {
       refreshing.value = false;
     }
@@ -246,6 +263,7 @@ export const useCatalogStore = defineStore("catalog", () => {
     expectedBytes,
     parsing,
     refreshing,
+    fetchedAt,
     progress,
     visible,
     anyOrientation,

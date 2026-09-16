@@ -30,6 +30,7 @@ export default {
     plays: "Most played",
     views: "Most viewed",
     longest: "Longest",
+    speed: "Fastest",
     title: "A–Z"
   },
 
@@ -43,6 +44,16 @@ export default {
 
   filters: {
     title: "Filters",
+    // Section headings for the filters dialog, which splits in two on a wide
+    // screen: page filters on the left, the three standing preferences on the
+    // right. The caption spells out the difference the badge and Clear filters
+    // already encode — those three are not cleared and are not counted.
+    sectionContent: "Content",
+    sectionVideo: "Video",
+    sectionScript: "Script",
+    sectionAlways: "Always applied",
+    sectionAlwaysCaption:
+      "Your standing preferences. They apply everywhere and Clear filters leaves them alone.",
     addTag: "Add tag",
     noTags: "No matching tags",
     site: "Site",
@@ -64,6 +75,31 @@ export default {
     mutedNone: "Nothing muted",
     // {tags} is a comma-joined list of the first few muted tags
     mutedMore: "{tags} +{rest} more",
+    scripter: "Scripter",
+    noScripters: "No matching scripters",
+    // Recency. "Any" is the off position; the rest read as a window ending
+    // now, which is why they are worded as spans and not as dates.
+    // Reads "Added", not "Published", because that is what it measures: the
+    // filter cuts on `createdAt`. The index's `publishedAt` is a batch-ingest
+    // stamp — 1,858 distinct values across 16,493 videos, 996 sharing one
+    // instant — so a week cut on it returned videos a median 20 days old.
+    // The key name is left alone to keep the diff off the other nine files.
+    published: "Added",
+    publishedAny: "Any time",
+    publishedWeek: "Past week",
+    publishedMonth: "Past month",
+    publishedYear: "Past year",
+    clipLabel: "Has preview clip",
+    clipCaption: "Only videos shipping a short silent roll clip",
+    // Strokes per minute, read off the script data the index now carries
+    // inline. "Any" is the off position; the top handle at the cap means no
+    // upper bound, matching the duration slider's sentinel.
+    speed: "Speed",
+    speedAny: "Any",
+    speedFrom: "{min}+ spm",
+    speedRange: "{min}–{max} spm",
+    speedUnmeasured:
+      "{count} videos have no measured speed and stay hidden while this is set.",
     duration: "Duration",
     durationAny: "Any",
     durationFrom: "{min}+ min",

@@ -147,177 +147,273 @@
         class="videos-page__filters"
       >
         <div class="videos-page__filters-stack">
-          <q-select
-            :model-value="null"
-            :options="tagOptions"
-            emit-value
-            map-options
-            use-input
-            input-debounce="150"
-            filled
-            dense
-            :label="$t('browse.filters.addTag')"
-            @filter="filterTags"
-            @update:model-value="addTag"
-          >
-            <template #prepend>
-              <q-icon name="sell" />
-            </template>
-            <template #no-option>
-              <q-item>
-                <q-item-section class="text-body-sm">
-                  {{ $t("browse.filters.noTags") }}
-                </q-item-section>
-              </q-item>
-            </template>
-          </q-select>
+          <!-- Column one: the page filters. Everything here narrows THIS
+               search, counts toward the "Filters (n)" badge, and is wiped by
+               Clear filters. -->
+          <div class="videos-page__filters-col">
+            <section class="videos-page__group">
+              <h4 class="text-h5 videos-page__group-title">
+                {{ $t("browse.filters.sectionContent") }}
+              </h4>
+              <q-select
+                :model-value="null"
+                :options="tagOptions"
+                emit-value
+                map-options
+                use-input
+                input-debounce="150"
+                filled
+                dense
+                :label="$t('browse.filters.addTag')"
+                @filter="filterTags"
+                @update:model-value="addTag"
+              >
+                <template #prepend>
+                  <q-icon name="sell" />
+                </template>
+                <template #no-option>
+                  <q-item>
+                    <q-item-section class="text-body-sm">
+                      {{ $t("browse.filters.noTags") }}
+                    </q-item-section>
+                  </q-item>
+                </template>
+              </q-select>
 
-          <q-select
-            :model-value="partnerId || null"
-            :options="siteOptions"
-            emit-value
-            map-options
-            use-input
-            input-debounce="150"
-            filled
-            dense
-            :label="$t('browse.filters.site')"
-            @filter="filterSites"
-            @update:model-value="setPartner"
-          >
-            <template #prepend>
-              <q-icon name="language" />
-            </template>
-            <template #no-option>
-              <q-item>
-                <q-item-section class="text-body-sm">
-                  {{ $t("browse.filters.noSites") }}
-                </q-item-section>
-              </q-item>
-            </template>
-          </q-select>
+              <q-select
+                :model-value="partnerId || null"
+                :options="siteOptions"
+                emit-value
+                map-options
+                use-input
+                input-debounce="150"
+                filled
+                dense
+                :label="$t('browse.filters.site')"
+                @filter="filterSites"
+                @update:model-value="setPartner"
+              >
+                <template #prepend>
+                  <q-icon name="language" />
+                </template>
+                <template #no-option>
+                  <q-item>
+                    <q-item-section class="text-body-sm">
+                      {{ $t("browse.filters.noSites") }}
+                    </q-item-section>
+                  </q-item>
+                </template>
+              </q-select>
 
-          <q-select
-            :model-value="performerId || null"
-            :display-value="performerDisplay"
-            :options="performerOptions"
-            emit-value
-            map-options
-            use-input
-            clearable
-            input-debounce="150"
-            filled
-            dense
-            :label="$t('browse.filters.performer')"
-            @filter="filterPerformers"
-            @update:model-value="setPerformer"
-          >
-            <template #prepend>
-              <q-icon name="person" />
-            </template>
-            <template #no-option>
-              <q-item>
-                <q-item-section class="text-body-sm">
-                  {{ $t("browse.filters.noPerformers") }}
-                </q-item-section>
-              </q-item>
-            </template>
-          </q-select>
+              <q-select
+                :model-value="performerId || null"
+                :display-value="performerDisplay"
+                :options="performerOptions"
+                emit-value
+                map-options
+                use-input
+                clearable
+                input-debounce="150"
+                filled
+                dense
+                :label="$t('browse.filters.performer')"
+                @filter="filterPerformers"
+                @update:model-value="setPerformer"
+              >
+                <template #prepend>
+                  <q-icon name="person" />
+                </template>
+                <template #no-option>
+                  <q-item>
+                    <q-item-section class="text-body-sm">
+                      {{ $t("browse.filters.noPerformers") }}
+                    </q-item-section>
+                  </q-item>
+                </template>
+              </q-select>
 
-          <div v-if="chips.length" class="videos-page__chips">
-            <button
-              v-for="chip in chips"
-              :key="chip.key"
-              type="button"
-              class="videos-page__chip"
-              :aria-label="chipRemoveAria(chip)"
-              @click="chip.remove()"
-            >
-              <HChip :icon="chip.icon">
-                {{ chip.label }}
-                <q-icon
-                  name="close"
-                  size="16px"
-                  class="videos-page__chip-close"
+              <q-select
+                :model-value="scripter || null"
+                :options="scripterOptions"
+                emit-value
+                map-options
+                use-input
+                clearable
+                input-debounce="150"
+                filled
+                dense
+                :label="$t('browse.filters.scripter')"
+                @filter="filterScripters"
+                @update:model-value="setScripter"
+              >
+                <template #prepend>
+                  <q-icon name="edit_note" />
+                </template>
+                <template #no-option>
+                  <q-item>
+                    <q-item-section class="text-body-sm">
+                      {{ $t("browse.filters.noScripters") }}
+                    </q-item-section>
+                  </q-item>
+                </template>
+              </q-select>
+
+              <div v-if="chips.length" class="videos-page__chips">
+                <button
+                  v-for="chip in chips"
+                  :key="chip.key"
+                  type="button"
+                  class="videos-page__chip"
+                  :aria-label="chipRemoveAria(chip)"
+                  @click="chip.remove()"
+                >
+                  <HChip :icon="chip.icon">
+                    {{ chip.label }}
+                    <q-icon
+                      name="close"
+                      size="16px"
+                      class="videos-page__chip-close"
+                    />
+                  </HChip>
+                </button>
+              </div>
+            </section>
+
+            <section class="videos-page__group">
+              <h4 class="text-h5 videos-page__group-title">
+                {{ $t("browse.filters.sectionVideo") }}
+              </h4>
+              <HList>
+                <HToggleRow
+                  :model-value="vr"
+                  icon="view_in_ar"
+                  :label="$t('browse.filters.vrLabel')"
+                  :caption="$t('browse.filters.vrCaption')"
+                  @update:model-value="setVr"
                 />
-              </HChip>
-            </button>
+                <HToggleRow
+                  :model-value="clip"
+                  icon="movie"
+                  :label="$t('browse.filters.clipLabel')"
+                  :caption="$t('browse.filters.clipCaption')"
+                  @update:model-value="setClip"
+                />
+              </HList>
+
+              <HLabeledSlider
+                :model-value="durationInput"
+                :label="$t('browse.filters.duration')"
+                unit="min"
+                :min="0"
+                :max="DURATION_MAX"
+                :step="1"
+                :editable="false"
+                @update:model-value="onDurationInput"
+                @change="commitDuration"
+              >
+                <template #value>{{ durationLabel }}</template>
+              </HLabeledSlider>
+            </section>
+
+            <section class="videos-page__group">
+              <h4 class="text-h5 videos-page__group-title">
+                {{ $t("browse.filters.sectionScript") }}
+              </h4>
+              <HLabeledSlider
+                :model-value="speedInput"
+                :label="$t('browse.filters.speed')"
+                unit="spm"
+                :min="0"
+                :max="SPEED_MAX"
+                :step="5"
+                :editable="false"
+                @update:model-value="onSpeedInput"
+                @change="commitSpeed"
+              >
+                <template #value>{{ speedLabel }}</template>
+              </HLabeledSlider>
+
+              <p v-if="unmeasured" class="text-caption videos-page__note">
+                {{
+                  $t("browse.filters.speedUnmeasured", {
+                    count: $n(unmeasured)
+                  })
+                }}
+              </p>
+            </section>
+
+            <HList :title="$t('browse.filters.published')">
+              <HRadioRow
+                v-for="option in PUBLISHED_WINDOWS"
+                :key="option"
+                :model-value="since"
+                :val="option"
+                :label="$t(`browse.filters.${PUBLISHED_LABELS[option]}`)"
+                @update:model-value="setSince(option)"
+              />
+            </HList>
           </div>
 
-          <HList>
-            <HToggleRow
-              :model-value="vr"
-              icon="view_in_ar"
-              :label="$t('browse.filters.vrLabel')"
-              :caption="$t('browse.filters.vrCaption')"
-              @update:model-value="setVr"
-            />
-          </HList>
-
-          <!-- The global settings gates. They ride in the URL so a shared
-               link reproduces this grid, but they stay preferences rather
-               than page filters: they don't count toward the badge, and
-               Clear filters leaves them alone. -->
-          <HList :title="$t('browse.filters.orientation')">
-            <HRadioRow
-              v-for="option in ORIENTATIONS"
-              :key="option"
-              v-model="settings.orientation"
-              :val="option"
-              :label="format.orientation(option)"
-            />
-          </HList>
-
-          <HList :title="$t('browse.filters.access')">
-            <HToggleRow
-              v-model="settings.showPremiumScripts"
-              icon="workspace_premium"
-              :label="$t('browse.filters.premiumScriptsLabel')"
-              :caption="$t('browse.filters.premiumScriptsCaption')"
-            />
-            <HToggleRow
-              v-model="settings.showPaidVideos"
-              icon="paid"
-              :label="$t('browse.filters.premiumVideosLabel')"
-              :caption="$t('browse.filters.premiumVideosCaption')"
-            />
-          </HList>
-
-          <!-- the third gate, and the only one with no control in the
-               browsing chrome: a single common tag can carry half the
-               index, so it is listed here with the others rather than
-               living solely behind the hidden-count notice -->
-          <HList>
-            <HListRow
-              icon="block"
-              :label="$t('browse.filters.mutedLabel')"
-              :caption="mutedCaption"
-              :clickable="false"
-            >
-              <template #trailing>
-                <HBtn
-                  variant="tertiary"
-                  size="sm"
-                  :label="$t('common.action.manage')"
-                  @click="mutedTagsOpen = true"
+          <!-- Column two: the three standing preferences. They ride in the
+               URL so a shared link reproduces the sender's grid, but they are
+               not page filters — no badge, and Clear filters leaves them
+               alone — so they get their own column and say so. -->
+          <div class="videos-page__filters-col">
+            <section class="videos-page__group">
+              <h4 class="text-h5 videos-page__group-title">
+                {{ $t("browse.filters.sectionAlways") }}
+              </h4>
+              <p class="text-caption videos-page__group-caption">
+                {{ $t("browse.filters.sectionAlwaysCaption") }}
+              </p>
+              <HList :title="$t('browse.filters.orientation')">
+                <HRadioRow
+                  v-for="option in ORIENTATIONS"
+                  :key="option"
+                  v-model="settings.orientation"
+                  :val="option"
+                  :label="format.orientation(option)"
                 />
-              </template>
-            </HListRow>
-          </HList>
+              </HList>
 
-          <HLabeledSlider
-            :model-value="durationInput"
-            :label="$t('browse.filters.duration')"
-            unit="min"
-            :min="0"
-            :max="DURATION_MAX"
-            :step="1"
-            :editable="false"
-            @update:model-value="onDurationInput"
-            @change="commitDuration"
-          >
-            <template #value>{{ durationLabel }}</template>
-          </HLabeledSlider>
+              <HList :title="$t('browse.filters.access')">
+                <HToggleRow
+                  v-model="settings.showPremiumScripts"
+                  icon="workspace_premium"
+                  :label="$t('browse.filters.premiumScriptsLabel')"
+                  :caption="$t('browse.filters.premiumScriptsCaption')"
+                />
+                <HToggleRow
+                  v-model="settings.showPaidVideos"
+                  icon="paid"
+                  :label="$t('browse.filters.premiumVideosLabel')"
+                  :caption="$t('browse.filters.premiumVideosCaption')"
+                />
+              </HList>
+
+              <!-- the third gate, and the only one with no control in the
+                 browsing chrome: a single common tag can carry half the
+                 index, so it is listed here with the others rather than
+                 living solely behind the hidden-count notice -->
+              <HList>
+                <HListRow
+                  icon="block"
+                  :label="$t('browse.filters.mutedLabel')"
+                  :caption="mutedCaption"
+                  :clickable="false"
+                >
+                  <template #trailing>
+                    <HBtn
+                      variant="tertiary"
+                      size="sm"
+                      :label="$t('common.action.manage')"
+                      @click="mutedTagsOpen = true"
+                    />
+                  </template>
+                </HListRow>
+              </HList>
+            </section>
+          </div>
         </div>
 
         <template #actions>
@@ -371,18 +467,25 @@ import {
   byDurationRange,
   byPartner,
   byPerformer,
+  byScripter,
+  bySpeedRange,
   byTags,
+  fastestFirst,
   longestFirst,
   mostPlayed,
   mostViewed,
   partnersOf,
   performersOf,
+  addedWithin,
   recentFirst,
   recentlyUpdatedFirst,
+  scriptersOf,
   searchTitle,
   tagsOf,
   topRated,
-  vrOnly
+  unmeasuredCount,
+  vrOnly,
+  withPreview
 } from "@/services/script-index/queries";
 import type { PartnerVideo } from "@/services/script-index/types";
 import { useCatalogStore } from "@/stores/catalog";
@@ -394,6 +497,29 @@ const SEARCH_DEBOUNCE_MS = 300;
 // "no cap" (open-ended range), so dmax is never written at this value
 const DURATION_MAX = 120;
 
+/** The recency windows, in days. 0 is the off position. Spans rather than
+ * dates so a shared link keeps meaning "the past month" instead of freezing
+ * whatever month the sender was in. Counts on the live index: 186 videos in
+ * the past week, 1,074 in the month, 5,636 in the year. */
+/** Speed slider cap in STROKES PER MINUTE. A max handle sitting at the cap
+ * means "no cap", so smax is never written at this value — the same sentinel
+ * DURATION_MAX uses. 180 leaves 0.47% of measured videos above it, while
+ * keeping the handle's travel over the range that actually exists (p50 95,
+ * p95 136). */
+const SPEED_MAX = 180;
+
+const PUBLISHED_WINDOWS = [0, 7, 30, 365] as const;
+type PublishedWindow = (typeof PUBLISHED_WINDOWS)[number];
+
+/** Keyed by the day count so the radio list can stay a module constant of
+ * numbers instead of English. */
+const PUBLISHED_LABELS: Record<PublishedWindow, string> = {
+  0: "publishedAny",
+  7: "publishedWeek",
+  30: "publishedMonth",
+  365: "publishedYear"
+};
+
 type SortKey =
   | "recent"
   | "updated"
@@ -401,6 +527,7 @@ type SortKey =
   | "plays"
   | "views"
   | "longest"
+  | "speed"
   | "title";
 
 const SORTERS: Record<
@@ -413,6 +540,7 @@ const SORTERS: Record<
   plays: mostPlayed,
   views: mostViewed,
   longest: longestFirst,
+  speed: fastestFirst,
   title: alphabetical
 };
 
@@ -427,6 +555,7 @@ const SORT_ORDER: SortKey[] = [
   "plays",
   "views",
   "longest",
+  "speed",
   "title"
 ];
 
@@ -441,6 +570,7 @@ const NATURAL_DIR: Record<SortKey, SortDir> = {
   plays: "desc",
   views: "desc",
   longest: "desc",
+  speed: "desc",
   title: "asc"
 };
 
@@ -485,6 +615,15 @@ const partnerId = computed(() => firstParam(route.query.partnerId));
 const performerId = computed(() => firstParam(route.query.performerId));
 const performerName = computed(() => firstParam(route.query.performerName));
 const vr = computed(() => firstParam(route.query.vr) === "1");
+const clip = computed(() => firstParam(route.query.clip) === "1");
+const scripter = computed(() => firstParam(route.query.scripter));
+
+const since = computed<PublishedWindow>(() => {
+  const raw = Number.parseInt(firstParam(route.query.since), 10);
+  return (PUBLISHED_WINDOWS as readonly number[]).includes(raw)
+    ? (raw as PublishedWindow)
+    : 0;
+});
 const sortKey = computed<SortKey>(() => {
   const raw = firstParam(route.query.sort);
   return isSortKey(raw) ? raw : "recent";
@@ -560,6 +699,26 @@ const durationMax = computed(() => {
   return Math.max(raw, durationMin.value);
 });
 
+// smin/smax are integer STROKES PER MINUTE; both optional, omitted at defaults
+const speedMin = computed(() => {
+  const raw = Number.parseInt(firstParam(route.query.smin), 10);
+  if (!Number.isFinite(raw)) return 0;
+  return Math.min(Math.max(raw, 0), SPEED_MAX);
+});
+
+const speedMax = computed(() => {
+  const raw = Number.parseInt(firstParam(route.query.smax), 10);
+  // absent/invalid, or at/over the cap -> open-ended (the sentinel)
+  if (!Number.isFinite(raw) || raw <= 0 || raw >= SPEED_MAX) return SPEED_MAX;
+  return Math.max(raw, speedMin.value);
+});
+
+/** the speed window is narrowed at all — the one condition under which
+ * unmeasured videos are dropped, and so the one that has to disclose it */
+const speedActive = computed(
+  () => speedMin.value > 0 || speedMax.value < SPEED_MAX
+);
+
 // --- writing filters back to the URL ---
 
 interface Filters {
@@ -571,10 +730,20 @@ interface Filters {
   sort: SortKey;
   dir: SortDir;
   vr: boolean;
+  /** only videos shipping a roll clip */
+  clip: boolean;
+  /** scripter name; "" = any */
+  scripter: string;
+  /** days; 0 = any time */
+  since: PublishedWindow;
   /** minutes; 0 = no lower bound */
   dmin: number;
   /** minutes; DURATION_MAX = no cap */
   dmax: number;
+  /** strokes per minute; 0 = no lower bound */
+  smin: number;
+  /** strokes per minute; SPEED_MAX = no cap */
+  smax: number;
   /** global gate — read from the store, not the URL (see currentFilters) */
   orientation: Orientation;
   /** global gate — read from the store, not the URL */
@@ -593,8 +762,13 @@ function currentFilters(): Filters {
     sort: sortKey.value,
     dir: sortDir.value,
     vr: vr.value,
+    clip: clip.value,
+    scripter: scripter.value,
+    since: since.value,
     dmin: durationMin.value,
     dmax: durationMax.value,
+    smin: speedMin.value,
+    smax: speedMax.value,
     // the store is the truth for both gates: every write goes through it
     // first, so what lands in the URL is what the app is actually using
     orientation: settings.orientation,
@@ -617,8 +791,13 @@ function apply(filters: Filters) {
   if (filters.sort !== "recent") query.sort = filters.sort;
   if (filters.dir !== NATURAL_DIR[filters.sort]) query.dir = filters.dir;
   if (filters.vr) query.vr = "1";
+  if (filters.clip) query.clip = "1";
+  if (filters.scripter) query.scripter = filters.scripter;
+  if (filters.since) query.since = String(filters.since);
   if (filters.dmin > 0) query.dmin = String(filters.dmin);
   if (filters.dmax < DURATION_MAX) query.dmax = String(filters.dmax);
+  if (filters.smin > 0) query.smin = String(filters.smin);
+  if (filters.smax < SPEED_MAX) query.smax = String(filters.smax);
   // written unconditionally, unlike every filter above: their "default" is
   // whatever this user saved, not a constant, so omitting them at a default
   // would export nothing on the most common visit — the one where you never
@@ -643,6 +822,22 @@ function flipDir() {
 
 function setVr(value: boolean) {
   apply({ ...currentFilters(), vr: value });
+}
+
+function setClip(value: boolean) {
+  apply({ ...currentFilters(), clip: value });
+}
+
+function setSince(value: PublishedWindow) {
+  apply({ ...currentFilters(), since: value });
+}
+
+function setScripter(name: string | null) {
+  apply({ ...currentFilters(), scripter: name ?? "" });
+}
+
+function removeScripter() {
+  apply({ ...currentFilters(), scripter: "" });
 }
 
 function removeTag(tag: string) {
@@ -674,8 +869,13 @@ function clearAll() {
     sort: "recent",
     dir: NATURAL_DIR.recent,
     vr: false,
+    clip: false,
+    scripter: "",
+    since: 0,
     dmin: 0,
-    dmax: DURATION_MAX
+    dmax: DURATION_MAX,
+    smin: 0,
+    smax: SPEED_MAX
   });
 }
 
@@ -747,7 +947,11 @@ const advancedCount = computed(
     (partnerId.value ? 1 : 0) +
     (performerId.value ? 1 : 0) +
     (vr.value ? 1 : 0) +
-    (durationMin.value > 0 || durationMax.value < DURATION_MAX ? 1 : 0)
+    (clip.value ? 1 : 0) +
+    (scripter.value ? 1 : 0) +
+    (since.value ? 1 : 0) +
+    (durationMin.value > 0 || durationMax.value < DURATION_MAX ? 1 : 0) +
+    (speedActive.value ? 1 : 0)
 );
 
 const filtersLabel = computed(() =>
@@ -765,8 +969,13 @@ function clearAdvanced() {
     performerId: "",
     performerName: "",
     vr: false,
+    clip: false,
+    scripter: "",
+    since: 0,
     dmin: 0,
-    dmax: DURATION_MAX
+    dmax: DURATION_MAX,
+    smin: 0,
+    smax: SPEED_MAX
   });
 }
 
@@ -838,6 +1047,52 @@ function commitDuration() {
   });
 }
 
+// --- speed range slider ---
+
+// same discipline as the duration track: the pending range lives here while
+// dragging and only the commit (@change) writes the URL
+const speedInput = ref<HLabeledSliderRange>({ min: 0, max: SPEED_MAX });
+
+watch(
+  [speedMin, speedMax],
+  ([min, max]) => {
+    speedInput.value = { min, max };
+  },
+  { immediate: true }
+);
+
+const speedLabel = computed(() => {
+  const { min, max } = speedInput.value;
+  if (min <= 0 && max >= SPEED_MAX) return t("browse.filters.speedAny");
+  if (max >= SPEED_MAX) return t("browse.filters.speedFrom", { min: n(min) });
+  return t("browse.filters.speedRange", { min: n(min), max: n(max) });
+});
+
+function onSpeedInput(value: number | HLabeledSliderRange) {
+  if (typeof value === "number") return;
+  speedInput.value = value;
+}
+
+function commitSpeed() {
+  apply({
+    ...currentFilters(),
+    smin: speedInput.value.min,
+    smax: speedInput.value.max
+  });
+}
+
+/** How many videos the speed window drops purely for carrying no measurement
+ * (1.2% of the catalog, scattered by age rather than all recent). Stated
+ * outright: a filter that silently removes what it cannot judge is the same
+ * failure as the muted-tag gate this app already discloses. Computed only
+ * while the filter is on, and the pool is the gated catalog so the number
+ * matches what the grid is drawn from. */
+const unmeasured = computed(() =>
+  speedActive.value && catalog.status === "ready"
+    ? unmeasuredCount(catalog.visible)
+    : 0
+);
+
 // --- pickers: add a tag / choose a site or performer without leaving the
 // page ---
 
@@ -849,6 +1104,7 @@ interface PickOption {
 const tagNeedle = ref("");
 const siteNeedle = ref("");
 const performerNeedle = ref("");
+const scripterNeedle = ref("");
 
 const allTags = computed(() =>
   catalog.status === "ready" ? tagsOf(catalog.visible) : []
@@ -867,6 +1123,33 @@ const allSites = computed(() =>
 const allPerformers = computed(() =>
   catalog.status === "ready" ? performersOf(catalog.visible) : []
 );
+
+// unlike the other three this is a closed, tiny set — 17 people across the
+// whole index — so the list is offered whole and the search box is a
+// courtesy rather than the only way through it
+const allScripters = computed(() =>
+  catalog.status === "ready" ? scriptersOf(catalog.visible) : []
+);
+
+const scripterOptions = computed<PickOption[]>(() =>
+  allScripters.value
+    .filter(summary =>
+      summary.name.toLowerCase().includes(scripterNeedle.value)
+    )
+    .map(summary => ({
+      label: t("browse.filters.option", {
+        name: summary.name,
+        count: n(summary.count)
+      }),
+      value: summary.name
+    }))
+);
+
+function filterScripters(input: string, update: (fn: () => void) => void) {
+  update(() => {
+    scripterNeedle.value = input.trim().toLowerCase();
+  });
+}
 
 const tagOptions = computed<PickOption[]>(() =>
   allTags.value
@@ -998,6 +1281,14 @@ const chips = computed<FilterChip[]>(() => {
       remove: removePerformer
     });
   }
+  if (scripter.value) {
+    list.push({
+      key: "scripter",
+      label: scripter.value,
+      icon: "edit_note",
+      remove: removeScripter
+    });
+  }
   return list;
 });
 
@@ -1007,8 +1298,8 @@ function chipRemoveAria(chip: FilterChip): string {
   return t("browse.chip.removeAria", { label: chip.label });
 }
 
-// --- results:
-// byTags → byPartner → byPerformer → vrOnly → duration → search → sort ---
+// --- results: byTags → byPartner → byPerformer → vrOnly → clip → scripter
+// → added → duration → search → sort ---
 
 // Picking a site or a performer used to lift the orientation gate, on the
 // theory that a deliberate pick outranks an ambient filter. It reads as a
@@ -1021,10 +1312,18 @@ function filterPool(pool: readonly PartnerVideo[]): PartnerVideo[] {
   if (partnerId.value) out = byPartner(out, partnerId.value);
   if (performerId.value) out = byPerformer(out, performerId.value);
   if (vr.value) out = vrOnly(out);
+  if (clip.value) out = withPreview(out);
+  if (scripter.value) out = byScripter(out, scripter.value);
+  if (since.value) out = addedWithin(out, since.value);
   out = byDurationRange(
     out,
     durationMin.value * 60,
     durationMax.value >= DURATION_MAX ? Infinity : durationMax.value * 60
+  );
+  out = bySpeedRange(
+    out,
+    speedMin.value,
+    speedMax.value >= SPEED_MAX ? Infinity : speedMax.value
   );
   return searchTitle(out, q.value);
 }
@@ -1188,12 +1487,63 @@ async function shareResults() {
 
 .videos-page__filters {
   width: 480px;
+  // the kit caps at 560; on a narrow phone a fixed 480 would overhang
+  max-width: 100%;
+}
+
+// Wide screens get two columns and the room to hold them. HModal's 560px cap
+// is a kit rule and the kit is never forked, so it is overridden here, from
+// the consumer, and only above the breakpoint — the doubled class buys the
+// specificity to beat the component's own scoped rule without !important.
+// Justification for departing from the 560 rule: this dialog carries thirteen
+// controls, and one 560px column makes it a scroller on a 27" display.
+@media (min-width: 1024px) {
+  .videos-page__filters.videos-page__filters {
+    width: 900px;
+    max-width: calc(100vw - 2 * var(--space-lg));
+  }
 }
 
 .videos-page__filters-stack {
-  display: flex;
-  flex-direction: column;
+  display: grid;
   gap: var(--space-sm);
+  // columns are independent stacks, not a flowing masonry: the split is
+  // semantic (page filters | standing preferences), so a section must never
+  // migrate across it to even the heights out
+  align-items: start;
+
+  @media (min-width: 1024px) {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-md);
+  }
+}
+
+.videos-page__filters-col {
+  display: grid;
+  gap: var(--space-sm);
+  align-content: start;
+  // grid children default to auto min-width, which a long select label
+  // stretches past its track
+  min-width: 0;
+}
+
+.videos-page__group {
+  display: grid;
+  gap: var(--space-sm);
+  min-width: 0;
+}
+
+// matches the HList card title (text-h5) but sits on the dialog surface
+// rather than on a card, so it carries no inset padding of its own
+.videos-page__group-title {
+  margin: 0;
+  color: var(--color-text-primary);
+}
+
+.videos-page__group-caption {
+  margin: calc(var(--space-sm) * -1) 0 0;
+  color: var(--color-text-tertiary);
+  text-wrap: balance;
 }
 
 .videos-page__chips {
@@ -1235,6 +1585,11 @@ async function shareResults() {
   display: flex;
   justify-content: center;
   padding-top: var(--space-xl);
+}
+
+.videos-page__note {
+  margin: calc(var(--space-xs) * -1) 0 0;
+  color: var(--color-text-tertiary);
 }
 
 .videos-page__grid {

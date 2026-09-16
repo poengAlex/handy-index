@@ -74,6 +74,18 @@ const settings: typeof enUS = {
     hint: "Tu connection key de Handy, que se usa al descargar scripts."
   },
 
+  catalog: {
+    title: "Catálogo",
+    label: "Catálogo guardado",
+    captionUpdated: "Descargado {when}",
+    captionPending: "Aún no descargado",
+    captionUpdating: "Obteniendo una copia nueva…",
+    action: "Actualizar ahora",
+    doneToast: "Catálogo actualizado",
+    failedToast:
+      "No se pudo acceder al catálogo. Inténtalo de nuevo en un momento."
+  },
+
   clearDataAction: "Borrar datos…",
 
   // ClearDataDialog. Every row names its own toast instead of sharing one

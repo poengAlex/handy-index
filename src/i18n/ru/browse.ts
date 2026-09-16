@@ -32,6 +32,7 @@ const browse: typeof enUS = {
     plays: "По запускам",
     views: "По просмотрам",
     longest: "По длительности",
+    speed: "Самые быстрые",
     title: "По алфавиту"
   },
 
@@ -45,6 +46,12 @@ const browse: typeof enUS = {
 
   filters: {
     title: "Фильтры",
+    sectionContent: "Содержание",
+    sectionVideo: "Видео",
+    sectionScript: "Script",
+    sectionAlways: "Всегда применяется",
+    sectionAlwaysCaption:
+      "Ваши постоянные настройки. Действуют везде, и «Очистить фильтры» их не трогает.",
     addTag: "Добавить тег",
     noTags: "Теги не найдены",
     site: "Сайт",
@@ -67,6 +74,21 @@ const browse: typeof enUS = {
     mutedNone: "Ничего не заглушено",
     // {tags} is a comma-joined list of the first few muted tags
     mutedMore: "{tags} и ещё {rest}",
+    scripter: "Автор script",
+    noScripters: "Нет подходящих script-авторов",
+    published: "Добавлено",
+    publishedAny: "За всё время",
+    publishedWeek: "За неделю",
+    publishedMonth: "За месяц",
+    publishedYear: "За год",
+    clipLabel: "С превью-клипом",
+    clipCaption: "Только видео с коротким беззвучным клипом",
+    speed: "Темп",
+    speedAny: "Любой",
+    speedFrom: "от {min}",
+    speedRange: "{min}–{max}",
+    speedUnmeasured:
+      "У {count} видео темп не измерен, они скрыты, пока включён этот фильтр.",
     duration: "Длительность",
     durationAny: "Любая",
     durationFrom: "от {min} мин",
