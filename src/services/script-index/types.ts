@@ -82,21 +82,30 @@ export interface Scripter {
   description?: string;
 }
 
-/** Per-second travel distance for a script, run-length encoded: a NEGATIVE
- * entry is a run of that many idle seconds, a non-negative entry is one
- * second carrying that much movement. Decoded, the array is exactly
- * `ceil(endTime / 1000)` long and aligned to the video's own clock — see
- * `decodeSegments` in services/script-heat.ts.
+/** Per-segment travel distance for a script, run-length encoded: a
+ * non-negative entry is one segment carrying that much movement, a NEGATIVE
+ * entry repeats the value before it that many MORE times. `[0, -10]` is
+ * eleven idle segments; `[1854, -3]` is four segments of 1854, which is why
+ * the run cannot be read as rest — see `decodeSegments` in
+ * services/script-heat.ts for the catalog-wide check behind that.
+ *
+ * Decoded, the array is exactly `ceil(endTime / resolution)` long and aligned
+ * to the video's own clock, and `total_distance` is exactly its sum.
  *
  * `non_zero_segment_count` does NOT describe the encoded array (it counts
- * neither entries nor decoded seconds); nothing here reads it. */
+ * neither entries, decoded segments, nor moving ones); nothing here reads
+ * it. */
 export interface SegmentDistances {
   distances?: number[];
   max_value?: number;
   min_value?: number;
-  /** milliseconds per segment — 1000 on every script observed */
+  /** milliseconds per segment. 1000 throughout the per-video endpoint; the
+   * copy carried inline on the index is downsampled per script, which across
+   * the catalog is 50 distinct values from 1 s to 52 s (median 4 s). */
   resolution?: number;
-  /** summed |change in position| over the whole script, 0-100 scale */
+  /** summed |change in position| over the whole script, 0-100 scale — and
+   * the sum of the decoded segments exactly, on all 16,628 index entries
+   * carrying segment data */
   total_distance?: number;
   non_zero_segment_count?: number;
 }

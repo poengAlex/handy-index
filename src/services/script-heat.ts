@@ -5,12 +5,29 @@
 // the sentences.
 //
 // The encoding, established against the live API and not the (stale) spec:
-// `distances` is RUN-LENGTH ENCODED. A negative entry is a run of that many
-// idle SEGMENTS; a non-negative entry is one segment carrying that much
-// movement. Decoded it is exactly `ceil(endTime / resolution)` entries long,
-// which holds on 16,303/16,303 index entries and on every per-video response
-// sampled — a falsifiable prediction, since 15,474 of those arrays are
-// compressed. So the strip is a real clock, not a vague intensity ordering.
+// `distances` is RUN-LENGTH ENCODED. A non-negative entry is one segment
+// carrying that much movement; a negative entry repeats the PRECEDING value
+// that many MORE times — `[0, -10]` is eleven idle segments, and `[1854, -3]`
+// is four segments of 1854 each, not one of movement followed by three of
+// rest. Two independent checks over the 16,628 index entries carrying
+// segment data fix both halves of that, and neither is a near miss:
+//
+//   sum(decoded) === total_distance   16,628/16,628 repeating the previous
+//                                     value; 14,238/16,628 if the runs were
+//                                     zeros. min_value and max_value agree
+//                                     on 16,628/16,628 the same way.
+//   len(decoded) === ceil(endTime / resolution)
+//                                     16,628/16,628 for |n| further entries;
+//                                     837/16,628 for |n| - 1, i.e. it fails
+//                                     on every one of the 15,791 compressed
+//                                     arrays and passes only where there is
+//                                     nothing to expand.
+//
+// Runs that repeat a non-zero value are not rare — 4,242 of them across 2,390
+// scripts (14% of the catalog) — and reading them as rest used to shorten the
+// moving time those scripts are measured over, printing a speed up to 79%
+// (median 7%) above the truth. So the strip is a real clock, not a vague
+// intensity ordering, and a repeated value is movement continuing.
 //
 // Segment width is NOT fixed. The per-video endpoint uses 1 s throughout; the
 // copy carried inline on the index is downsampled to roughly 110 segments per
@@ -33,7 +50,9 @@ export const HEAT_BINS = 120;
  * non-idle 120-bin mean across 217 sampled scripts (18,931 bins) gives p50
  * 87.9, p90 172.8, p95 199.7 spm. At 200 the median bin sits at 44% of the
  * ramp and 5.0% of bins clip: mid-tones for ordinary stretches, headroom that
- * only genuinely fast passages reach.
+ * only genuinely fast passages reach. Re-run over the whole catalog with the
+ * corrected decoder (1,447,185 non-idle bins) it holds — p50 86.3, p90 172.3,
+ * p95 198.6, 3.5% clipping — so the fix moved the strip, not the ramp.
  */
 export const HEAT_CEILING_SPM = 200;
 
@@ -42,7 +61,7 @@ export const HEAT_CEILING_SPM = 200;
 export const HEAT_FLOOR = 0.08;
 
 export interface ScriptHeat {
-  /** per-segment travel distance, idle runs expanded back out */
+  /** per-segment travel distance, repeated runs expanded back out */
   segments: number[];
   /** seconds each segment covers — 1 off the per-video endpoint, commonly
    * 3-25 off the index's inline copy */
@@ -78,22 +97,28 @@ export interface ScriptHeat {
 
 /**
  * Expands the run-length encoding into one entry per segment. A negative
- * entry becomes that many zeros; everything else passes through.
+ * entry repeats the value before it that many more times; everything else
+ * passes through. Idle runs are only the common case of that, because what
+ * precedes them is usually a 0.
  *
  * Defensive against a hand-mangled or future payload: a non-finite entry is
- * dropped rather than turned into NaN segments, and a run is capped so a
- * corrupt -2000000 can't allocate its way through the tab's memory.
+ * dropped rather than turned into NaN segments, a run is capped so a corrupt
+ * -2000000 can't allocate its way through the tab's memory, and a leading
+ * negative (never yet observed) repeats the 0 the script is assumed to start
+ * from rather than reading off the end of the array.
  */
 export function decodeSegments(distances: readonly number[]): number[] {
   const segments: number[] = [];
+  let previous = 0;
   for (const value of distances) {
     if (!Number.isFinite(value)) continue;
     if (value < 0) {
       // 86,400 segments is a day even at one-second resolution
       const run = Math.min(Math.round(-value), 86_400);
-      for (let index = 0; index < run; index += 1) segments.push(0);
+      for (let index = 0; index < run; index += 1) segments.push(previous);
     } else {
       segments.push(value);
+      previous = value;
     }
   }
   return segments;

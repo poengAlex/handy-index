@@ -503,9 +503,11 @@ const DURATION_MAX = 120;
  * the past week, 1,074 in the month, 5,636 in the year. */
 /** Speed slider cap in STROKES PER MINUTE. A max handle sitting at the cap
  * means "no cap", so smax is never written at this value — the same sentinel
- * DURATION_MAX uses. 180 leaves 0.47% of measured videos above it, while
- * keeping the handle's travel over the range that actually exists (p50 95,
- * p95 136). */
+ * DURATION_MAX uses. 180 leaves 0.29% of measured videos above it, while
+ * keeping the handle's travel over the range that actually exists (p50 94,
+ * p95 135) — re-measured after the run-length decoder stopped reading a
+ * repeated value as rest, which had pushed 2,390 scripts above their real
+ * speed. */
 const SPEED_MAX = 180;
 
 const PUBLISHED_WINDOWS = [0, 7, 30, 365] as const;

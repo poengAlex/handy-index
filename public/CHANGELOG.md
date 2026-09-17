@@ -5,6 +5,21 @@
      words. Newest release on top. Format: "## <version> — <date>", then
      "### <group>" headings and "- " lines. Keep it English-only. -->
 
+## 2.6.1 — 16 September 2026
+
+### Script speed and the activity strip
+
+- Fixed how script measurements are read. When a script keeps up the same
+  amount of movement for a stretch, the data says so in shorthand, and we were
+  reading that shorthand as a pause instead. Roughly one video in seven was
+  affected: its speed came out too high — usually by about 7%, in the worst
+  cases by nearly 80% — and the activity strip drew a flat, resting stretch
+  over a part of the video where the script was still going.
+- Speeds, the moving percentage, the longest pause and the strip itself are
+  all right now, on every video. The speed filter and the "Fastest" sort read
+  the same corrected numbers, so some videos will sit a little lower than they
+  did yesterday. That is the fix, not a change of scale.
+
 ## 2.6.0 — 16 September 2026
 
 ### Video pages
