@@ -1,0 +1,130 @@
+// Part of the kit's global CSS — loaded through kit.scss, never on its own.
+// The type scale, prose width, token text colours, tabular figures.
+
+// ------------------------------------------------------------
+// Typography  [DESIGN.md §4]
+// clamp() scales between 600px and 1440px viewports.
+// Overrides Quasar's .text-* classes so the same names work.
+// ------------------------------------------------------------
+@mixin display-features {
+  font-feature-settings:
+    "ss01" on,
+    "ss02" on,
+    "cv11" on;
+}
+
+.text-display {
+  font-size: clamp(40px, 17.1px + 3.81vw, 72px);
+  font-weight: 500;
+  line-height: 116%;
+  letter-spacing: 0;
+  @include display-features;
+}
+
+.text-h1 {
+  font-size: clamp(32px, 20.6px + 1.9vw, 48px);
+  font-weight: 500;
+  line-height: 116%;
+  letter-spacing: 0;
+  @include display-features;
+}
+
+.text-h2 {
+  font-size: clamp(26px, 18.9px + 1.19vw, 36px);
+  font-weight: 500;
+  line-height: 121%;
+  letter-spacing: 0;
+  @include display-features;
+}
+
+.text-h3 {
+  font-size: clamp(22px, 16.3px + 0.95vw, 30px);
+  font-weight: 700;
+  line-height: 128%;
+  letter-spacing: 0;
+  @include display-features;
+}
+
+.text-h4 {
+  font-size: clamp(20px, 17.1px + 0.48vw, 24px);
+  font-weight: 500;
+  line-height: 144%;
+  letter-spacing: 0;
+}
+
+.text-h5 {
+  font-size: clamp(16px, 14.6px + 0.24vw, 18px);
+  font-weight: 500;
+  line-height: 144%;
+  letter-spacing: 0;
+}
+
+.text-h6 {
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 144%;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.text-body-lg {
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 144%;
+}
+
+.text-body {
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 144%;
+}
+
+.text-body-compact {
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 150%;
+  letter-spacing: -0.16px;
+}
+
+.text-body-sm {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 143%;
+  letter-spacing: -0.14px;
+}
+
+.text-caption {
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 133%;
+  letter-spacing: 0;
+}
+
+.text-button {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 143%;
+  letter-spacing: -0.14px;
+}
+
+// Prose columns cap at 680px [§4]
+.prose {
+  max-width: 680px;
+}
+
+// Token-driven text colors
+.text-secondary-token {
+  color: var(--color-text-secondary);
+}
+
+.text-tertiary-token {
+  color: var(--color-text-tertiary);
+}
+
+// Realtime / frequently-updating numbers use tabular figures so digit
+// widths don't reflow as values change — Figtree's default numerals are
+// proportional. Apply to any live readout (speed, battery, temp, timers).
+// [DESIGN.md §4]
+.text-tabular {
+  font-variant-numeric: tabular-nums;
+}

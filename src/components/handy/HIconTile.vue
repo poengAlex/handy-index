@@ -66,3 +66,14 @@ const emit = defineEmits<{ click: [] }>();
   overflow: hidden;
 }
 </style>
+
+<style lang="scss">
+// Shadows don't read on dark, so the light-mode hover lift is invisible
+// there. On dark, hover lifts via a hairline outline instead (the dark-mode
+// "separation is surface/stroke, not shadow" rule) — the same treatment
+// HNavCard gets, for the same reason.
+[data-theme="dark"] .h-icon-tile:hover,
+.section-dark .h-icon-tile:hover {
+  box-shadow: inset 0 0 0 1px var(--color-stroke-default);
+}
+</style>

@@ -1,0 +1,49 @@
+// Part of the kit's global CSS — loaded through kit.scss, never on its own.
+// Page base: html/body, links, the focus ring.
+
+// ------------------------------------------------------------
+// Base
+// ------------------------------------------------------------
+// The page is a rigid surface [DESIGN.md §10]: it never pans sideways and
+// never rubber-bands past its ends on touch.
+// - overflow-x: clip — full-bleed 100vw break-outs (carousels, dark bands)
+//   can overhang by a scrollbar width; clip removes the horizontal pan
+//   without creating a scroll container (unlike `hidden`).
+// - overscroll-behavior: none — kills the elastic bounce/glow at the scroll
+//   ends and scroll chaining. Deliberate side effect: Chrome Android's
+//   pull-to-refresh is off; the brand treats the page as a fixed surface.
+html,
+body {
+  overflow-x: clip;
+  overscroll-behavior: none;
+}
+
+body {
+  font-family: var(--font-brand);
+  background: var(--color-bg-page);
+  color: var(--color-text-primary);
+  font-size: 16px;
+  line-height: 144%;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--color-text-link);
+  text-decoration: none;
+
+  // The underline is the text-link affordance, and a button is never a text
+  // link — its shape is the affordance. Quasar renders any q-btn carrying
+  // `to` or `href` as an <a>, so an unguarded `a:hover` (0,1,1) outranks
+  // Quasar's own `.q-btn { text-decoration: none }` (0,1,0) and underlines
+  // the label — or, on an icon-only button, the Material Symbols glyph,
+  // which is text too. Guarding here fixes it once instead of per component.
+  &:hover:not(.q-btn) {
+    text-decoration: underline;
+  }
+}
+
+// Visible focus ring on every interactive element [§11]
+:focus-visible {
+  outline: 2px solid var(--color-stroke-focus);
+  outline-offset: 2px;
+}

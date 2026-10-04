@@ -150,6 +150,13 @@ const config = computed(() => {
     gap: 16,
     snapAlign: "start" as const,
     wrapAround: wrap,
+    // vue3-carousel (0.17 to 0.19) tracks CSS animations by default: on mount
+    // it puts animationstart/animationend listeners on `document`, and takes
+    // them off only from an effect the unmount has already stopped, so every
+    // carousel stayed reachable from `document`, its page with it (found with
+    // heap snapshots in the onboarding app, 2026-10-04). The cards are a
+    // fixed width; there is nothing to track.
+    ignoreAnimations: true,
     // the library ignores (and warns about) preventExcessiveDragging when
     // wrapAround is on, so only set it on the non-looping carousel
     ...(wrap ? {} : { preventExcessiveDragging: true }),

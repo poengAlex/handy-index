@@ -56,7 +56,7 @@
 // "action" slot puts one icon-only control on the title row's right edge
 // (refresh and friends) — it never grows the row, so a card with an action
 // lines up with one without.
-import { kitLabel } from "@/components/handy/labels";
+import { kitLabel } from "./labels";
 
 export interface InfoItem {
   label: string;

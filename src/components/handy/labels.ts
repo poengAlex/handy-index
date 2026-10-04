@@ -20,9 +20,18 @@ export const KIT_LABELS = {
   readFullText: "Read the full text",
   loading: "Loading",
   recommended: "Recommended",
-  /** The footer of a help tip, in each of its two states. */
-  tipPin: "Click to pin, then scroll",
-  tipClose: "Esc or click outside to close",
+  /** Marks a control a casual user should leave alone (HSectionCard). */
+  expert: "Expert",
+  /**
+   * The foot of a help tip, printed only while it is LOCKED. Nothing
+   * advertises that a click would lock one: a hint for a state the reader is
+   * not in yet costs a line on the surface with the fewest to spare. Locked
+   * is different — the sheet now outlives the cursor, and the way back out is
+   * the part that stopped being guessable.
+   */
+  tipLocked: "Locked — Esc or click outside to close",
+  /** The same line where there is no Esc key and nothing to click with. */
+  tipLockedTouch: "Locked — tap outside to close",
   /** `{label}` is the control's own name, or `value` when it has none. */
   increase: "Increase {label}",
   decrease: "Decrease {label}",
@@ -62,7 +71,16 @@ export const KIT_LABELS = {
   themeToLight: "Switch to light mode",
   themeToDark: "Switch to dark mode",
   themeLight: "Light mode",
-  themeDark: "Dark mode"
+  themeDark: "Dark mode",
+  /**
+   * What a connection dot calls itself when it is a BUTTON and the caller
+   * named no other purpose for it. An icon-only button has to say something,
+   * and the state it is showing is the honest thing for it to say — a caller
+   * whose button does something more specific ("Reconnect") passes `label`.
+   */
+  connected: "Connected",
+  connecting: "Connecting",
+  offline: "Offline"
 } as const;
 
 export type KitLabel = keyof typeof KIT_LABELS;

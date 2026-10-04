@@ -61,12 +61,9 @@
 // full text in an HModal; q-dialog scrolls tall content natively.
 import { nextTick, onMounted, onUnmounted, ref, watch } from "vue";
 import type { QScrollArea } from "quasar";
-import HModal from "@/components/handy/HModal.vue";
-import { kitLabel } from "@/components/handy/labels";
-import {
-  H_SCROLL_BAR_STYLE,
-  H_SCROLL_THUMB_STYLE
-} from "@/components/handy/scroll";
+import HModal from "./HModal.vue";
+import { kitLabel } from "./labels";
+import { H_SCROLL_BAR_STYLE, H_SCROLL_THUMB_STYLE } from "./scroll";
 
 const props = withDefaults(
   defineProps<{

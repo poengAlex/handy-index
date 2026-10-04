@@ -5,8 +5,9 @@
     :class="{ 'h-helptip--pinned': pinned }"
     :aria-label="ariaLabel"
     :aria-expanded="pinned"
-    @mouseenter="preview"
-    @mouseleave="endPreview"
+    @pointerenter="preview"
+    @pointerleave="endPreview"
+    @pointerdown="notePointer"
     @click.stop.prevent="togglePin"
   >
     <q-icon name="help_outline" :size="size" />
@@ -22,10 +23,8 @@
       anchor="bottom middle"
       self="top middle"
       :offset="[0, 6]"
-      max-width="340px"
       transition-show="jump-down"
       transition-hide="jump-up"
-      @show="measure"
       @hide="unpin"
     >
       <div ref="bodyRef" class="h-helptip__body">
@@ -34,8 +33,8 @@
         <p v-if="detail" class="h-helptip__detail">{{ detail }}</p>
         <p v-if="note" class="h-helptip__note">{{ note }}</p>
       </div>
-      <p v-if="pinned || overflows" class="h-helptip__pin">
-        {{ pinned ? kitLabel("tipClose") : kitLabel("tipPin") }}
+      <p v-if="pinned" class="h-helptip__pin">
+        {{ kitLabel(coarse ? "tipLockedTouch" : "tipLocked") }}
       </p>
     </q-menu>
   </button>
@@ -50,16 +49,22 @@
 // nobody reads about — panel-level help answers "what is this panel for",
 // which is a different question from "what does this knob do".
 //
-// Two rules. Hover previews, click PINS (usePinnableTip explains why a
-// tooltip cannot be the popup here) — so the cursor is a pointer, because
-// something does happen on click. And every paragraph is mirrored onto the
-// accessible name, because a popup that only appears on hover reaches nobody
-// navigating by keyboard; pinning is on the same button, so Enter or Space
-// opens the readable copy.
+// Two rules. Hover previews, click LOCKS (usePinnableTip explains why a
+// tooltip cannot be the popup here, and why a tap skips the preview) — so the
+// cursor is a pointer, because something does happen on click. And every
+// paragraph is mirrored onto the accessible name, because a popup that only
+// appears on hover reaches nobody navigating by keyboard; locking is on the
+// same button, so Enter or Space opens the readable copy.
+//
+// The foot is printed in ONE direction only. Nothing announces that a click
+// would lock the tip: that is a hint spent on a state the reader is not in
+// yet, on the surface with the least room to spend anything. Locked, it says
+// so — because that state changed the rules (the sheet now outlives the
+// cursor) and the way out is the one thing that is no longer guessable.
 
 import { computed } from "vue";
-import { usePinnableTip } from "@/components/handy/usePinnableTip";
-import { kitLabel } from "@/components/handy/labels";
+import { usePinnableTip } from "./usePinnableTip";
+import { kitLabel } from "./labels";
 
 const props = withDefaults(
   defineProps<{
@@ -87,12 +92,12 @@ const {
   bodyRef,
   open,
   pinned,
-  overflows,
+  coarse,
+  notePointer,
   preview,
   endPreview,
   togglePin,
-  unpin,
-  measure
+  unpin
 } = usePinnableTip();
 
 // A popup that only appears on hover reaches nobody on a keyboard, so every
@@ -107,6 +112,7 @@ const ariaLabel = computed(() =>
 <style scoped lang="scss">
 .h-helptip {
   all: unset;
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -131,7 +137,20 @@ const ariaLabel = computed(() =>
   }
 }
 
-// Pinned, the ? stays lit for as long as its sheet is up — otherwise a sheet
+// An 18px mark is a fine target for a cursor and a poor one for a fingertip,
+// so a touch screen gets a halo of empty hit area around it. Deliberately
+// modest (32px, not the 48px floor the M3 audit was turned down over): the ?
+// sits inside rows that are themselves tappable, and a target that swallows
+// the row's own taps trades one miss for another.
+@media (pointer: coarse) {
+  .h-helptip::after {
+    content: "";
+    position: absolute;
+    inset: -7px;
+  }
+}
+
+// Locked, the ? stays lit for as long as its sheet is up — otherwise a sheet
 // that no longer follows the mouse has nothing left pointing back at the
 // control it belongs to.
 .h-helptip--pinned {
@@ -142,7 +161,7 @@ const ariaLabel = computed(() =>
 
 <!-- QMenu portals to the body, so its content sits outside this component's
      scope and has to be styled globally. Qualified with .q-menu so the sheet
-     keeps its own radius against app.scss's dropdown rule. -->
+     keeps its own radius against the kit's dropdown rule (styles/_quasar.scss). -->
 <style lang="scss">
 // inline-flex, not the flex a column would normally ask for: q-menu is
 // inline-block so that a two-word tip comes out two words wide, and going
@@ -160,6 +179,11 @@ const ariaLabel = computed(() =>
   padding: 0;
   font-size: 13px;
   line-height: 1.45;
+  // 340px where there is room for it. The cap is CSS rather than q-menu's
+  // max-width prop because the prop is a fixed pixel string: on a 360px
+  // phone a sheet anchored to a ? near the edge would be shoved around by
+  // the position engine instead of simply being narrower.
+  max-width: min(340px, calc(100vw - 24px));
 }
 
 .h-helptip__body {
@@ -169,8 +193,11 @@ const ariaLabel = computed(() =>
   padding: var(--space-sm);
 }
 
-// Pinned it is a surface you can land on, so it says so: a real border and a
-// deeper lift separate it from the weightless preview it replaces.
+// Locked it is a surface you can land on, so it says so: a real border and a
+// deeper lift separate it from the weightless preview it replaces. On a touch
+// screen it is the only state there is, which is why the difference has to be
+// carried by the sheet's own weight and not by a transition out of a hover
+// nobody there ever sees.
 .q-menu.h-helptip__tip--pinned {
   box-shadow:
     inset 0 0 0 1px var(--color-stroke-default),
@@ -207,9 +234,9 @@ const ariaLabel = computed(() =>
   color: var(--color-text-primary);
 }
 
-// Outside the scroller on purpose. It only appears on a sheet whose bottom is
-// off-screen, so as ordinary trailing text it would be the one line nobody
-// could ever read.
+// Outside the scroller on purpose. It appears on the sheets most likely to be
+// taller than their room, so as ordinary trailing text it would be the one
+// line nobody could ever read.
 .h-helptip__pin {
   flex: 0 0 auto;
   margin: 0;

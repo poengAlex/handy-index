@@ -22,7 +22,8 @@
     "typecheck": "vue-tsc --noEmit",
     "i18n:check": "node scripts/check-i18n.mjs",
     "start": "node server.js",
-    "postinstall": "quasar prepare --silent"
+    "postinstall": "quasar prepare --silent",
+    "kit": "node scripts/handy-kit/bootstrap.mjs"
   },
   "dependencies": {
     "@fontsource-variable/figtree": "^5.3.0",
@@ -31,6 +32,8 @@
     "pinia": "^3.0.1",
     "pinia-plugin-persistedstate": "^4.7.1",
     "quasar": "^2.21.1",
+    "uplot": "^1.6.32",
+    "uplot-vue": "^1.2.4",
     "vue": "^3.5.22",
     "vue-i18n": "^11.4.8",
     "vue-router": "^5.0.6",

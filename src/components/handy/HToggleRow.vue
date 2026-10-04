@@ -33,8 +33,8 @@
 // whole row flips the value, and a direct tap on the switch is stopped so
 // it can't double-flip. Toggle = an independent on/off setting (§6); it
 // sits trailing, one row per card or grouped in an HList.
-import HListRow from "@/components/handy/HListRow.vue";
-import HHelpTip from "@/components/handy/HHelpTip.vue";
+import HListRow from "./HListRow.vue";
+import HHelpTip from "./HHelpTip.vue";
 
 withDefaults(
   defineProps<{

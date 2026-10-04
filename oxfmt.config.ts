@@ -10,7 +10,11 @@ export default defineConfig({
     ".quasar/",
     "src-cordova/",
     "src-capacitor/",
-    "src/router/typed-router.d.ts"
+    "src/router/typed-router.d.ts",
+    // byte-exact mirror of brand-ux's kit and its sync tooling, replaced by
+    // `npm run kit -- pull` — reformatting means drift
+    "src/components/handy/",
+    "scripts/handy-kit/"
   ],
 
   printWidth: 80,
