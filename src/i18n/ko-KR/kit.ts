@@ -12,7 +12,7 @@ import type enUS from "../en-US/kit";
 const kit: typeof enUS = {
   close: "닫기",
   copy: "복사",
-  copyKey: "키 복사",
+  copyKey: "connection key 복사",
   dismiss: "닫기",
   readFullText: "전체 내용 읽기",
   loading: "불러오는 중",

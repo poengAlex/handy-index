@@ -3,7 +3,7 @@ import type enUS from "../en-US/kit";
 const kit: typeof enUS = {
   close: "Lukk",
   copy: "Kopier",
-  copyKey: "Kopier nøkkelen",
+  copyKey: "Kopier connection key",
   dismiss: "Skjul",
   readFullText: "Les hele teksten",
   loading: "Laster",

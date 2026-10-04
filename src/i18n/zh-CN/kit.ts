@@ -12,7 +12,7 @@ import type enUS from "../en-US/kit";
 const kit: typeof enUS = {
   close: "关闭",
   copy: "复制",
-  copyKey: "复制密钥",
+  copyKey: "复制 connection key",
   dismiss: "关闭",
   readFullText: "阅读全文",
   loading: "加载中",

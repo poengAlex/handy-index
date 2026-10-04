@@ -12,7 +12,7 @@ import type enUS from "../en-US/kit";
 const kit: typeof enUS = {
   close: "Fechar",
   copy: "Copiar",
-  copyKey: "Copiar a chave",
+  copyKey: "Copiar a connection key",
   dismiss: "Dispensar",
   readFullText: "Ler o texto completo",
   loading: "Carregando",
