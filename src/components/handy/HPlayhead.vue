@@ -249,7 +249,7 @@ function onKeydown(e: KeyboardEvent) {
   --h-playhead-gap-width: 3px;
   --h-playhead-inset: 2px;
   // --h-slider-gap is the kit's existing "colour of the surface a handle is
-  // cut into", declared per scope in app.scss so dark islands don't inherit
+  // cut into", declared per scope in styles/_tokens.scss so dark islands don't inherit
   // a white halo. Same job here.
   --h-playhead-surface: var(--h-slider-gap, var(--color-bg-page, #ffffff));
   // the playhead colour the charts already use (graph-theme.ts cursor)

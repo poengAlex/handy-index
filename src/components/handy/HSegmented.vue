@@ -235,7 +235,7 @@ async function onKeydown(event: KeyboardEvent) {
   // here: a custom property set on the element itself beats one inherited
   // from an ancestor, so declaring the default locally would make the
   // override impossible. It lives in the var() fallback instead, which keeps
-  // the default inside the component (this folder is copied without app.scss)
+  // the default inside the component (it must not depend on a host's styles)
   // while still letting a surface on the same tint re-point it.
   --h-segmented-inset: 3px;
 

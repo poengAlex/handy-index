@@ -5,9 +5,9 @@
     "kind": "github",
     "repo": "poengAlex/brand-ux",
     "ref": "kit/self-contained",
-    "commit": "bf2fd0a4fb93a9224f4b1084e5c6aa1f111e8782"
+    "commit": "9d3e6030c07b0ad7fffd24e2f4d25dcf1d998679"
   },
-  "pulledAt": "2026-10-04T13:02:40.960Z",
+  "pulledAt": "2026-10-04T16:18:03.341Z",
   "files": {
     "CHANGELOG.md": "a9cb3d22e66b322474c6da746f84bb176dfbb9e081641e649d0b0ddc87faff48",
     "HBtn.vue": "3eb58cd9704a6cabff3babd6e446a19ba58c4fde1fdde1fa15ddc66f61bff363",
@@ -21,7 +21,7 @@
     "HFatSlider.vue": "404e01e0f43d0e2dd83da6007c56852b2f448d6943621b597d1019ac4be03d9f",
     "HFeaturePoint.vue": "36c6493037ad0a6d9c81b0da07ca037373ee7e89cd359f1913007497d9f37a5f",
     "HFeedbackCard.vue": "6a48d8de910efa8cb6ecfbd3907e11a5331368756b0997d033ba0d7e0b34aa5a",
-    "HGraph.vue": "96a3280a7232df227398161a9a22818428ab84caa7a3091481d1cd3a7f4d060f",
+    "HGraph.vue": "21bc14e53485fa77ca123aa8a1a7d44150add30b069b8fd1f7016da432454107",
     "HHelpTip.vue": "d5312689e481391d54dc9d654ed516c6491754f90cb4aeabb54bc6600b00ac2d",
     "HHoldBtn.vue": "e7e8340c7d698aa00263671559118d6e08908c91a57ca113f0c5d1fbd2405582",
     "HIconTile.vue": "3ec75c713d29337f64085143e6366b8a431d4ddd3ddc5ba095f8788bbff5334f",
@@ -35,11 +35,11 @@
     "HNavCard.vue": "6ff89bf78a31b41d43fd0e0ecf13d9292bad441d5d79b579bc2cc5bf4e7201c7",
     "HNumberStepper.vue": "c78f3bb9e0c3bb15fade41cd0c6f7215983cd1d865dd924680e9004181dc2f83",
     "HPeekCarousel.vue": "5bdb32670ae7692332257c561009e40004526afe1607b493a552f97cc22ff52e",
-    "HPlayhead.vue": "4be2dd12632ac62b2741b2b113679eb542b97627f9e7403f4089fa6dd9c2391b",
+    "HPlayhead.vue": "34649ccef99c4d5b63f1923f0da5158e36aee6be7c8b6a73befa1f469b90d79e",
     "HProductCard.vue": "13f7052da004fc2243d21bb7dc850d643b53fb5cb0eec0f6f466728c55ea1277",
     "HRadioRow.vue": "cef3efd6825bf1d76b4cadbdc0dab8fd7b7c3da3f5cde504c55def0236ab189d",
     "HSectionCard.vue": "98f1001e1887eb4010495cd34d1560460975bf6ff0b060d8f2476d42641d08df",
-    "HSegmented.vue": "3b0e4091dad2f86e042240341ba0363be37d537c7d49060141fd57bd0cf65c19",
+    "HSegmented.vue": "3c28cffc2061d8c850f342810e985f9bba79b3553aa8c18a0262ca275e503950",
     "HSliderMenu.vue": "cc5a611ff47101fa8d5c6ea4db6d7b1114d5ead472cbc8de678876dd18f8a489",
     "HStatusBadge.vue": "ff4e368be6bb5421b80425e29e4dd47825134201bd8bee37a52540b0d1b9f690",
     "HSuccessMark.vue": "6db6c7f0a6296e687dea81b51ede4cf99c462a8f18b1421322a0f30292639d89",
@@ -49,7 +49,7 @@
     "HThemeToggle.vue": "520962dcabfc452d01103bf7d3da9377110368dfd3f8c0e5ace7d53024572ba5",
     "HToggleRow.vue": "6500c5c05ea265d6bec45d84118eed88d00e604695e86dc4fbd3955577138dc5",
     "HandyLoader.vue": "6f66589e7b84bfd3bc4104043ef2ad79a42ccbbe29b3e33ab3b8af4aa8577484",
-    "README.md": "8d5b616bae71522b771efcb5158ab7c651fa986d979c125ddf2fc50b101cadd8",
+    "README.md": "bf1d3c320b2a0da75235ff488ef0fd2b464bb862a7e8d8f79af302e148d29ea6",
     "background/GrainOverlay.vue": "d098295d535d110a1175dd4617b8165b6eb0032e9ace18502c52e6026c79e4a5",
     "background/HandyBackground.vue": "8b5cd920ae0def73928aa5ad7aa72a0845498e18d6a8ea2632f4788877a87150",
     "background/LensField.vue": "7e3736cc97b605f78054d3bd647874da202be4d7baaa169bcb43f2905de77592",
@@ -71,7 +71,7 @@
     "handy-logo-art.ts": "2cf2f321c9dfbecbdcb81bb75f2b199dee0462b4e93e0597a6bbe571903eede8",
     "handyverse-logo-art.ts": "73e97474da06db84f1252e9983fb0cba4de52e57c8a4a145afe24b643ef0f5f3",
     "index.ts": "2aeee49d29915a74fa71e139391e2147acbe2c4e5e207f8106b4392844de02ec",
-    "install.ts": "ce18108cdbad6771d3b12d0d04dd93ca38a550e24bca7d6c45245635b567ed7a",
+    "install.ts": "8988e15fa4bb00d58fa4d14ad711372fda46b4696057a1c71f17bcaee9ca510c",
     "keys.ts": "8d2685cc5edebd6a57c3febfc4983537dc569ae5b76ea1d41468a413ec433dab",
     "kit.json": "30b4f9b21a91ab7a00aafb1ba349e79491d0ecd74bb0058541e76e3eee201d7d",
     "labels.ts": "c6c1b1717ed47987ddf78dc3d60ee1906ca790bc8ceb0dccd66803d438cbb364",
@@ -85,11 +85,11 @@
     "styles/_tokens.scss": "cfe9cacf2a474e6d8ac68b5e7597647ebbf6d8a066a7f94ee5f8fd9c5906e1f8",
     "styles/_typography.scss": "50a37429149ebe1236c73aa09e04e28bb5d72588784ff86a91748786755bd64d",
     "styles/kit.scss": "9b377d79baeb517e04a4394e7c5119002a7a17d8455ef0bae5d8db0030801203",
-    "toast.ts": "43ddf9ecd2c66c3818f90a743f6dd8e1e3e94f52e0ab25eb8bf649f764a8ffe5",
+    "toast.ts": "19ec06a10c2859466395c3d03d1dd05b8abfcbcc77c538715c9da48be299599c",
     "useForwardProgress.ts": "b55546d5ebf2e05b2e3328077f17cab1bbaa76dea7503dc657d0a22bf1d1ff8e",
     "useGlassOnScroll.ts": "1cd342607341899a98ad0e7f38ab35770b0f404c73459e0787622a0def6e0e70",
     "useHandyTheme.ts": "4d06f3f659f4858a06dff9a8df2ff7abcfa20394a5027f8c1f815afe535de4c9",
     "usePinnableTip.ts": "5c2a69e8ac0d75e87d650c38d38268e831b06506802f205f23583c48b50836dd",
-    "vite.ts": "730ad901c80f646254f989a150e7112e0d0d6259ef93af1e276a7d96f46c0345"
+    "vite.ts": "d7c97e3f644b5a7b7b7866fdfe5bc77c5e1e527a150a361a9bf571459a599af8"
   }
 }

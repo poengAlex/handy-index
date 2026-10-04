@@ -53,7 +53,7 @@ folder, never a subset, never edits it, and syncs it with `npm run kit`
 | Where                                                | What                                                                                                                        |
 | ---------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
 | `src/css/app.scss`, as its first rule                | `@use "../components/handy/styles/kit";` The app's own rules go below it.                                                   |
-| a boot file, listed in `boot:`                       | `installHandyKit({ labels })` from `src/components/handy/install`. `labels` is optional (§15).                              |
+| a boot file, listed in `boot:`                       | `installHandyKit({ labels })` from `@/components/handy/install`. `labels` is optional (§15).                                |
 | `quasar.config.ts`, `build.extendViteConf(viteConf)` | `handyViteConfig(viteConf, { dev: ctx.dev })` from `./src/components/handy/vite`                                            |
 | `quasar.config.ts`, `framework` and `extras`         | `plugins` include `Notify` and `Dark`. `extras` include `material-symbols-outlined`, unless the app ships that font itself. |
 | `src/css/quasar.variables.scss`                      | the brand values of Quasar's own variables: `$primary` = Brand Blue, the font family, `$generic-border-radius`              |
@@ -62,7 +62,7 @@ folder, never a subset, never edits it, and syncs it with `npm run kit`
 ```ts
 // src/boot/handy-kit.ts
 import { defineBoot } from "#q-app";
-import { installHandyKit } from "src/components/handy/install";
+import { installHandyKit } from "@/components/handy/install";
 
 export default defineBoot(() => installHandyKit({ labels: myKitLabels }));
 ```
@@ -135,12 +135,12 @@ brand-ux (`tools/kit/`). The bootstrap keeps a clone of brand-ux in
 `~/.cache/handy-kit/brand-ux` and runs the CLI from the brand-ux ref being
 synced, so tooling changes reach apps the same way kit changes do.
 
-| Command                                 | What it does                                                                                                                                                                                                                                                                           |
-| --------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `npm run kit -- status`                 | In sync, behind, or locally edited? Also lists missing peers and changelog entries the copy hasn't seen. Exit 0 in sync, 10 behind, 11 local edits, 12 both. When offline it says so and exits 0. A `SessionStart` hook runs it at the start of every session.                         |
-| `npm run kit -- pull`                   | Replaces the whole folder from brand-ux `master` (`--ref <ref>`, or `--from <checkout>`, uncommitted files included). Then writes the lock, refreshes the hooks and skill, checks peers, and prints the changelog entries with their `Consumer action:` lines. Refuses on local edits. |
-| `npm run kit -- upstream start <slug>`  | Creates a brand-ux worktree on the branch `kit/<app>-<slug>` from `origin/master`, for making a kit change.                                                                                                                                                                            |
-| `npm run kit -- upstream finish <slug>` | Requires a new `CHANGELOG.md` entry, runs brand-ux's gates in the worktree, commits, and prints the push command and the compare URL. It never pushes.                                                                                                                                 |
+| Command                                 | What it does                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| --------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `npm run kit -- status`                 | In sync, behind (kit files or tooling), or locally edited? Compared with what the copy follows: `master`, or the branch or local checkout it was last pulled from. Also lists missing peers and changelog entries the copy hasn't seen. Exit 0 in sync, 10 behind, 11 local edits, 12 both. Offline isn't an error: it says so, and only local edits change the exit code. A `SessionStart` hook runs it at the start of every session. |
+| `npm run kit -- pull`                   | Replaces the whole folder from brand-ux `master` (`--ref <ref>`, or `--from <checkout>`, uncommitted files included). Then writes the lock, refreshes the hooks and skill, checks peers, and prints the changelog entries with their `Consumer action:` lines. Refuses on local edits. On a copy that follows a branch or a local checkout, a plain `pull` asks which source to use instead of guessing.                                |
+| `npm run kit -- upstream start <slug>`  | Creates a brand-ux worktree on the branch `kit/<app>-<slug>` from `origin/master`, for making a kit change.                                                                                                                                                                                                                                                                                                                             |
+| `npm run kit -- upstream finish <slug>` | Requires a new `CHANGELOG.md` entry, runs brand-ux's gates in the worktree, commits, and prints the push command and the compare URL. It never pushes.                                                                                                                                                                                                                                                                                  |
 
 First-time setup in an app:
 

@@ -65,9 +65,10 @@
 // per pixel column, and hands uPlot a tiny array — so scrubbing and editing
 // cost is independent of script length.
 //
-// Build requirements (both fail silently or cryptically — see README.md):
-// quasar.config.ts needs `vueOptionsAPI: true` and a Vite alias resolving the
-// bare "uplot" specifier to uplot/dist/uPlot.cjs.js.
+// Build requirements (both fail silently or cryptically): the Options API
+// flag and a Vite alias resolving the bare "uplot" specifier to
+// uplot/dist/uPlot.cjs.js. handyViteConfig (vite.ts) sets both; README.md §1
+// "Build flags" has the details.
 import {
   computed,
   getCurrentInstance,

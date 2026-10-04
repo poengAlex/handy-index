@@ -2,7 +2,7 @@
 // anything renders:
 //
 //   import { defineBoot } from "#q-app";
-//   import { installHandyKit } from "src/components/handy/install";
+//   import { installHandyKit } from "@/components/handy/install";
 //   export default defineBoot(() => installHandyKit({ labels }));
 //
 // Everything here configures Quasar globally (the icon map, slider prop

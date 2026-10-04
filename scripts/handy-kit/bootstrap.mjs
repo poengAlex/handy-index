@@ -33,7 +33,11 @@ const HOME =
 const REMOTE =
   process.env.HANDY_KIT_REMOTE || "https://github.com/poengAlex/brand-ux.git";
 const CLONE = join(HOME, "brand-ux");
-const ENV = { ...process.env, GIT_TERMINAL_PROMPT: "0" };
+const ENV = {
+  ...process.env,
+  GIT_TERMINAL_PROMPT: "0",
+  GIT_SSH_COMMAND: process.env.GIT_SSH_COMMAND || "ssh -o BatchMode=yes"
+};
 
 const args = process.argv.slice(2);
 const command = args[0] ?? "help";

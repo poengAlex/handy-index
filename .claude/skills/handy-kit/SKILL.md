@@ -30,11 +30,15 @@ Use them in this order of preference.
 npm run kit -- status
 ```
 
-Reports whether the copy is in sync, behind brand-ux, or locally edited, plus
-any missing peer dependencies and the changelog entries the copy hasn't
-seen. Exit codes: 0 in sync, 10 behind, 11 local edits, 12 both. Offline
-isn't an error: it says it couldn't check and exits 0. The same summary
-arrives at the start of every session from the `SessionStart` hook.
+Reports whether the copy is in sync, behind brand-ux (kit files or the
+tooling), or locally edited, plus any missing peer dependencies and the
+changelog entries the copy hasn't seen. It compares with what the copy
+follows: `master`, or the branch or local checkout it was last pulled from
+(it says so). Exit codes: 0 in sync, 10 behind, 11 local edits, 12 both.
+Offline isn't an error: it says it couldn't check, and only local edits
+change the exit code. The same summary arrives at the start of every session
+from the `SessionStart` hook, and its "Next:" line names the exact pull
+command to run.
 
 ## 2. `pull`: take the latest kit
 
@@ -63,7 +67,9 @@ After a pull:
 
 `--ref <ref>` pulls another brand-ux branch or commit. `--from <path>` pulls
 from a local brand-ux checkout, uncommitted files included (that's how §3
-tests a change).
+tests a change). A copy pulled that way keeps following that source, and a
+plain `pull` then asks which you mean: the same `--ref`/`--from` again, or
+`--ref master` to return to master.
 
 ## 3. `upstream`: when the app needs a kit change
 
@@ -93,8 +99,8 @@ on the branch `kit/<app>-<slug>` (from `origin/master`) and prints its path.
    It prints the push command and a GitHub compare URL. Give both to the user,
    who pushes and opens the pull request.
 
-Once the pull request is merged, run `npm run kit -- pull` to put the app
-back on `master`.
+Once the pull request is merged, run `npm run kit -- pull --ref master` to put
+the app back on `master`.
 
 ## Files
 

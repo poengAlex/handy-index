@@ -8,6 +8,7 @@
 // stderr goes back to Claude) and points at the upstream flow instead.
 // Anything it can't read is let through, so a hook bug never blocks work.
 import { existsSync, readFileSync, realpathSync } from "node:fs";
+import { homedir } from "node:os";
 import {
   basename,
   dirname,
@@ -67,6 +68,7 @@ try {
 }
 const cwd = typeof input?.cwd === "string" ? input.cwd : process.cwd();
 const hit = paths(input?.tool_input ?? {})
+  .map(p => (p === "~" || p.startsWith("~/") ? join(homedir(), p.slice(1)) : p))
   .map(p => resolve(cwd, p))
   .find(inKit);
 if (!hit) process.exit(0);

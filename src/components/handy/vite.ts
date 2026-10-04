@@ -24,11 +24,32 @@ interface ViteOutput {
   manualChunks?: unknown;
 }
 
+type SideEffects = (id: string, external: boolean) => boolean;
+
 export interface HandyViteConf {
   define?: Record<string, unknown>;
   optimizeDeps?: { exclude?: string[] };
-  build?: { rollupOptions?: { output?: unknown } };
+  build?: { rollupOptions?: { output?: unknown; treeshake?: unknown } };
   resolve?: { alias?: unknown };
+}
+
+/** A kit script module (not a style block), by its module id. */
+function isKitScript(id: string): boolean {
+  const [file = "", query = ""] = id.split("?");
+  return (
+    /[\\/]src[\\/]components[\\/]handy[\\/]/.test(file) &&
+    /\.(?:ts|vue)$/.test(file) &&
+    !/type=style/.test(query)
+  );
+}
+
+/** Whatever the host had said about side effects, as a function. */
+function hostSideEffects(rule: unknown): SideEffects {
+  if (typeof rule === "function") return rule as SideEffects;
+  if (rule === "no-external") return (_id, external) => !external;
+  if (Array.isArray(rule)) return id => rule.includes(id);
+  if (typeof rule === "boolean") return () => rule;
+  return () => true;
 }
 
 export function handyViteConfig(
@@ -82,6 +103,28 @@ export function handyViteConfig(
     for (const single of output) single.manualChunks = manualChunks;
   } else {
     viteConf.build.rollupOptions.output = { ...output, manualChunks };
+  }
+
+  // Every kit module is free of import-time side effects: components,
+  // composables and helpers are definitions only. Saying so lets the bundler
+  // drop what an app never uses even though it imports the barrel, which
+  // re-exports everything (apps take the whole folder). Without it, importing
+  // anything from "@/components/handy" also ships uPlot and uplot-vue
+  // (HGraph), the carousel and the background sub-kit: +150 KB on IVDB's
+  // first load. Style blocks keep their side effects; they are imported only
+  // for their CSS.
+  const { treeshake } = viteConf.build.rollupOptions;
+  if (treeshake !== false) {
+    const base =
+      treeshake && typeof treeshake === "object"
+        ? (treeshake as Record<string, unknown>)
+        : {};
+    const host = hostSideEffects(base.moduleSideEffects);
+    viteConf.build.rollupOptions.treeshake = {
+      ...base,
+      moduleSideEffects: (id: string, external: boolean) =>
+        isKitScript(id) ? false : host(id, external)
+    };
   }
 
   // uplot-vue is a UMD bundle whose require("uplot") interop receives the
