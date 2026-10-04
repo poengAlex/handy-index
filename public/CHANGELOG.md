@@ -5,6 +5,15 @@
      words. Newest release on top. Format: "## <version> — <date>", then
      "### <group>" headings and "- " lines. Keep it English-only. -->
 
+## 2.6.2 — 4 October 2026
+
+### Finding videos
+
+- The Trans filter now looks for the word "trans" itself, not just those
+  letters inside a tag. Words like "transformation", "transparent",
+  "translated" and "public transport" were enough to file a video under Trans
+  and hide it from Straight. Those videos are back where they belong.
+
 ## 2.6.1 — 16 September 2026
 
 ### Script speed and the activity strip

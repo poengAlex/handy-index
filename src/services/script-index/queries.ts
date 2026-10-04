@@ -19,14 +19,28 @@ export const ORIENTATION_ICONS: Record<Orientation, string> = {
   all: "all_inclusive"
 };
 
+/** "trans" as a whole word, never as a prefix: a substring test also caught
+ * transformation, transparent, translated and public transport, sorting
+ * straight videos under Trans and hiding them from Straight. The index stamps
+ * trans + transgender + shemale together on every trans video (1,133 of
+ * 16,762, never one without the others), so these three words find exactly
+ * that set. Anything that isn't a letter or digit separates words, so "trans
+ * woman", "xyz-trans" and "shemale-xyz" all count. Plurals and "ts" stay out
+ * on purpose — on their own they are keyword spam on straight videos. */
+const TRANS_TAG =
+  /(?:^|[^\p{L}\p{N}])(?:trans|transgender|shemale)(?![\p{L}\p{N}])/iu;
+
 export function matchesOrientation(
   video: PartnerVideo,
   orientation: Orientation
 ): boolean {
   if (orientation === "all") return true;
   const tags = video.tags ?? [];
+  // a substring is safe here, unlike "trans": no tag in the index carries
+  // "gay" inside another word, and it catches site-name tags (gaymaletube,
+  // justthegays) that a whole-word rule would miss
   const gay = tags.some(tag => tag.includes("gay"));
-  const trans = tags.some(tag => tag.includes("trans"));
+  const trans = tags.some(tag => TRANS_TAG.test(tag));
   if (orientation === "gay") return gay;
   if (orientation === "trans") return trans;
   return !gay && !trans;
