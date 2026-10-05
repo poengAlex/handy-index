@@ -60,6 +60,42 @@
         </div>
       </section>
 
+      <!-- Catalog size. The whole index rather than the gated view — it
+           describes the database — and last month on the day videos went
+           live, which is final once the month ends (see publishedBetween).
+           Each count is a slot so the number can carry its own weight while
+           the sentence around it stays one translatable unit. -->
+      <div v-if="catalog.status === 'ready'" class="h-container">
+        <p class="text-body-sm home-stats">
+          <i18n-t
+            keypath="home.stats.total"
+            :plural="stats.total"
+            tag="span"
+            scope="global"
+          >
+            <template #count>
+              <strong class="home-stats__num">{{
+                format.num(stats.total)
+              }}</strong>
+            </template>
+          </i18n-t>
+          <span class="home-stats__sep" aria-hidden="true">·</span>
+          <i18n-t
+            keypath="home.stats.lastMonth"
+            :plural="stats.lastMonth"
+            tag="span"
+            scope="global"
+          >
+            <template #count>
+              <strong class="home-stats__num">{{
+                format.num(stats.lastMonth)
+              }}</strong>
+            </template>
+            <template #month>{{ stats.month }}</template>
+          </i18n-t>
+        </p>
+      </div>
+
       <!-- The shelves -->
       <div class="home-rows">
         <template v-if="catalog.status === 'ready'">
@@ -129,6 +165,7 @@ import {
   hasMutedTag,
   inOrder,
   mostPlayed,
+  publishedBetween,
   recentFirst,
   recentlyUpdatedFirst,
   tagsOf,
@@ -211,6 +248,20 @@ const featured = computed(() =>
 
 watch(featured, video => {
   if (video) lastFeaturedId = video.partnerVideoId;
+});
+
+// Last month is the previous calendar month in the visitor's own time zone,
+// so the window and the month name printed beside it are the same month.
+// Month arithmetic below zero rolls back a year: January asks for December.
+const stats = computed(() => {
+  const now = new Date();
+  const from = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+  const to = new Date(now.getFullYear(), now.getMonth(), 1);
+  return {
+    total: catalog.videos.length,
+    lastMonth: publishedBetween(catalog.videos, from, to).length,
+    month: format.month(from)
+  };
 });
 
 function titleCase(tag: string): string {
@@ -367,6 +418,24 @@ const rows = computed<Row[]>(() => {
 .home-hero-empty__body {
   color: var(--color-text-tertiary);
   margin: var(--space-xs) 0 0;
+}
+
+// a fact about the database, not a call to action: secondary ink for the
+// words (tertiary would sit under AA on the gradient field), primary for the
+// two figures that are the point
+.home-stats {
+  margin: var(--space-lg) 0 0;
+  color: var(--color-text-secondary);
+}
+
+.home-stats__num {
+  color: var(--color-text-primary);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.home-stats__sep {
+  margin-inline: var(--space-xs);
 }
 
 .home-hero-loading {

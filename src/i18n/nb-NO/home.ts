@@ -11,6 +11,11 @@ const home: typeof enUS = {
   filteredOutBody:
     "Filtrene og de dempede taggene dine skjuler hele katalogen. Løsne på dem i innstillingene.",
 
+  stats: {
+    total: "{count} script | {count} scripts",
+    lastMonth: "{count} lagt til i {month} | {count} lagt til i {month}"
+  },
+
   rows: {
     recent: "Nylig lagt til",
     favorites: "Mine favoritter",

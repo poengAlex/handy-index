@@ -18,6 +18,17 @@ const home: typeof enUS = {
   filteredOutBody:
     "필터와 차단한 태그가 카탈로그 전체를 가리고 있어요. 설정에서 조건을 풀어 보세요.",
 
+  // The line between the hero and the first shelf. Both counts are the whole
+  // index, not the visitor's filtered view: they describe the database, and a
+  // number that moved with the orientation switch would read as a bug.
+  // {count} arrives as an emphasised, already-localized number; {month} is the
+  // month alone ("September"), so the sentence supplies the preposition.
+  stats: {
+    total: "Script {count}개",
+    /** the previous calendar month, by the day each video went live */
+    lastMonth: "{month}에 {count}개 추가"
+  },
+
   rows: {
     recent: "최근 추가됨",
     favorites: "내 즐겨찾기",

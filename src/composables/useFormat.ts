@@ -30,6 +30,10 @@ export function useFormat() {
     () => new Intl.DateTimeFormat(locale.value, { dateStyle: "long" })
   );
 
+  const monthFormat = computed(
+    () => new Intl.DateTimeFormat(locale.value, { month: "long" })
+  );
+
   /** A localized integer: "15,000" in English, "15 000" in Norwegian. */
   function num(value: number): string {
     return n(value);
@@ -114,5 +118,14 @@ export function useFormat() {
     return dateFormat.value.format(value);
   }
 
-  return { num, count, ofTotal, duration, orientation, relative, date };
+  /** "September" / "september" / "9月" — the month alone, in the standalone
+   * form, so a message slots it into a sentence ("in {month}"). Russian gets
+   * the nominative "сентябрь", which is why its messages put it after "за",
+   * where the nominative reads correctly. Empty for an invalid date. */
+  function month(value: Date): string {
+    if (Number.isNaN(value.getTime())) return "";
+    return monthFormat.value.format(value);
+  }
+
+  return { num, count, ofTotal, duration, orientation, relative, date, month };
 }

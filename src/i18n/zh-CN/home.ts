@@ -17,6 +17,17 @@ const home: typeof enUS = {
   // list. Both are the same "you filtered the catalog away" state.
   filteredOutBody: "你的筛选和屏蔽标签把整个片库都藏了起来。到设置里放宽一些。",
 
+  // The line between the hero and the first shelf. Both counts are the whole
+  // index, not the visitor's filtered view: they describe the database, and a
+  // number that moved with the orientation switch would read as a bug.
+  // {count} arrives as an emphasised, already-localized number; {month} is the
+  // month alone ("September"), so the sentence supplies the preposition.
+  stats: {
+    total: "{count} 个 script",
+    /** the previous calendar month, by the day each video went live */
+    lastMonth: "{month}新增 {count} 个"
+  },
+
   rows: {
     recent: "最近添加",
     favorites: "我的收藏",

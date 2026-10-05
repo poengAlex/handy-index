@@ -16,6 +16,17 @@ export default {
   filteredOutBody:
     "Your filters and muted tags hide the whole catalog. Loosen them in settings.",
 
+  // The line between the hero and the first shelf. Both counts are the whole
+  // index, not the visitor's filtered view: they describe the database, and a
+  // number that moved with the orientation switch would read as a bug.
+  // {count} arrives as an emphasised, already-localized number; {month} is the
+  // month alone ("September"), so the sentence supplies the preposition.
+  stats: {
+    total: "{count} script | {count} scripts",
+    /** the previous calendar month, by the day each video went live */
+    lastMonth: "{count} added in {month} | {count} added in {month}"
+  },
+
   rows: {
     recent: "Recently added",
     favorites: "My favorites",

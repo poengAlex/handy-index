@@ -18,6 +18,18 @@ const home: typeof enUS = {
   filteredOutBody:
     "Твои фильтры и заглушённые теги скрывают весь каталог. Ослабь их в настройках.",
 
+  // The line between the hero and the first shelf. Both counts are the whole
+  // index, not the visitor's filtered view: they describe the database, and a
+  // number that moved with the orientation switch would read as a bug.
+  // {count} arrives as an emphasised, already-localized number; {month} is the
+  // month alone ("September"), so the sentence supplies the preposition.
+  stats: {
+    total: "{count} script | {count} scripts | {count} scripts",
+    /** the previous calendar month, by the day each video went live */
+    lastMonth:
+      "{count} новый за {month} | {count} новых за {month} | {count} новых за {month}"
+  },
+
   rows: {
     recent: "Новинки",
     favorites: "Моё избранное",

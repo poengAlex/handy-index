@@ -18,6 +18,17 @@ const home: typeof enUS = {
   filteredOutBody:
     "フィルターとミュート中のタグで、カタログ全体が隠れています。設定で条件を緩めてください。",
 
+  // The line between the hero and the first shelf. Both counts are the whole
+  // index, not the visitor's filtered view: they describe the database, and a
+  // number that moved with the orientation switch would read as a bug.
+  // {count} arrives as an emphasised, already-localized number; {month} is the
+  // month alone ("September"), so the sentence supplies the preposition.
+  stats: {
+    total: "Script{count}件",
+    /** the previous calendar month, by the day each video went live */
+    lastMonth: "{month}に{count}件追加"
+  },
+
   rows: {
     recent: "新着",
     favorites: "お気に入り",

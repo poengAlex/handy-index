@@ -312,6 +312,30 @@ export function publishedWithin(
 }
 
 /**
+ * Published in `[from, to)`, on `publishedAt` — for a closed window such as a
+ * calendar month, where `publishedWithin` only reaches back from now.
+ *
+ * A month that has ended is final on this field: `publishedAt` is stamped
+ * when a batch goes live (September 2026's batches include 203 videos created
+ * back in 2024), so nothing arrives later carrying an earlier date. Counting
+ * on `createdAt` would not be — September has 110 by that field today and
+ * keeps growing for months, since entries publish a median 20 days after they
+ * are started (p90: 61).
+ */
+export function publishedBetween(
+  videos: readonly PartnerVideo[],
+  from: Date,
+  to: Date
+): PartnerVideo[] {
+  const start = from.getTime();
+  const end = to.getTime();
+  return videos.filter(video => {
+    const at = time(video.publishedAt);
+    return at >= start && at < end;
+  });
+}
+
+/**
  * Strokes per minute while the script is moving, or `null` when this video
  * carries no usable measurement (1.2% of the catalog).
  *

@@ -5,6 +5,17 @@
      words. Newest release on top. Format: "## <version> — <date>", then
      "### <group>" headings and "- " lines. Keep it English-only. -->
 
+## 2.7.0 — 5 October 2026
+
+### Front page
+
+- Under the featured video, a short line now says how many scripts the
+  database holds and how many were added last month — for example "877 added
+  in September". Both numbers count the whole database, so they stay the same
+  whatever filters you have on.
+- "Added last month" counts the day each video was published, so the number
+  is final as soon as the month is over and doesn't creep up afterwards.
+
 ## 2.6.3 — 5 October 2026
 
 ### Finding videos
