@@ -5,6 +5,15 @@
      words. Newest release on top. Format: "## <version> — <date>", then
      "### <group>" headings and "- " lines. Keep it English-only. -->
 
+## 2.8.2 — 5 October 2026
+
+### Requests
+
+- Requests that come with pictures but no cover image now show their first
+  picture on the voting board, instead of an empty grey tile.
+- Hovering a request on the voting board now plays its short preview clip,
+  the same way it does on a video.
+
 ## 2.8.1 — 5 October 2026
 
 ### Speed

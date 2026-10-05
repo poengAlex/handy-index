@@ -248,6 +248,9 @@ export interface VideoRequest {
   tags?: string[];
   images?: string[];
   thumbnail?: string;
+  /** short silent roll clip, the same field a catalog video carries — the
+   * API added it to requests on 2026-10-05 */
+  preview?: string;
   performers?: RequestPerformer[];
   createdAt?: string;
   updatedAt?: string;

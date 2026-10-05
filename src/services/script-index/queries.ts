@@ -594,9 +594,14 @@ export function relatedTo(
     .map(entry => entry.candidate);
 }
 
-/** The one artwork rule: thumbnail first, first still as fallback. */
-export function artworkOf(video: PartnerVideo): string | undefined {
-  return video.thumbnail ?? video.images?.[0];
+/** The one artwork rule: thumbnail first, first still as fallback. Takes a
+ * request as readily as a video — both carry the same two fields, and the
+ * voting board used to ignore the fallback and show a blank tile. An empty
+ * string is no artwork either, so it falls through like a missing one. */
+export function artworkOf(
+  video: Pick<PartnerVideo, "thumbnail" | "images">
+): string | undefined {
+  return video.thumbnail || video.images?.find(Boolean);
 }
 
 /** Inline-player embed URL for partners with a public embed endpoint

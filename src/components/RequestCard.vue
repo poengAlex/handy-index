@@ -2,9 +2,10 @@
   <TileCard :href="href" :aria-label="$t('requests.card.openAria', { name })">
     <template #media>
       <MediaPreview
-        v-if="settings.nsfw && request.thumbnail"
-        :poster="request.thumbnail"
+        v-if="settings.nsfw && artwork"
+        :poster="artwork"
         :images="request.images ?? []"
+        :preview="request.preview ?? ''"
         :alt="name"
         class="tile-card__img"
       />
@@ -41,14 +42,15 @@
 // video card: NSFW-gated 16:9 well, title over a meta line, page-supplied
 // actions in the footer. The tile links out to the source video — a request
 // is a video you can go and look at — which is why the vote controls sit in
-// TileCard's footer slot, outside that link. Requests ship seven stills and
-// no roll clip, so hovering one cycles the stills.
+// TileCard's footer slot, outside that link. Hovering previews it the way it
+// does a video: the roll clip when the request has one, else the stills.
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { HChip } from "@/components/handy";
 import MediaPreview from "@/components/MediaPreview.vue";
 import TileCard from "@/components/TileCard.vue";
 import { useFormat } from "@/composables/useFormat";
+import { artworkOf } from "@/services/script-index/queries";
 import type { VideoRequest } from "@/services/script-index/types";
 import { useSettingsStore } from "@/stores/settings";
 
@@ -69,6 +71,8 @@ const name = computed(
   () =>
     props.request.title ?? props.request.domain ?? t("requests.card.untitled")
 );
+
+const artwork = computed(() => artworkOf(props.request));
 
 /** The request URL, if it is one we're willing to hand the browser. It comes
  * straight from a third-party payload, and an unchecked `javascript:` in an
