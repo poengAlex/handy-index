@@ -75,7 +75,7 @@ const browse: typeof enUS = {
     mutedMore: "{tags} 他{rest}個",
     scripter: "Script作成者",
     noScripters: "該当するScript作成者はいません",
-    published: "追加時期",
+    published: "公開時期",
     publishedAny: "すべての期間",
     publishedWeek: "過去1週間",
     publishedMonth: "過去1か月",

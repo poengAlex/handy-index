@@ -74,7 +74,7 @@ const browse: typeof enUS = {
     mutedMore: "{tags} 等另外 {rest} 个",
     scripter: "Script 作者",
     noScripters: "没有匹配的 Script 作者",
-    published: "添加时间",
+    published: "发布时间",
     publishedAny: "不限时间",
     publishedWeek: "最近一周",
     publishedMonth: "最近一个月",

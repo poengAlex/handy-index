@@ -75,7 +75,7 @@ const browse: typeof enUS = {
     mutedMore: "{tags} +{rest} autres",
     scripter: "Scripter",
     noScripters: "Aucun Scripter correspondant",
-    published: "Ajouté",
+    published: "Publié",
     publishedAny: "N'importe quand",
     publishedWeek: "Dernière semaine",
     publishedMonth: "Dernier mois",

@@ -5,6 +5,17 @@
      words. Newest release on top. Format: "## <version> — <date>", then
      "### <group>" headings and "- " lines. Keep it English-only. -->
 
+## 2.6.3 — 5 October 2026
+
+### Finding videos
+
+- "Recently added" and the date filter now go by the day a video was
+  published, the same date its page shows. They were going by the day work on
+  the video started, which is usually about a month earlier, so "Past week"
+  showed almost nothing. It now shows the 200 or so videos that actually came
+  out this week.
+- The date filter is now called "Published", to match.
+
 ## 2.6.2 — 4 October 2026
 
 ### Finding videos

@@ -76,7 +76,7 @@ const browse: typeof enUS = {
     mutedMore: "{tags} и ещё {rest}",
     scripter: "Автор script",
     noScripters: "Нет подходящих script-авторов",
-    published: "Добавлено",
+    published: "Опубликовано",
     publishedAny: "За всё время",
     publishedWeek: "За неделю",
     publishedMonth: "За месяц",

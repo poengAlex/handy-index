@@ -63,7 +63,7 @@ const browse: typeof enUS = {
     mutedMore: "{tags} +{rest} til",
     scripter: "Scripter",
     noScripters: "Ingen Scripter passer",
-    published: "Lagt til",
+    published: "Publisert",
     publishedAny: "Når som helst",
     publishedWeek: "Siste uke",
     publishedMonth: "Siste måned",

@@ -180,17 +180,23 @@ function time(value?: string): number {
   return parsed;
 }
 
-/** Newest first, on `createdAt`.
+/** Newest first, on `publishedAt` — the day the video went live on the index.
  *
- * NOT `publishedAt`: that is a batch-ingest stamp, so it cannot order a list.
- * The live index holds 1,858 distinct `publishedAt` values for 16,493 videos
- * and 996 of them share the single instant 2025-04-22T07:21:04 — a "recently
- * added" row sorted on it puts a thousand videos in arbitrary order and shows
- * whichever the engine happened to emit first. `createdAt` is unique per
- * video (16,493 distinct for 16,493 entries). Same field `addedWithin` cuts
- * on, so the shelf and the filter finally agree. */
+ * NOT `createdAt`: that is when the entry was started, which on the live index
+ * comes a median 34 days (p90: 129) before it is published, and on 15,916 of
+ * 16,762 videos more than a day before. A shelf sorted on it surfaces videos
+ * by when work on them began, not when anyone could see them.
+ *
+ * `publishedAt` goes out in batches — 1,863 distinct values, 992 videos on
+ * the single instant 2025-04-22T07:21:04 — so ties are broken on `createdAt`
+ * to keep the order stable instead of whatever the engine emits first. Same
+ * field `publishedWithin` cuts on, so the shelf and the filter agree. */
 export function recentFirst(videos: readonly PartnerVideo[]): PartnerVideo[] {
-  return [...videos].sort((a, b) => time(b.createdAt) - time(a.createdAt));
+  return [...videos].sort(
+    (a, b) =>
+      time(b.publishedAt) - time(a.publishedAt) ||
+      time(b.createdAt) - time(a.createdAt)
+  );
 }
 
 export function recentlyUpdatedFirst(
@@ -281,27 +287,26 @@ export function byScripter(
 }
 
 /**
- * Added within the last `days`, measured on `createdAt`.
+ * Published within the last `days`, measured on `publishedAt`.
  *
- * NOT `publishedAt`, which is a batch-ingest stamp and cannot answer a
- * recency question: the live index carries only 1,858 distinct `publishedAt`
- * values across 16,493 videos, 996 of them share the single instant
- * 2025-04-22T07:21:04, and a "past week" cut on it returned 140 videos whose
- * `createdAt` was a median 20 days old — 92% of them older than a fortnight.
- * `createdAt` is unique per video (16,493 distinct for 16,493 entries, no
- * cluster above 1), which is the only thing here that can carry a date range.
+ * NOT `createdAt`, which is when the entry was started, not when it went
+ * live: it runs a median 34 days ahead of `publishedAt`, so a "past week" cut
+ * on it found 2 videos in a week the index published 197. (2.5.0 had this the
+ * other way round, reading `publishedAt`'s batch ties as an ingest artefact.
+ * They are real — publishing happens in batches.)
  *
- * Videos with no `createdAt` drop out rather than passing through: an undated
- * entry is not evidence of being recent. (Every live entry carries one.)
+ * Videos with no `publishedAt` drop out rather than passing through: an
+ * undated entry is not evidence of being recent. (Every live entry carries
+ * one.)
  */
-export function addedWithin(
+export function publishedWithin(
   videos: readonly PartnerVideo[],
   days: number
 ): PartnerVideo[] {
   if (!(days > 0)) return [...videos];
   const cutoff = Date.now() - days * 24 * 60 * 60 * 1000;
   return videos.filter(video => {
-    const at = video.createdAt ? Date.parse(video.createdAt) : NaN;
+    const at = video.publishedAt ? Date.parse(video.publishedAt) : NaN;
     return Number.isFinite(at) && at >= cutoff;
   });
 }

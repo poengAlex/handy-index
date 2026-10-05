@@ -79,12 +79,9 @@ export default {
     noScripters: "No matching scripters",
     // Recency. "Any" is the off position; the rest read as a window ending
     // now, which is why they are worded as spans and not as dates.
-    // Reads "Added", not "Published", because that is what it measures: the
-    // filter cuts on `createdAt`. The index's `publishedAt` is a batch-ingest
-    // stamp — 1,858 distinct values across 16,493 videos, 996 sharing one
-    // instant — so a week cut on it returned videos a median 20 days old.
-    // The key name is left alone to keep the diff off the other nine files.
-    published: "Added",
+    // The filter cuts on `publishedAt`, the day a video went live — the same
+    // date the video page shows under "Published", so the two read alike.
+    published: "Published",
     publishedAny: "Any time",
     publishedWeek: "Past week",
     publishedMonth: "Past month",

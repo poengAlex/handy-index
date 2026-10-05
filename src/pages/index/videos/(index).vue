@@ -476,7 +476,7 @@ import {
   mostViewed,
   partnersOf,
   performersOf,
-  addedWithin,
+  publishedWithin,
   recentFirst,
   recentlyUpdatedFirst,
   scriptersOf,
@@ -1301,7 +1301,7 @@ function chipRemoveAria(chip: FilterChip): string {
 }
 
 // --- results: byTags → byPartner → byPerformer → vrOnly → clip → scripter
-// → added → duration → search → sort ---
+// → published → duration → search → sort ---
 
 // Picking a site or a performer used to lift the orientation gate, on the
 // theory that a deliberate pick outranks an ambient filter. It reads as a
@@ -1316,7 +1316,7 @@ function filterPool(pool: readonly PartnerVideo[]): PartnerVideo[] {
   if (vr.value) out = vrOnly(out);
   if (clip.value) out = withPreview(out);
   if (scripter.value) out = byScripter(out, scripter.value);
-  if (since.value) out = addedWithin(out, since.value);
+  if (since.value) out = publishedWithin(out, since.value);
   out = byDurationRange(
     out,
     durationMin.value * 60,

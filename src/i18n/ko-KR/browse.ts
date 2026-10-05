@@ -75,7 +75,7 @@ const browse: typeof enUS = {
     mutedMore: "{tags} 외 {rest}개",
     scripter: "Script 제작자",
     noScripters: "일치하는 Script 제작자가 없습니다",
-    published: "추가 시기",
+    published: "공개 시기",
     publishedAny: "전체 기간",
     publishedWeek: "지난 1주",
     publishedMonth: "지난 1개월",
