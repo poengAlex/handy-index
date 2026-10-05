@@ -25,6 +25,47 @@ export interface Performer {
   avatar?: string;
 }
 
+/** One performer's profile: `/performers/{id}`, or one entry of the
+ * `/performers` list mapped from its snake_case (`getPerformerRoster`). The
+ * list holds every catalog performer, but `/performers/{id}` answers 404 for
+ * about a third of them — Mia Evans among them — which is why the list is the
+ * fallback (see usePerformerProfile). The record is a scrape of the
+ * performer's page on some partner site, so beyond the name it is sparse (a
+ * bio on 1,901 of the live 6,304)
+ * and every field is free text in that site's own wording: "Blond" and
+ * "Blonde", "yes" and "Yes", a city where a country belongs, a lone "N".
+ * `age` is whatever it was on the day of the scrape — wrong for three in four
+ * of the performers that also carry `dateOfBirth`. Read it through
+ * performer-profile.ts, never raw. */
+export interface PerformerProfile {
+  performerId: string;
+  name: string;
+  /** plain text on most, `<p>`-wrapped HTML with entities on a few */
+  description?: string;
+  age?: number;
+  dateOfBirth?: string;
+  careerStatus?: string;
+  /** a year, or a date pinned to the 1st of January */
+  careerStart?: string;
+  /** a year, or "Present" */
+  careerEnd?: string;
+  country?: string;
+  height?: string;
+  weight?: string;
+  measurements?: string;
+  hair?: string;
+  eyes?: string;
+  ethnicity?: string;
+  starSign?: string;
+  tattoos?: string;
+  piercings?: string;
+  hobbies?: string;
+  avatar?: string;
+  images?: string[];
+  /** their own links — `name` is whatever the scrape guessed, often a handle */
+  some?: { name?: string; url?: string }[];
+}
+
 /** The request board's cast is NOT the index's. A request is scraped from the
  * source partner's page before anything is registered, so its performers
  * carry a name and a link to their profile on that site and nothing else —

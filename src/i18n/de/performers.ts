@@ -37,7 +37,37 @@ const performers: typeof enUS = {
     "Dein Premium-Filter und die stummgeschalteten Schlagwörter verbergen jeden Darsteller. Lockere sie in den Einstellungen.",
   noMatchTitle: "Keine passenden Darsteller",
   noMatchBody:
-    "Nichts im Index passt zu „{query}“. Versuche es mit einem kürzeren Namen."
+    "Nichts im Index passt zu „{query}“. Versuche es mit einem kürzeren Namen.",
+
+  profile: {
+    eyebrow: "Darsteller",
+    plays: "{count} Script-Wiedergabe | {count} Script-Wiedergaben",
+    linkAria: "{site} — öffnet sich in einem neuen Tab",
+    about: "Biografie",
+    hobbies: "Hobbys",
+    details: "Profil",
+    born: "Geboren",
+    age: "Alter",
+    from: "Herkunft",
+    career: "Karriere",
+    careerSpan: "{start}–{end}",
+    careerSince: "Seit {start}",
+    careerActive: "Aktiv",
+    careerInactive: "Inaktiv",
+    height: "Größe",
+    weight: "Gewicht",
+    heightValue: "{cm} cm",
+    weightValue: "{kg} kg",
+    measurements: "Maße",
+    hair: "Haare",
+    eyes: "Augen",
+    ethnicity: "Ethnie",
+    starSign: "Sternzeichen",
+    tattoos: "Tattoos",
+    piercings: "Piercings",
+    yes: "Ja",
+    no: "Nein"
+  }
 };
 
 export default performers;

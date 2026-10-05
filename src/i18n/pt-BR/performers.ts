@@ -35,7 +35,37 @@ const performers: typeof enUS = {
     "Seu filtro premium e as tags silenciadas escondem todos os artistas. Ajuste os filtros nas configurações.",
   noMatchTitle: "Nenhum artista encontrado",
   noMatchBody:
-    "Nada no índice corresponde a “{query}”. Tente um nome mais curto."
+    "Nada no índice corresponde a “{query}”. Tente um nome mais curto.",
+
+  profile: {
+    eyebrow: "Artista",
+    plays: "{count} reprodução do script | {count} reproduções do script",
+    linkAria: "{site} — abre em nova aba",
+    about: "Biografia",
+    hobbies: "Hobbies",
+    details: "Perfil",
+    born: "Nascimento",
+    age: "Idade",
+    from: "Origem",
+    career: "Carreira",
+    careerSpan: "{start}–{end}",
+    careerSince: "Desde {start}",
+    careerActive: "Em atividade",
+    careerInactive: "Sem atividade",
+    height: "Altura",
+    weight: "Peso",
+    heightValue: "{cm} cm",
+    weightValue: "{kg} kg",
+    measurements: "Medidas",
+    hair: "Cabelo",
+    eyes: "Olhos",
+    ethnicity: "Etnia",
+    starSign: "Signo",
+    tattoos: "Tatuagens",
+    piercings: "Piercings",
+    yes: "Sim",
+    no: "Não"
+  }
 };
 
 export default performers;

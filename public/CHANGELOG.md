@@ -21,6 +21,23 @@
 - On a video's page, the description can appear a moment after the rest of
   the page.
 
+## 2.8.0 — 5 October 2026
+
+### Performers
+
+- Opening a performer now shows who they are above their videos: their
+  picture, how many of their videos are here and how often their scripts have
+  been played, links to their own pages (Instagram, X, OnlyFans and so on),
+  their bio, and a profile with their birthday, age, where they're from,
+  height, weight, measurements and more.
+- Heights and weights are all written the same way, whatever the performer's
+  page had. In English you get feet and inches or pounds with the metric
+  figure next to it; in every other language, centimetres and kilograms.
+- Ages are worked out from the birthday, so they are right today rather than
+  whatever they were when the profile was written.
+- Many performers have only a little profile information, and some have none.
+  Their page shows what there is.
+
 ## 2.7.1 — 5 October 2026
 
 ### Finding videos

@@ -33,7 +33,37 @@ const performers: typeof enUS = {
   errorTitle: "无法加载演员",
   hiddenBody: "你的付费筛选和屏蔽标签把所有演员都藏了起来。到设置里放宽一些。",
   noMatchTitle: "没有匹配的演员",
-  noMatchBody: "索引里没有匹配“{query}”的内容。换个更短的名字试试。"
+  noMatchBody: "索引里没有匹配“{query}”的内容。换个更短的名字试试。",
+
+  profile: {
+    eyebrow: "演员",
+    plays: "Script 播放 {count} 次",
+    linkAria: "{site}(在新标签页打开)",
+    about: "简介",
+    hobbies: "爱好",
+    details: "资料",
+    born: "出生日期",
+    age: "年龄",
+    from: "来自",
+    career: "从业经历",
+    careerSpan: "{start}–{end} 年",
+    careerSince: "{start} 年起",
+    careerActive: "活跃",
+    careerInactive: "已不活跃",
+    height: "身高",
+    weight: "体重",
+    heightValue: "{cm} cm",
+    weightValue: "{kg} kg",
+    measurements: "三围",
+    hair: "发色",
+    eyes: "瞳色",
+    ethnicity: "族裔",
+    starSign: "星座",
+    tattoos: "纹身",
+    piercings: "穿孔",
+    yes: "有",
+    no: "无"
+  }
 };
 
 export default performers;

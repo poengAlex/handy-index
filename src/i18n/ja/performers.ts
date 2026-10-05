@@ -35,7 +35,37 @@ const performers: typeof enUS = {
     "有料コンテンツのフィルターとミュート中のタグで、すべての出演者が隠れています。設定で条件を緩めてください。",
   noMatchTitle: "一致する出演者がいません",
   noMatchBody:
-    "「{query}」に一致するものは、インデックスにありません。もっと短い名前で試してください。"
+    "「{query}」に一致するものは、インデックスにありません。もっと短い名前で試してください。",
+
+  profile: {
+    eyebrow: "出演者",
+    plays: "Script再生{count}回",
+    linkAria: "{site}(新しいタブで開きます)",
+    about: "紹介",
+    hobbies: "趣味",
+    details: "プロフィール",
+    born: "生年月日",
+    age: "年齢",
+    from: "出身",
+    career: "キャリア",
+    careerSpan: "{start}–{end}年",
+    careerSince: "{start}年から",
+    careerActive: "活動中",
+    careerInactive: "活動休止",
+    height: "身長",
+    weight: "体重",
+    heightValue: "{cm} cm",
+    weightValue: "{kg} kg",
+    measurements: "スリーサイズ",
+    hair: "髪の色",
+    eyes: "瞳の色",
+    ethnicity: "民族",
+    starSign: "星座",
+    tattoos: "タトゥー",
+    piercings: "ピアス",
+    yes: "あり",
+    no: "なし"
+  }
 };
 
 export default performers;

@@ -15,6 +15,15 @@
         />
       </header>
 
+      <!-- a performer's videos are this page filtered to them, so their
+           profile rides above the controls while the filter is on -->
+      <PerformerPanel
+        v-if="performerId"
+        :performer-id="performerId"
+        :name="performerName"
+        class="videos-page__performer"
+      />
+
       <div class="videos-page__controls">
         <q-input
           :model-value="searchInput"
@@ -458,6 +467,7 @@ import {
 import type { HLabeledSliderRange } from "@/components/handy/HLabeledSlider.vue";
 import GateNotice from "@/components/GateNotice.vue";
 import MutedTagsDialog from "@/components/MutedTagsDialog.vue";
+import PerformerPanel from "@/components/PerformerPanel.vue";
 import VideoGrid from "@/components/VideoGrid.vue";
 import { useFormat } from "@/composables/useFormat";
 import type { Orientation } from "@/services/script-index/queries";
@@ -1464,6 +1474,10 @@ async function shareResults() {
 // its own row under the title/count pair, which share the baseline above it
 .videos-page__gate {
   flex-basis: 100%;
+}
+
+.videos-page__performer {
+  margin-top: var(--space-lg);
 }
 
 .videos-page__controls {

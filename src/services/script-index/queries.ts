@@ -785,6 +785,46 @@ export function performersOf(
  * entry deserves the slot. */
 const FEATURED_POOL = 24;
 
+export interface PerformerStats {
+  /** as the index spells it on their videos; undefined when none are here */
+  name?: string;
+  avatar?: string | undefined;
+  count: number;
+  /** mean rating (0–100) across their rated videos, as `performersOf`
+   * averages it, so the profile agrees with the directory card; 0 when none
+   * are rated */
+  avgRating: number;
+  /** script plays summed across their videos */
+  plays: number;
+}
+
+/** One performer's numbers across `videos` — what `performersOf` works out
+ * for everyone, for a single id, without building the whole roster. */
+export function performerStats(
+  videos: readonly PartnerVideo[],
+  performerId: string
+): PerformerStats {
+  const stats: PerformerStats = { count: 0, avgRating: 0, plays: 0 };
+  let ratingSum = 0;
+  let ratedCount = 0;
+  for (const video of videos) {
+    const performer = video.performers?.find(
+      entry => entry.performerId === performerId
+    );
+    if (!performer) continue;
+    stats.count += 1;
+    stats.plays += video.scriptPlays ?? 0;
+    if (performer.name?.trim()) stats.name ??= performer.name;
+    stats.avatar ??= performer.avatar;
+    if ((video.rating ?? 0) > 0) {
+      ratingSum += video.rating ?? 0;
+      ratedCount += 1;
+    }
+  }
+  stats.avgRating = ratedCount ? ratingSum / ratedCount : 0;
+  return stats;
+}
+
 /** Days after publication at which a video keeps half its freshness weight. */
 const FEATURED_HALF_LIFE_DAYS = 120;
 

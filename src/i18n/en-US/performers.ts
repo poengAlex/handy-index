@@ -32,5 +32,48 @@ export default {
   hiddenBody:
     "Your premium filter and muted tags hide every performer. Loosen them in settings.",
   noMatchTitle: "No performers match",
-  noMatchBody: "Nothing in the index matches “{query}”. Try a shorter name."
+  noMatchBody: "Nothing in the index matches “{query}”. Try a shorter name.",
+
+  // The profile panel above a performer's videos (/videos?performerId=…).
+  // Only the labels are ours: every value beside them is the profile's own
+  // free text, scraped from a partner site and shown as written.
+  profile: {
+    // the small line over the name, saying whose page this is
+    eyebrow: "Performer",
+    // script plays summed over their videos; {count} is already localized
+    plays: "{count} script play | {count} script plays",
+    // one of their own links; {site} is a proper name — "Instagram", "X"
+    linkAria: "{site} — opens in a new tab",
+    about: "About",
+    hobbies: "Hobbies",
+    details: "Profile",
+    // birthday and age are two rows, not "{date} (age {age})", so no message
+    // has to inflect the word for years by the number (Russian has three)
+    born: "Born",
+    age: "Age",
+    from: "From",
+    career: "Career",
+    // career years; {start} and {end} are plain years, never grouped
+    careerSpan: "{start}–{end}",
+    careerSince: "Since {start}",
+    careerActive: "Active",
+    careerInactive: "Inactive",
+    height: "Height",
+    weight: "Weight",
+    // Height and weight arrive with every unit filled in — {cm} and {kg},
+    // {feet}, {inches} and {lb} — so each language prints the system its
+    // readers measure in. All whole numbers, already localized.
+    heightValue: "{feet}′{inches}″ ({cm} cm)",
+    weightValue: "{lb} lb ({kg} kg)",
+    measurements: "Measurements",
+    hair: "Hair",
+    eyes: "Eyes",
+    ethnicity: "Ethnicity",
+    starSign: "Star sign",
+    tattoos: "Tattoos",
+    piercings: "Piercings",
+    // tattoos and piercings
+    yes: "Yes",
+    no: "No"
+  }
 };

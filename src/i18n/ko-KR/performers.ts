@@ -35,7 +35,37 @@ const performers: typeof enUS = {
     "유료 필터와 차단한 태그가 모든 출연자를 가리고 있어요. 설정에서 조건을 풀어 보세요.",
   noMatchTitle: "일치하는 출연자가 없어요",
   noMatchBody:
-    "색인에 「{query}」 검색 결과가 없어요. 더 짧은 이름으로 찾아 보세요."
+    "색인에 「{query}」 검색 결과가 없어요. 더 짧은 이름으로 찾아 보세요.",
+
+  profile: {
+    eyebrow: "출연자",
+    plays: "Script 재생 {count}회",
+    linkAria: "{site} — 새 탭에서 열려요",
+    about: "소개",
+    hobbies: "취미",
+    details: "프로필",
+    born: "생년월일",
+    age: "나이",
+    from: "출신",
+    career: "경력",
+    careerSpan: "{start}–{end}년",
+    careerSince: "{start}년부터",
+    careerActive: "활동 중",
+    careerInactive: "활동 중단",
+    height: "키",
+    weight: "몸무게",
+    heightValue: "{cm} cm",
+    weightValue: "{kg} kg",
+    measurements: "신체 사이즈",
+    hair: "머리 색",
+    eyes: "눈 색",
+    ethnicity: "인종",
+    starSign: "별자리",
+    tattoos: "타투",
+    piercings: "피어싱",
+    yes: "있음",
+    no: "없음"
+  }
 };
 
 export default performers;

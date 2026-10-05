@@ -35,7 +35,38 @@ const performers: typeof enUS = {
     "Фильтр платного контента и заглушённые теги скрывают всех актёров. Ослабь их в настройках.",
   noMatchTitle: "Актёры не найдены",
   noMatchBody:
-    "В индексе нет совпадений с «{query}». Попробуй более короткое имя."
+    "В индексе нет совпадений с «{query}». Попробуй более короткое имя.",
+
+  profile: {
+    eyebrow: "Актёр",
+    plays:
+      "{count} запуск script | {count} запуска script | {count} запусков script",
+    linkAria: "{site} — откроется в новой вкладке",
+    about: "Биография",
+    hobbies: "Хобби",
+    details: "Профиль",
+    born: "Дата рождения",
+    age: "Возраст",
+    from: "Откуда",
+    career: "Карьера",
+    careerSpan: "{start}–{end}",
+    careerSince: "С {start} года",
+    careerActive: "Снимается",
+    careerInactive: "Не снимается",
+    height: "Рост",
+    weight: "Вес",
+    heightValue: "{cm} cm",
+    weightValue: "{kg} kg",
+    measurements: "Параметры",
+    hair: "Волосы",
+    eyes: "Глаза",
+    ethnicity: "Этничность",
+    starSign: "Знак зодиака",
+    tattoos: "Татуировки",
+    piercings: "Пирсинг",
+    yes: "Есть",
+    no: "Нет"
+  }
 };
 
 export default performers;

@@ -1,6 +1,7 @@
 // Minimal typed client for the Script Index API. Only the endpoints the app
-// actually uses — the index snapshot, single-video lookups, the orientation
-// tags, the script token flow and the video-request board. List queries
+// actually uses — the index snapshot, single-video and single-performer
+// lookups, the orientation tags, the script token flow and the video-request
+// board. List queries
 // (/videos, /tags as a listing, …) are deliberately absent: the API cannot
 // sort, so every listing derives from the index via queries.ts.
 import {
@@ -10,6 +11,7 @@ import {
 } from "./index-cache";
 import type {
   PartnerVideo,
+  PerformerProfile,
   Script,
   ScriptComment,
   Tag,
@@ -228,6 +230,50 @@ export async function getOrientationTags(): Promise<string[]> {
 
 export function getVideo(partnerVideoId: string): Promise<PartnerVideo> {
   return request<PartnerVideo>(`/videos/${encodeURIComponent(partnerVideoId)}`);
+}
+
+/** A performer's profile — bio, measurements, their own links. The index
+ * carries only name and avatar; this is the rest. 404 for an unknown id, and
+ * also for about a third of the known ones — see getPerformerRoster. */
+export function getPerformer(performerId: string): Promise<PerformerProfile> {
+  return request<PerformerProfile>(
+    `/performers/${encodeURIComponent(performerId)}`
+  );
+}
+
+/** The most `/performers` hands out per request; it ignores anything larger. */
+const ROSTER_PAGE = 500;
+/** pages requested at once */
+const ROSTER_BATCH = 4;
+
+/** Every performer profile, from the list endpoint — the one place the
+ * profiles `/performers/{id}` wrongly 404s can be read, since the list takes
+ * no filter. About 3.6 MB over 13 pages, so it is the fallback, never the
+ * first ask. The list answers in snake_case (`performer_id`,
+ * `date_of_birth`); it is mapped to the camelCase `/performers/{id}` uses, so
+ * callers see one shape. */
+export async function getPerformerRoster(): Promise<PerformerProfile[]> {
+  const roster: PerformerProfile[] = [];
+  for (let skip = 0; ; skip += ROSTER_PAGE * ROSTER_BATCH) {
+    const pages = await Promise.all(
+      Array.from({ length: ROSTER_BATCH }, (_, index) =>
+        request<Record<string, unknown>[]>(
+          `/performers?take=${ROSTER_PAGE}&skip=${skip + index * ROSTER_PAGE}`
+        )
+      )
+    );
+    for (const page of pages) roster.push(...page.map(camelCaseKeys));
+    if (pages.some(page => page.length < ROSTER_PAGE)) return roster;
+  }
+}
+
+function camelCaseKeys(entry: Record<string, unknown>): PerformerProfile {
+  return Object.fromEntries(
+    Object.entries(entry).map(([key, value]) => [
+      key.replace(/_([a-z])/g, (_, letter: string) => letter.toUpperCase()),
+      value
+    ])
+  ) as unknown as PerformerProfile;
 }
 
 export function getVideoScripts(partnerVideoId: string): Promise<Script[]> {

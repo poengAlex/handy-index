@@ -35,7 +35,38 @@ const performers: typeof enUS = {
     "Tu filtro premium y las etiquetas silenciadas ocultan a todos los intérpretes. Quita alguno en los ajustes.",
   noMatchTitle: "Ningún intérprete coincide",
   noMatchBody:
-    "Nada del índice coincide con «{query}». Prueba con un nombre más corto."
+    "Nada del índice coincide con «{query}». Prueba con un nombre más corto.",
+
+  profile: {
+    eyebrow: "Intérprete",
+    plays:
+      "{count} reproducción del script | {count} reproducciones del script",
+    linkAria: "{site} — se abre en una pestaña nueva",
+    about: "Biografía",
+    hobbies: "Aficiones",
+    details: "Perfil",
+    born: "Nacimiento",
+    age: "Edad",
+    from: "Origen",
+    career: "Carrera",
+    careerSpan: "{start}–{end}",
+    careerSince: "Desde {start}",
+    careerActive: "En activo",
+    careerInactive: "Sin actividad",
+    height: "Altura",
+    weight: "Peso",
+    heightValue: "{cm} cm",
+    weightValue: "{kg} kg",
+    measurements: "Medidas",
+    hair: "Cabello",
+    eyes: "Ojos",
+    ethnicity: "Etnia",
+    starSign: "Signo del zodiaco",
+    tattoos: "Tatuajes",
+    piercings: "Piercings",
+    yes: "Sí",
+    no: "No"
+  }
 };
 
 export default performers;

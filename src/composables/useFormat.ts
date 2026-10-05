@@ -30,6 +30,14 @@ export function useFormat() {
     () => new Intl.DateTimeFormat(locale.value, { dateStyle: "long" })
   );
 
+  const dayFormat = computed(
+    () =>
+      new Intl.DateTimeFormat(locale.value, {
+        dateStyle: "long",
+        timeZone: "UTC"
+      })
+  );
+
   const monthFormat = computed(
     () => new Intl.DateTimeFormat(locale.value, { month: "long" })
   );
@@ -118,6 +126,14 @@ export function useFormat() {
     return dateFormat.value.format(value);
   }
 
+  /** `date` for a calendar day that has no time of its own — a birthday,
+   * sent as midnight UTC. Read in UTC, so it doesn't print as the day
+   * before anywhere west of Greenwich. */
+  function day(value?: Date): string {
+    if (!value || Number.isNaN(value.getTime())) return "";
+    return dayFormat.value.format(value);
+  }
+
   /** "September" / "september" / "9月" — the month alone, in the standalone
    * form, so a message slots it into a sentence ("in {month}"). Russian gets
    * the nominative "сентябрь", which is why its messages put it after "за",
@@ -127,5 +143,15 @@ export function useFormat() {
     return monthFormat.value.format(value);
   }
 
-  return { num, count, ofTotal, duration, orientation, relative, date, month };
+  return {
+    num,
+    count,
+    ofTotal,
+    duration,
+    orientation,
+    relative,
+    date,
+    day,
+    month
+  };
 }

@@ -35,7 +35,37 @@ const performers: typeof enUS = {
     "Ton filtre premium et tes étiquettes en sourdine masquent tous les acteurs. Assouplis-les dans les paramètres.",
   noMatchTitle: "Aucun acteur ne correspond",
   noMatchBody:
-    "Rien dans l'index ne correspond à « {query} ». Essaie un nom plus court."
+    "Rien dans l'index ne correspond à « {query} ». Essaie un nom plus court.",
+
+  profile: {
+    eyebrow: "Acteur",
+    plays: "{count} lecture du script | {count} lectures du script",
+    linkAria: "{site} — s'ouvre dans un nouvel onglet",
+    about: "Biographie",
+    hobbies: "Loisirs",
+    details: "Profil",
+    born: "Naissance",
+    age: "Âge",
+    from: "Origine",
+    career: "Carrière",
+    careerSpan: "{start}–{end}",
+    careerSince: "Depuis {start}",
+    careerActive: "En activité",
+    careerInactive: "Plus en activité",
+    height: "Taille",
+    weight: "Poids",
+    heightValue: "{cm} cm",
+    weightValue: "{kg} kg",
+    measurements: "Mensurations",
+    hair: "Cheveux",
+    eyes: "Yeux",
+    ethnicity: "Origine ethnique",
+    starSign: "Signe astrologique",
+    tattoos: "Tatouages",
+    piercings: "Piercings",
+    yes: "Oui",
+    no: "Non"
+  }
 };
 
 export default performers;
