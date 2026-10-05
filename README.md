@@ -38,6 +38,18 @@ npm run typecheck
 npm run build
 ```
 
+### Icons
+
+The icon font is Material Symbols cut down to the icons the app uses (147 kB
+instead of the full 3.96 MB). After using an icon that wasn't used before,
+regenerate it — otherwise it renders as a plain word. `npm run lint:check`
+fails until you do.
+
+```bash
+pip install fonttools brotli   # once
+npm run icons:subset
+```
+
 ## Changing something users can see
 
 Every user-visible change bumps `version` in `package.json` and adds lines to
@@ -56,3 +68,10 @@ parses exactly that.
 npm run build
 npm start   # express static server on :5000 (PORT overridable)
 ```
+
+The server also serves a slimmed copy of the catalog at `/api/catalog`
+(`server/catalog.js`). It refreshes the copy from the API every 15 minutes,
+and the app downloads that instead of the raw index: about 4 MB instead of
+17, and half the memory on the phone. Wherever the endpoint isn't available
+(`npm run dev`, a plain static host), the app loads the API's index directly,
+as before.

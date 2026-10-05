@@ -1,0 +1,29 @@
+/* Material Symbols Outlined, cut down to the icons this app uses — 147 kB
+   instead of the 3.96 MB full font that @quasar/extras ships. Regenerate
+   after using a new icon: npm run icons:subset (npm run icons:check catches
+   a forgotten one). Everything below the @font-face src is the extras' own
+   stylesheet, unchanged. */
+@font-face {
+  font-family: "Material Symbols Outlined";
+  font-style: normal;
+  font-weight: 100 700;
+  font-display: block;
+  src: url("./material-symbols-outlined.subset.woff2") format("woff2");
+}
+
+.material-symbols-outlined {
+  font-family: "Material Symbols Outlined";
+  font-weight: normal;
+  font-style: normal;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: "liga";
+}

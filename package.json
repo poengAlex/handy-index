@@ -1,6 +1,6 @@
 {
   "name": "ivdb",
-  "version": "2.7.1",
+  "version": "2.8.1",
   "private": true,
   "description": "IVDB — Interactive Video Database",
   "keywords": [
@@ -16,11 +16,13 @@
   "type": "module",
   "scripts": {
     "lint": "oxfmt && oxlint --fix",
-    "lint:check": "oxfmt --check && oxlint",
+    "lint:check": "oxfmt --check && oxlint && node scripts/check-icons.mjs",
     "dev": "quasar dev",
     "build": "quasar build",
     "typecheck": "vue-tsc --noEmit",
     "i18n:check": "node scripts/check-i18n.mjs",
+    "icons:check": "node scripts/check-icons.mjs",
+    "icons:subset": "python3 scripts/subset-icons.py",
     "start": "node server.js",
     "postinstall": "quasar prepare --silent"
   },

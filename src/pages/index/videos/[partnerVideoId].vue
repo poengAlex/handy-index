@@ -533,6 +533,7 @@ import {
   getPublishedComments,
   getScriptTokenUrl,
   getVideo,
+  getVideoExtras,
   getVideoScripts,
   isAuthError,
   postScriptComment,
@@ -566,6 +567,9 @@ const format = useFormat();
 /** What `/videos/{id}` answered with, and only for an id the catalog has no
  * entry for. See `video` below for why it is the second choice. */
 const fetchedVideo = ref<PartnerVideo>();
+/** What a slimmed snapshot entry leaves out (its description and the script
+ * measurements the strip draws), from the server that slimmed it. */
+const extras = ref<Pick<PartnerVideo, "description" | "scriptMetadata">>();
 const scripts = ref<Script[]>([]);
 const state = ref<"loading" | "ready" | "missing">("loading");
 const gettingScript = ref(false);
@@ -674,14 +678,39 @@ const videoId = computed(() => route.params.partnerVideoId);
  * Merged rather than swapped, so anything only the endpoint returns (`gifs`)
  * survives the upgrade.
  */
-const video = computed<PartnerVideo | undefined>(() => {
+const entry = computed<PartnerVideo | undefined>(() => {
   const id = videoId.value;
-  const entry = id
+  return id
     ? catalog.videos.find(item => item.partnerVideoId === id)
     : undefined;
-  if (!entry) return fetchedVideo.value;
-  return fetchedVideo.value ? { ...fetchedVideo.value, ...entry } : entry;
 });
+
+const video = computed<PartnerVideo | undefined>(() => {
+  if (!entry.value) return fetchedVideo.value;
+  const merged = fetchedVideo.value
+    ? { ...fetchedVideo.value, ...entry.value }
+    : entry.value;
+  return extras.value ? { ...merged, ...extras.value } : merged;
+});
+
+/** A slimmed entry (it carries `spm`) is missing its description and its
+ * script measurements; fetch them once it is known to be one. Watched rather
+ * than done in `load`: a page opened before the snapshot landed only learns
+ * that when the snapshot arrives. */
+watch(
+  () => (entry.value?.spm !== undefined ? entry.value.partnerVideoId : ""),
+  async id => {
+    if (!id) return;
+    try {
+      const fetched = await getVideoExtras(id);
+      if (videoId.value === id) extras.value = fetched;
+    } catch {
+      // no description and no strip — what a video the index has neither
+      // for looks like anyway
+    }
+  },
+  { immediate: true }
+);
 
 const favorite = computed(() =>
   video.value ? settings.isFavorite(video.value.partnerVideoId) : false
@@ -790,10 +819,12 @@ const heat = computed(() =>
  * all, so without this every video would claim to be unmeasured for the
  * first 15 seconds of a cold visit. `video` recomputes when the index
  * arrives, so the row fills itself in. */
-const heatUnmeasured = computed(
-  () =>
-    catalog.status === "ready" && Boolean(video.value) && heat.value === null
-);
+const heatUnmeasured = computed(() => {
+  if (catalog.status !== "ready" || !video.value) return false;
+  // a slimmed entry says outright, before its measurements have arrived
+  if (entry.value?.spm !== undefined) return entry.value.spm === null;
+  return heat.value === null;
+});
 
 /** The two numbers, localized once — the strip's standing line, its spoken
  * description and the details card all print the same pair. */
@@ -967,6 +998,7 @@ async function load(id: string) {
   commentDraft.value = "";
   pendingAction.value = null;
   fetchedVideo.value = undefined;
+  extras.value = undefined;
   if (catalog.videos.some(item => item.partnerVideoId === id)) {
     state.value = "ready";
   } else {

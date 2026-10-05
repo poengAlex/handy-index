@@ -75,16 +75,19 @@ export async function readCachedIndex(
   }
 }
 
-/** Store a freshly downloaded snapshot. Fire-and-forget: a write that fails
+/** Store a freshly downloaded snapshot — as text, or as the body while it is
+ * still arriving (one branch of a tee). Fire-and-forget: a write that fails
  * (quota, private mode) costs the next load a download, nothing more. */
-export async function writeCachedIndex(text: string): Promise<void> {
+export async function writeCachedIndex(
+  body: string | ReadableStream<Uint8Array>
+): Promise<void> {
   const store = cacheStore();
-  if (!store) return;
   try {
+    if (!store) throw new Error("no Cache Storage");
     const cache = await store;
     await cache.put(
       CACHE_KEY,
-      new Response(text, {
+      new Response(body, {
         headers: {
           "Content-Type": "application/json",
           [STAMP_HEADER]: String(Date.now())
@@ -92,7 +95,9 @@ export async function writeCachedIndex(text: string): Promise<void> {
       })
     );
   } catch {
-    // no recovery worth attempting — the in-memory copy is already good
+    // no recovery worth attempting — the in-memory copy is already good. A
+    // stream nobody reads would hold its tee twin's every chunk, so let go.
+    if (typeof body !== "string") void body.cancel().catch(() => {});
   }
 }
 

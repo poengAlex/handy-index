@@ -70,6 +70,11 @@ export interface PartnerVideo {
    * but it needs no request, which is what makes a catalog-wide speed filter
    * possible at all. */
   scriptMetadata?: ScriptMetadata;
+  /** Not the API's: script speed in strokes per minute (`scriptSpeed`),
+   * worked out by our own server when the snapshot came from there, null
+   * when unmeasured. Such entries carry no `description` and no
+   * `scriptMetadata` — the video page fetches both (`getVideoExtras`). */
+  spm?: number | null;
   scriptPlays?: number;
   createdAt?: string;
   updatedAt?: string;

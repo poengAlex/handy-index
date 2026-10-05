@@ -73,6 +73,8 @@ async function request<T>(
 export interface IndexProgress {
   /** decoded JSON bytes read from the stream so far */
   received: number;
+  /** the decoded total, when the server says (only our own one does) */
+  expected?: number | undefined;
   /** true once every byte is in and JSON.parse is about to run */
   parsing: boolean;
 }
@@ -105,15 +107,34 @@ export async function getCachedIndex(
   }
 }
 
-/** The full catalog snapshot (~15k videos, ~40 MB of JSON — fetch once).
- * Pass `onProgress` to read the body as a stream and get byte counts as they
- * land; without it this is a plain one-shot request. Either way the result is
- * written to the disk cache, so the next tab does not repeat the download. */
+/** Where the snapshot comes from, best first. Our own server's slimmed copy
+ * (server/catalog.js) is about a quarter of the download, half the memory,
+ * and answers at once instead of after the API's ~4.5 s. The API itself is
+ * the fallback whenever that is unavailable: the dev server, the first
+ * seconds after a deploy, or a host without the endpoint. */
+async function fetchSnapshot(): Promise<Response> {
+  try {
+    const slim = await fetch("api/catalog");
+    // a dev server answers any unknown path with index.html and a 200
+    if (slim.ok && slim.headers.get("content-type")?.includes("json")) {
+      return slim;
+    }
+  } catch {
+    // offline or blocked — the API request below reports which
+  }
+  const response = await fetch(`${BASE_URL}/index`);
+  if (!response.ok) throw new ScriptIndexError(response.status, "/index");
+  return response;
+}
+
+/** The full catalog snapshot (~17k videos — fetch once). Pass `onProgress`
+ * to read the body as a stream and get byte counts as they land; without it
+ * this is a plain one-shot request. Either way the result is written to the
+ * disk cache, so the next tab does not repeat the download. */
 export async function getIndex(
   onProgress?: (progress: IndexProgress) => void
 ): Promise<PartnerVideo[]> {
-  const response = await fetch(`${BASE_URL}/index`);
-  if (!response.ok) throw new ScriptIndexError(response.status, "/index");
+  const response = await fetchSnapshot();
   // no streams (old browser, or a body-less mock) — fall back to one shot
   if (!response.body || !onProgress) {
     const text = await response.text();
@@ -121,32 +142,51 @@ export async function getIndex(
     return JSON.parse(text) as PartnerVideo[];
   }
 
-  const reader = response.body.getReader();
-  const decoder = new TextDecoder();
-  // chunks joined once at the end: 40 MB of `+=` is the one thing that would
-  // cost more than the download itself
-  const chunks: string[] = [];
+  const expected =
+    Number(response.headers.get("x-decoded-length")) || undefined;
+  // One branch streams straight to the disk cache, the other is counted for
+  // the bar and decoded once. Holding the decoded chunks, then their join,
+  // then a copy for the cache write kept three copies of the biggest thing
+  // the app ever holds alive at once — the peak that gets a phone's tab
+  // killed. Written as it arrives, not after the parse: the parse is the one
+  // step that can still fail, and a snapshot that reached us intact is worth
+  // keeping either way.
+  const [toDisk, toParse] = response.body.tee();
+  void writeCachedIndex(toDisk);
   let received = 0;
-  for (;;) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    received += value.byteLength;
-    chunks.push(decoder.decode(value, { stream: true }));
-    onProgress({ received, parsing: false });
-  }
-  chunks.push(decoder.decode());
+  const counted = toParse.pipeThrough(
+    new TransformStream<Uint8Array, Uint8Array>({
+      transform(chunk, controller) {
+        received += chunk.byteLength;
+        onProgress({ received, expected, parsing: false });
+        controller.enqueue(chunk);
+      }
+    })
+  );
+  const text = await new Response(counted).text();
 
-  onProgress({ received, parsing: true });
-  // JSON.parse on 40 MB freezes the main thread for a beat, and a frame that
-  // only renders after the freeze never says "parsing" — yield past one paint
-  // so the message the user waits on is the one on screen
+  onProgress({ received, expected, parsing: true });
+  // JSON.parse on this much freezes the main thread for a beat, and a frame
+  // that only renders after the freeze never says "parsing" — yield past one
+  // paint so the message the user waits on is the one on screen
   await nextPaint();
-  const text = chunks.join("");
-  // written before the parse, not after: the parse is the one step that can
-  // still fail, and a snapshot that reached us intact is worth keeping either
-  // way. Not awaited — a 40 MB disk write must not hold up the first render.
-  void writeCachedIndex(text);
   return JSON.parse(text) as PartnerVideo[];
+}
+
+/** What the slimmed snapshot leaves out of one video — its description and
+ * the script measurements the video page draws — from the server that
+ * slimmed it. Only ever asked about entries that came from there (they carry
+ * `spm`); the API's own entries are complete. */
+export async function getVideoExtras(
+  partnerVideoId: string
+): Promise<Pick<PartnerVideo, "description" | "scriptMetadata">> {
+  const path = `api/catalog/${encodeURIComponent(partnerVideoId)}`;
+  const response = await fetch(path);
+  if (!response.ok) throw new ScriptIndexError(response.status, path);
+  return (await response.json()) as Pick<
+    PartnerVideo,
+    "description" | "scriptMetadata"
+  >;
 }
 
 /** Resolves after the next frame has been painted; off-DOM (tests) it is just

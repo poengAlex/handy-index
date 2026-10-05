@@ -5,6 +5,22 @@
      words. Newest release on top. Format: "## <version> — <date>", then
      "### <group>" headings and "- " lines. Keep it English-only. -->
 
+## 2.8.1 — 5 October 2026
+
+### Speed
+
+- The site is ready much sooner on your first visit, about four times faster
+  on a typical phone connection. It also needs about half as much memory
+  while it loads, so older and cheaper phones should no longer reload the
+  page or give up partway through.
+- Opening the site again later is quicker too, and the page freezes less
+  while it gets ready.
+- Icons show up straight away instead of staying blank while they load.
+- Going back to the front page is faster. Shelves further down the page are
+  drawn as you scroll towards them.
+- On a video's page, the description can appear a moment after the rest of
+  the page.
+
 ## 2.7.1 — 5 October 2026
 
 ### Finding videos

@@ -16,12 +16,14 @@ import { useSettingsStore } from "./settings";
 
 export type CatalogStatus = "idle" | "loading" | "ready" | "error";
 
-/** The index has no readable Content-Length (chunked gzip, and CORS exposes
- * no size header), so the denominator for a progress bar has to come from
- * somewhere else: whatever the last successful load decoded to. The seed is a
- * measured figure, so even a first visit gets a bar that tracks reality. */
+/** The API's index has no readable Content-Length (chunked gzip, and CORS
+ * exposes no size header), so when the snapshot comes from there the
+ * denominator for a progress bar has to come from somewhere else: whatever
+ * the last successful load decoded to. The seed is a measured figure (the
+ * API's, October 2026), so even a first visit gets a bar that tracks reality.
+ * Our own server's slimmed copy states its size outright. */
 const SIZE_KEY = "ivdb.index-bytes";
-const SIZE_SEED = 43_000_000;
+const SIZE_SEED = 83_000_000;
 
 /** How long a disk copy counts as current, matching the endpoint's own
  * `max-age`. Past this the snapshot still renders straight away — waiting on
@@ -269,7 +271,9 @@ export const useCatalogStore = defineStore("catalog", () => {
     void updateOrientationTags();
     try {
       videos.value = Object.freeze(
-        await getIndex(({ received, parsing: isParsing }) => {
+        await getIndex(({ received, expected, parsing: isParsing }) => {
+          // our own server states the real size; better than any memory of it
+          if (expected) expectedBytes.value = expected;
           // the parse tick always lands: it carries the final byte count
           if (!isParsing && received - drawn < PROGRESS_STEP) return;
           drawn = received;

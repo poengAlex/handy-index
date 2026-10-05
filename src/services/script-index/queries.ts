@@ -54,17 +54,44 @@ export function matchesOrientation(
   orientationTags: ReadonlySet<string>
 ): boolean {
   if (orientation === "all") return true;
-  let gay = false;
-  let trans = false;
-  for (const tag of video.tags ?? []) {
-    if (!orientationTags.has(tag)) continue;
-    const filed = FILED_UNDER.get(tag);
-    if (filed === "gay") gay = true;
-    else if (filed === "trans") trans = true;
+  const filed = filedUnder(video, orientationTags);
+  if (orientation === "gay") return (filed & FILED_GAY) !== 0;
+  if (orientation === "trans") return (filed & FILED_TRANS) !== 0;
+  return filed === 0;
+}
+
+const FILED_GAY = 1;
+const FILED_TRANS = 2;
+
+/** Which orientations a video is filed under, as FILED_* bits — remembered
+ * per video for one orientation-tag list. Every page load walks the whole
+ * catalog's tags twice (the visible list and the header's gate counts) and
+ * every orientation or access change twice again; the answer only changes
+ * with the snapshot (new video objects) or the tag list (a new Set). */
+let filedMemo = {
+  tags: undefined as ReadonlySet<string> | undefined,
+  byVideo: new WeakMap<PartnerVideo, number>()
+};
+
+function filedUnder(
+  video: PartnerVideo,
+  orientationTags: ReadonlySet<string>
+): number {
+  if (filedMemo.tags !== orientationTags) {
+    filedMemo = { tags: orientationTags, byVideo: new WeakMap() };
   }
-  if (orientation === "gay") return gay;
-  if (orientation === "trans") return trans;
-  return !gay && !trans;
+  let filed = filedMemo.byVideo.get(video);
+  if (filed === undefined) {
+    filed = 0;
+    for (const tag of video.tags ?? []) {
+      if (!orientationTags.has(tag)) continue;
+      const under = FILED_UNDER.get(tag);
+      if (under === "gay") filed |= FILED_GAY;
+      else if (under === "trans") filed |= FILED_TRANS;
+    }
+    filedMemo.byVideo.set(video, filed);
+  }
+  return filed;
 }
 
 /** Orientation is derived from tags (see matchesOrientation), so muting one
@@ -216,18 +243,63 @@ function time(value?: string): number {
  * the single instant 2025-04-22T07:21:04 — so ties are broken on `createdAt`
  * to keep the order stable instead of whatever the engine emits first. Same
  * field `publishedWithin` cuts on, so the shelf and the filter agree. */
-export function recentFirst(videos: readonly PartnerVideo[]): PartnerVideo[] {
-  return [...videos].sort(
+export function recentFirst(
+  videos: readonly PartnerVideo[],
+  limit?: number
+): PartnerVideo[] {
+  return sortedHead(
+    videos,
     (a, b) =>
       time(b.publishedAt) - time(a.publishedAt) ||
-      time(b.createdAt) - time(a.createdAt)
+      time(b.createdAt) - time(a.createdAt),
+    limit
   );
 }
 
 export function recentlyUpdatedFirst(
-  videos: readonly PartnerVideo[]
+  videos: readonly PartnerVideo[],
+  limit?: number
 ): PartnerVideo[] {
-  return [...videos].sort((a, b) => time(b.updatedAt) - time(a.updatedAt));
+  return sortedHead(
+    videos,
+    (a, b) => time(b.updatedAt) - time(a.updatedAt),
+    limit
+  );
+}
+
+/** `[...items].sort(compare).slice(0, limit)`, without sorting the rest.
+ * A shelf shows 20 of a ~10k pool, and a full sort per shelf on every visit
+ * was the larger part of the homepage's cost on a slow phone. Ties keep
+ * their input order, exactly as the (stable) full sort leaves them. No limit
+ * is the plain full sort. */
+function sortedHead<T>(
+  items: readonly T[],
+  compare: (a: T, b: T) => number,
+  limit?: number
+): T[] {
+  if (limit === undefined || limit >= items.length) {
+    return [...items].sort(compare);
+  }
+  const head: T[] = [];
+  if (limit <= 0) return head;
+  for (const item of items) {
+    // full, and not strictly ahead of the last kept: a stable sort puts it
+    // after that one too
+    if (head.length === limit && compare(item, head[limit - 1]!) >= 0) {
+      continue;
+    }
+    // first slot whose occupant sorts strictly after this item
+    let low = 0;
+    let high = head.length;
+    while (low < high) {
+      const mid = (low + high) >> 1;
+      if (compare(item, head[mid]!) < 0) high = mid;
+      else low = mid + 1;
+    }
+    head.splice(low, 0, item);
+    if (head.length > limit) head.pop();
+  }
+  return head;
 }
 
 /** Votes a rating needs before it ranks purely on its percentage — anything
@@ -241,21 +313,31 @@ function voteCount(video: PartnerVideo): number {
 
 /** Exact rating order (matches the % shown on cards), established ratings
  * first, ties broken by vote count. */
-export function topRated(videos: readonly PartnerVideo[]): PartnerVideo[] {
-  return [...videos]
-    .filter(video => (video.rating ?? 0) > 0)
-    .sort((a, b) => {
+export function topRated(
+  videos: readonly PartnerVideo[],
+  limit?: number
+): PartnerVideo[] {
+  return sortedHead(
+    videos.filter(video => (video.rating ?? 0) > 0),
+    (a, b) => {
       const aEstablished = voteCount(a) >= RATING_VOTE_FLOOR;
       const bEstablished = voteCount(b) >= RATING_VOTE_FLOOR;
       if (aEstablished !== bEstablished) return aEstablished ? -1 : 1;
       return (b.rating ?? 0) - (a.rating ?? 0) || voteCount(b) - voteCount(a);
-    });
+    },
+    limit
+  );
 }
 
-export function mostPlayed(videos: readonly PartnerVideo[]): PartnerVideo[] {
-  return [...videos]
-    .filter(video => (video.scriptPlays ?? 0) > 0)
-    .sort((a, b) => (b.scriptPlays ?? 0) - (a.scriptPlays ?? 0));
+export function mostPlayed(
+  videos: readonly PartnerVideo[],
+  limit?: number
+): PartnerVideo[] {
+  return sortedHead(
+    videos.filter(video => (video.scriptPlays ?? 0) > 0),
+    (a, b) => (b.scriptPlays ?? 0) - (a.scriptPlays ?? 0),
+    limit
+  );
 }
 
 export function mostViewed(videos: readonly PartnerVideo[]): PartnerVideo[] {
@@ -381,6 +463,10 @@ export function publishedBetween(
 const speedCache = new WeakMap<PartnerVideo, number | null>();
 
 export function scriptSpeed(video: PartnerVideo): number | null {
+  // worked out ahead by our own server with this same arithmetic, when the
+  // snapshot came from there (server/catalog.js) — its entries carry no
+  // segments to decode
+  if (video.spm !== undefined) return video.spm;
   const cached = speedCache.get(video);
   if (cached !== undefined) return cached;
   const heat = scriptHeat(video.scriptMetadata);
@@ -559,14 +645,18 @@ export interface TagSummary {
 }
 
 /** Every tag in the catalog with its video count, most-used first. */
-export function tagsOf(videos: readonly PartnerVideo[]): TagSummary[] {
+function tagCounts(videos: readonly PartnerVideo[]): Map<string, number> {
   const counts = new Map<string, number>();
   for (const video of videos) {
     for (const tag of video.tags ?? []) {
       counts.set(tag, (counts.get(tag) ?? 0) + 1);
     }
   }
-  return [...counts.entries()]
+  return counts;
+}
+
+export function tagsOf(videos: readonly PartnerVideo[]): TagSummary[] {
+  return [...tagCounts(videos).entries()]
     .map(([tag, count]) => ({ tag, count }))
     .sort((a, b) => b.count - a.count);
 }
@@ -576,9 +666,10 @@ export function topTags(
   videos: readonly PartnerVideo[],
   count: number
 ): string[] {
-  return tagsOf(videos)
-    .slice(0, count)
-    .map(summary => summary.tag);
+  // the same order tagsOf would give, minus sorting all ~30k tags for 12
+  return sortedHead([...tagCounts(videos)], (a, b) => b[1] - a[1], count).map(
+    ([tag]) => tag
+  );
 }
 
 export interface PartnerSummary {

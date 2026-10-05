@@ -100,7 +100,7 @@
       <div class="home-rows">
         <template v-if="catalog.status === 'ready'">
           <CarouselRow
-            v-for="row in rows"
+            v-for="row in shownRows"
             :key="row.key"
             :title="row.title"
             :videos="row.videos"
@@ -109,6 +109,7 @@
             :clear-label="row.clearLabel"
             @clear="clearHistoryOpen = true"
           />
+          <div v-if="!rowsDone" ref="rowSentinel" class="home-rows__sentinel" />
           <div v-if="!rows.length" class="h-container home-empty">
             <HEmptyState
               icon="filter_alt_off"
@@ -158,6 +159,7 @@ import {
 import CarouselRow from "@/components/CarouselRow.vue";
 import MediaHero from "@/components/MediaHero.vue";
 import { useFormat } from "@/composables/useFormat";
+import { useIncrementalReveal } from "@/composables/useIncrementalReveal";
 import {
   artworkOf,
   byTag,
@@ -183,6 +185,12 @@ import { useSettingsStore } from "@/stores/settings";
 let lastFeaturedId: string | undefined;
 
 const ROW_SIZE = 20;
+
+/** Shelves drawn up front, and added each time the reader nears the last.
+ * All eleven at once was the homepage's biggest freeze on a slow phone — each
+ * is a carousel of 20 cards that measures itself on mount — and on a phone
+ * screen only the first one or two are in view. */
+const ROWS_PER_REVEAL = 3;
 const MIN_ROW_VIDEOS = 5;
 
 // tags that describe orientation/format rather than content — they already
@@ -268,6 +276,66 @@ function titleCase(tag: string): string {
   return tag.charAt(0).toUpperCase() + tag.slice(1);
 }
 
+/** The shelves drawn from the catalog itself, as opposed to the visitor's own
+ * (favorites, history). */
+interface CatalogShelves {
+  /** what the catalog shelves draw from — see `rows` */
+  pool: PartnerVideo[];
+  rowTags: string[];
+  byTag: Map<string, PartnerVideo[]>;
+  recent: PartnerVideo[];
+  topRated: PartnerVideo[];
+  mostPlayed: PartnerVideo[];
+  vr: PartnerVideo[];
+  updated: PartnerVideo[];
+}
+
+// They only change when the gated catalog or the broken-artwork registry
+// does, yet every visit to home rebuilt them, and that was most of what
+// returning here cost on a slow phone. So they outlive the page, keyed on
+// exactly those inputs: the registry by identity AND size, because it grows
+// in place.
+let shelfCache:
+  | {
+      visible: readonly PartnerVideo[];
+      broken: ReadonlySet<string>;
+      brokenSize: number;
+      shelves: CatalogShelves;
+    }
+  | undefined;
+
+function catalogShelves(
+  visible: readonly PartnerVideo[],
+  broken: ReadonlySet<string>
+): CatalogShelves {
+  const brokenSize = broken.size;
+  if (
+    shelfCache?.visible === visible &&
+    shelfCache.broken === broken &&
+    shelfCache.brokenSize === brokenSize
+  ) {
+    return shelfCache.shelves;
+  }
+  const pool = withThumbnail(visible, broken);
+  const rowTags = topTags(pool, 12)
+    .filter(tag => !EXCLUDED_ROW_TAGS.has(tag))
+    .slice(0, 4);
+  const shelves: CatalogShelves = {
+    pool,
+    rowTags,
+    byTag: new Map(
+      rowTags.map(tag => [tag, recentFirst(byTag(pool, tag), ROW_SIZE)])
+    ),
+    recent: recentFirst(pool, ROW_SIZE),
+    topRated: topRated(pool, ROW_SIZE),
+    mostPlayed: mostPlayed(pool, ROW_SIZE),
+    vr: recentFirst(vrOnly(pool), ROW_SIZE),
+    updated: recentlyUpdatedFirst(pool, ROW_SIZE)
+  };
+  shelfCache = { visible, broken, brokenSize, shelves };
+  return shelves;
+}
+
 // Shelf titles are translated here rather than in a module-level table: a
 // constant would be built once at import and keep its labels through a
 // language switch, while this computed re-runs when the locale changes.
@@ -277,16 +345,13 @@ const rows = computed<Row[]>(() => {
   // grey tile, so the catalog shelves only draw from illustrated videos.
   // Personal shelves (favorites, recently viewed) stay complete — hiding
   // something the user saved would read as data loss.
-  const pool = withThumbnail(catalog.visible, catalog.brokenArtwork);
-
-  const rowTags = topTags(pool, 12)
-    .filter(tag => !EXCLUDED_ROW_TAGS.has(tag))
-    .slice(0, 4);
+  const shelves = catalogShelves(catalog.visible, catalog.brokenArtwork);
+  const { pool, rowTags } = shelves;
 
   const tagRows: Row[] = rowTags.map(tag => ({
     key: `tag-${tag}`,
     title: titleCase(tag),
-    videos: recentFirst(byTag(pool, tag)).slice(0, ROW_SIZE),
+    videos: shelves.byTag.get(tag) ?? [],
     to: `/videos?tag=${encodeURIComponent(tag)}`
   }));
 
@@ -308,7 +373,7 @@ const rows = computed<Row[]>(() => {
     .map(({ tag }) => ({
       key: `like-${tag}`,
       title: t("home.rows.becauseYouLike", { tag }),
-      videos: recentFirst(byTag(pool, tag)).slice(0, ROW_SIZE),
+      videos: recentFirst(byTag(pool, tag), ROW_SIZE),
       to: `/videos?tag=${encodeURIComponent(tag)}`
     }));
 
@@ -316,13 +381,13 @@ const rows = computed<Row[]>(() => {
     {
       key: "recent",
       title: t("home.rows.recent"),
-      videos: recentFirst(pool).slice(0, ROW_SIZE),
+      videos: shelves.recent,
       to: "/videos"
     },
     {
       key: "favorites",
       title: t("home.rows.favorites"),
-      videos: recentFirst(catalog.favorites).slice(0, ROW_SIZE),
+      videos: recentFirst(catalog.favorites, ROW_SIZE),
       to: "/favorites"
     },
     {
@@ -344,13 +409,13 @@ const rows = computed<Row[]>(() => {
     {
       key: "top-rated",
       title: t("home.rows.topRated"),
-      videos: topRated(pool).slice(0, ROW_SIZE),
+      videos: shelves.topRated,
       to: "/videos?sort=top"
     },
     {
       key: "most-played",
       title: t("home.rows.mostPlayed"),
-      videos: mostPlayed(pool).slice(0, ROW_SIZE),
+      videos: shelves.mostPlayed,
       to: "/videos?sort=plays"
     },
     {
@@ -358,14 +423,14 @@ const rows = computed<Row[]>(() => {
       // the one shelf title that is not a message: "VR" is the same word in
       // every locale this app ships
       title: "VR",
-      videos: recentFirst(vrOnly(pool)).slice(0, ROW_SIZE),
+      videos: shelves.vr,
       to: "/videos?vr=1"
     },
     ...tagRows,
     {
       key: "updated",
       title: t("home.rows.updated"),
-      videos: recentlyUpdatedFirst(pool).slice(0, ROW_SIZE),
+      videos: shelves.updated,
       to: "/videos?sort=updated"
     }
   ];
@@ -376,6 +441,12 @@ const rows = computed<Row[]>(() => {
       : row.videos.length >= MIN_ROW_VIDEOS
   );
 });
+
+const {
+  shown: shownRows,
+  done: rowsDone,
+  sentinel: rowSentinel
+} = useIncrementalReveal(rows, ROWS_PER_REVEAL, { reset: false });
 </script>
 
 <style scoped lang="scss">
@@ -451,5 +522,9 @@ const rows = computed<Row[]>(() => {
   flex-direction: column;
   gap: var(--space-xl);
   margin-top: var(--space-xl);
+}
+
+.home-rows__sentinel {
+  height: 1px;
 }
 </style>

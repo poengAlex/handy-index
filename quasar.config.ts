@@ -19,10 +19,12 @@ export default defineConfig(() => {
     // app boot file (/src/boot)
     boot: ["i18n", "icons", "quasar-defaults"],
 
-    css: ["app.scss"],
+    // the icon font is our own cut of Material Symbols rather than the
+    // extras' 4 MB full set — see scripts/subset-icons.py
+    css: ["icons/material-symbols-outlined.css", "app.scss"],
 
     // https://github.com/quasarframework/quasar/tree/dev/extras
-    extras: ["material-symbols-outlined"],
+    extras: [],
 
     build: {
       // vue-i18n's own build flags. Left undefined they only produce console

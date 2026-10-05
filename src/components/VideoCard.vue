@@ -20,8 +20,16 @@
       <HChip v-if="isVr" label="VR" class="video-card__badge" />
 
       <!-- Opened by the card's own triggers below, and placed at whatever
-           was clicked, so Quasar's anchor wiring stays off -->
-      <q-menu ref="menuRef" no-parent-event touch-position :target="menuTarget">
+           was clicked, so Quasar's anchor wiring stays off. Mounted on first
+           use: a shelf page draws hundreds of cards and opens a menu on
+           almost none of them. -->
+      <q-menu
+        v-if="menuMounted"
+        ref="menuRef"
+        no-parent-event
+        touch-position
+        :target="menuTarget"
+      >
         <q-list dense class="video-card__menu">
           <q-item v-close-popup clickable @click="open">
             <q-item-section side>
@@ -46,7 +54,7 @@
             </q-item-section>
             <q-item-section>{{ favoriteLabel }}</q-item-section>
           </q-item>
-          <q-item v-close-popup clickable @click="playlistDialog = true">
+          <q-item v-close-popup clickable @click="openPlaylistDialog">
             <q-item-section side>
               <q-icon name="playlist_add" size="20px" />
             </q-item-section>
@@ -111,12 +119,18 @@
       }}</span>
     </div>
 
+    <!-- both mounted on first use, like the menu -->
     <AddToPlaylistDialog
+      v-if="playlistDialogMounted"
       v-model="playlistDialog"
       :video-id="video.partnerVideoId"
     />
 
-    <ConnectionKeyDialog v-model="keyDialog" @saved="downloadScript">
+    <ConnectionKeyDialog
+      v-if="keyDialogMounted"
+      v-model="keyDialog"
+      @saved="downloadScript"
+    >
       {{ $t("media.keyDialog.body") }}
     </ConnectionKeyDialog>
 
@@ -141,7 +155,7 @@
 // The catalog media tile: TileCard with a 16:9 thumbnail well over two text
 // lines. Explicit artwork only renders when the NSFW setting is on — which
 // also gates the hover preview, since that is the same artwork in motion.
-import { computed, ref } from "vue";
+import { computed, nextTick, ref } from "vue";
 import type { ComponentPublicInstance } from "vue";
 import type { QMenu } from "quasar";
 import { useI18n } from "vue-i18n";
@@ -198,19 +212,36 @@ const moreBtn = ref<ComponentPublicInstance | null>(null);
 // between a second tap on ⋮ closing the menu and it closing then reopening.
 const menuTarget = computed<Element | true>(() => moreBtn.value?.$el ?? true);
 
+const menuMounted = ref(false);
+
+/** the menu, mounting it first if this card has never opened one */
+async function menu(): Promise<QMenu | null> {
+  if (!menuMounted.value) {
+    menuMounted.value = true;
+    await nextTick();
+  }
+  return menuRef.value;
+}
+
 /** the ⋮ button — a second tap on it closes the menu again */
-function toggleMenu(evt: Event) {
-  menuRef.value?.toggle(evt);
+async function toggleMenu(evt: Event) {
+  (await menu())?.toggle(evt);
 }
 
 // A long press is what raises `contextmenu` on a phone, so it opens nothing
 // there — but it is still cancelled, or the browser answers a press on a card
 // with its own link/image menu.
-function onContextMenu(evt: Event) {
-  if (canHover.value) menuRef.value?.show(evt);
+async function onContextMenu(evt: Event) {
+  if (canHover.value) (await menu())?.show(evt);
 }
 
 const playlistDialog = ref(false);
+const playlistDialogMounted = ref(false);
+
+function openPlaylistDialog() {
+  playlistDialogMounted.value = true;
+  playlistDialog.value = true;
+}
 
 const detailPath = computed(() => `/videos/${props.video.partnerVideoId}`);
 
@@ -263,10 +294,12 @@ function openOnSite() {
 // --- script download (free scripts only — the menu item is hidden otherwise) ---
 
 const keyDialog = ref(false);
+const keyDialogMounted = ref(false);
 
 async function downloadScript() {
   const key = settings.connectionKey.trim();
   if (!key) {
+    keyDialogMounted.value = true;
     keyDialog.value = true;
     return;
   }

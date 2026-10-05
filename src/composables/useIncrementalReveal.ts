@@ -10,12 +10,15 @@ import {
 /**
  * Sentinel-driven endless scroll over an in-memory result list: `shown` is a
  * growing slice of the source, extended by `pageSize` whenever the sentinel
- * element nears the viewport. A new source list resets to the first page.
- * Render the sentinel only while `done` is false.
+ * element nears the viewport. A new source list resets to the first page,
+ * unless `reset: false` — for a page whose list changes under the reader
+ * (the homepage gains a shelf when its first favorite lands) and must not
+ * fold back up because of it. Render the sentinel only while `done` is false.
  */
 export function useIncrementalReveal<T>(
   source: Ref<readonly T[]>,
-  pageSize: number
+  pageSize: number,
+  options: { reset?: boolean } = {}
 ) {
   const limit = ref(pageSize);
   const sentinel = ref<HTMLElement>();
@@ -29,12 +32,14 @@ export function useIncrementalReveal<T>(
   // a reader 900 rows deep back to the first page for a change they made
   // themselves. A narrowed filter still moves the length, which is the reset
   // that matters; re-sorting keeps the reveal and simply shows the new order.
-  watch(
-    () => source.value.length,
-    () => {
-      limit.value = pageSize;
-    }
-  );
+  if (options.reset !== false) {
+    watch(
+      () => source.value.length,
+      () => {
+        limit.value = pageSize;
+      }
+    );
+  }
 
   let observer: IntersectionObserver | undefined;
 
