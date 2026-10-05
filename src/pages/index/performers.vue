@@ -110,8 +110,8 @@
                 >
                   <template #media>
                     <MediaImage
-                      v-if="settings.nsfw && performer.avatar"
-                      :src="performer.avatar"
+                      v-if="settings.nsfw && avatarOf(performer)"
+                      :src="avatarOf(performer)"
                       :alt="performer.name"
                       class="tile-card__img"
                     />
@@ -163,6 +163,7 @@ import MediaImage from "@/components/MediaImage.vue";
 import TileCard from "@/components/TileCard.vue";
 import { useFormat } from "@/composables/useFormat";
 import { useIncrementalReveal } from "@/composables/useIncrementalReveal";
+import { usePerformerPictures } from "@/composables/usePerformerProfile";
 import {
   performersOf,
   type PerformerSummary
@@ -260,6 +261,33 @@ const filtered = computed(() => {
 });
 
 const { shown, done, sentinel } = useIncrementalReveal(filtered, PAGE_SIZE);
+
+// Some performers have no picture on any of their videos (Lana Rhoades), or
+// one whose host has dropped it (Alex Adams) — but a working one in their
+// profile. Those are looked up for the cards on screen, after the page is
+// complete: the grid renders exactly as before and the pictures arrive into
+// it. A card whose picture fails while you look re-runs this through the
+// broken-artwork set. Not at all while explicit images are off.
+const { pictures, findPictures, working } = usePerformerPictures();
+
+watch(
+  [shown, () => settings.nsfw, () => catalog.brokenArtwork.size],
+  ([list, nsfw]) => {
+    if (!nsfw) return;
+    const missing = list
+      .filter(performer => !working(performer.avatar))
+      .map(performer => performer.performerId);
+    if (missing.length) void findPictures(missing);
+  },
+  { immediate: true }
+);
+
+/** empty when there is none (yet) */
+function avatarOf(performer: PerformerSummary): string {
+  return working(performer.avatar)
+    ? performer.avatar
+    : (pictures.get(performer.performerId) ?? "");
+}
 
 const countLabel = computed(() => {
   const total = count("performers", all.value.length);

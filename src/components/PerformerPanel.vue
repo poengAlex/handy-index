@@ -94,12 +94,15 @@
 // from the catalog and shows at once; the bio, links and card come from the
 // performer's profile, which most performers have little of — so a missing
 // profile, or a sparse one, is a shorter panel rather than an error.
-import { computed, toRef, useId } from "vue";
+import { computed, toRef, useId, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { HChip, HTextCard } from "@/components/handy";
 import MediaImage from "@/components/MediaImage.vue";
 import { useFormat } from "@/composables/useFormat";
-import { usePerformerProfile } from "@/composables/usePerformerProfile";
+import {
+  usePerformerPictures,
+  usePerformerProfile
+} from "@/composables/usePerformerProfile";
 import {
   feetAndInches,
   pounds,
@@ -153,10 +156,29 @@ const displayName = computed(
       t("browse.chip.performerFallback"))
 );
 
-// the catalog's and the profile's are the same picture wherever both exist
+const { pictures, findPictures, working } = usePerformerPictures();
+
+// The catalog's and the profile's are the same picture wherever both exist.
+// Without a working one, one of the profile's other pictures — checked for
+// shape first, so the same one the directory card shows and never a banner.
+const ownAvatar = computed(() =>
+  [stats.value?.avatar, profile.value?.avatar].find(working)
+);
+
 const avatar = computed(
+  () => ownAvatar.value ?? pictures.get(props.performerId)
+);
+
+// re-run when the profile lands, and when the picture in hand fails to load
+watch(
   () =>
-    stats.value?.avatar ?? profile.value?.avatar ?? profile.value?.images?.[0]
+    settings.nsfw && profile.value && !ownAvatar.value
+      ? profile.value
+      : undefined,
+  current => {
+    if (current) void findPictures([current.performerId]);
+  },
+  { immediate: true }
 );
 
 const statsLine = computed(() => {

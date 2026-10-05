@@ -785,11 +785,6 @@ export function performersOf(
     .sort((a, b) => b.count - a.count);
 }
 
-/** How many of the strongest candidates the hero draws from. Wide enough
- * that coming back to home shows something else, narrow enough that every
- * entry deserves the slot. */
-const FEATURED_POOL = 24;
-
 export interface PerformerStats {
   /** as the index spells it on their videos; undefined when none are here */
   name?: string;
@@ -829,6 +824,11 @@ export function performerStats(
   stats.avgRating = ratedCount ? ratingSum / ratedCount : 0;
   return stats;
 }
+
+/** How many of the strongest candidates the hero draws from. Wide enough
+ * that coming back to home shows something else, narrow enough that every
+ * entry deserves the slot. */
+const FEATURED_POOL = 24;
 
 /** Days after publication at which a video keeps half its freshness weight. */
 const FEATURED_HALF_LIFE_DAYS = 120;

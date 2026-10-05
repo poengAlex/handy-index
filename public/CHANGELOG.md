@@ -5,6 +5,19 @@
      words. Newest release on top. Format: "## <version> — <date>", then
      "### <group>" headings and "- " lines. Keep it English-only. -->
 
+## 2.8.3 — 5 October 2026
+
+### Performers
+
+- Performers whose videos come without a picture, like Lana Rhoades, now get
+  one on the Performers page too, taken from their own profile. It's the same
+  picture their page above their videos already showed.
+- Performers whose picture had stopped loading, like Alex Adams and Jax
+  Slayher, show it again: the same picture, from a place that still has it.
+- These pictures load after the rest of the page, so the page itself comes up
+  as fast as before and they appear a moment later. Wide banner images are
+  skipped, so a card never shows a squashed strip.
+
 ## 2.8.2 — 5 October 2026
 
 ### Requests
