@@ -5,6 +5,15 @@
      words. Newest release on top. Format: "## <version> — <date>", then
      "### <group>" headings and "- " lines. Keep it English-only. -->
 
+## 2.7.1 — 5 October 2026
+
+### Finding videos
+
+- Straight, Gay and Trans now go only by the orientation each video is
+  tagged with, not by words that turn up inside its other tags. A few trans
+  videos that also showed under Gay, because of tags like "black gays", now
+  show under Trans only.
+
 ## 2.7.0 — 5 October 2026
 
 ### Front page

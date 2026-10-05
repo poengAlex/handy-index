@@ -19,28 +19,49 @@ export const ORIENTATION_ICONS: Record<Orientation, string> = {
   all: "all_inclusive"
 };
 
-/** "trans" as a whole word, never as a prefix: a substring test also caught
- * transformation, transparent, translated and public transport, sorting
- * straight videos under Trans and hiding them from Straight. The index stamps
- * trans + transgender + shemale together on every trans video (1,133 of
- * 16,762, never one without the others), so these three words find exactly
- * that set. Anything that isn't a letter or digit separates words, so "trans
- * woman", "xyz-trans" and "shemale-xyz" all count. Plurals and "ts" stay out
- * on purpose — on their own they are keyword spam on straight videos. */
-const TRANS_TAG =
-  /(?:^|[^\p{L}\p{N}])(?:trans|transgender|shemale)(?![\p{L}\p{N}])/iu;
+/** The tags `/tags` files under the "orientation" category, as of October
+ * 2026 (5 of its 30,412). The gate goes by these until the live list arrives
+ * — and keeps going by them if it never does, since an empty list would file
+ * every video under Straight. */
+export const ORIENTATION_TAGS_SEED: readonly string[] = [
+  "bisexual",
+  "gay",
+  "shemale",
+  "straight",
+  "trans"
+];
 
+/** Which filter an orientation tag files a video under. Two are our own
+ * filters' names, and shemale goes on exactly the videos trans does (1,133 of
+ * 16,762, never one without the other). The rest file a video nowhere:
+ * Straight is whatever carries neither gay nor trans — the straight tag
+ * itself is on only 469 videos — and bisexual is on 56 that are otherwise
+ * M/F or lesbian, which is where Straight already put them. */
+const FILED_UNDER: ReadonlyMap<string, "gay" | "trans"> = new Map([
+  ["gay", "gay"],
+  ["trans", "trans"],
+  ["shemale", "trans"]
+]);
+
+/** Orientation goes by the index's own orientation tags (`orientationTags`,
+ * the live `/tags` list or the seed above) and nothing else. Looking for the
+ * words inside other tags kept misfiling: a prefix test put translated and
+ * transformation under Trans, and a substring test put trans videos tagged
+ * "black gays" or "gay trans" under Gay as well. */
 export function matchesOrientation(
   video: PartnerVideo,
-  orientation: Orientation
+  orientation: Orientation,
+  orientationTags: ReadonlySet<string>
 ): boolean {
   if (orientation === "all") return true;
-  const tags = video.tags ?? [];
-  // a substring is safe here, unlike "trans": no tag in the index carries
-  // "gay" inside another word, and it catches site-name tags (gaymaletube,
-  // justthegays) that a whole-word rule would miss
-  const gay = tags.some(tag => tag.includes("gay"));
-  const trans = tags.some(tag => TRANS_TAG.test(tag));
+  let gay = false;
+  let trans = false;
+  for (const tag of video.tags ?? []) {
+    if (!orientationTags.has(tag)) continue;
+    const filed = FILED_UNDER.get(tag);
+    if (filed === "gay") gay = true;
+    else if (filed === "trans") trans = true;
+  }
   if (orientation === "gay") return gay;
   if (orientation === "trans") return trans;
   return !gay && !trans;
@@ -73,6 +94,8 @@ function hasFreeVideo(video: PartnerVideo): boolean {
 
 export interface CatalogFilter {
   orientation: Orientation;
+  /** the index's orientation tags — see matchesOrientation */
+  orientationTags: ReadonlySet<string>;
   /** include videos whose script is behind a partner's paywall */
   premiumScripts: boolean;
   /** include videos behind the partner's own paywall — a different question:
@@ -106,7 +129,7 @@ export function visibleVideos(
   filter: CatalogFilter
 ): PartnerVideo[] {
   const base = (video: PartnerVideo) =>
-    matchesOrientation(video, filter.orientation) &&
+    matchesOrientation(video, filter.orientation, filter.orientationTags) &&
     (filter.premiumScripts || hasFreeScript(video)) &&
     (filter.paidVideos || hasFreeVideo(video));
   // nothing muted (the common case) skips the per-video tag loop entirely
@@ -144,7 +167,9 @@ export function gateBreakdown(
   let byVideo = 0;
   let byMutedTags = 0;
   for (const video of videos) {
-    if (!matchesOrientation(video, filter.orientation)) {
+    if (
+      !matchesOrientation(video, filter.orientation, filter.orientationTags)
+    ) {
       byOrientation += 1;
     } else if (!(filter.premiumScripts || hasFreeScript(video))) {
       byScript += 1;

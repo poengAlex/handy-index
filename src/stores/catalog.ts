@@ -1,7 +1,12 @@
 import { acceptHMRUpdate, defineStore } from "pinia";
 import { computed, ref, shallowRef } from "vue";
-import { getCachedIndex, getIndex } from "@/services/script-index/client";
 import {
+  getCachedIndex,
+  getIndex,
+  getOrientationTags
+} from "@/services/script-index/client";
+import {
+  ORIENTATION_TAGS_SEED,
   byIds,
   gateBreakdown,
   visibleVideos
@@ -54,6 +59,26 @@ function rememberSize(bytes: number) {
   }
 }
 
+/** The orientation tags as `/tags` last listed them. Kept across visits so
+ * that once the list moves on from ORIENTATION_TAGS_SEED, the gate goes by
+ * the new one from the first paint, not only once this visit's copy lands. */
+const ORIENTATION_KEY = "ivdb.orientation-tags";
+
+function rememberedOrientationTags(): ReadonlySet<string> {
+  try {
+    const raw: unknown = JSON.parse(
+      localStorage.getItem(ORIENTATION_KEY) ?? "null"
+    );
+    if (Array.isArray(raw)) {
+      const tags = raw.filter(entry => typeof entry === "string");
+      if (tags.length) return new Set(tags);
+    }
+  } catch {
+    // private mode or a mangled blob — the seed is fine
+  }
+  return new Set(ORIENTATION_TAGS_SEED);
+}
+
 /** Artwork URLs that failed to load. Dead partner CDNs are common in the
  * index and the metadata still carries the stale link, so presence of a URL
  * says nothing — only a load attempt does. Remembered across visits because
@@ -99,6 +124,13 @@ export const useCatalogStore = defineStore("catalog", () => {
    * question the settings row answers is how old the data is. */
   const fetchedAt = ref(0);
 
+  /** Which tags say a video's orientation — what the orientation gate reads.
+   * Fetched whenever the snapshot itself is, so the two stay about as fresh
+   * as each other; until then, last visit's list or the seed. */
+  const orientationTags = shallowRef<ReadonlySet<string>>(
+    rememberedOrientationTags()
+  );
+
   /** 0–1, and never quite 1 while bytes are still arriving: a bar that sits
    * full through the last chunk is the same lie as a spinner. */
   const progress = computed(() => {
@@ -112,6 +144,7 @@ export const useCatalogStore = defineStore("catalog", () => {
     const settings = useSettingsStore();
     return visibleVideos(videos.value, {
       orientation: settings.orientation,
+      orientationTags: orientationTags.value,
       premiumScripts: settings.showPremiumScripts,
       paidVideos: settings.showPaidVideos,
       mutedTags: settings.mutedSet
@@ -127,6 +160,7 @@ export const useCatalogStore = defineStore("catalog", () => {
     const settings = useSettingsStore();
     return visibleVideos(videos.value, {
       orientation: "all",
+      orientationTags: orientationTags.value,
       premiumScripts: settings.showPremiumScripts,
       paidVideos: settings.showPaidVideos,
       mutedTags: settings.mutedSet
@@ -141,6 +175,7 @@ export const useCatalogStore = defineStore("catalog", () => {
     const settings = useSettingsStore();
     return gateBreakdown(videos.value, {
       orientation: settings.orientation,
+      orientationTags: orientationTags.value,
       premiumScripts: settings.showPremiumScripts,
       paidVideos: settings.showPaidVideos,
       mutedTags: settings.mutedSet
@@ -178,6 +213,31 @@ export const useCatalogStore = defineStore("catalog", () => {
     }
   }
 
+  /** Swap in the live orientation tags. Never throws, and never applies an
+   * empty list: that would file every video under Straight, and is far
+   * likelier a broken answer than the index dropping orientation. */
+  async function updateOrientationTags(): Promise<void> {
+    let tags: string[];
+    try {
+      tags = await getOrientationTags();
+    } catch {
+      // last visit's list or the seed carries on
+      return;
+    }
+    if (!tags.length) return;
+    const current = orientationTags.value;
+    // the same list (the usual answer) must not re-run every gate and row
+    if (tags.length === current.size && tags.every(tag => current.has(tag))) {
+      return;
+    }
+    orientationTags.value = new Set(tags);
+    try {
+      localStorage.setItem(ORIENTATION_KEY, JSON.stringify(tags));
+    } catch {
+      // storage full or disabled — this visit still has the list
+    }
+  }
+
   async function load(): Promise<void> {
     if (status.value === "loading" || status.value === "ready") return;
     status.value = "loading";
@@ -205,6 +265,8 @@ export const useCatalogStore = defineStore("catalog", () => {
     }
     parsing.value = false;
 
+    // a fraction of the snapshot's wait, so it is in before the gate first runs
+    void updateOrientationTags();
     try {
       videos.value = Object.freeze(
         await getIndex(({ received, parsing: isParsing }) => {
@@ -239,6 +301,7 @@ export const useCatalogStore = defineStore("catalog", () => {
   async function refresh(): Promise<boolean> {
     if (refreshing.value || status.value !== "ready") return false;
     refreshing.value = true;
+    void updateOrientationTags();
     try {
       videos.value = Object.freeze(await getIndex());
       fetchedAt.value = Date.now();
@@ -264,6 +327,7 @@ export const useCatalogStore = defineStore("catalog", () => {
     parsing,
     refreshing,
     fetchedAt,
+    orientationTags,
     progress,
     visible,
     anyOrientation,

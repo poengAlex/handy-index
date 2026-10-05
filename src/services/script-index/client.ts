@@ -1,8 +1,8 @@
 // Minimal typed client for the Script Index API. Only the endpoints the app
-// actually uses — the index snapshot, single-video lookups, the script token
-// flow and the video-request board. List queries (/videos, /tags, …) are
-// deliberately absent: the API cannot sort, so every listing derives from
-// the index via queries.ts.
+// actually uses — the index snapshot, single-video lookups, the orientation
+// tags, the script token flow and the video-request board. List queries
+// (/videos, /tags as a listing, …) are deliberately absent: the API cannot
+// sort, so every listing derives from the index via queries.ts.
 import {
   dropCachedIndex,
   readCachedIndex,
@@ -12,6 +12,7 @@ import type {
   PartnerVideo,
   Script,
   ScriptComment,
+  Tag,
   TokenUrl,
   VideoRequest
 } from "./types";
@@ -160,6 +161,29 @@ function nextPaint(): Promise<void> {
     // runs before the paint it precedes
     requestAnimationFrame(() => setTimeout(resolve, 0));
   });
+}
+
+/** `/tags` pages by take/skip like the request board. One page this size
+ * holds the whole live list (30,412 tags, ~310 kB gzipped); the backstop only
+ * stops a runaway loop. */
+const TAG_PAGE_SIZE = 50_000;
+const MAX_TAGS = 500_000;
+
+/** The tags `/tags` files under the "orientation" category. It cannot filter
+ * by category itself (a `category` parameter is ignored), so the whole list
+ * comes down and is filtered here. */
+export async function getOrientationTags(): Promise<string[]> {
+  const found: string[] = [];
+  for (let skip = 0; skip < MAX_TAGS; skip += TAG_PAGE_SIZE) {
+    const page = await request<Tag[]>(
+      `/tags?take=${TAG_PAGE_SIZE}&skip=${skip}`
+    );
+    for (const tag of page) {
+      if (tag.category === "orientation") found.push(tag.tagId);
+    }
+    if (page.length < TAG_PAGE_SIZE) break;
+  }
+  return found;
 }
 
 export function getVideo(partnerVideoId: string): Promise<PartnerVideo> {

@@ -76,6 +76,17 @@ export interface PartnerVideo {
   publishedAt?: string;
 }
 
+/** One entry of `/tags`. `category` is absent on most tags (29,081 of the
+ * live 30,412) and is free text where present — a few hundred even carry the
+ * string "undefined" — so only exact values are worth testing. */
+export interface Tag {
+  tagId: string;
+  category?: string;
+  videoCount?: number;
+  playCount?: number;
+  count?: number;
+}
+
 export interface Scripter {
   scripterId: string;
   name?: string;
