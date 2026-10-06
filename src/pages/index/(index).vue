@@ -60,6 +60,11 @@
         </div>
       </section>
 
+      <!-- where the old site went: returning visitors land here first -->
+      <div class="h-container">
+        <OldSiteNote class="home-old-site" />
+      </div>
+
       <!-- Catalog size. The whole index rather than the gated view — it
            describes the database — and last month on the day videos went
            live, which is final once the month ends (see publishedBetween).
@@ -158,6 +163,7 @@ import {
 } from "@/components/handy";
 import CarouselRow from "@/components/CarouselRow.vue";
 import MediaHero from "@/components/MediaHero.vue";
+import OldSiteNote from "@/components/OldSiteNote.vue";
 import { useFormat } from "@/composables/useFormat";
 import { useIncrementalReveal } from "@/composables/useIncrementalReveal";
 import {
@@ -452,6 +458,10 @@ const {
 <style scoped lang="scss">
 .home {
   padding-bottom: var(--space-3xl);
+}
+
+.home-old-site {
+  margin-top: var(--space-lg);
 }
 
 .home-error,

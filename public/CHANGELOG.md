@@ -5,6 +5,14 @@
      words. Newest release on top. Format: "## <version> — <date>", then
      "### <group>" headings and "- " lines. Keep it English-only. -->
 
+## 2.8.5 — 6 October 2026
+
+### Front page
+
+- A note under the featured video on the front page, and under "About this
+  site" in Help, says this is the new IVDB, and that the old version is
+  still there at old.ivdb.io if you prefer it.
+
 ## 2.8.3 — 5 October 2026
 
 ### Performers

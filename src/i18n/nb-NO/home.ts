@@ -1,6 +1,9 @@
 import type enUS from "../en-US/home";
 
 const home: typeof enUS = {
+  oldSite:
+    "IVDB v2 er her. Vil du heller bruke den gamle versjonen? Den finnes fortsatt på {link}.",
+
   hero: {
     kicker: "Utvalgt",
     alt: "Utvalgt video",

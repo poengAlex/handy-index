@@ -5,6 +5,9 @@ import type enUS from "../en-US/home";
 // shelf's clear icon. Shelf titles are row headers in a tight horizontal
 // strip — keep them short.
 const home: typeof enUS = {
+  oldSite:
+    "Вышла IVDB v2. Нужна старая версия? Она по-прежнему доступна на {link}.",
+
   hero: {
     kicker: "Рекомендуем",
     /** alt text when the featured video has no title of its own */

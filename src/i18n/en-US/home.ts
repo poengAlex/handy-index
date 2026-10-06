@@ -3,6 +3,11 @@
 // shelf's clear icon. Shelf titles are row headers in a tight horizontal
 // strip — keep them short.
 export default {
+  // The card pointing to the v1 site, under the hero here and under the
+  // help page's "About this site" group. {link} is the address itself (old.ivdb.io) and stays
+  // untranslated.
+  oldSite: "IVDB v2 is here. Prefer the old version? It's still at {link}.",
+
   hero: {
     kicker: "Featured",
     /** alt text when the featured video has no title of its own */

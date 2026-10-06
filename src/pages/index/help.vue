@@ -154,6 +154,8 @@
           />
         </HList>
 
+        <OldSiteNote />
+
         <!-- Small print, and the only place the build announces itself
              without being asked. -->
         <footer class="text-caption help-page__footer">{{ buildMeta }}</footer>
@@ -174,6 +176,7 @@
 import { ref } from "vue";
 import AboutDialog from "@/components/AboutDialog.vue";
 import ChangelogDialog from "@/components/ChangelogDialog.vue";
+import OldSiteNote from "@/components/OldSiteNote.vue";
 import PrivacyDialog from "@/components/PrivacyDialog.vue";
 import { HList, HListRow } from "@/components/handy";
 import { useBuildMeta } from "@/composables/useBuildMeta";
