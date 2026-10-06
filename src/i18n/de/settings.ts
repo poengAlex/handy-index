@@ -16,6 +16,10 @@ const settings: typeof enUS = {
     playersLabel: "Eingebettete Player",
     playersCaption:
       "Pornhub- und xHamster-Videos direkt auf der Videoseite abspielen",
+    // the photo carousel and the reel of preview clips on a performer's page
+    performerMediaLabel: "Fotos und Clips von Darstellern",
+    performerMediaCaption:
+      "Foto- und Clip-Karussells auf Darstellerseiten zeigen. Zum Sparen von Daten ausschalten.",
     fullWidthLabel: "Volle Breite",
     fullWidthCaption:
       "Den ganzen Bildschirm nutzen statt einer zentrierten Spalte"
@@ -66,7 +70,15 @@ const settings: typeof enUS = {
       "der Vorschau zu sehen. Klicke auf eine Beschriftung, um dieses Tempo " +
       "zurückzusetzen.",
     imageSpeed: "Bildtempo",
-    clipSpeed: "Cliptempo"
+    clipSpeed: "Cliptempo",
+    // the two switches: previews on video cards (the request board's too),
+    // and on the performer directory's cards
+    videoCardsLabel: "Vorschau auf Videokarten",
+    videoCardsCaption:
+      "Spielt die Vorschau eines Videos, wenn du seine Karte berührst oder mit der Maus darüberfährst",
+    performerCardsLabel: "Vorschau auf Darstellerkarten",
+    performerCardsCaption:
+      "Spielt den meistgespielten Clip, wenn du die Karte berührst oder mit der Maus darüberfährst"
   },
 
   // shared by the settings field and the connection-key prompt

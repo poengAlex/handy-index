@@ -47,7 +47,8 @@ export default {
   ofTotal: {
     videos: "{shown} of {total} video | {shown} of {total} videos",
     performers: "{shown} of {total} performer | {shown} of {total} performers",
-    tags: "{shown} of {total} tag | {shown} of {total} tags"
+    tags: "{shown} of {total} tag | {shown} of {total} tags",
+    sites: "{shown} of {total} site | {shown} of {total} sites"
   },
 
   count: {

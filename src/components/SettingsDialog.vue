@@ -27,6 +27,12 @@
             :caption="$t('settings.display.playersCaption')"
           />
           <HToggleRow
+            v-model="settings.performerMedia"
+            icon="animation"
+            :label="$t('settings.display.performerMediaLabel')"
+            :caption="$t('settings.display.performerMediaCaption')"
+          />
+          <HToggleRow
             v-model="settings.fullWidth"
             icon="fit_screen"
             :label="$t('settings.display.fullWidthLabel')"
@@ -103,6 +109,20 @@
           >
             {{ $t("settings.previews.hint") }}
           </div>
+          <HList class="settings-modal__preview-switches">
+            <HToggleRow
+              v-model="settings.videoCardPreviews"
+              icon="movie"
+              :label="$t('settings.previews.videoCardsLabel')"
+              :caption="$t('settings.previews.videoCardsCaption')"
+            />
+            <HToggleRow
+              v-model="settings.performerCardPreviews"
+              icon="person"
+              :label="$t('settings.previews.performerCardsLabel')"
+              :caption="$t('settings.previews.performerCardsCaption')"
+            />
+          </HList>
           <HLabeledSlider
             :model-value="frameSeconds"
             :label="$t('settings.previews.imageSpeed')"
@@ -359,5 +379,10 @@ async function onKeyInput(raw: string) {
   display: flex;
   flex-direction: column;
   gap: var(--space-xs);
+}
+
+// the two switches sit between the lead and the sliders they share a block with
+.settings-modal__preview-switches {
+  margin: var(--space-xs) 0;
 }
 </style>

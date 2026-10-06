@@ -2,9 +2,11 @@ import { acceptHMRUpdate, defineStore } from "pinia";
 import { computed, ref, shallowRef } from "vue";
 import {
   getCachedIndex,
+  getCategories,
   getIndex,
-  getOrientationTags
+  getTags
 } from "@/services/script-index/client";
+import type { Tag } from "@/services/script-index/types";
 import {
   ORIENTATION_TAGS_SEED,
   byIds,
@@ -58,6 +60,64 @@ function rememberSize(bytes: number) {
     localStorage.setItem(SIZE_KEY, String(bytes));
   } catch {
     // nothing to do: next load just uses the seed again
+  }
+}
+
+/** `/categories` as last fetched, and when. The list is short and rarely
+ * changes, so it is asked for again only once this copy is a week old —
+ * unlike which tag is in which category, which comes with every visit's
+ * `/tags` list. */
+const CATEGORIES_KEY = "ivdb.tag-categories";
+const CATEGORIES_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000;
+
+function rememberedCategories(): { names: string[]; at: number } | null {
+  try {
+    const raw: unknown = JSON.parse(
+      localStorage.getItem(CATEGORIES_KEY) ?? "null"
+    );
+    if (
+      raw &&
+      typeof raw === "object" &&
+      Array.isArray((raw as { names?: unknown }).names) &&
+      typeof (raw as { at?: unknown }).at === "number"
+    ) {
+      const { names, at } = raw as { names: unknown[]; at: number };
+      return {
+        names: names.filter(n => typeof n === "string") as string[],
+        at
+      };
+    }
+  } catch {
+    // private mode or a mangled blob — the seed is fine
+  }
+  return null;
+}
+
+/** The categories list as `/categories` serves it: the last fetched copy
+ * while it is under a week old, otherwise a fresh one (remembered for next
+ * time). If that fails, the last copy of any age, then nothing — the caller
+ * falls back to the categories the tags themselves carry. */
+async function categoryNames(): Promise<string[]> {
+  const remembered = rememberedCategories();
+  if (
+    remembered?.names.length &&
+    Date.now() - remembered.at < CATEGORIES_MAX_AGE_MS
+  ) {
+    return remembered.names;
+  }
+  try {
+    const names = await getCategories();
+    try {
+      localStorage.setItem(
+        CATEGORIES_KEY,
+        JSON.stringify({ names, at: Date.now() })
+      );
+    } catch {
+      // storage full or disabled — this visit still has the list
+    }
+    return names;
+  } catch {
+    return remembered?.names ?? [];
   }
 }
 
@@ -132,6 +192,29 @@ export const useCatalogStore = defineStore("catalog", () => {
   const orientationTags = shallowRef<ReadonlySet<string>>(
     rememberedOrientationTags()
   );
+
+  /** Each categorised tag's category as `/tags` gives it, tag -> category —
+   * what the tag page's category pills filter on. Empty until
+   * loadTagCategories() has run. */
+  const tagCategories = shallowRef<ReadonlyMap<string, string>>(new Map());
+  /** The categories, in `/categories`' order. */
+  const categories = shallowRef<readonly string[]>([]);
+  const categoriesStatus = ref<"idle" | "loading" | "ready" | "error">("idle");
+
+  /** One `/tags` download per visit, shared by the orientation gate and the
+   * categories — it is the same ~31,000-entry list either way. `fresh`
+   * (the manual catalog update) asks again. Dropped on failure so the next
+   * ask retries. */
+  let tagList: Promise<Tag[]> | undefined;
+  function tagDirectory(fresh = false): Promise<Tag[]> {
+    if (fresh || !tagList) {
+      tagList = getTags().catch((error: unknown) => {
+        tagList = undefined;
+        throw error;
+      });
+    }
+    return tagList;
+  }
 
   /** 0–1, and never quite 1 while bytes are still arriving: a bar that sits
    * full through the last chunk is the same lie as a spinner. */
@@ -218,10 +301,12 @@ export const useCatalogStore = defineStore("catalog", () => {
   /** Swap in the live orientation tags. Never throws, and never applies an
    * empty list: that would file every video under Straight, and is far
    * likelier a broken answer than the index dropping orientation. */
-  async function updateOrientationTags(): Promise<void> {
+  async function updateOrientationTags(fresh = false): Promise<void> {
     let tags: string[];
     try {
-      tags = await getOrientationTags();
+      tags = (await tagDirectory(fresh))
+        .filter(tag => tag.category === "orientation")
+        .map(tag => tag.tagId);
     } catch {
       // last visit's list or the seed carries on
       return;
@@ -237,6 +322,33 @@ export const useCatalogStore = defineStore("catalog", () => {
       localStorage.setItem(ORIENTATION_KEY, JSON.stringify(tags));
     } catch {
       // storage full or disabled — this visit still has the list
+    }
+  }
+
+  /** Fetch which tag is in which category, for the tag page. Never throws;
+   * `categoriesStatus` says how it went. */
+  async function loadTagCategories(): Promise<void> {
+    if (categoriesStatus.value === "loading") return;
+    if (categoriesStatus.value === "ready") return;
+    categoriesStatus.value = "loading";
+    try {
+      // the names are only an ordering, and rarely change (see
+      // categoryNames); which tag is in which category comes from `/tags`
+      const [list, names] = await Promise.all([
+        tagDirectory(),
+        categoryNames()
+      ]);
+      // as the API has them: the app shows its data, it doesn't amend it
+      const byTag = new Map<string, string>();
+      for (const tag of list) {
+        if (tag.category) byTag.set(tag.tagId, tag.category);
+      }
+      const ordered = [...new Set([...names, ...byTag.values()])];
+      tagCategories.value = byTag;
+      categories.value = ordered;
+      categoriesStatus.value = "ready";
+    } catch {
+      categoriesStatus.value = "error";
     }
   }
 
@@ -305,7 +417,7 @@ export const useCatalogStore = defineStore("catalog", () => {
   async function refresh(): Promise<boolean> {
     if (refreshing.value || status.value !== "ready") return false;
     refreshing.value = true;
-    void updateOrientationTags();
+    void updateOrientationTags(true);
     try {
       videos.value = Object.freeze(await getIndex());
       fetchedAt.value = Date.now();
@@ -332,6 +444,10 @@ export const useCatalogStore = defineStore("catalog", () => {
     refreshing,
     fetchedAt,
     orientationTags,
+    tagCategories,
+    categories,
+    categoriesStatus,
+    loadTagCategories,
     progress,
     visible,
     anyOrientation,

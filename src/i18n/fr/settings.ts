@@ -16,6 +16,10 @@ const settings: typeof enUS = {
     playersLabel: "Lecteurs intégrés",
     playersCaption:
       "Lire les vidéos Pornhub et xHamster directement sur la page vidéo",
+    // the photo carousel and the reel of preview clips on a performer's page
+    performerMediaLabel: "Photos et extraits des acteurs",
+    performerMediaCaption:
+      "Afficher les carrousels de photos et d'extraits sur les pages d'acteurs. Désactive pour charger moins.",
     fullWidthLabel: "Pleine largeur",
     fullWidthCaption: "Utiliser tout l'écran au lieu d'une colonne centrée"
   },
@@ -62,7 +66,15 @@ const settings: typeof enUS = {
       "Survole une carte — ou touche-la du doigt — pour la prévisualiser. " +
       "Clique sur un libellé pour rétablir la vitesse d'origine.",
     imageSpeed: "Vitesse des images",
-    clipSpeed: "Vitesse des clips"
+    clipSpeed: "Vitesse des clips",
+    // the two switches: previews on video cards (the request board's too),
+    // and on the performer directory's cards
+    videoCardsLabel: "Aperçus des vidéos",
+    videoCardsCaption:
+      "Lit l’aperçu d’une vidéo quand tu survoles ou touches sa carte",
+    performerCardsLabel: "Aperçus des acteurs",
+    performerCardsCaption:
+      "Lit l’extrait le plus joué quand tu survoles ou touches la carte d’un acteur"
   },
 
   // shared by the settings field and the connection-key prompt

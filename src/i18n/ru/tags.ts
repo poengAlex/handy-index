@@ -39,6 +39,12 @@ const tags: typeof enUS = {
     mutedCount: "Заглушённые ({count})"
   },
 
+  categories: {
+    title: "Категория",
+    label: "Фильтр тегов по категории",
+    all: "Все"
+  },
+
   empty: {
     searchTitle: "Теги не найдены",
     searchBody: "В индексе нет совпадений с «{query}».",

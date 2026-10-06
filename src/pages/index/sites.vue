@@ -48,6 +48,14 @@
             @action="catalog.retry()"
           />
         </div>
+        <!-- every site the index has is behind a preference -->
+        <div v-else-if="!shown.length" class="sites-page__center">
+          <HEmptyState
+            icon="filter_alt_off"
+            :title="$t('common.state.emptyTitle')"
+            :body="$t('sites.hiddenBody')"
+          />
+        </div>
         <div v-else-if="!filtered.length" class="sites-page__center">
           <HEmptyState
             icon="search_off"
@@ -59,7 +67,7 @@
           <HNavCard
             v-for="partner in filtered"
             :key="partner.partnerId"
-            icon="language"
+            :icon="siteIcon(partner)"
             :label="partner.name"
             :caption="videoCountLabel(partner)"
             :to="`/videos?partnerId=${encodeURIComponent(partner.partnerId)}`"
@@ -71,25 +79,32 @@
 </template>
 
 <script setup lang="ts">
-// The site directory: every partner in the INDEX as a nav card, count-sorted
-// by partnersOf, with a client-side name filter on top. The LIST is ungated —
-// a directory that dropped sites would read as an incomplete index — while
-// every COUNT on the page is fully gated: script access, video access, muted
-// tags and orientation all move it. Each card also breaks the site down by
-// both paywalls, which is the one figure the filters don't touch (it
-// describes the site, not your view of it).
+// The site directory: every partner site your preferences leave anything of,
+// as a nav card, count-sorted by partnersOf, with a client-side name filter
+// on top. A site is listed when at least one of its videos passes the
+// catalog's gates — script access, video access, muted tags, orientation —
+// and, once `/partners` gives it orientation tags, when those match your
+// orientation too. The header says how many of the index's sites that is,
+// and GateNotice says why the rest are hidden. Each card also breaks the site
+// down by both paywalls, which describes the site, not your view of it.
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { HEmptyState, HNavCard, HandyLoader } from "@/components/handy";
 import GateNotice from "@/components/GateNotice.vue";
 import { useFormat } from "@/composables/useFormat";
+import { usePartners } from "@/composables/usePartners";
+import { faviconForHost } from "@/services/favicons";
 import {
+  partnerMatchesOrientation,
   partnersOf,
   type PartnerSummary
 } from "@/services/script-index/queries";
 import { useCatalogStore } from "@/stores/catalog";
+import { useSettingsStore } from "@/stores/settings";
 
 const catalog = useCatalogStore();
+const settings = useSettingsStore();
+const { byId: partnerInfo } = usePartners();
 const { t } = useI18n();
 const { count, num, ofTotal } = useFormat();
 
@@ -111,10 +126,28 @@ const matching = computed(() => {
   return counts;
 });
 
+/** the sites your preferences leave: at least one video through the
+ * catalog's gates, and — where `/partners` tags the site with orientations —
+ * your orientation among them */
+const shown = computed(() => {
+  const withVideos = new Set(
+    partnersOf(catalog.visible).map(summary => summary.partnerId)
+  );
+  return partners.value.filter(
+    partner =>
+      withVideos.has(partner.partnerId) &&
+      partnerMatchesOrientation(
+        partnerInfo.value.get(partner.partnerId)?.tags ?? [],
+        settings.orientation,
+        catalog.orientationTags
+      )
+  );
+});
+
 const filtered = computed(() => {
   const needle = query.value.trim().toLowerCase();
-  if (!needle) return partners.value;
-  return partners.value.filter(partner =>
+  if (!needle) return shown.value;
+  return shown.value.filter(partner =>
     partner.name.toLowerCase().includes(needle)
   );
 });
@@ -124,7 +157,10 @@ const filtered = computed(() => {
 // "·" joins two finished phrases rather than splicing a sentence: each half
 // is one whole message, and only the punctuation between them is code.
 const countLabel = computed(() => {
-  const sites = count("sites", partners.value.length);
+  const sites =
+    shown.value.length < partners.value.length
+      ? ofTotal(shown.value.length, partners.value.length, "sites")
+      : count("sites", partners.value.length);
   const videos = count("videos", catalog.videos.length);
   const total = matching.value
     ? ofTotal(catalog.visible.length, catalog.videos.length, "videos")
@@ -136,6 +172,14 @@ const countLabel = computed(() => {
 // total stays the headline because that is what the site holds; the first
 // number is what your filters leave of it. The two paywalls are named in
 // full: they are different gates, and "500 premium" would not say which.
+/** The site's own icon — bundled, see services/favicons — through q-icon's
+ * `img:` form, so the kit card takes it as it takes a glyph; the globe for a
+ * site without one. */
+function siteIcon(partner: PartnerSummary): string {
+  const icon = faviconForHost(partner.name);
+  return icon ? `img:${icon}` : "language";
+}
+
 function videoCountLabel(partner: PartnerSummary): string {
   const total = count("videos", partner.count);
   const counts = matching.value;

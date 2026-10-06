@@ -15,6 +15,9 @@ const settings: typeof enUS = {
     nsfwCaption: "Vis ekte bilder i stedet for nøytrale ruter",
     playersLabel: "Innebygde spillere",
     playersCaption: "Spill av Pornhub- og xHamster-videoer rett på videosiden",
+    performerMediaLabel: "Skuespillerbilder og klipp",
+    performerMediaCaption:
+      "Vis karuseller med bilder og forhåndsklipp på skuespillersidene. Slå av for å laste mindre.",
     fullWidthLabel: "Full bredde",
     fullWidthCaption: "Bruk hele skjermen i stedet for en midtstilt kolonne"
   },
@@ -57,7 +60,13 @@ const settings: typeof enUS = {
       "det. Klikk på navnet til en glidebryter for å nullstille " +
       "hastigheten.",
     imageSpeed: "Bildehastighet",
-    clipSpeed: "Klipphastighet"
+    clipSpeed: "Klipphastighet",
+    videoCardsLabel: "Forhåndsvisning på videokort",
+    videoCardsCaption:
+      "Spill av forhåndsvisningen når du holder over eller trykker på et videokort",
+    performerCardsLabel: "Forhåndsvisning på skuespillerkort",
+    performerCardsCaption:
+      "Spill av det mest spilte klippet når du holder over eller trykker på et skuespillerkort"
   },
 
   connectionKey: {

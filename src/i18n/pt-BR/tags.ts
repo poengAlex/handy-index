@@ -39,6 +39,12 @@ const tags: typeof enUS = {
     mutedCount: "Silenciadas ({count})"
   },
 
+  categories: {
+    title: "Categoria",
+    label: "Filtrar tags por categoria",
+    all: "Todas"
+  },
+
   empty: {
     searchTitle: "Nenhuma tag encontrada",
     searchBody: "Nada no índice corresponde a “{query}”.",

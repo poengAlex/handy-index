@@ -5,6 +5,45 @@
      words. Newest release on top. Format: "## <version> — <date>", then
      "### <group>" headings and "- " lines. Keep it English-only. -->
 
+## 2.10.0 — 6 October 2026
+
+### Performers
+
+- Filter performers by gender, hair, eyes, ethnicity, cup size, natural or
+  enhanced breasts, tattoos, piercings, age, height and build. Each option
+  shows how many performers it leaves.
+- Sort performers by age, height, weight, build or cup size. Performers whose
+  profile doesn't say come last, whichever way round.
+- Hover a performer to see a clip from their most played video, picked from
+  scenes with them alone or with one partner where there are any. On phones
+  and tablets, tap the play button on the picture.
+
+### Performer pages
+
+- A photo slideshow and a reel of their videos' preview clips, most played
+  first. Only one clip plays at a time, and both pause when you look away.
+- Their social links and a "More of" section with their profiles on partner
+  sites, each with the site's icon.
+- The ? next to Profile explains where the details come from, and lets you
+  report a mistake to us by email.
+
+### Video pages
+
+- Plays, votes, rating and views are now loaded fresh each time you open a
+  video.
+- "Watch on" links show the site's icon, in the menu on video cards too.
+
+### Tags, performers and sites
+
+- Pick a category on the tags page to see only those tags.
+- The sites page shows each site's icon, and only lists sites your
+  preferences leave videos from.
+
+### Settings
+
+- New switches for performer photos and reels, and for the previews on video
+  cards and performer cards — turn any of them off to load less.
+
 ## 2.9.5 — 6 October 2026
 
 ### Speed

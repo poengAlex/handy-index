@@ -25,6 +25,9 @@ const sites: typeof enUS = {
   errorTitle: "Impossible de charger les sites",
   emptyBody:
     "L'index est revenu sans le moindre site. Essaie de le charger à nouveau.",
+  // every site in the index is behind a preference
+  hiddenBody:
+    "Tes préférences masquent tous les sites de l’index. Assouplis-les dans les réglages.",
   noMatchTitle: "Aucun site ne correspond",
   noMatchBody:
     "Aucun nom de site ne correspond à cette recherche. Essaie moins de lettres."

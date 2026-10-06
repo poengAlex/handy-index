@@ -13,6 +13,10 @@ export default {
     nsfwCaption: "Show real artwork instead of neutral tiles",
     playersLabel: "Embedded players",
     playersCaption: "Play Pornhub and xHamster videos right on the video page",
+    // the photo carousel and the reel of preview clips on a performer's page
+    performerMediaLabel: "Performer photos and reels",
+    performerMediaCaption:
+      "Show photo and preview-clip carousels on performer pages. Turn off to load less.",
     fullWidthLabel: "Full-width layout",
     fullWidthCaption: "Use the whole screen instead of a centered column"
   },
@@ -62,7 +66,15 @@ export default {
       "Hover a card — or touch one — to preview it. Click a label to put " +
       "that speed back.",
     imageSpeed: "Image speed",
-    clipSpeed: "Clip speed"
+    clipSpeed: "Clip speed",
+    // the two switches: previews on video cards (the request board's too),
+    // and on the performer directory's cards
+    videoCardsLabel: "Video card previews",
+    videoCardsCaption:
+      "Play a video's preview when you hover or touch its card",
+    performerCardsLabel: "Performer card previews",
+    performerCardsCaption:
+      "Play a performer's most played clip when you hover or touch their card"
   },
 
   // shared by the settings field and the connection-key prompt

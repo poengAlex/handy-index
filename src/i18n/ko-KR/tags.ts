@@ -38,6 +38,15 @@ const tags: typeof enUS = {
     mutedCount: "차단됨 ({count})"
   },
 
+  // The category pills over the cloud. The pills themselves carry the
+  // API's own category names, as the tag pills carry tag names; only
+  // these two are ours.
+  categories: {
+    title: "카테고리",
+    label: "카테고리별로 태그 걸러 보기",
+    all: "전체"
+  },
+
   empty: {
     searchTitle: "일치하는 태그가 없어요",
     searchBody: "색인에 「{query}」 검색 결과가 없어요.",

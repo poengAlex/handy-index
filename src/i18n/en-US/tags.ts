@@ -36,6 +36,15 @@ export default {
     mutedCount: "Muted ({count})"
   },
 
+  // The category pills over the cloud. The pills themselves carry the
+  // API's own category names, as the tag pills carry tag names; only
+  // these two are ours.
+  categories: {
+    title: "Category",
+    label: "Filter tags by category",
+    all: "All"
+  },
+
   empty: {
     searchTitle: "No tags match",
     searchBody: "Nothing in the index matches “{query}”.",

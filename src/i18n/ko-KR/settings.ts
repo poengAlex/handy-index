@@ -15,6 +15,10 @@ const settings: typeof enUS = {
     nsfwCaption: "밋밋한 기본 이미지 대신 실제 이미지를 보여줘요",
     playersLabel: "내장 플레이어",
     playersCaption: "Pornhub와 xHamster 동영상을 상세 페이지에서 바로 재생해요",
+    // the photo carousel and the reel of preview clips on a performer's page
+    performerMediaLabel: "출연자 사진과 클립",
+    performerMediaCaption:
+      "출연자 페이지에 사진과 미리보기 클립 캐러셀을 보여줘요. 끄면 불러오는 양이 줄어요",
     fullWidthLabel: "전체 너비 보기",
     fullWidthCaption: "가운데 정렬된 단 대신 화면 전체를 사용해요"
   },
@@ -61,7 +65,15 @@ const settings: typeof enUS = {
       "목록의 동영상에 마우스를 올리거나 손가락으로 건드리면 미리보기가 " +
       "나와요. 항목 이름을 누르면 그 속도가 원래대로 돌아가요.",
     imageSpeed: "이미지 속도",
-    clipSpeed: "클립 속도"
+    clipSpeed: "클립 속도",
+    // the two switches: previews on video cards (the request board's too),
+    // and on the performer directory's cards
+    videoCardsLabel: "동영상 카드 미리보기",
+    videoCardsCaption:
+      "동영상 카드에 마우스를 올리거나 터치하면 미리보기를 재생해요",
+    performerCardsLabel: "출연자 카드 미리보기",
+    performerCardsCaption:
+      "출연자 카드에 마우스를 올리거나 터치하면 가장 많이 재생된 클립을 재생해요"
   },
 
   // shared by the settings field and the connection-key prompt

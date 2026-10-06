@@ -98,6 +98,36 @@
             />
           </div>
 
+          <!-- one category at a time, over search and sort; only the
+               categories that have a tag in this cloud -->
+          <div
+            class="tags-page__categories"
+            role="group"
+            :aria-label="$t('tags.categories.label')"
+          >
+            <span class="text-body-sm tags-page__categories-label">
+              {{ $t("tags.categories.title") }}
+            </span>
+            <!-- outlined, not the tag pills' fill: these choose which tags
+                 the cloud shows, they aren't tags themselves -->
+            <button
+              v-for="option in categoryOptions"
+              :key="option.value"
+              type="button"
+              :class="[
+                'text-body-sm tags-page__category',
+                { 'tags-page__category--on': category === option.value }
+              ]"
+              :aria-pressed="category === option.value"
+              @click="category = option.value"
+            >
+              {{ option.label }}
+              <span class="tags-page__category-count">{{
+                $n(option.count)
+              }}</span>
+            </button>
+          </div>
+
           <div v-if="!filtered.length" class="tags-page__center">
             <HEmptyState
               v-if="needle"
@@ -170,9 +200,10 @@
 
 <script setup lang="ts">
 // Every tag in the visible catalog as a clickable pill cloud — most-used
-// first or A–Z, searchable, revealed incrementally. A pill filters the
-// browse page on that tag.
-import { computed, ref, watch } from "vue";
+// first or A–Z, searchable, narrowed to one category (`/tags` files about
+// 1,300 of its tags under one of `/categories`), revealed incrementally. A
+// pill filters the browse page on that tag.
+import { computed, onMounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import {
   HBtn,
@@ -309,12 +340,60 @@ const all = computed(() =>
   catalog.status === "ready" ? tagsOf(catalog.visible) : []
 );
 
+// --- categories: `/tags` files ~1,300 of its tags under one ---
+
+/** "" is every tag; otherwise one category's */
+const category = ref("");
+
+onMounted(() => void catalog.loadTagCategories());
+
+/** How many tags in this cloud each category holds. */
+const categoryCounts = computed(() => {
+  const counts = new Map<string, number>();
+  const byTag = catalog.tagCategories;
+  for (const summary of all.value) {
+    const name = byTag.get(summary.tag);
+    if (name) counts.set(name, (counts.get(name) ?? 0) + 1);
+  }
+  return counts;
+});
+
+/** "All", then the categories with tags here, biggest first. */
+const categoryOptions = computed(() => {
+  const counts = categoryCounts.value;
+  if (!counts.size) return [];
+  const named = catalog.categories
+    .filter(name => counts.has(name))
+    .map(name => ({
+      value: name,
+      // the API's own name, as the tag pills show tags
+      label: name,
+      count: counts.get(name) ?? 0
+    }))
+    .sort((a, b) => b.count - a.count);
+  return [
+    { value: "", label: t("tags.categories.all"), count: all.value.length },
+    ...named
+  ];
+});
+
+// a category a mute or a filter has emptied falls back to every tag
+watch(categoryCounts, counts => {
+  if (category.value && !counts.has(category.value)) category.value = "";
+});
+
+const inCategory = computed(() => {
+  if (!category.value) return all.value;
+  const byTag = catalog.tagCategories;
+  return all.value.filter(summary => byTag.get(summary.tag) === category.value);
+});
+
 const needle = computed(() => (query.value ?? "").trim().toLowerCase());
 
 const filtered = computed(() => {
   const matches = needle.value
-    ? all.value.filter(summary => summary.tag.includes(needle.value))
-    : all.value;
+    ? inCategory.value.filter(summary => summary.tag.includes(needle.value))
+    : inCategory.value;
   const ordered =
     sortKey.value === "name"
       ? [...matches].sort((a, b) => a.tag.localeCompare(b.tag))
@@ -328,7 +407,7 @@ const { shown, done, sentinel } = useIncrementalReveal(filtered, PAGE_SIZE);
 
 const countLabel = computed(() => {
   const total = all.value.length;
-  return needle.value
+  return needle.value || category.value
     ? fmt.ofTotal(filtered.value.length, total, "tags")
     : fmt.count("tags", total);
 });
@@ -371,6 +450,61 @@ const countLabel = computed(() => {
 
 .tags-page__dir {
   color: var(--color-text-secondary);
+}
+
+// a control row above the cloud, set apart from it: a label, outlined
+// pills, and a rule underneath
+.tags-page__categories {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-xs);
+  margin-bottom: var(--space-md);
+  padding-bottom: var(--space-md);
+  border-bottom: 1px solid var(--color-stroke-subtle);
+}
+
+.tags-page__categories-label {
+  margin-right: var(--space-xs);
+  color: var(--color-text-secondary);
+  font-weight: 600;
+}
+
+.tags-page__category {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 5px 12px;
+  border: 1px solid var(--color-stroke-default);
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease;
+
+  &:hover {
+    border-color: var(--color-stroke-strong);
+    background: var(--color-row-hover);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-stroke-focus);
+    outline-offset: 2px;
+  }
+}
+
+.tags-page__category--on,
+.tags-page__category--on:hover {
+  border-color: var(--color-action-primary);
+  background: var(--color-action-primary);
+  color: var(--color-action-primary-label);
+}
+
+.tags-page__category-count {
+  opacity: 0.6;
+  font-variant-numeric: tabular-nums;
 }
 
 .tags-page__center {

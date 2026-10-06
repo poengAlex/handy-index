@@ -22,6 +22,9 @@ export default {
 
   errorTitle: "Couldn't load sites",
   emptyBody: "The index came back without a single site. Try loading it again.",
+  // every site in the index is behind a preference
+  hiddenBody:
+    "Your preferences hide every site in the index. Loosen them in settings.",
   noMatchTitle: "No sites match",
   noMatchBody: "No site names match that search. Try fewer letters."
 };

@@ -59,13 +59,17 @@
             :label="watchLabel"
             arrow
             @click="openOnSite"
-          />
+          >
+            <SiteIcon :url="video.videoUrl" />
+          </HBtn>
           <HBtn
             v-if="expectFree && video.videoUrl"
             variant="secondary"
             :label="watchLabel"
             @click="openOnSite"
-          />
+          >
+            <SiteIcon :url="video.videoUrl" />
+          </HBtn>
           <q-btn
             flat
             round
@@ -541,6 +545,7 @@ import ConnectionKeyDialog from "@/components/ConnectionKeyDialog.vue";
 import MediaHero from "@/components/MediaHero.vue";
 import MediaImage from "@/components/MediaImage.vue";
 import ScriptHeatmap from "@/components/ScriptHeatmap.vue";
+import SiteIcon from "@/components/SiteIcon.vue";
 import { useFormat } from "@/composables/useFormat";
 import {
   getPublishedComments,
@@ -559,6 +564,7 @@ import {
   track
 } from "@/services/analytics";
 import { scriptHeat } from "@/services/script-heat";
+import { REPORT_EMAIL } from "@/services/contact";
 import {
   artworkOf,
   byPartner,
@@ -583,8 +589,8 @@ const settings = useSettingsStore();
 const { t, n } = useI18n();
 const format = useFormat();
 
-/** What `/videos/{id}` answered with, and only for an id the catalog has no
- * entry for. See `video` below for why it is the second choice. */
+/** What `/videos/{id}` answered with — the live record, fetched on every
+ * open. See `video` below for how it meets the catalog's entry. */
 const fetchedVideo = ref<PartnerVideo>();
 /** What a slimmed snapshot entry leaves out (its description and the script
  * measurements the strip draws), from the server that slimmed it. */
@@ -683,22 +689,8 @@ function stillAlt(index: number): string {
 
 const videoId = computed(() => route.params.partnerVideoId);
 
-/**
- * The video, from whichever source has the most of it.
- *
- * The index entry is the richer record, which is not obvious: `/videos/{id}`
- * returns neither `rating`, `upVotes`, `downVotes`, `views` nor the scripter,
- * and the index carries the last two on every single entry. Sampled over 20
- * videos the single-video endpoint was missing the scripter on 20, the rating
- * on 17 and the vote counts on 11. So a page reached before the catalog
- * landed used to show no rating, no votes, no views and no scripter — and
- * kept showing none of them for the rest of the visit, because nothing went
- * back once the snapshot arrived. Recomputing off `catalog.videos` is what
- * fixes that: the moment the index lands, the missing rows appear.
- *
- * Merged rather than swapped, so anything only the endpoint returns (`gifs`)
- * survives the upgrade.
- */
+/** The catalog's entry for this video — the snapshot this browser holds,
+ * which can be hours old. */
 const entry = computed<PartnerVideo | undefined>(() => {
   const id = videoId.value;
   return id
@@ -706,12 +698,52 @@ const entry = computed<PartnerVideo | undefined>(() => {
     : undefined;
 });
 
+/** A record's fields that actually say something — so a value the endpoint
+ * leaves empty never blanks one the catalog has. */
+function given(record: PartnerVideo | undefined): Partial<PartnerVideo> {
+  if (!record) return {};
+  return Object.fromEntries(
+    Object.entries(record).filter(
+      ([, value]) =>
+        value !== undefined &&
+        value !== null &&
+        value !== "" &&
+        !(Array.isArray(value) && value.length === 0)
+    )
+  ) as Partial<PartnerVideo>;
+}
+
+/**
+ * The video: the live record from `/videos/{id}`, fetched every time the
+ * page opens, over the catalog's entry. The live one is the current one —
+ * plays, votes, rating and views move while the snapshot sits in the
+ * browser — and, sampled over 25 videos (October 2026), it carries every
+ * field the index does. The entry shows at once and fills whatever the
+ * endpoint leaves empty; it is also all there is if the request fails.
+ *
+ * One exception: the script measurements are always the index's copy —
+ * see `heat` for why the page must not show the finer figure the endpoint
+ * carries. The endpoint's copy is only used for a video the catalog doesn't
+ * hold at all, once the catalog is here to say so.
+ */
 const video = computed<PartnerVideo | undefined>(() => {
-  if (!entry.value) return fetchedVideo.value;
-  const merged = fetchedVideo.value
-    ? { ...fetchedVideo.value, ...entry.value }
-    : entry.value;
-  return extras.value ? { ...merged, ...extras.value } : merged;
+  const base = entry.value;
+  const live = fetchedVideo.value;
+  if (!base && !live) return undefined;
+  const merged = {
+    ...base,
+    ...extras.value,
+    ...given(live)
+  } as PartnerVideo;
+  // the index's measurement, or none: until the snapshot is here nobody
+  // knows yet whether the index has one, and a video it left unmeasured
+  // stays unmeasured, as the browse page's speed filter treats it
+  if (base || catalog.status !== "ready") {
+    const indexMetadata = base?.scriptMetadata ?? extras.value?.scriptMetadata;
+    if (indexMetadata) merged.scriptMetadata = indexMetadata;
+    else delete merged.scriptMetadata;
+  }
+  return merged;
 });
 
 /** A slimmed entry (it carries `spm`) is missing its description and its
@@ -836,10 +868,9 @@ const heat = computed(() =>
  * line: silence here reads as a missing feature.
  *
  * Gated on the catalog, not on `state`: a page opened before the snapshot
- * lands renders from `/videos/{id}`, which carries no `scriptMetadata` at
- * all, so without this every video would claim to be unmeasured for the
- * first 15 seconds of a cold visit. `video` recomputes when the index
- * arrives, so the row fills itself in. */
+ * lands renders from `/videos/{id}` alone, and whether the index measured
+ * this video is only known once the index is here. `video` recomputes when
+ * it arrives, so the row fills itself in. */
 const heatUnmeasured = computed(() => {
   if (catalog.status !== "ready" || !video.value) return false;
   // a slimmed entry says outright, before its measurements have arrived
@@ -1020,19 +1051,26 @@ async function load(id: string) {
   pendingAction.value = null;
   fetchedVideo.value = undefined;
   extras.value = undefined;
+  // always asked for: the catalog's copy can be hours old. Where the catalog
+  // has the video the page shows it at once and the live record lands on
+  // top; where it doesn't, the live record is the page.
+  const live = getVideo(id).then(
+    fetched => {
+      if (videoId.value === id) fetchedVideo.value = fetched;
+      return fetched;
+    },
+    () => undefined
+  );
   if (catalog.videos.some(item => item.partnerVideoId === id)) {
     state.value = "ready";
   } else {
-    try {
-      const fetched = await getVideo(id);
-      if (videoId.value !== id) return;
-      fetchedVideo.value = fetched;
-      state.value = "ready";
-    } catch {
-      if (videoId.value !== id) return;
+    const fetched = await live;
+    if (videoId.value !== id) return;
+    if (!fetched) {
       state.value = "missing";
       return;
     }
+    state.value = "ready";
   }
   settings.recordView(id);
   const opened = video.value;
@@ -1219,7 +1257,7 @@ const reportMailto = computed(() => {
     ""
   ].join("\n");
   return (
-    "mailto:lars@ohdoki.com" +
+    `mailto:${REPORT_EMAIL}` +
     `?subject=${encodeURIComponent(t("video.report.subject"))}` +
     `&body=${encodeURIComponent(body)}`
   );

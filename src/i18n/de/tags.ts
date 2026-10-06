@@ -39,6 +39,15 @@ const tags: typeof enUS = {
     mutedCount: "Stumm ({count})"
   },
 
+  // The category pills over the cloud. The pills themselves carry the
+  // API's own category names, as the tag pills carry tag names; only
+  // these two are ours.
+  categories: {
+    title: "Kategorie",
+    label: "Schlagwörter nach Kategorie filtern",
+    all: "Alle"
+  },
+
   empty: {
     searchTitle: "Keine passenden Schlagwörter",
     searchBody: "Nichts im Index passt zu „{query}“.",

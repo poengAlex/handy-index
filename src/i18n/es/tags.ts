@@ -39,6 +39,15 @@ const tags: typeof enUS = {
     mutedCount: "Silenciadas ({count})"
   },
 
+  // The category pills over the cloud. The pills themselves carry the
+  // API's own category names, as the tag pills carry tag names; only
+  // these two are ours.
+  categories: {
+    title: "Categoría",
+    label: "Filtrar etiquetas por categoría",
+    all: "Todas"
+  },
+
   empty: {
     searchTitle: "Ninguna etiqueta coincide",
     searchBody: "Nada del índice coincide con «{query}».",

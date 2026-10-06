@@ -16,6 +16,10 @@ const settings: typeof enUS = {
     playersLabel: "Reproductores integrados",
     playersCaption:
       "Reproducir los vídeos de Pornhub y xHamster en la propia página del vídeo",
+    // the photo carousel and the reel of preview clips on a performer's page
+    performerMediaLabel: "Fotos y clips de los intérpretes",
+    performerMediaCaption:
+      "Mostrar los carruseles de fotos y clips en las páginas de intérpretes. Desactívalo para cargar menos.",
     fullWidthLabel: "Diseño a ancho completo",
     fullWidthCaption: "Usar toda la pantalla en lugar de una columna centrada"
   },
@@ -64,7 +68,15 @@ const settings: typeof enUS = {
       "previsualizarla. Haz clic en el nombre de una velocidad para " +
       "restablecerla.",
     imageSpeed: "Velocidad de imagen",
-    clipSpeed: "Velocidad de clip"
+    clipSpeed: "Velocidad de clip",
+    // the two switches: previews on video cards (the request board's too),
+    // and on the performer directory's cards
+    videoCardsLabel: "Vistas previas de vídeos",
+    videoCardsCaption:
+      "Reproduce la vista previa de un vídeo al pasar el ratón o tocar su tarjeta",
+    performerCardsLabel: "Vistas previas de intérpretes",
+    performerCardsCaption:
+      "Reproduce el clip más reproducido al pasar el ratón o tocar la tarjeta de un intérprete"
   },
 
   // shared by the settings field and the connection-key prompt

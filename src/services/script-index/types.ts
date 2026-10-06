@@ -44,6 +44,9 @@ export interface PerformerProfile {
   description?: string;
   age?: number;
   dateOfBirth?: string;
+  /** Female, male, trans_mtf, Couple, … in any casing — read through
+   * performer-traits.ts */
+  gender?: string;
   careerStatus?: string;
   /** a year, or a date pinned to the 1st of January */
   careerStart?: string;
@@ -53,6 +56,8 @@ export interface PerformerProfile {
   height?: string;
   weight?: string;
   measurements?: string;
+  /** "Yes" or "No" */
+  fakeBoobs?: string;
   hair?: string;
   eyes?: string;
   ethnicity?: string;
@@ -64,6 +69,16 @@ export interface PerformerProfile {
   images?: string[];
   /** their own links — `name` is whatever the scrape guessed, often a handle */
   some?: { name?: string; url?: string }[];
+  /** their profile page on each partner site that carries them, where the
+   * site has more of their videos. Snake_case inside from both endpoints:
+   * the list's mapping (getPerformerRoster) only renames the top level.
+   * Read through profilePartnerLinks. */
+  partnerSiteRefs?: {
+    url?: string;
+    /** the site's domain, "pornhub.com" — as `partnerName` on a video */
+    partner_name?: string;
+    partner_id?: string;
+  }[];
 }
 
 /** The request board's cast is NOT the index's. A request is scraped from the
@@ -120,6 +135,16 @@ export interface PartnerVideo {
   createdAt?: string;
   updatedAt?: string;
   publishedAt?: string;
+}
+
+/** One entry of `/partners`: a partner site. `tags` is the partner's own
+ * tag list — its orientation tags among them — when the API carries it. */
+export interface Partner {
+  partnerID: string;
+  /** the site's domain, "pornhub.com" — as `partnerName` on its videos */
+  name: string;
+  description?: string;
+  tags?: string[];
 }
 
 /** One entry of `/tags`. `category` is absent on most tags (29,081 of the

@@ -24,6 +24,8 @@ const sites: typeof enUS = {
 
   errorTitle: "无法加载网站",
   emptyBody: "索引返回时一个网站都没有。重新加载试试。",
+  // every site in the index is behind a preference
+  hiddenBody: "你的偏好设置隐藏了索引中的所有网站。请在设置中放宽条件。",
   noMatchTitle: "没有匹配的网站",
   noMatchBody: "没有网站名匹配这次搜索。少输入几个字母试试。"
 };

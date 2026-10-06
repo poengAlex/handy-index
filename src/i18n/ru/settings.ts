@@ -16,6 +16,9 @@ const settings: typeof enUS = {
     playersLabel: "Встроенные плееры",
     playersCaption:
       "Воспроизводить видео Pornhub и xHamster прямо на странице видео",
+    performerMediaLabel: "Фото и шоурилы актёров",
+    performerMediaCaption:
+      "Показывать на страницах актёров карусели фото и клипов-превью. Отключите, чтобы загружать меньше.",
     fullWidthLabel: "Во всю ширину",
     fullWidthCaption: "Использовать весь экран вместо колонки по центру"
   },
@@ -63,7 +66,13 @@ const settings: typeof enUS = {
       "Наведи курсор на карточку — или коснись её пальцем, — чтобы увидеть " +
       "предпросмотр. Нажми на подпись, чтобы вернуть исходную скорость.",
     imageSpeed: "Скорость изображения",
-    clipSpeed: "Скорость клипа"
+    clipSpeed: "Скорость клипа",
+    videoCardsLabel: "Превью на карточках видео",
+    videoCardsCaption:
+      "Показывать превью видео при наведении или касании карточки",
+    performerCardsLabel: "Превью на карточках актёров",
+    performerCardsCaption:
+      "Показывать самый популярный клип при наведении или касании карточки актёра"
   },
 
   // shared by the settings field and the connection-key prompt

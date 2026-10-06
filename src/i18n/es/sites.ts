@@ -24,6 +24,9 @@ const sites: typeof enUS = {
 
   errorTitle: "No se han podido cargar los sitios",
   emptyBody: "El índice ha llegado sin un solo sitio. Vuelve a cargarlo.",
+  // every site in the index is behind a preference
+  hiddenBody:
+    "Tus preferencias ocultan todos los sitios del índice. Relájalas en los ajustes.",
   noMatchTitle: "Ningún sitio coincide",
   noMatchBody:
     "Ningún nombre de sitio coincide con esa búsqueda. Prueba con menos letras."

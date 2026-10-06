@@ -61,7 +61,8 @@ const common: typeof enUS = {
     videos: "{shown} von {total} Video | {shown} von {total} Videos",
     performers:
       "{shown} von {total} Darsteller | {shown} von {total} Darstellern",
-    tags: "{shown} von {total} Schlagwort | {shown} von {total} Schlagwörtern"
+    tags: "{shown} von {total} Schlagwort | {shown} von {total} Schlagwörtern",
+    sites: "{shown} von {total} Website | {shown} von {total} Websites"
   },
 
   count: {

@@ -42,7 +42,9 @@ const common: typeof enUS = {
       "{shown} из {total} видео | {shown} из {total} видео | {shown} из {total} видео",
     performers:
       "{shown} из {total} актёра | {shown} из {total} актёров | {shown} из {total} актёров",
-    tags: "{shown} из {total} тега | {shown} из {total} тегов | {shown} из {total} тегов"
+    tags: "{shown} из {total} тега | {shown} из {total} тегов | {shown} из {total} тегов",
+    sites:
+      "{shown} из {total} сайта | {shown} из {total} сайтов | {shown} из {total} сайтов"
   },
 
   count: {

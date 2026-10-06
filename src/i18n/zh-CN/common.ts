@@ -48,7 +48,8 @@ const common: typeof enUS = {
   ofTotal: {
     videos: "{total} 个视频中的 {shown} 个",
     performers: "{total} 位演员中的 {shown} 位",
-    tags: "{total} 个标签中的 {shown} 个"
+    tags: "{total} 个标签中的 {shown} 个",
+    sites: "{total} 个网站中的 {shown} 个"
   },
 
   count: {

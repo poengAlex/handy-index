@@ -7,6 +7,7 @@
         :images="request.images ?? []"
         :preview="request.preview ?? ''"
         :alt="name"
+        :enabled="settings.videoCardPreviews"
         class="tile-card__img"
       />
       <div v-else class="tile-card__placeholder">

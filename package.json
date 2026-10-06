@@ -1,6 +1,6 @@
 {
   "name": "ivdb",
-  "version": "2.9.5",
+  "version": "2.10.0",
   "private": true,
   "description": "IVDB — Interactive Video Database",
   "keywords": [
@@ -23,6 +23,7 @@
     "i18n:check": "node scripts/check-i18n.mjs",
     "icons:check": "node scripts/check-icons.mjs",
     "icons:subset": "python3 scripts/subset-icons.py",
+    "favicons:fetch": "python3 scripts/fetch-favicons.py",
     "start": "node server.js",
     "postinstall": "quasar prepare --silent",
     "kit": "node scripts/handy-kit/bootstrap.mjs"

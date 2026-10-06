@@ -58,6 +58,9 @@ export type SettingName =
   | "premium_scripts"
   | "premium_videos"
   | "embedded_players"
+  | "performer_media"
+  | "video_card_previews"
+  | "performer_card_previews"
   | "full_width"
   | "background"
   | "background_motion";

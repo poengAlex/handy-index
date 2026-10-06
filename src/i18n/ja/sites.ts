@@ -25,6 +25,9 @@ const sites: typeof enUS = {
   errorTitle: "サイトを読み込めませんでした",
   emptyBody:
     "インデックスにサイトが1件も入っていませんでした。もう一度読み込んでみてください。",
+  // every site in the index is behind a preference
+  hiddenBody:
+    "設定によってインデックスのすべてのサイトが非表示になっています。設定で条件を緩めてください。",
   noMatchTitle: "一致するサイトがありません",
   noMatchBody:
     "その検索に一致するサイト名はありません。文字数を減らして試してください。"

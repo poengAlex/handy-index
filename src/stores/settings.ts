@@ -142,8 +142,18 @@ export const useSettingsStore = defineStore(
     const previewFrameMs = ref(PREVIEW_FRAME_MS.default);
     /** playback rate for the partner roll clip a card preview plays */
     const previewClipRate = ref(PREVIEW_CLIP_RATE.default);
+    /** hover / touch previews on video cards (and the request board's).
+     * ON by default — the switch is for whoever would rather not have clips
+     * start under their pointer */
+    const videoCardPreviews = ref(true);
+    /** the same on the performer directory's cards, play button included */
+    const performerCardPreviews = ref(true);
     /** embedded partner players (Pornhub/xHamster) on video pages */
     const inlinePlayers = ref(false);
+    /** the photo carousel and the reel of preview clips on a performer's
+     * page. ON by default; the switch is for whoever would rather not have a
+     * dozen clips download because they opened a profile */
+    const performerMedia = ref(true);
     /** let pages span the whole viewport instead of the 1440px column */
     const fullWidth = ref(false);
     /** which look sits behind every page, or "off" for none */
@@ -344,7 +354,10 @@ export const useSettingsStore = defineStore(
       showPaidVideos.value = true;
       previewFrameMs.value = PREVIEW_FRAME_MS.default;
       previewClipRate.value = PREVIEW_CLIP_RATE.default;
+      videoCardPreviews.value = true;
+      performerCardPreviews.value = true;
       inlinePlayers.value = false;
+      performerMedia.value = true;
       fullWidth.value = false;
       backgroundScene.value = BACKGROUND_STYLE_DEFAULT;
       backgroundAttach.value = BACKGROUND_ATTACHMENT_DEFAULT;
@@ -360,7 +373,10 @@ export const useSettingsStore = defineStore(
       showPaidVideos.value = true;
       previewFrameMs.value = PREVIEW_FRAME_MS.default;
       previewClipRate.value = PREVIEW_CLIP_RATE.default;
+      videoCardPreviews.value = true;
+      performerCardPreviews.value = true;
       inlinePlayers.value = false;
+      performerMedia.value = true;
       fullWidth.value = false;
       backgroundScene.value = BACKGROUND_STYLE_DEFAULT;
       backgroundAttach.value = BACKGROUND_ATTACHMENT_DEFAULT;
@@ -386,7 +402,10 @@ export const useSettingsStore = defineStore(
       showPaidVideos,
       previewFrameMs,
       previewClipRate,
+      videoCardPreviews,
+      performerCardPreviews,
       inlinePlayers,
+      performerMedia,
       fullWidth,
       backgroundScene,
       backgroundAttach,
@@ -473,6 +492,12 @@ export const useSettingsStore = defineStore(
         // a hand-edited blob can still carry a non-boolean
         settings.showPremiumScripts = Boolean(settings.showPremiumScripts);
         settings.showPaidVideos = Boolean(settings.showPaidVideos);
+        // ON by default, and a blob from before the switch carries nothing —
+        // only an explicit false survives
+        settings.performerMedia = settings.performerMedia !== false;
+        settings.videoCardPreviews = settings.videoCardPreviews !== false;
+        settings.performerCardPreviews =
+          settings.performerCardPreviews !== false;
         // `background` was a single boolean meaning "render the field at
         // all". That question now lives in backgroundScene ("off"), and the
         // boolean was reused for a different one — whether the field moves.

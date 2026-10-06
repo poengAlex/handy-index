@@ -24,6 +24,9 @@ const sites: typeof enUS = {
 
   errorTitle: "사이트를 불러오지 못했어요",
   emptyBody: "색인에 사이트가 하나도 없어요. 다시 불러와 보세요.",
+  // every site in the index is behind a preference
+  hiddenBody:
+    "설정 때문에 인덱스의 모든 사이트가 숨겨져 있어요. 설정에서 조건을 완화해 보세요.",
   noMatchTitle: "일치하는 사이트가 없어요",
   noMatchBody: "그 검색어와 맞는 사이트 이름이 없어요. 글자 수를 줄여 보세요."
 };

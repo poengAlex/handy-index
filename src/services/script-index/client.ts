@@ -10,6 +10,7 @@ import {
   writeCachedIndex
 } from "./index-cache";
 import type {
+  Partner,
   PartnerVideo,
   PerformerProfile,
   Script,
@@ -211,21 +212,33 @@ function nextPaint(): Promise<void> {
 const TAG_PAGE_SIZE = 50_000;
 const MAX_TAGS = 500_000;
 
-/** The tags `/tags` files under the "orientation" category. It cannot filter
- * by category itself (a `category` parameter is ignored), so the whole list
- * comes down and is filtered here. */
-export async function getOrientationTags(): Promise<string[]> {
-  const found: string[] = [];
+/** Every tag `/tags` lists, with its category. It cannot filter by category
+ * itself (a `category` parameter is ignored), so the whole list comes down
+ * and callers pick from it — the orientation gate and the tag page's
+ * category pills both read this one list. */
+export async function getTags(): Promise<Tag[]> {
+  const found: Tag[] = [];
   for (let skip = 0; skip < MAX_TAGS; skip += TAG_PAGE_SIZE) {
     const page = await request<Tag[]>(
       `/tags?take=${TAG_PAGE_SIZE}&skip=${skip}`
     );
-    for (const tag of page) {
-      if (tag.category === "orientation") found.push(tag.tagId);
-    }
+    found.push(...page);
     if (page.length < TAG_PAGE_SIZE) break;
   }
   return found;
+}
+
+/** The tag categories, `/categories`: a short list of names ("action",
+ * "performer", …) — and "undefined", which hundreds of tags carry as a
+ * string. */
+export function getCategories(): Promise<string[]> {
+  return request<string[]>("/categories");
+}
+
+/** Every partner site, `/partners` — 37 of them, small enough to ask for
+ * whenever the site directory opens. */
+export function getPartners(): Promise<Partner[]> {
+  return request<Partner[]>("/partners");
 }
 
 export function getVideo(partnerVideoId: string): Promise<PartnerVideo> {

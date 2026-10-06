@@ -81,9 +81,16 @@ const props = withDefaults(
     /** partner roll clip, when there is one */
     preview?: string;
     alt?: string;
+    /** off: a still picture, nothing previews — the reader's setting */
+    enabled?: boolean;
   }>(),
-  { images: () => [], preview: "", alt: "" }
+  { images: () => [], preview: "", alt: "", enabled: true }
 );
+
+/** `active` reports the preview starting and stopping, whatever caused it
+ * — hover, touch, another card taking the stage, or a scroll away — so a
+ * play button somewhere can show the state truthfully. */
+const emit = defineEmits<{ active: [playing: boolean] }>();
 
 const CLIP_TIMEOUT_MS = 1500;
 
@@ -154,10 +161,11 @@ function onLeave(e: PointerEvent) {
 }
 
 function start() {
-  if (active.value) return;
+  if (active.value || !props.enabled) return;
   // take the stage first: this stops whatever was playing elsewhere
   if (root.value) claimPreview(root.value);
   active.value = true;
+  emit("active", true);
   // the stills run even when a clip is loading: if the clip never plays, the
   // preview has already been showing something the whole time
   startCycling(!clip.value);
@@ -173,6 +181,7 @@ function stop() {
   window.clearTimeout(clipTimer);
   clipTimer = 0;
   stopCycling();
+  if (active.value) emit("active", false);
   active.value = false;
   clipReady.value = false;
   frame.value = 0;
@@ -215,6 +224,14 @@ function failClip() {
   startCycling(true);
 }
 
+// switched off in settings: one already playing stops on the spot
+watch(
+  () => props.enabled,
+  on => {
+    if (!on) stop();
+  }
+);
+
 // a recycled tile (carousels and the grid reuse DOM as you scroll) must not
 // keep the previous video's frame index or dead-clip verdict
 watch(
@@ -233,6 +250,9 @@ onMounted(() => {
   card = root.value.closest(".tile-card") ?? root.value;
   card.addEventListener("touchstart", start, { passive: true });
 });
+
+// for a play button on the card: the same start and stop hover and touch use
+defineExpose({ start, stop });
 
 onBeforeUnmount(() => {
   card?.removeEventListener("touchstart", start);

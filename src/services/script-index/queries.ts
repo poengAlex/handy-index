@@ -43,6 +43,21 @@ const FILED_UNDER: ReadonlyMap<string, "gay" | "trans"> = new Map([
   ["shemale", "trans"]
 ]);
 
+/** Whether a partner site belongs under the reader's orientation, by the
+ * orientation tags `/partners` gives it — filed the way a video's are: gay,
+ * trans (shemale with it), and the rest under Straight. A site carrying none
+ * says nothing here (true): its videos decide, through the catalog's gate. */
+export function partnerMatchesOrientation(
+  partnerTags: readonly string[],
+  orientation: Orientation,
+  orientationTags: ReadonlySet<string>
+): boolean {
+  if (orientation === "all") return true;
+  const tags = partnerTags.filter(tag => orientationTags.has(tag));
+  if (!tags.length) return true;
+  return tags.some(tag => (FILED_UNDER.get(tag) ?? "straight") === orientation);
+}
+
 /** Orientation goes by the index's own orientation tags (`orientationTags`,
  * the live `/tags` list or the seed above) and nothing else. Looking for the
  * words inside other tags kept misfiling: a prefix test put translated and
@@ -787,6 +802,39 @@ export function performersOf(
       avgRating: summary.ratedCount ? ratingSum / summary.ratedCount : 0
     }))
     .sort((a, b) => b.count - a.count);
+}
+
+/** A cast this small is them alone or with one partner — a clip from it
+ * shows them; one from a compilation or a group scene may show anyone. */
+const SMALL_CAST = 2;
+
+/** For each performer, the preview clip their card in the directory plays on
+ * hover: the most played of their videos with a clip and a small cast (them
+ * alone, or with one other), and only where they have none of those, the
+ * most played of any. Performers with no clip on any video are absent. */
+export function topPreviewByPerformer(
+  videos: readonly PartnerVideo[]
+): Map<string, string> {
+  type Best = { preview: string; plays: number };
+  const small = new Map<string, Best>();
+  const any = new Map<string, Best>();
+  const keep = (map: Map<string, Best>, id: string, candidate: Best) => {
+    const current = map.get(id);
+    if (!current || candidate.plays > current.plays) map.set(id, candidate);
+  };
+  for (const video of videos) {
+    if (!video.preview) continue;
+    const candidate = { preview: video.preview, plays: video.scriptPlays ?? 0 };
+    const cast = video.performers ?? [];
+    for (const performer of cast) {
+      keep(any, performer.performerId, candidate);
+      if (cast.length <= SMALL_CAST)
+        keep(small, performer.performerId, candidate);
+    }
+  }
+  return new Map(
+    [...any].map(([id, best]) => [id, (small.get(id) ?? best).preview])
+  );
 }
 
 export interface PerformerStats {

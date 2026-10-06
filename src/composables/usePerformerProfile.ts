@@ -13,12 +13,13 @@ import { useCatalogStore } from "@/stores/catalog";
  * remembered: the next visit asks again. */
 const profiles = new Map<string, PerformerProfile | null>();
 
-/** The whole list, by id — downloaded once, on the first 404, and shared by
- * every miss after it. Dropped if the download fails, so the next miss
- * retries instead of inheriting the failure. */
+/** The whole list, by id — downloaded once, on the first 404 or the first
+ * look at the directory's filters, and shared by everything after it.
+ * Dropped if the download fails, so the next ask retries instead of
+ * inheriting the failure. */
 let roster: Promise<Map<string, PerformerProfile>> | undefined;
 
-function loadRoster(): Promise<Map<string, PerformerProfile>> {
+export function loadRoster(): Promise<Map<string, PerformerProfile>> {
   roster ??= getPerformerRoster().then(
     list => new Map(list.map(entry => [entry.performerId, entry])),
     (error: unknown) => {

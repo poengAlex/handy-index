@@ -39,6 +39,15 @@ const tags: typeof enUS = {
     mutedCount: "ミュート中（{count}）"
   },
 
+  // The category pills over the cloud. The pills themselves carry the
+  // API's own category names, as the tag pills carry tag names; only
+  // these two are ours.
+  categories: {
+    title: "カテゴリ",
+    label: "カテゴリでタグを絞り込む",
+    all: "すべて"
+  },
+
   empty: {
     searchTitle: "一致するタグがありません",
     searchBody: "「{query}」に一致するものは、インデックスにありません。",
