@@ -17,7 +17,7 @@ const buildDate = new Date().toISOString();
 export default defineConfig(() => {
   return {
     // app boot file (/src/boot)
-    boot: ["i18n", "icons", "quasar-defaults"],
+    boot: ["i18n", "icons", "quasar-defaults", "analytics"],
 
     // the icon font is our own cut of Material Symbols rather than the
     // extras' 4 MB full set — see scripts/subset-icons.py

@@ -28,7 +28,7 @@ export default {
   local: {
     title: "What stays in this browser",
     intro:
-      "There are no accounts, no cookies, and no analytics. Everything you set is stored only in this browser's local storage:",
+      "There are no accounts and no cookies. Everything you set is stored only in this browser's local storage:",
     item: {
       consent: "your answer to the first-visit consent dialog",
       previews: "the explicit previews (NSFW) setting",
@@ -36,15 +36,33 @@ export default {
       accessFilters: "your script and video access filters",
       favorites: "your favorites",
       votes: "votes you've cast on video requests",
-      connectionKey: "your Handy connection key"
+      connectionKey: "your Handy connection key",
+      statisticsId:
+        "a random ID for the anonymous usage statistics described below"
     },
     outro:
-      "Open the site on another device — or clear your browser data — and these are gone; there is nothing to recover from a server. The flip side of having no analytics is that we can't see errors happen, so bug reports are extra welcome."
+      "Open the site on another device — or clear your browser data — and these are gone; there is nothing to recover from a server."
   },
 
   catalog: {
     title: "Where the catalog comes from",
-    body: "The catalog, its metadata, and the scripts are loaded from the handyfeeling.com script index API. When you download a script, submit a video request, or vote on one, your connection key is sent to that API as authorization — that is the only time something you've entered leaves your browser."
+    body: "The catalog, its metadata, and the scripts are loaded from the handyfeeling.com script index API. When you download a script, submit a video request, or vote on one, your connection key is sent to that API as authorization. With usage statistics on, it is also sent to the Handy API, to check whether your Handy is online — see below. Those are the only times something you've entered leaves your browser."
+  },
+
+  // What the usage statistics send and never send. Each sentence is a claim
+  // the event list in services/analytics/events.ts has to keep true — change
+  // the list and this together. `device` describes identify() in
+  // boot/analytics.ts; the IP sentence relies on the PostHog project's
+  // "Discard client IP data" setting staying on.
+  statistics: {
+    title: "Anonymous usage statistics",
+    sent: "To see which features get used and where the site breaks, IVDB sends anonymous usage statistics to PostHog, an analytics service that stores them on servers in the EU. What is sent: the pages you open, including which video (by its ID); what you do with the site's buttons — opening a video, getting a script, adding a favorite and the like; your settings and language; your browser and type of device; the country your connection comes from; and an error report when something breaks.",
+    never:
+      "What is never sent: your orientation filter, tag or performer names, what you search for, video titles, your comments, or the filters in the web address. Your screen is never recorded, and your IP address is not stored.",
+    device:
+      "If you have saved a connection key and your Handy is online, the statistics are linked to an ID made from that key — its first three characters and a hash of the whole key — together with your Handy's model and firmware version. That lets us count devices rather than browsers. The key itself is never sent to PostHog.",
+    choice:
+      "Statistics are on by default. You can switch them off at any time in settings; the site then sends one last message saying so, and nothing after that. Clearing all stored data also starts a new random ID."
   },
 
   thirdParty: {
@@ -59,7 +77,7 @@ export default {
 
   choices: {
     title: "Changing your choices",
-    body: "Nothing you chose in the first-visit dialog is final. Explicit previews, orientation, and the script and video access filters can be changed at any time from the settings dialog in the top bar."
+    body: "Nothing you chose in the first-visit dialog is final. Explicit previews, orientation, the script and video access filters, and the usage statistics can be changed at any time from the settings dialog in the top bar."
   },
 
   contact: {

@@ -72,6 +72,13 @@ const settings: typeof enUS = {
     hint: "Ta connection key Handy, utilisée pour télécharger les scripts."
   },
 
+  analytics: {
+    title: "Confidentialité",
+    label: "Statistiques d'utilisation anonymes",
+    caption:
+      "Nous montrent ce qui sert et ce qui plante. Jamais tes recherches, étiquettes ou orientation."
+  },
+
   catalog: {
     title: "Catalogue",
     label: "Catalogue enregistré",

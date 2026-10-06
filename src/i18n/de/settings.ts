@@ -76,6 +76,13 @@ const settings: typeof enUS = {
     hint: "Dein connection key für The Handy, nötig beim Herunterladen von scripts."
   },
 
+  analytics: {
+    title: "Datenschutz",
+    label: "Anonyme Nutzungsstatistik",
+    caption:
+      "Zeigt uns, was genutzt wird und was hakt. Nie deine Suchen, Schlagwörter oder Orientierung."
+  },
+
   catalog: {
     title: "Katalog",
     label: "Gespeicherter Katalog",

@@ -49,6 +49,7 @@ import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { HBtn, HList, HListRow, HModal, hToast } from "@/components/handy";
 import { useFormat } from "@/composables/useFormat";
+import { track } from "@/services/analytics";
 import {
   PREVIEW_CLIP_RATE,
   PREVIEW_FRAME_MS,
@@ -187,11 +188,14 @@ const rows = computed<ClearRow[]>(() => {
 });
 
 function clearRow(row: ClearRow): void {
+  track("data_cleared", { what: row.key });
   row.clear();
   hToast("info", row.toast);
 }
 
 function clearAll(): void {
+  // before the wipe: clearing everything also starts a new statistics ID
+  track("data_cleared", { what: "all" });
   settings.clearAll();
   emit("update:modelValue", false);
   emit("cleared-all");

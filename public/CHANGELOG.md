@@ -5,6 +5,24 @@
      words. Newest release on top. Format: "## <version> — <date>", then
      "### <group>" headings and "- " lines. Keep it English-only. -->
 
+## 2.9.0 — 6 October 2026
+
+### Privacy
+
+- IVDB now collects anonymous usage statistics, so we can see which features
+  people use and fix what breaks: the pages you open, which buttons you use,
+  your settings and language, your browser and type of device, the country
+  you visit from, and an error report when something goes wrong.
+- What you search for, your orientation filter, tag and performer names,
+  video titles, your comments and the filters in the web address are never
+  sent. Your screen is never recorded.
+- If you've saved your connection key and your Handy is online, the
+  statistics are linked to an ID made from the key, along with your Handy's
+  model and firmware version. The key itself is never sent.
+- The statistics are on by default. You can switch them off at any time in
+  Settings, under Privacy.
+- The Privacy & terms page explains all of this, in all ten languages.
+
 ## 2.8.5 — 6 October 2026
 
 ### Front page

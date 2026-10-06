@@ -113,6 +113,7 @@ import {
   hToast
 } from "@/components/handy";
 import { useFormat } from "@/composables/useFormat";
+import { track } from "@/services/analytics";
 import {
   PlaylistImportError,
   parsePlaylistExport,
@@ -131,12 +132,15 @@ const importOpen = ref(false);
 const importText = ref("");
 const importing = ref(false);
 
-function finishImport(parsed: ImportedPlaylist): void {
+type ImportFormat = "file" | "text" | "link";
+
+function finishImport(parsed: ImportedPlaylist, kind: ImportFormat): void {
   // an export with no name of its own still has to become a named playlist,
   // and naming it is UI copy — the parser has no locale to write it in
   const name = parsed.name || t("playlists.import.defaultName");
   const playlist = settings.importPlaylist(name, parsed.videoIds);
   const count = playlist.videoIds.length;
+  track("playlist_imported", { format: kind, outcome: "ok", videos: count });
   importOpen.value = false;
   importText.value = "";
   hToast(
@@ -150,7 +154,8 @@ function finishImport(parsed: ImportedPlaylist): void {
   );
 }
 
-function toastImportError(error: unknown): void {
+function toastImportError(error: unknown, kind: ImportFormat): void {
+  track("playlist_imported", { format: kind, outcome: "failed" });
   // the parser throws a code, not a sentence; the sentence lives here
   const code = error instanceof PlaylistImportError ? error.code : "unknown";
   hToast(
@@ -163,10 +168,12 @@ function toastImportError(error: unknown): void {
 async function importFromText() {
   if (importing.value) return;
   importing.value = true;
+  // a pasted share link, or the export JSON itself
+  const kind = /^\s*https?:\/\//i.test(importText.value) ? "link" : "text";
   try {
-    finishImport(await resolveImportText(importText.value));
+    finishImport(await resolveImportText(importText.value), kind);
   } catch (error) {
-    toastImportError(error);
+    toastImportError(error, kind);
   } finally {
     importing.value = false;
   }
@@ -179,9 +186,9 @@ async function onImportFile(event: Event) {
   input.value = "";
   if (!file) return;
   try {
-    finishImport(parsePlaylistExport(await file.text()));
+    finishImport(parsePlaylistExport(await file.text()), "file");
   } catch (error) {
-    toastImportError(error);
+    toastImportError(error, "file");
   }
 }
 

@@ -72,6 +72,15 @@ export default {
     hint: "Your Handy connection key, used when downloading scripts."
   },
 
+  // The statistics switch. The caption names the three things a reader is
+  // most likely to worry about; privacy.statistics has the full list.
+  analytics: {
+    title: "Privacy",
+    label: "Anonymous usage statistics",
+    caption:
+      "Shows us what gets used and what breaks. Never your searches, tags or orientation."
+  },
+
   // The catalog row. IVDB keeps the whole video list on your device so the
   // site opens instantly; this says how old that copy is and lets you replace
   // it without waiting for the automatic refresh.

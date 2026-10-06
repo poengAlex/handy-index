@@ -76,6 +76,13 @@ const settings: typeof enUS = {
     hint: "Scriptのダウンロードに使う、Handyのconnection keyです。"
   },
 
+  analytics: {
+    title: "プライバシー",
+    label: "匿名の利用統計",
+    caption:
+      "どの機能が使われ、どこで不具合が起きているかを把握するためのものです。検索内容・タグ・性的指向は送信しません。"
+  },
+
   catalog: {
     title: "カタログ",
     label: "保存されたカタログ",

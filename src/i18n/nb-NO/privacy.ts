@@ -23,7 +23,7 @@ const privacy: typeof enUS = {
   local: {
     title: "Hva som blir værende i denne nettleseren",
     intro:
-      "Det finnes ingen brukerkontoer, ingen informasjonskapsler og ingen analyse. Alt du stiller inn lagres bare i denne nettleserens lokale lagring:",
+      "Det finnes ingen brukerkontoer og ingen informasjonskapsler. Alt du stiller inn lagres bare i denne nettleserens lokale lagring:",
     item: {
       consent: "svaret ditt i samtykkedialogen ved første besøk",
       previews: "innstillingen for eksplisitte forhåndsvisninger (NSFW)",
@@ -31,15 +31,28 @@ const privacy: typeof enUS = {
       accessFilters: "tilgangsfiltrene dine for script og video",
       favorites: "favorittene dine",
       votes: "stemmene du har avgitt på videoforespørsler",
-      connectionKey: "connection key til din Handy"
+      connectionKey: "connection key til din Handy",
+      statisticsId:
+        "en tilfeldig ID for den anonyme bruksstatistikken som er beskrevet nedenfor"
     },
     outro:
-      "Åpner du nettstedet på en annen enhet — eller sletter nettleserdataene dine — er alt dette borte; det finnes ingenting å hente tilbake fra en server. Baksiden av å ikke ha analyse er at vi ikke ser feil når de skjer, så feilrapporter er ekstra velkomne."
+      "Åpner du nettstedet på en annen enhet — eller sletter nettleserdataene dine — er alt dette borte; det finnes ingenting å hente tilbake fra en server."
   },
 
   catalog: {
     title: "Hvor katalogen kommer fra",
-    body: "Katalogen, metadataene og alle scripts lastes fra API-et til script-indeksen på handyfeeling.com. Når du laster ned et script, sender inn en videoforespørsel eller stemmer på en, sendes din connection key til det API-et som autorisasjon — det er den eneste gangen noe du har skrevet inn forlater nettleseren din."
+    body: "Katalogen, metadataene og alle scripts lastes fra API-et til script-indeksen på handyfeeling.com. Når du laster ned et script, sender inn en videoforespørsel eller stemmer på en, sendes din connection key til det API-et som autorisasjon. Når bruksstatistikken er på, sendes den også til Handy-API-et for å sjekke om din Handy er tilkoblet — se nedenfor. Det er de eneste gangene noe du har skrevet inn forlater nettleseren din."
+  },
+
+  statistics: {
+    title: "Anonym bruksstatistikk",
+    sent: "For å se hvilke funksjoner som blir brukt og hvor nettstedet svikter, sender IVDB anonym bruksstatistikk til PostHog, en analysetjeneste som lagrer den på servere i EU. Dette sendes: sidene du åpner, også hvilken video (med videoens ID); hva du gjør med knappene på nettstedet — åpner en video, henter et script, legger til en favoritt og lignende; innstillingene og språket ditt; nettleseren og enhetstypen din; landet tilkoblingen din kommer fra; og en feilrapport når noe går galt.",
+    never:
+      "Dette sendes aldri: orienteringsfilteret ditt, navn på tagger eller skuespillere, hva du søker etter, videotitler, kommentarene dine eller filtrene i nettadressen. Skjermen din blir aldri tatt opp, og IP-adressen din lagres ikke.",
+    device:
+      "Hvis du har lagret en connection key og din Handy er tilkoblet, knyttes statistikken til en ID laget av nøkkelen — de tre første tegnene og en hash av hele nøkkelen — sammen med modellen og fastvareversjonen til din Handy. Slik kan vi telle enheter i stedet for nettlesere. Selve nøkkelen sendes aldri til PostHog.",
+    choice:
+      "Statistikken er på som standard. Du kan slå den av når som helst i innstillingene; nettstedet sender da én siste melding om det, og ingenting etter det. Sletter du alle lagrede data, får du også en ny tilfeldig ID."
   },
 
   thirdParty: {
@@ -54,7 +67,7 @@ const privacy: typeof enUS = {
 
   choices: {
     title: "Endre valgene dine",
-    body: "Ingenting av det du valgte i dialogen ved første besøk er endelig. Eksplisitte forhåndsvisninger, orientering og tilgangsfiltrene for script og video kan endres når som helst fra innstillingsdialogen i toppmenyen."
+    body: "Ingenting av det du valgte i dialogen ved første besøk er endelig. Eksplisitte forhåndsvisninger, orientering, tilgangsfiltrene for script og video og bruksstatistikken kan endres når som helst fra innstillingsdialogen i toppmenyen."
   },
 
   contact: {

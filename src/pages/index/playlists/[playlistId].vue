@@ -207,7 +207,11 @@
     </q-dialog>
 
     <!-- Connection key prompt for the bulk script download -->
-    <ConnectionKeyDialog v-model="keyDialog" @saved="downloadAllScripts">
+    <ConnectionKeyDialog
+      v-model="keyDialog"
+      reason="playlist_download"
+      @saved="downloadAllScripts"
+    >
       {{ $t("playlists.bulk.keyPrompt") }}
     </ConnectionKeyDialog>
 
@@ -254,6 +258,7 @@ import ConnectionKeyDialog from "@/components/ConnectionKeyDialog.vue";
 import VideoCard from "@/components/VideoCard.vue";
 import VideoGrid from "@/components/VideoGrid.vue";
 import { useFormat } from "@/composables/useFormat";
+import { track } from "@/services/analytics";
 import {
   exportPlaylist,
   playlistExportText,
@@ -314,14 +319,18 @@ const exportText = computed(() =>
 );
 
 function exportThis() {
-  if (playlist.value) exportPlaylist(playlist.value);
+  if (!playlist.value) return;
+  exportPlaylist(playlist.value);
+  track("playlist_exported", { format: "file", outcome: "ok" });
 }
 
 async function copyExportText() {
   try {
     await navigator.clipboard.writeText(exportText.value);
+    track("playlist_exported", { format: "text", outcome: "ok" });
     hToast("positive", t("playlists.share.jsonCopied"));
   } catch {
+    track("playlist_exported", { format: "text", outcome: "failed" });
     hToast("negative", t("playlists.share.jsonCopyFailed"));
   }
 }
@@ -341,6 +350,7 @@ async function createShareLink() {
   sharing.value = true;
   try {
     shareUrl.value = await uploadPlaylistPaste(current);
+    track("playlist_exported", { format: "link", outcome: "ok" });
     try {
       await navigator.clipboard.writeText(shareUrl.value);
       hToast(
@@ -352,6 +362,7 @@ async function createShareLink() {
       hToast("positive", t("playlists.share.linkCreated"));
     }
   } catch {
+    track("playlist_exported", { format: "link", outcome: "failed" });
     hToast(
       "negative",
       t("playlists.share.linkFailedTitle"),
@@ -388,6 +399,7 @@ async function downloadAllScripts() {
   if (bulkBusy.value || !freeCount.value) return;
   const key = settings.connectionKey.trim();
   if (!key) {
+    track("script_download", { surface: "playlist", outcome: "no_key" });
     keyDialog.value = true;
     return;
   }
@@ -408,6 +420,15 @@ async function downloadAllScripts() {
   }
   bulkBusy.value = false;
   const saved = freeCount.value - failed;
+  track("script_download", {
+    surface: "playlist",
+    outcome: saved
+      ? "ok"
+      : lastFailure === "unauthorized"
+        ? "key_rejected"
+        : "failed",
+    count: saved
+  });
   if (!saved) {
     hToast(
       "negative",

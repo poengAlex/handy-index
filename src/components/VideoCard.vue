@@ -3,6 +3,7 @@
     :to="`/videos/${video.partnerVideoId}`"
     :aria-label="video.title ?? $t('media.card.fallbackTitle')"
     class="video-card"
+    @click="noteShelf"
     @contextmenu.prevent="onContextMenu"
   >
     <template #media>
@@ -129,6 +130,7 @@
     <ConnectionKeyDialog
       v-if="keyDialogMounted"
       v-model="keyDialog"
+      reason="script_download"
       @saved="downloadScript"
     >
       {{ $t("media.keyDialog.body") }}
@@ -167,12 +169,36 @@ import MediaPreview from "@/components/MediaPreview.vue";
 import TileCard from "@/components/TileCard.vue";
 import { canHover } from "@/composables/useCanHover";
 import { useFormat } from "@/composables/useFormat";
-import { downloadFreeScript } from "@/services/script-download";
+import {
+  noteVideoShelf,
+  type Outcome,
+  shelfKind,
+  track
+} from "@/services/analytics";
+import {
+  downloadFreeScript,
+  scriptDownloadCode
+} from "@/services/script-download";
 import { artworkOf } from "@/services/script-index/queries";
 import type { PartnerVideo } from "@/services/script-index/types";
 import { useSettingsStore } from "@/stores/settings";
 
-const props = defineProps<{ video: PartnerVideo }>();
+const props = withDefaults(
+  defineProps<{
+    video: PartnerVideo;
+    /** the row this card sits in, for the usage statistics */
+    shelf?: string;
+  }>(),
+  { shelf: "" }
+);
+
+/** Any click in the card — the video page asks whether it came from a row,
+ * and only believes it for this video and only for a few seconds. */
+function noteShelf() {
+  if (props.shelf) {
+    noteVideoShelf(props.video.partnerVideoId, shelfKind(props.shelf));
+  }
+}
 
 const router = useRouter();
 const settings = useSettingsStore();
@@ -269,6 +295,9 @@ function detailUrl(): string {
 }
 
 function open() {
+  // the menu is teleported out of the card, so its clicks never reach the
+  // card's own @click
+  noteShelf();
   void router.push(detailPath.value);
 }
 
@@ -279,16 +308,36 @@ function openNewTab() {
 async function copyLink() {
   try {
     await navigator.clipboard.writeText(detailUrl());
+    track("link_shared", { what: "video", method: "clipboard", outcome: "ok" });
     hToast("positive", t("media.toast.linkCopied"));
   } catch {
+    track("link_shared", {
+      what: "video",
+      method: "clipboard",
+      outcome: "failed"
+    });
     hToast("negative", t("media.toast.linkCopyFailed"));
   }
 }
 
 function openOnSite() {
   if (props.video.videoUrl) {
+    track("partner_outbound_click", {
+      surface: "quick_menu",
+      partnerVideoId: props.video.partnerVideoId,
+      partnerId: props.video.partnerId ?? null
+    });
     window.open(props.video.videoUrl, "_blank", "noopener");
   }
+}
+
+function trackDownload(outcome: Outcome) {
+  track("script_download", {
+    surface: "quick_menu",
+    outcome,
+    partnerVideoId: props.video.partnerVideoId,
+    partnerId: props.video.partnerId ?? null
+  });
 }
 
 // --- script download (free scripts only — the menu item is hidden otherwise) ---
@@ -299,14 +348,19 @@ const keyDialogMounted = ref(false);
 async function downloadScript() {
   const key = settings.connectionKey.trim();
   if (!key) {
+    trackDownload("no_key");
     keyDialogMounted.value = true;
     keyDialog.value = true;
     return;
   }
   try {
     await downloadFreeScript(props.video, key);
+    trackDownload("ok");
     hToast("positive", t("media.toast.scriptDownloaded"));
-  } catch {
+  } catch (error) {
+    trackDownload(
+      scriptDownloadCode(error) === "unauthorized" ? "key_rejected" : "failed"
+    );
     hToast(
       "negative",
       t("media.toast.scriptFailedTitle"),

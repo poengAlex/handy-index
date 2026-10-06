@@ -30,7 +30,7 @@ const privacy: typeof enUS = {
   local: {
     title: "O que fica neste navegador",
     intro:
-      "Não há contas, nem cookies, nem ferramentas de análise de uso. Tudo o que você define fica guardado apenas no armazenamento local deste navegador:",
+      "Não há contas nem cookies. Tudo o que você define fica guardado apenas no armazenamento local deste navegador:",
     item: {
       consent: "a sua resposta ao aviso de consentimento da primeira visita",
       previews: "a configuração de prévias explícitas (NSFW)",
@@ -38,15 +38,28 @@ const privacy: typeof enUS = {
       accessFilters: "os seus filtros de acesso a scripts e vídeos",
       favorites: "os seus favoritos",
       votes: "os votos que você deu em pedidos de vídeo",
-      connectionKey: "a sua connection key do Handy"
+      connectionKey: "a sua connection key do Handy",
+      statisticsId:
+        "um ID aleatório para as estatísticas de uso anônimas descritas abaixo"
     },
     outro:
-      "Abra o site em outro dispositivo — ou limpe os dados do navegador — e isso tudo some; não há nada para recuperar de um servidor. O outro lado de não ter ferramentas de análise é que não conseguimos ver os erros acontecerem, então relatos de bugs são muito bem-vindos."
+      "Abra o site em outro dispositivo — ou limpe os dados do navegador — e isso tudo some; não há nada para recuperar de um servidor."
   },
 
   catalog: {
     title: "De onde vem o catálogo",
-    body: "O catálogo, os metadados dele e os scripts são carregados da API do índice de scripts em handyfeeling.com. Quando você baixa um script, envia um pedido de vídeo ou vota em um, a sua connection key é enviada a essa API como autorização — é a única vez que algo digitado por você sai do seu navegador."
+    body: "O catálogo, os metadados dele e os scripts são carregados da API do índice de scripts em handyfeeling.com. Quando você baixa um script, envia um pedido de vídeo ou vota em um, a sua connection key é enviada a essa API como autorização. Com as estatísticas de uso ativadas, ela também é enviada à API do Handy, para verificar se o seu Handy está online — veja abaixo. São as únicas vezes em que algo digitado por você sai do seu navegador."
+  },
+
+  statistics: {
+    title: "Estatísticas de uso anônimas",
+    sent: "Para ver quais recursos são usados e onde o site falha, o IVDB envia estatísticas de uso anônimas ao PostHog, um serviço de análise que as guarda em servidores na UE. O que é enviado: as páginas que você abre, inclusive qual vídeo (pelo ID dele); o que você faz com os botões do site — abrir um vídeo, baixar um script, adicionar um favorito e coisas do tipo; as suas configurações e o seu idioma; o seu navegador e o tipo de dispositivo; o país de onde vem a sua conexão; e um relatório de erro quando algo quebra.",
+    never:
+      "O que nunca é enviado: o seu filtro de orientação, nomes de tags ou de artistas, o que você busca, títulos de vídeos, os seus comentários ou os filtros do endereço da página. A sua tela nunca é gravada, e o seu endereço IP não é armazenado.",
+    device:
+      "Se você salvou uma connection key e o seu Handy está online, as estatísticas são ligadas a um ID gerado a partir dessa chave — os três primeiros caracteres e um hash da chave inteira —, junto com o modelo e a versão de firmware do seu Handy. Assim contamos dispositivos, e não navegadores. A chave em si nunca é enviada ao PostHog.",
+    choice:
+      "As estatísticas vêm ativadas. Você pode desativá-las a qualquer momento nas configurações; o site então envia uma última mensagem avisando disso, e nada depois. Limpar todos os dados guardados também começa um novo ID aleatório."
   },
 
   thirdParty: {
@@ -61,7 +74,7 @@ const privacy: typeof enUS = {
 
   choices: {
     title: "Mudar as suas escolhas",
-    body: "Nada do que você escolheu no aviso da primeira visita é definitivo. As prévias explícitas, a orientação e os filtros de acesso a scripts e vídeos podem ser mudados a qualquer momento nas configurações, na barra superior."
+    body: "Nada do que você escolheu no aviso da primeira visita é definitivo. As prévias explícitas, a orientação, os filtros de acesso a scripts e vídeos e as estatísticas de uso podem ser mudados a qualquer momento nas configurações, na barra superior."
   },
 
   contact: {

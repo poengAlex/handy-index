@@ -470,6 +470,7 @@ import MutedTagsDialog from "@/components/MutedTagsDialog.vue";
 import PerformerPanel from "@/components/PerformerPanel.vue";
 import VideoGrid from "@/components/VideoGrid.vue";
 import { useFormat } from "@/composables/useFormat";
+import { track } from "@/services/analytics";
 import type { Orientation } from "@/services/script-index/queries";
 import {
   ORIENTATIONS,
@@ -1378,6 +1379,87 @@ const orientationBody = computed(() => {
 
 const countLabel = computed(() => format.count("videos", results.value.length));
 
+// --- usage statistics ---
+//
+// What kind of filter is on, never what it is set to: a tag count, not the
+// tags; whether a performer is picked, not who. The search reports its
+// length. Orientation and the paywall gates aren't watched at all. Each is
+// debounced — a slider drag or a run of chip removals is one change of mind —
+// and flushed if the page is left first.
+
+const STATS_DEBOUNCE_MS = 1500;
+let filteredTimer = 0;
+let searchedTimer = 0;
+
+function sendFiltered() {
+  filteredTimer = 0;
+  track("browse_filtered", {
+    sort: sortKey.value,
+    descending: sortDir.value === "desc",
+    tags: tags.value.length,
+    site: Boolean(partnerId.value),
+    performer: Boolean(performerId.value),
+    scripter: Boolean(scripter.value),
+    vr: vr.value,
+    clip: clip.value,
+    published: Boolean(since.value),
+    duration: durationMin.value > 0 || durationMax.value < DURATION_MAX,
+    speed: speedMin.value > 0 || speedMax.value < SPEED_MAX,
+    results: results.value.length
+  });
+}
+
+function sendSearched() {
+  searchedTimer = 0;
+  const length = q.value.trim().length;
+  if (length) {
+    track("search_performed", {
+      queryLength: length,
+      results: results.value.length
+    });
+  }
+}
+
+// the values only decide whether anything changed; they are never sent
+watch(
+  () =>
+    JSON.stringify([
+      tags.value,
+      partnerId.value,
+      performerId.value,
+      scripter.value,
+      sortKey.value,
+      sortDir.value,
+      vr.value,
+      clip.value,
+      since.value,
+      durationMin.value,
+      durationMax.value,
+      speedMin.value,
+      speedMax.value
+    ]),
+  () => {
+    window.clearTimeout(filteredTimer);
+    filteredTimer = window.setTimeout(sendFiltered, STATS_DEBOUNCE_MS);
+  }
+);
+
+watch(q, () => {
+  window.clearTimeout(searchedTimer);
+  searchedTimer = window.setTimeout(sendSearched, STATS_DEBOUNCE_MS);
+});
+
+onBeforeUnmount(() => {
+  if (filteredTimer) {
+    window.clearTimeout(filteredTimer);
+    sendFiltered();
+  }
+  if (searchedTimer) {
+    window.clearTimeout(searchedTimer);
+    sendSearched();
+  }
+});
+
 // --- muted tags sitting in the URL filter ---
 
 // the URL is never silently rewritten: that would rewrite a shared link and
@@ -1432,6 +1514,11 @@ async function shareResults() {
   if (navigator.share) {
     try {
       await navigator.share({ title, url });
+      track("link_shared", {
+        what: "results",
+        method: "share_sheet",
+        outcome: "ok"
+      });
     } catch {
       // user dismissed the sheet — not an error
     }
@@ -1439,12 +1526,22 @@ async function shareResults() {
   }
   try {
     await navigator.clipboard.writeText(url);
+    track("link_shared", {
+      what: "results",
+      method: "clipboard",
+      outcome: "ok"
+    });
     hToast(
       "positive",
       t("browse.share.copiedTitle"),
       t("browse.share.copiedBody")
     );
   } catch {
+    track("link_shared", {
+      what: "results",
+      method: "clipboard",
+      outcome: "failed"
+    });
     hToast("negative", t("browse.share.failedTitle"));
   }
 }

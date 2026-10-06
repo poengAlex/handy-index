@@ -84,17 +84,24 @@ function browserLanguages(): readonly string[] {
  * The browser's preferred UI locale, walked in `navigator.languages` order:
  * an exact tag wins, otherwise the primary subtag decides — "nb-NO", "no-NB"
  * and a bare "no" are all Norwegian, "pt-PT" gets the Brazilian bundle, and
- * "en-GB" is English. Falls back to English when nothing the browser asks for
- * is on offer.
+ * "en-GB" is English. Null when nothing the browser asks for is on offer —
+ * which the usage statistics count, as the next translation worth adding.
  */
-export function detectLocale(
+export function matchLocale(
   preferred: readonly string[] = browserLanguages()
-): Locale {
+): Locale | null {
   for (const tag of preferred) {
     if (isLocale(tag)) return tag;
     const primary = tag.toLowerCase().split("-")[0];
     const match = primary ? PRIMARY_SUBTAGS[primary] : undefined;
     if (match) return match;
   }
-  return DEFAULT_LOCALE;
+  return null;
+}
+
+/** matchLocale, falling back to English. */
+export function detectLocale(
+  preferred: readonly string[] = browserLanguages()
+): Locale {
+  return matchLocale(preferred) ?? DEFAULT_LOCALE;
 }

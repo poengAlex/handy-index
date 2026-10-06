@@ -44,7 +44,7 @@
       item-width="clamp(240px, 72vw, 300px)"
     >
       <template #default="{ item }">
-        <VideoCard :video="item" />
+        <VideoCard :video="item" :shelf="shelf" />
       </template>
     </HPeekCarousel>
   </section>
@@ -73,6 +73,9 @@ withDefaults(
     /** shows a small delete icon after the title carrying this tooltip;
      * pressing it emits `clear` for the parent to confirm and act on */
     clearLabel?: string | undefined;
+    /** the row's id for the usage statistics — which row a video was
+     * opened from (reduced to its kind by shelfKind before it is sent) */
+    shelf?: string;
   }>(),
   {
     title: "",
@@ -80,7 +83,8 @@ withDefaults(
     loading: false,
     to: "",
     hint: "",
-    clearLabel: ""
+    clearLabel: "",
+    shelf: ""
   }
 );
 

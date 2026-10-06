@@ -158,6 +158,11 @@ export const useSettingsStore = defineStore(
      * motion behind a catalog you scroll is a taste that wears out on the
      * second visit — this is opt-in rather than opt-out */
     const backgroundMotion = ref(false);
+    /** anonymous usage statistics. ON by default; switching it off sends one
+     * last event saying so and nothing after (services/analytics). Neither
+     * reset below touches it: a visitor who said no must not be switched
+     * back on by tidying up their data. */
+    const analytics = ref(true);
     const orientation = ref<Orientation>("straight");
     const connectionKey = ref("");
     const favorites = ref<string[]>([]);
@@ -386,6 +391,7 @@ export const useSettingsStore = defineStore(
       backgroundScene,
       backgroundAttach,
       backgroundMotion,
+      analytics,
       orientation,
       connectionKey,
       favorites,
@@ -471,6 +477,9 @@ export const useSettingsStore = defineStore(
         delete legacy.background;
         // motion defaults OFF, so only an explicit true survives hydration
         settings.backgroundMotion = settings.backgroundMotion === true;
+        // statistics default ON, so only an explicit false survives — but
+        // that one always does
+        settings.analytics = settings.analytics !== false;
         // a retired style must not reach the component, which would fall
         // back to its own default and leave the radio matching nothing
         if (!isBackgroundStyle(settings.backgroundScene)) {

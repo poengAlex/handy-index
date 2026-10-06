@@ -66,6 +66,13 @@ const settings: typeof enUS = {
     hint: "Connection key til din Handy. Den brukes når du laster ned scripts."
   },
 
+  analytics: {
+    title: "Personvern",
+    label: "Anonym bruksstatistikk",
+    caption:
+      "Viser oss hva som blir brukt og hva som svikter. Aldri søkene, taggene eller orienteringen din."
+  },
+
   catalog: {
     title: "Katalog",
     label: "Lagret katalog",

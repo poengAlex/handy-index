@@ -44,10 +44,16 @@
 import { nextTick, ref, watch } from "vue";
 import type { QInput } from "quasar";
 import { HBtn, HModal } from "@/components/handy";
+import { noteKeyFromPrompt, track, type KeyReason } from "@/services/analytics";
 import { sanitizeConnectionKey } from "@/services/format";
 import { useSettingsStore } from "@/stores/settings";
 
-const props = defineProps<{ modelValue: boolean }>();
+const props = defineProps<{
+  modelValue: boolean;
+  /** what asked for the key — reported each time the prompt opens, so the
+   * statistics can show how many give up here */
+  reason: KeyReason;
+}>();
 
 const emit = defineEmits<{
   "update:modelValue": [value: boolean];
@@ -61,16 +67,19 @@ const inputRef = ref<QInput>();
 // A key rarely changes, and the dialog also reopens when the API rejects a
 // call — starting empty would make every reopen a full retype. Prefill the
 // saved key and select it, so confirming is one tap and replacing is one
-// keystroke.
+// keystroke. Immediate, because the quick menu mounts this dialog already
+// open.
 watch(
   () => props.modelValue,
   async open => {
     if (!open) return;
+    track("key_prompt_shown", { reason: props.reason });
     keyInput.value = sanitizeConnectionKey(settings.connectionKey);
     if (!keyInput.value) return;
     await nextTick();
     inputRef.value?.select();
-  }
+  },
+  { immediate: true }
 );
 
 // When sanitizing is a no-op on the ref (typed char was stripped back to the
@@ -88,6 +97,7 @@ async function onInput(raw: string) {
 function save() {
   const key = keyInput.value.trim();
   if (!key) return;
+  if (key !== settings.connectionKey.trim()) noteKeyFromPrompt();
   settings.connectionKey = key;
   emit("update:modelValue", false);
   emit("saved");

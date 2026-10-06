@@ -30,7 +30,7 @@ const privacy: typeof enUS = {
   local: {
     title: "Qué se queda en este navegador",
     intro:
-      "No hay cuentas, ni cookies, ni analítica. Todo lo que configuras se guarda únicamente en el almacenamiento local de este navegador:",
+      "No hay cuentas ni cookies. Todo lo que configuras se guarda únicamente en el almacenamiento local de este navegador:",
     item: {
       consent: "tu respuesta al diálogo de consentimiento de la primera visita",
       previews: "la opción de vistas previas explícitas (NSFW)",
@@ -38,15 +38,28 @@ const privacy: typeof enUS = {
       accessFilters: "tus filtros de acceso a scripts y vídeos",
       favorites: "tus favoritos",
       votes: "los votos que has emitido en las solicitudes de vídeo",
-      connectionKey: "tu connection key de Handy"
+      connectionKey: "tu connection key de Handy",
+      statisticsId:
+        "un ID aleatorio para las estadísticas de uso anónimas que se describen más abajo"
     },
     outro:
-      "Abre el sitio en otro dispositivo — o borra los datos de tu navegador — y todo esto desaparece; no hay nada que recuperar de ningún servidor. La contrapartida de no tener analítica es que no vemos los errores cuando ocurren, así que los informes de fallos son doblemente bienvenidos."
+      "Abre el sitio en otro dispositivo — o borra los datos de tu navegador — y todo esto desaparece; no hay nada que recuperar de ningún servidor."
   },
 
   catalog: {
     title: "De dónde sale el catálogo",
-    body: "El catálogo, sus metadatos y los scripts se cargan desde la API del índice de scripts de handyfeeling.com. Cuando descargas un script, envías una solicitud de vídeo o votas una, tu connection key se manda a esa API como autorización — es la única vez que algo que has escrito sale de tu navegador."
+    body: "El catálogo, sus metadatos y los scripts se cargan desde la API del índice de scripts de handyfeeling.com. Cuando descargas un script, envías una solicitud de vídeo o votas una, tu connection key se manda a esa API como autorización. Con las estadísticas de uso activadas, también se manda a la API de Handy para comprobar si tu Handy está conectado — mira más abajo. Son las únicas veces que algo que has escrito sale de tu navegador."
+  },
+
+  statistics: {
+    title: "Estadísticas de uso anónimas",
+    sent: "Para saber qué funciones se usan y dónde falla el sitio, IVDB envía estadísticas de uso anónimas a PostHog, un servicio de analítica que las guarda en servidores de la UE. Lo que se envía: las páginas que abres, incluido qué vídeo (por su ID); lo que haces con los botones del sitio — abrir un vídeo, descargar un script, añadir un favorito y cosas así; tus ajustes y tu idioma; tu navegador y tu tipo de dispositivo; el país desde el que te conectas; y un informe de error cuando algo falla.",
+    never:
+      "Lo que nunca se envía: tu filtro de orientación, nombres de etiquetas o de intérpretes, lo que buscas, títulos de vídeos, tus comentarios ni los filtros de la dirección web. Tu pantalla nunca se graba y tu dirección IP no se almacena.",
+    device:
+      "Si has guardado una connection key y tu Handy está conectado, las estadísticas se vinculan a un ID creado a partir de esa clave — sus tres primeros caracteres y un hash de la clave entera —, junto con el modelo y la versión de firmware de tu Handy. Así contamos dispositivos en lugar de navegadores. La clave en sí nunca se envía a PostHog.",
+    choice:
+      "Las estadísticas están activadas por defecto. Puedes desactivarlas cuando quieras en los ajustes; el sitio envía entonces un último mensaje que lo indica, y nada más después. Borrar todos los datos guardados también empieza un ID aleatorio nuevo."
   },
 
   thirdParty: {
@@ -61,7 +74,7 @@ const privacy: typeof enUS = {
 
   choices: {
     title: "Cambiar lo que has elegido",
-    body: "Nada de lo que has elegido en el diálogo de la primera visita es definitivo. Las vistas previas explícitas, la orientación y los filtros de acceso a scripts y vídeos se pueden cambiar cuando quieras desde el diálogo de ajustes de la barra superior."
+    body: "Nada de lo que has elegido en el diálogo de la primera visita es definitivo. Las vistas previas explícitas, la orientación, los filtros de acceso a scripts y vídeos y las estadísticas de uso se pueden cambiar cuando quieras desde el diálogo de ajustes de la barra superior."
   },
 
   contact: {

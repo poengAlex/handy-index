@@ -30,7 +30,7 @@ const privacy: typeof enUS = {
   local: {
     title: "Ce qui reste dans ce navigateur",
     intro:
-      "Il n'y a ni comptes, ni cookies, ni outils de mesure d'audience. Tout ce que tu règles est stocké uniquement dans le stockage local de ce navigateur :",
+      "Il n'y a ni comptes ni cookies. Tout ce que tu règles est stocké uniquement dans le stockage local de ce navigateur :",
     item: {
       consent: "ta réponse à la fenêtre de consentement de la première visite",
       previews: "le réglage des aperçus explicites (NSFW)",
@@ -38,15 +38,28 @@ const privacy: typeof enUS = {
       accessFilters: "tes filtres d'accès aux scripts et aux vidéos",
       favorites: "tes favoris",
       votes: "les votes que tu as exprimés sur des demandes de vidéos",
-      connectionKey: "ta connection key Handy"
+      connectionKey: "ta connection key Handy",
+      statisticsId:
+        "un identifiant aléatoire pour les statistiques d'utilisation anonymes décrites plus bas"
     },
     outro:
-      "Ouvre le site sur un autre appareil — ou efface les données de ton navigateur — et tout cela disparaît ; il n'y a rien à récupérer sur un serveur. La contrepartie de l'absence de mesure d'audience, c'est que nous ne voyons pas les erreurs se produire : les rapports de bugs sont donc particulièrement bienvenus."
+      "Ouvre le site sur un autre appareil — ou efface les données de ton navigateur — et tout cela disparaît ; il n'y a rien à récupérer sur un serveur."
   },
 
   catalog: {
     title: "D'où vient le catalogue",
-    body: "Le catalogue, ses métadonnées et les scripts sont chargés depuis l'API de l'index des scripts de handyfeeling.com. Lorsque tu télécharges un script, soumets une demande de vidéo ou votes pour l'une d'elles, ta connection key est envoyée à cette API comme autorisation — c'est le seul moment où quelque chose que tu as saisi quitte ton navigateur."
+    body: "Le catalogue, ses métadonnées et les scripts sont chargés depuis l'API de l'index des scripts de handyfeeling.com. Lorsque tu télécharges un script, soumets une demande de vidéo ou votes pour l'une d'elles, ta connection key est envoyée à cette API comme autorisation. Quand les statistiques d'utilisation sont activées, elle est aussi envoyée à l'API Handy pour vérifier si ton Handy est en ligne — voir plus bas. Ce sont les seuls moments où quelque chose que tu as saisi quitte ton navigateur."
+  },
+
+  statistics: {
+    title: "Statistiques d'utilisation anonymes",
+    sent: "Pour savoir quelles fonctions sont utilisées et où le site plante, IVDB envoie des statistiques d'utilisation anonymes à PostHog, un service de mesure d'audience qui les stocke sur des serveurs dans l'UE. Ce qui est envoyé : les pages que tu ouvres, y compris quelle vidéo (par son identifiant) ; ce que tu fais avec les boutons du site — ouvrir une vidéo, récupérer un script, ajouter un favori, ce genre de choses ; tes réglages et ta langue ; ton navigateur et ton type d'appareil ; le pays d'où vient ta connexion ; et un rapport d'erreur quand quelque chose plante.",
+    never:
+      "Ce qui n'est jamais envoyé : ton filtre d'orientation, les noms d'étiquettes ou d'acteurs, ce que tu recherches, les titres des vidéos, tes commentaires, ni les filtres de l'adresse web. Ton écran n'est jamais enregistré, et ton adresse IP n'est pas conservée.",
+    device:
+      "Si tu as enregistré une connection key et que ton Handy est en ligne, les statistiques sont rattachées à un identifiant tiré de cette clé — ses trois premiers caractères et un hash de la clé entière —, avec le modèle et la version du firmware de ton Handy. Cela nous permet de compter des appareils plutôt que des navigateurs. La clé elle-même n'est jamais envoyée à PostHog.",
+    choice:
+      "Les statistiques sont activées par défaut. Tu peux les désactiver à tout moment dans les paramètres ; le site envoie alors un dernier message pour le signaler, et plus rien ensuite. Effacer toutes les données stockées démarre aussi un nouvel identifiant aléatoire."
   },
 
   thirdParty: {
@@ -61,7 +74,7 @@ const privacy: typeof enUS = {
 
   choices: {
     title: "Modifier tes choix",
-    body: "Rien de ce que tu as choisi dans la fenêtre de première visite n'est définitif. Les aperçus explicites, l'orientation et les filtres d'accès aux scripts et aux vidéos peuvent être modifiés à tout moment depuis la fenêtre des paramètres, dans la barre du haut."
+    body: "Rien de ce que tu as choisi dans la fenêtre de première visite n'est définitif. Les aperçus explicites, l'orientation, les filtres d'accès aux scripts et aux vidéos et les statistiques d'utilisation peuvent être modifiés à tout moment depuis la fenêtre des paramètres, dans la barre du haut."
   },
 
   contact: {

@@ -47,11 +47,18 @@
         <li>{{ $t("privacy.local.item.favorites") }}</li>
         <li>{{ $t("privacy.local.item.votes") }}</li>
         <li>{{ $t("privacy.local.item.connectionKey") }}</li>
+        <li>{{ $t("privacy.local.item.statisticsId") }}</li>
       </ul>
       <p class="text-body">{{ $t("privacy.local.outro") }}</p>
 
       <h2 :class="headingClass">{{ $t("privacy.catalog.title") }}</h2>
       <p class="text-body">{{ $t("privacy.catalog.body") }}</p>
+
+      <h2 :class="headingClass">{{ $t("privacy.statistics.title") }}</h2>
+      <p class="text-body">{{ $t("privacy.statistics.sent") }}</p>
+      <p class="text-body">{{ $t("privacy.statistics.never") }}</p>
+      <p class="text-body">{{ $t("privacy.statistics.device") }}</p>
+      <p class="text-body">{{ $t("privacy.statistics.choice") }}</p>
 
       <h2 :class="headingClass">{{ $t("privacy.thirdParty.title") }}</h2>
       <p class="text-body">{{ $t("privacy.thirdParty.body") }}</p>

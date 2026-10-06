@@ -67,6 +67,13 @@ const settings: typeof enUS = {
     hint: "你的 Handy connection key，下载 scripts 时使用。"
   },
 
+  analytics: {
+    title: "隐私",
+    label: "匿名使用统计",
+    caption:
+      "帮助我们了解哪些功能被使用、哪里出错。绝不包含你的搜索、标签或取向。"
+  },
+
   catalog: {
     title: "目录",
     label: "已保存的目录",

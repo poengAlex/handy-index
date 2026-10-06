@@ -144,6 +144,15 @@
           </div>
         </div>
 
+        <HList :title="$t('settings.analytics.title')">
+          <HToggleRow
+            v-model="settings.analytics"
+            icon="policy"
+            :label="$t('settings.analytics.label')"
+            :caption="$t('settings.analytics.caption')"
+          />
+        </HList>
+
         <HList :title="$t('settings.backgroundSceneTitle')">
           <HRadioRow
             v-for="option in BACKGROUND_STYLES"

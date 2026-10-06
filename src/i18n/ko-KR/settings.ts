@@ -71,6 +71,13 @@ const settings: typeof enUS = {
     hint: "Script를 다운로드할 때 쓰는 Handy connection key 값이에요."
   },
 
+  analytics: {
+    title: "개인정보",
+    label: "익명 사용 통계",
+    caption:
+      "어떤 기능이 쓰이고 어디서 오류가 나는지 알려 줘요. 검색어, 태그, 성향은 절대 보내지 않아요."
+  },
+
   catalog: {
     title: "카탈로그",
     label: "저장된 카탈로그",

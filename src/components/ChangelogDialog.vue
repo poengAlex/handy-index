@@ -80,6 +80,7 @@
 import { ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { HBtn, HEmptyState, HModal, HandyLoader } from "@/components/handy";
+import { track } from "@/services/analytics";
 import { type ChangelogRelease, fetchChangelog } from "@/services/changelog";
 
 const props = defineProps<{ modelValue: boolean }>();
@@ -106,6 +107,7 @@ async function load() {
 watch(
   () => props.modelValue,
   open => {
+    if (open) track("changelog_opened");
     if (open && status.value !== "ready" && status.value !== "loading") {
       void load();
     }

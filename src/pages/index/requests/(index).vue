@@ -161,7 +161,11 @@
       </div>
     </div>
 
-    <ConnectionKeyDialog v-model="keyDialog" @saved="loadUnlessReady">
+    <ConnectionKeyDialog
+      v-model="keyDialog"
+      reason="requests"
+      @saved="loadUnlessReady"
+    >
       {{ $t("requests.key.boardDialog") }}
     </ConnectionKeyDialog>
   </q-page>
@@ -186,6 +190,7 @@ import {
   isAuthError,
   voteForRequest
 } from "@/services/script-index/client";
+import { track } from "@/services/analytics";
 import { rankByVotes, votesOf } from "@/services/script-index/requests";
 import type { VideoRequest } from "@/services/script-index/types";
 import { useSettingsStore } from "@/stores/settings";
@@ -269,12 +274,14 @@ async function vote(request: VideoRequest) {
   if (settings.hasUpvoted(request.requestId) || votingId.value) return;
   const key = settings.connectionKey.trim();
   if (!key) {
+    track("request_voted", { outcome: "no_key" });
     keyDialog.value = true;
     return;
   }
   votingId.value = request.requestId;
   try {
     await voteForRequest(request.requestId, key);
+    track("request_voted", { outcome: "ok" });
     settings.markUpvoted(request.requestId);
     request.votes = (request.votes ?? 0) + 1;
     hToast(
@@ -284,6 +291,7 @@ async function vote(request: VideoRequest) {
     );
   } catch (error) {
     if (isAuthError(error)) {
+      track("request_voted", { outcome: "key_rejected" });
       keyDialog.value = true;
       hToast(
         "negative",
@@ -291,6 +299,7 @@ async function vote(request: VideoRequest) {
         t("requests.vote.failedKeyBody")
       );
     } else {
+      track("request_voted", { outcome: "failed" });
       hToast(
         "negative",
         t("requests.vote.failedTitle"),
@@ -306,19 +315,24 @@ async function submit() {
   if (!validUrl.value || submitting.value) return;
   const key = settings.connectionKey.trim();
   if (!key) {
+    track("request_submitted", { outcome: "no_key" });
     keyDialog.value = true;
     return;
   }
   submitting.value = true;
   try {
     await createVideoRequest(url.value.trim(), key);
+    track("request_submitted", { outcome: "ok" });
     url.value = "";
     hToast(
       "positive",
       t("requests.submit.sentTitle"),
       t("requests.submit.sentBody")
     );
-  } catch {
+  } catch (error) {
+    track("request_submitted", {
+      outcome: isAuthError(error) ? "key_rejected" : "failed"
+    });
     hToast(
       "negative",
       t("requests.submit.failedTitle"),

@@ -416,13 +416,18 @@
       </section>
 
       <div v-if="related.length" class="video-page__more">
-        <CarouselRow :title="$t('video.more.related')" :videos="related" />
+        <CarouselRow
+          :title="$t('video.more.related')"
+          :videos="related"
+          shelf="related"
+        />
       </div>
 
       <div v-if="moreFromPartner.length" class="video-page__more">
         <CarouselRow
           :title="partnerRowTitle"
           :videos="moreFromPartner"
+          shelf="more_from_site"
           :to="`/videos?partnerId=${encodeURIComponent(video.partnerId)}`"
         />
       </div>
@@ -491,12 +496,20 @@
     </q-dialog>
 
     <!-- Connection key prompt for the script download -->
-    <ConnectionKeyDialog v-model="keyDialog" @saved="getScript">
+    <ConnectionKeyDialog
+      v-model="keyDialog"
+      reason="script_download"
+      @saved="getScript"
+    >
       {{ $t("video.keyPrompt.script") }}
     </ConnectionKeyDialog>
 
     <!-- Connection key prompt for rating and comments -->
-    <ConnectionKeyDialog v-model="actionKeyDialog" @saved="runPendingAction">
+    <ConnectionKeyDialog
+      v-model="actionKeyDialog"
+      :reason="actionKeyReason"
+      @saved="runPendingAction"
+    >
       {{ $t("video.keyPrompt.action") }}
     </ConnectionKeyDialog>
 
@@ -539,6 +552,12 @@ import {
   postScriptComment,
   rateScript
 } from "@/services/script-index/client";
+import {
+  type Outcome,
+  sourceFromPath,
+  takeVideoShelf,
+  track
+} from "@/services/analytics";
 import { scriptHeat } from "@/services/script-heat";
 import {
   artworkOf,
@@ -578,6 +597,8 @@ const playlistDialog = ref(false);
 
 // key prompt shared by rating + comments; resumes the interrupted action
 const actionKeyDialog = ref(false);
+/** which of the two the key prompt above is for — the statistics' reason */
+const actionKeyReason = ref<"rating" | "comments">("rating");
 const pendingAction = ref<(() => void) | null>(null);
 
 const ratingBusy = ref(false);
@@ -1014,6 +1035,18 @@ async function load(id: string) {
     }
   }
   settings.recordView(id);
+  const opened = video.value;
+  if (opened) {
+    track("video_opened", {
+      partnerVideoId: id,
+      partnerId: opened.partnerId ?? null,
+      vr: opened.format?.format === "vr",
+      freeScript: opened.scriptAccess === "public",
+      // the router's own record of the page before this one in the tab
+      source: sourceFromPath(router.options.history.state.back as string),
+      shelf: takeVideoShelf(id)
+    });
+  }
   try {
     const list = await getVideoScripts(id);
     if (videoId.value !== id) return;
@@ -1044,8 +1077,22 @@ watch(
 
 function openOnSite() {
   if (video.value?.videoUrl) {
+    track("partner_outbound_click", {
+      surface: "video_page",
+      partnerVideoId: video.value.partnerVideoId,
+      partnerId: video.value.partnerId ?? null
+    });
     window.open(video.value.videoUrl, "_blank", "noopener");
   }
+}
+
+function trackDownload(current: PartnerVideo, outcome: Outcome) {
+  track("script_download", {
+    surface: "video_page",
+    outcome,
+    partnerVideoId: current.partnerVideoId,
+    partnerId: current.partnerId ?? null
+  });
 }
 
 async function getScript() {
@@ -1053,6 +1100,7 @@ async function getScript() {
   if (!current) return;
   const key = settings.connectionKey.trim();
   if (!key) {
+    trackDownload(current, "no_key");
     keyDialog.value = true;
     return;
   }
@@ -1076,12 +1124,14 @@ async function getScript() {
     } else {
       window.open(token.url, "_blank", "noopener");
     }
+    trackDownload(current, "ok");
     hToast(
       "positive",
       t("video.script.readyTitle"),
       t("video.script.readyBody")
     );
-  } catch {
+  } catch (error) {
+    trackDownload(current, isAuthError(error) ? "key_rejected" : "failed");
     scriptWindow?.close();
     hToast(
       "negative",
@@ -1124,6 +1174,11 @@ async function share() {
   if (navigator.share) {
     try {
       await navigator.share({ title: video.value?.title ?? "IVDB", url });
+      track("link_shared", {
+        what: "video",
+        method: "share_sheet",
+        outcome: "ok"
+      });
     } catch {
       // user dismissed the sheet — not an error
     }
@@ -1131,8 +1186,14 @@ async function share() {
   }
   try {
     await navigator.clipboard.writeText(url);
+    track("link_shared", { what: "video", method: "clipboard", outcome: "ok" });
     hToast("positive", t("video.share.copiedTitle"));
   } catch {
+    track("link_shared", {
+      what: "video",
+      method: "clipboard",
+      outcome: "failed"
+    });
     hToast("negative", t("video.share.errorTitle"));
   }
 }
@@ -1176,6 +1237,7 @@ function runPendingAction() {
  * user abandoned at the key prompt from firing on this unrelated save. */
 function openKeyDialogForComments() {
   pendingAction.value = null;
+  actionKeyReason.value = "comments";
   actionKeyDialog.value = true;
 }
 
@@ -1192,7 +1254,9 @@ async function rate(stars: number) {
   if (!current || !script || stars < 1) return;
   const key = settings.connectionKey.trim();
   if (!key) {
+    track("script_rated", { stars, outcome: "no_key" });
     pendingAction.value = () => void rate(stars);
+    actionKeyReason.value = "rating";
     actionKeyDialog.value = true;
     return;
   }
@@ -1200,12 +1264,16 @@ async function rate(stars: number) {
   try {
     await rateScript(current.partnerVideoId, script.scriptId, stars * 20, key);
     settings.setScriptVote(script.scriptId, stars);
+    track("script_rated", { stars, outcome: "ok" });
     hToast("positive", t("video.rate.thanks"));
   } catch (error) {
     if (isAuthError(error)) {
+      track("script_rated", { stars, outcome: "key_rejected" });
       pendingAction.value = () => void rate(stars);
+      actionKeyReason.value = "rating";
       actionKeyDialog.value = true;
     } else {
+      track("script_rated", { stars, outcome: "failed" });
       hToast("negative", t("video.rate.errorTitle"));
     }
   } finally {
@@ -1251,7 +1319,9 @@ async function submitComment() {
   if (!current || !script || !message || postingComment.value) return;
   const key = settings.connectionKey.trim();
   if (!key) {
+    track("comment_posted", { outcome: "no_key" });
     pendingAction.value = () => void submitComment();
+    actionKeyReason.value = "comments";
     actionKeyDialog.value = true;
     return;
   }
@@ -1263,6 +1333,7 @@ async function submitComment() {
       message,
       key
     );
+    track("comment_posted", { outcome: "ok" });
     // not appended locally — new comments start unpublished
     commentDraft.value = "";
     hToast(
@@ -1272,9 +1343,12 @@ async function submitComment() {
     );
   } catch (error) {
     if (isAuthError(error)) {
+      track("comment_posted", { outcome: "key_rejected" });
       pendingAction.value = () => void submitComment();
+      actionKeyReason.value = "comments";
       actionKeyDialog.value = true;
     } else {
+      track("comment_posted", { outcome: "failed" });
       hToast("negative", t("video.comments.postErrorTitle"));
     }
   } finally {

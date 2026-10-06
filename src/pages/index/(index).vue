@@ -41,6 +41,7 @@
             :label="$t('home.hero.cta')"
             arrow
             :to="`/videos/${featured.partnerVideoId}`"
+            @click="noteVideoShelf(featured.partnerVideoId, 'hero')"
           />
         </div>
       </MediaHero>
@@ -112,6 +113,7 @@
             :to="row.to"
             :hint="row.hint"
             :clear-label="row.clearLabel"
+            :shelf="row.key"
             @clear="clearHistoryOpen = true"
           />
           <div v-if="!rowsDone" ref="rowSentinel" class="home-rows__sentinel" />
@@ -182,6 +184,7 @@ import {
   vrOnly,
   withThumbnail
 } from "@/services/script-index/queries";
+import { noteVideoShelf } from "@/services/analytics";
 import type { PartnerVideo } from "@/services/script-index/types";
 import { useCatalogStore } from "@/stores/catalog";
 import { useSettingsStore } from "@/stores/settings";
