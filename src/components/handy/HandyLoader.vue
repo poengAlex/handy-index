@@ -30,7 +30,7 @@
 // asset extracted from handy-playground/public/brand. Hero moments only:
 // full-page route loads and splash screens. Color follows
 // --color-text-primary per the brand playground's .loader-handy.
-import { kitLabel } from "@/components/handy/labels";
+import { kitLabel } from "./labels";
 
 withDefaults(defineProps<{ size?: number }>(), { size: 48 });
 </script>

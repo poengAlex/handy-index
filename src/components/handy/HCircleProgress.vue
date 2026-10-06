@@ -27,14 +27,12 @@
 // progress with a caption + color. §9's determinate counterpart to the spinner.
 // Strokes bind to CSS tokens so they re-theme in dark mode.
 //
-// The ring animates as it FILLS and never as it empties. Quasar transitions
-// stroke-dashoffset in both directions, so a meter reset to 0 unwinds
-// backwards for the length of the animation before it starts again — which
-// reads as "something just finished and is being undone", the opposite of
-// "starting". The same transition on the very first paint sweeps the ring in
-// from empty before the page has settled. Both are suppressed here rather
-// than in the pages, because every caller would otherwise have to know.
-import { computed, onMounted, ref, watch } from "vue";
+// The ring animates as it FILLS and never as it empties — useForwardProgress
+// owns that rule (and the first paint) for every determinate meter in the
+// kit. It is suppressed here rather than in the pages, because every caller
+// would otherwise have to know.
+import { computed } from "vue";
+import { useForwardProgress } from "./useForwardProgress";
 
 const props = withDefaults(
   defineProps<{
@@ -53,48 +51,9 @@ const props = withDefaults(
   { size: 96, stroke: 0, caption: "", display: "", color: "" }
 );
 
-// Quasar's transition is off while this is true. It starts true so the first
-// paint lands at its value, and goes off again for one PAINTED frame whenever
-// the value drops — a decrease is a reset or a re-measure, not a thing to
-// watch unwind.
-const instant = ref(true);
-
-onMounted(() => {
-  instant.value = false;
-});
-
-/**
- * Restore the transition only after the browser has actually drawn a frame
- * without it.
- *
- * nextTick is not enough, and this is the whole trick: it runs before paint,
- * so the transition would be removed and put back inside a single frame — the
- * compositor never sees it go, and animates the drop anyway. Two rAFs is the
- * shortest wait that guarantees one composited frame in between.
- */
-function restoreAfterPaint() {
-  if (typeof requestAnimationFrame !== "function") {
-    instant.value = false;
-    return;
-  }
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-      instant.value = false;
-    });
-  });
-}
-
-// `flush: "pre"` (the default) matters here too — the watcher has to set the
-// flag BEFORE this component re-renders, or the render that carries the new
-// value still carries the transition with it.
-watch(
-  () => props.value,
-  (next, previous) => {
-    if (next >= previous) return;
-    instant.value = true;
-    restoreAfterPaint();
-  }
-);
+// Bound to Quasar's `instant-feedback`: no transition while true, so the
+// first paint and every decrease land instantly instead of unwinding.
+const { instant } = useForwardProgress(() => props.value);
 
 const thickness = computed(
   () => props.stroke || Math.max(3, Math.round(props.size * 0.085))

@@ -1,0 +1,255 @@
+// Part of the kit's global CSS — loaded through kit.scss, never on its own.
+// Quasar component re-skins.
+
+// ------------------------------------------------------------
+// Quasar re-skins  [DESIGN.md §7]
+// ------------------------------------------------------------
+
+// Buttons — sentence case, pill, tight tracking
+.q-btn {
+  text-transform: none;
+  letter-spacing: -0.14px;
+  font-weight: 500;
+
+  // icon-to-label gap is --space-xs per §5; Quasar ships 6px
+  .on-left {
+    margin-right: var(--space-xs);
+  }
+
+  .on-right {
+    margin-left: var(--space-xs);
+  }
+}
+
+// Secondary (outlined) — MD2 default border is thicker
+.q-btn--outline:before {
+  border-width: 1px;
+}
+
+// Form fields — 8px radius all corners, full 2px focus border
+.q-field--filled,
+.q-field--outlined {
+  .q-field__control {
+    border-radius: var(--radius-xs);
+    background: var(--color-bg-input);
+  }
+}
+
+.q-field--filled {
+  .q-field__control {
+    box-shadow: inset 0 0 0 1px var(--color-stroke-subtle);
+    transition: box-shadow 180ms ease;
+
+    &:before,
+    &:after {
+      display: none; // kill MD2's bottom-border-grows pattern
+    }
+  }
+
+  &.q-field--focused .q-field__control {
+    box-shadow: inset 0 0 0 2px var(--color-stroke-focus);
+  }
+
+  &.q-field--error .q-field__control {
+    box-shadow: inset 0 0 0 2px var(--color-stroke-error);
+  }
+}
+
+// Quasar paints the focused floating label with $primary in both themes —
+// on dark that's Brand Blue as text (forbidden, changes.md Color). The link
+// token resolves to the same hex as --color-stroke-focus per theme, so the
+// label and the 2px focus border always match. Error keeps Quasar's negative.
+.q-field--focused:not(.q-field--error) .q-field__label {
+  color: var(--color-text-link);
+}
+
+.q-field--disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+// Number inputs — hide native spin buttons; steppers and inline ±
+// buttons provide the affordance
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+}
+
+// Cards — 20px radius is set via $generic-border-radius; keep them flat
+.q-card {
+  background: var(--color-bg-card);
+  color: var(--color-text-primary);
+}
+
+// Tabs — active underline, brand blue [§7]
+.q-tab {
+  text-transform: none;
+  letter-spacing: -0.14px;
+}
+
+// Brand Blue as *text* is forbidden on dark surfaces (changes.md, Color):
+// active tab labels lighten to the link token. The 2px underline is a
+// non-text accent and stays Brand Blue.
+[data-theme="dark"] .q-tab.text-primary,
+.section-dark .q-tab.text-primary {
+  color: var(--color-text-link) !important;
+}
+
+.q-tabs .q-tab__indicator {
+  height: 2px;
+  transition: transform 180ms ease;
+}
+
+// Active tab is bold; resting tabs stay regular weight. With the Brand Blue
+// label + 2px underline, weight is the third signal that sets active apart.
+.q-tab .q-tab__label {
+  font-weight: 400;
+}
+
+.q-tab--active .q-tab__label {
+  font-weight: 700;
+}
+
+// Chips
+.q-chip {
+  border-radius: var(--radius-full);
+}
+
+// $generic-border-radius is 20px for cards/dialogs (§5), but Quasar also
+// feeds it to small components where 20px breaks geometry. Scope them back:
+// slider/range value balloon — 20px on a 25px-tall bubble curves away the
+// flat bottom edge its arrow docks against.
+.q-slider__text-container {
+  border-radius: var(--radius-xs);
+}
+
+// --h-slider-gap, the surface colour of the handle's gap, is declared per
+// scope in _tokens.scss.
+
+// Mobile drag fix. Quasar's slider (use-slider.js) binds TouchPan with
+// `prevent: true` and relies on preventDefault-ing the FIRST touchmove to
+// win the gesture — but ships no touch-action, so the browser usually
+// claims the swipe for page scroll before the slider ever sees it (desktop
+// is unaffected: mousedown has no such race). Declare the intent up front:
+// keep the page-scroll axis native, hand the slider's own axis to the drag
+// handler. Editable only — disabled/readonly sliders shouldn't eat swipes.
+// QRange carries the same q-slider--h/--v classes, so ranges are covered.
+.q-slider--h.q-slider--editable {
+  touch-action: pan-y;
+}
+
+.q-slider--v.q-slider--editable {
+  touch-action: pan-x;
+}
+
+// long-pressing a slider on iOS otherwise starts text selection on the
+// value balloon / marker labels mid-drag
+.q-slider--editable {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.q-slider__thumb-shape {
+  stroke-width: 0;
+
+  path {
+    fill: currentColor;
+    // 6-unit stroke, half under the fill → a 3-unit (≈6px at the 40px
+    // thumb) surface-colored gap either side of the bar
+    stroke: var(--h-slider-gap);
+    stroke-width: 6;
+    paint-order: stroke;
+    transform-box: fill-box;
+    transform-origin: center;
+    transition: transform 120ms ease;
+  }
+}
+
+// M3 press state: the handle bar slims while dragging — thickness only,
+// never its length. scaleX fits every vertical bar; sliders whose bar is
+// horizontal (the vertical fat variant) override the axis to scaleY.
+.q-slider--active .q-slider__thumb-shape path {
+  transform: scaleX(0.55);
+}
+
+// Range: slim ONLY the touched handle. Quasar suppresses the focus class
+// during a pointer drag (`preventFocus`), so we can't key on it — instead
+// it puts an inline `z-index: 2` on the dragged thumb. The other knob has
+// no z-index, so restore its resting width.
+.q-range.q-slider--active
+  .q-slider__thumb:not([style*="z-index"])
+  .q-slider__thumb-shape
+  path {
+  transform: none;
+}
+
+// Quasar scales the whole thumb svg 1.5× while dragging — and hides it
+// entirely (scale 0) on labeled sliders. M3 does neither: pin the svg
+// and let the path-level slim above be the only press response.
+.q-slider--active .q-slider__thumb-shape,
+.q-slider--active.q-slider--label .q-slider__thumb-shape {
+  transform: scale(1) !important;
+}
+
+// No hover halo. Quasar's M2 focus-ring is a thumb-sized circle scaled
+// 1.55× on hover/focus — at the 40px thumb (72px fat) it spills far past
+// the 16px track and its card: clipped arcs where a parent clips, and a
+// stray horizontal scrollbar at the track ends (transformed overflow still
+// counts as scrollable). M3 sliders have no halo — hover feedback is the
+// cursor; keyboard focus gets the press treatment below.
+.q-slider__focus-ring {
+  display: none;
+}
+
+// Keyboard focus reuses the M3 press response (the spec gives focused and
+// pressed handles the same slimmed bar). Pointer use never sets --focus
+// (Quasar blurs on pan), so this only shows for keyboard users. The
+// vertical fat variant re-axes it to scaleY in HFatSlider, same as its
+// press rule.
+.q-slider--focus .q-slider__thumb-shape path {
+  transform: scaleX(0.55);
+}
+
+// M3: the active fill is flat-cut (2px) where it meets the handle; only
+// its outer end keeps the pill radius. The handle's surface-colored gap
+// masks the flat corners near the track's rounded caps. Vertical sliders
+// are always used `reverse` (fill from the bottom → flat edge on top).
+// outer corners use the track's own radius ($generic-border-radius, 20px)
+// — anything rounder under-shoots the cap and lets the track peek out
+// around the fill at the end
+.q-slider__track-container--h .q-slider__selection {
+  border-radius: var(--radius-lg) 2px 2px var(--radius-lg);
+}
+
+.q-slider__track-container--v .q-slider__selection {
+  border-radius: 2px 2px var(--radius-lg) var(--radius-lg);
+}
+
+// ranges: both fill edges meet a handle
+.q-range .q-slider__selection {
+  border-radius: 2px;
+}
+
+// Dropdowns are --radius-md (16px) per §7, not the 20px card radius
+.q-menu {
+  border-radius: var(--radius-md);
+}
+
+// Dialogs — overlay token + 4px blur (overrides design.md v2's no-blur rule)
+.q-dialog__backdrop {
+  background: var(--color-bg-overlay);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+// Notify toasts — card bg, semantic border-left accent [§7]
+.q-notification {
+  border-radius: var(--radius-md);
+  font-family: var(--font-brand);
+}

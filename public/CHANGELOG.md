@@ -5,6 +5,13 @@
      words. Newest release on top. Format: "## <version> — <date>", then
      "### <group>" headings and "- " lines. Keep it English-only. -->
 
+## 2.9.5 — 6 October 2026
+
+### Speed
+
+- The site has about a third less code to download before it can start, so
+  it opens a little sooner, especially on a phone.
+
 ## 2.9.4 — 6 October 2026
 
 ### Browsing

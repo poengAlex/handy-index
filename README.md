@@ -16,8 +16,9 @@ system (`design.md` in the brand-ux project) and its component kit.
   exposes `visible` (orientation + premium gate applied).
 - `src/stores/settings.ts` — persisted preferences (consent, NSFW, premium,
   orientation, connection key, favorite ids).
-- `src/components/handy/` — the Handy design-system kit, copied verbatim from
-  the brand-ux project. Don't fork it; re-copy when the kit evolves.
+- `src/components/handy/` — the Handy design-system kit, a read-only copy of
+  brand-ux's. Don't fork it; sync it with `npm run kit -- status|pull|upstream`
+  (the handy-kit skill has the flow, `handy-kit.lock.json` the commit).
 - `src/components/` — app components (VideoCard, CarouselRow, dialogs).
 - `src/pages/` — filename-based routing: `index.vue` is the shell (nav bar,
   consent + settings dialogs), `index/(index).vue` the Apple-TV-style

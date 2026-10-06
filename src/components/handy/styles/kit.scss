@@ -1,0 +1,25 @@
+// ============================================================
+// The Handy kit — global styles
+// Implements DESIGN.md: tokens (§3), typography (§4), spacing
+// & radius (§5), elevation (§6), component re-skins (§7),
+// motion (§9), accessibility (§11).
+//
+// A host loads this once, at the top of its global stylesheet
+// (src/css/app.scss):
+//
+//   @use "../components/handy/styles/kit";
+//
+// and puts its own rules below it. It is plain CSS: custom properties and
+// selectors only, nothing read from quasar.variables.scss (Quasar injects
+// that separately). The partials are listed in source order, and specificity
+// ties are decided by source order, so keep them in this order.
+// ============================================================
+
+@use "@fontsource-variable/figtree";
+@use "tokens";
+@use "base";
+@use "typography";
+@use "toast";
+@use "layout";
+@use "quasar";
+@use "motion";

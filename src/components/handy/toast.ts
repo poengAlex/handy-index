@@ -1,7 +1,7 @@
 // Semantic toast + plain notify [DESIGN.md Part 5 §6] — the one place
 // toast styling knobs live. Renders on the card surface with a semantic
-// left accent via the global .h-toast classes (app.scss; global because
-// q-notify portals out of any scoped style). Errors hold 8s, others 5s.
+// left accent via the global .h-toast classes (styles/_toast.scss; global
+// because q-notify portals out of any scoped style). Errors hold 8s, others 5s.
 // Position is responsive: bottom below md, top-right on md and larger.
 // Requires Quasar's Notify plugin (registered in quasar.config.ts).
 import type { QNotifyCreateOptions } from "quasar";
@@ -56,7 +56,7 @@ function fromDismissButton(ev: MouseEvent): boolean {
 // `Notify.create` returns its own dismiss fn and `attrs` are v-bound onto
 // the notification element, so a native onClick there closes the toast; the
 // cursor affordance rides along via the .h-toast--dismissable class
-// (app.scss).
+// (styles/_toast.scss).
 function notify(options: QNotifyCreateOptions, onClick?: () => void): void {
   const classes = [options.classes, "h-toast--dismissable"]
     .filter(Boolean)

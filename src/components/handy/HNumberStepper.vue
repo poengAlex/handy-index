@@ -76,8 +76,8 @@
 // absurd. The mask, the commit-on-blur and the step lattice all match
 // HLabeledSlider's click-to-type, so the two controls behave alike.
 import { computed, nextTick, onBeforeUnmount, ref, useTemplateRef } from "vue";
-import HTabularNum from "@/components/handy/HTabularNum.vue";
-import { kitLabelFor } from "@/components/handy/labels";
+import HTabularNum from "./HTabularNum.vue";
+import { kitLabelFor } from "./labels";
 
 const props = withDefaults(
   defineProps<{

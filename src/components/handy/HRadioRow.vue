@@ -26,8 +26,8 @@
 // the radio wiring baked in: the whole row selects, the control leads, and
 // `recommended` rides a quiet pill next to the label. Group the options in
 // one HList — picking a boot mode is one choice, so it's one card (§6).
-import HListRow from "@/components/handy/HListRow.vue";
-import { kitLabel } from "@/components/handy/labels";
+import HListRow from "./HListRow.vue";
+import { kitLabel } from "./labels";
 
 withDefaults(
   defineProps<{

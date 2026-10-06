@@ -111,19 +111,31 @@
         </slot>
       </span>
     </div>
-    <q-range
+    <!-- the wrapper is where the band's press is caught, before Quasar sees
+         it (see "the band drags, on a hold" below) -->
+    <div
       v-if="isRange"
-      :model-value="modelValue as HLabeledSliderRange"
-      :min="min"
-      :max="max"
-      :step="step"
-      :disable="disable"
-      :drag-range="dragRange"
-      color="primary"
-      @update:model-value="emit('update:modelValue', $event)"
-      @change="emit('change', $event)"
-      @pan="phase => emit('pan', phase)"
-    />
+      ref="rangeEl"
+      class="h-lslider__range"
+      :class="{
+        'h-lslider__range--live': press !== null,
+        'h-lslider__range--band': press === 'band',
+        'h-lslider__range--press-min': press === 'min',
+        'h-lslider__range--press-max': press === 'max'
+      }"
+    >
+      <q-range
+        :model-value="modelValue as HLabeledSliderRange"
+        :min="min"
+        :max="max"
+        :step="step"
+        :disable="disable"
+        color="primary"
+        @update:model-value="emit('update:modelValue', $event)"
+        @change="emit('change', $event)"
+        @pan="phase => emit('pan', phase)"
+      />
+    </div>
     <q-slider
       v-else
       :model-value="trackValue"
@@ -199,15 +211,16 @@
 //     margin-inline: -20px;
 //   }
 //
-// app.scss ships it as `.slider-thumb-room`; HModal and HSliderMenu inline it,
+// styles/_layout.scss ships it as `.slider-thumb-room`; HModal and HSliderMenu
+// inline it,
 // because they are scroll containers themselves and owe the guarantee to
 // anyone who copies them. Clipping is the WRONG fix — `overflow-x: clip`
 // slices the handle in half at exactly 0 and 100.
-import { computed, nextTick, ref } from "vue";
-import HTabularNum from "@/components/handy/HTabularNum.vue";
-import HHelpTip from "@/components/handy/HHelpTip.vue";
-import { formatSliderValue } from "@/components/handy/slider-format";
-import { kitLabelFor } from "@/components/handy/labels";
+import { computed, nextTick, onBeforeUnmount, onMounted, ref } from "vue";
+import HTabularNum from "./HTabularNum.vue";
+import HHelpTip from "./HHelpTip.vue";
+import { formatSliderValue } from "./slider-format";
+import { kitLabelFor } from "./labels";
 
 export interface HLabeledSliderRange {
   min: number;
@@ -233,8 +246,10 @@ const props = withDefaults(
     /** when set, clicking the label resets the value to this (explicit
      * undefined allowed, for wrappers that bind it conditionally) */
     reset?: number | HLabeledSliderRange | undefined;
-    /** range mode: the selected band itself is draggable — both ends move
-     * together, keeping their distance */
+    /** range mode: HOLD the selected band and it drags — both ends move
+     * together, keeping their distance. A click, or a drag that starts
+     * straight away, still moves the nearer handle (see "the band drags,
+     * on a hold" in the script). */
     dragRange?: boolean;
     /**
      * Track shape. "log" spaces the handle by RATIO instead of by amount —
@@ -434,6 +449,288 @@ function commitEdit() {
 function cancelEdit() {
   editing.value = null;
 }
+
+// ── the band drags, on a hold ──
+// `drag-range` used to be Quasar's prop passed straight through, and Quasar
+// claims the band the instant a pointer lands on it: press anywhere inside
+// the selection and the gesture IS a band drag, so a plain click in there —
+// the gesture that moves the nearer handle everywhere else on the track —
+// did nothing at all. The band is the middle of the track, so opting in cost
+// the control its most ordinary gesture.
+//
+// So the band drag is ours now, and it sits behind a hold. Press inside the
+// band and wait HOLD_MS and the band takes the gesture; click, or press and
+// move straight away, and the nearer handle goes where you pointed, exactly
+// as it does with `drag-range` off. Only a press that starts inside the band
+// (inset by a thumb radius, so the handles keep their own gesture) is taken
+// from Quasar — caught in the capture phase before its own listeners run,
+// then driven off `update:modelValue` like any other host would. The handles
+// and the track outside the band are still Quasar's, untouched.
+
+/** how long the band must be held before it takes the gesture. Short, and
+ * it can afford to be: moving cancels the hold outright (that press is a
+ * handle drag), and letting go without moving is still a click — so an
+ * unhurried click that dwells past the threshold does what it always did,
+ * rather than arming the band and dying there. */
+const HOLD_MS = 120;
+/** movement that ends the "is this a click?" question */
+const MOVE_SLOP = 4;
+/** half the default thumb — the strip at each end of the band that stays
+ * Quasar's, so grabbing a handle still grabs the handle */
+const THUMB_RADIUS = 10;
+
+const rangeEl = ref<HTMLElement | null>(null);
+/** what the press state is on: one end, or the band (the hold landed) */
+const press = ref<"min" | "max" | "band" | null>(null);
+
+type BandDrag = {
+  touch: boolean;
+  startX: number;
+  startY: number;
+  rect: DOMRect;
+  start: HLabeledSliderRange;
+  /** the handle a non-band drag moves — the one nearer the press */
+  edge: "min" | "max";
+  mode: "pending" | "handle" | "band";
+  timer: ReturnType<typeof setTimeout> | null;
+  moved: boolean;
+  last: HLabeledSliderRange;
+};
+
+let drag: BandDrag | null = null;
+
+/** the model value at a point on the track, snapped to `step` */
+function valueAt(clientX: number, rect: DOMRect): number {
+  const ratio = Math.min(1, Math.max(0, (clientX - rect.left) / rect.width));
+  const step = props.step > 0 ? props.step : 1;
+  const raw = props.min + ratio * (props.max - props.min);
+  const snapped = props.min + Math.round((raw - props.min) / step) * step;
+  // toFixed: a step like 0.1 leaves float dust that would print in the header
+  return Math.min(props.max, Math.max(props.min, Number(snapped.toFixed(6))));
+}
+
+/** one end moved, the other held — ends stop at each other rather than
+ * crossing, the same rule the typed input commits under */
+function withEdge(
+  start: HLabeledSliderRange,
+  edge: "min" | "max",
+  value: number
+): HLabeledSliderRange {
+  return edge === "min"
+    ? { min: Math.min(value, start.max), max: start.max }
+    : { min: start.min, max: Math.max(value, start.min) };
+}
+
+function push(next: HLabeledSliderRange) {
+  if (!drag || (next.min === drag.last.min && next.max === drag.last.max))
+    return;
+  drag.last = next;
+  emit("update:modelValue", next);
+}
+
+function onDown(
+  event: MouseEvent | TouchEvent,
+  clientX: number,
+  clientY: number
+) {
+  if (drag || props.disable || !props.dragRange || !isRange.value) return;
+  const rect = rangeEl.value
+    ?.querySelector(".q-slider")
+    ?.getBoundingClientRect();
+  const span = props.max - props.min;
+  if (!rect || rect.width === 0 || span <= 0) return;
+
+  const start = { ...(props.modelValue as HLabeledSliderRange) };
+  const ratio = (clientX - rect.left) / rect.width;
+  const inset = THUMB_RADIUS / rect.width;
+  const minRatio = (start.min - props.min) / span;
+  const maxRatio = (start.max - props.min) / span;
+  // outside the band, or on either handle: Quasar's gesture, not ours
+  if (ratio <= minRatio + inset || ratio >= maxRatio - inset) return;
+
+  const touch = event.type === "touchstart";
+  // Quasar binds mousedown/touch-pan on the track container below us, and
+  // the desktop mousedown moves a handle on the way down — stop the event
+  // here and the press is ours alone
+  event.stopPropagation();
+  if (!touch) event.preventDefault();
+
+  const value = valueAt(clientX, rect);
+  drag = {
+    touch,
+    startX: clientX,
+    startY: clientY,
+    rect,
+    start,
+    edge: value - start.min <= start.max - value ? "min" : "max",
+    mode: "pending",
+    timer: null,
+    moved: false,
+    last: start
+  };
+  drag.timer = setTimeout(() => {
+    if (!drag) return;
+    drag.mode = "band";
+    press.value = "band";
+  }, HOLD_MS);
+
+  if (touch) {
+    window.addEventListener("touchmove", onTouchMove, { passive: false });
+    window.addEventListener("touchend", onTouchEnd);
+    window.addEventListener("touchcancel", onTouchEnd);
+  } else {
+    window.addEventListener("mousemove", onMouseMove);
+    window.addEventListener("mouseup", onMouseUp);
+  }
+}
+
+function onMove(
+  event: MouseEvent | TouchEvent,
+  clientX: number,
+  clientY: number
+) {
+  if (!drag) return;
+  const dx = clientX - drag.startX;
+  const dy = clientY - drag.startY;
+
+  if (!drag.moved) {
+    if (Math.abs(dx) < MOVE_SLOP && Math.abs(dy) < MOVE_SLOP) return;
+    // a finger heading down the page is scrolling it, not editing the range —
+    // hand the gesture back before anything moves (the band, once held, is
+    // committed and keeps the touch)
+    if (drag.touch && drag.mode !== "band" && Math.abs(dy) > Math.abs(dx)) {
+      endDrag(true);
+      return;
+    }
+    drag.moved = true;
+    // moving before the hold landed settles it: this is a handle drag
+    if (drag.mode === "pending") {
+      drag.mode = "handle";
+      press.value = drag.edge;
+    }
+    if (drag.timer !== null) clearTimeout(drag.timer);
+    drag.timer = null;
+    emit("pan", "start");
+  }
+
+  // ours now — the page underneath stays put
+  if (drag.touch && event.cancelable) event.preventDefault();
+
+  if (drag.mode === "band") {
+    const width = drag.start.max - drag.start.min;
+    const shifted = valueAt(
+      drag.rect.left +
+        ((drag.start.min - props.min) / (props.max - props.min)) *
+          drag.rect.width +
+        dx,
+      drag.rect
+    );
+    const min = Math.min(Math.max(shifted, props.min), props.max - width);
+    push({ min, max: min + width });
+  } else {
+    push(withEdge(drag.start, drag.edge, valueAt(clientX, drag.rect)));
+  }
+}
+
+/** `abort`: the gesture was handed back (a finger that turned out to be
+ * scrolling the page) — nothing was ours to commit */
+function endDrag(abort = false) {
+  if (!drag) return;
+  const d = drag;
+  drag = null;
+  if (d.timer !== null) clearTimeout(d.timer);
+  press.value = null;
+  if (d.touch) {
+    window.removeEventListener("touchmove", onTouchMove);
+    window.removeEventListener("touchend", onTouchEnd);
+    window.removeEventListener("touchcancel", onTouchEnd);
+  } else {
+    window.removeEventListener("mousemove", onMouseMove);
+    window.removeEventListener("mouseup", onMouseUp);
+  }
+  if (abort) return;
+
+  // a touch ends in compatibility mouse events and a click, and Quasar's
+  // track is listening for both — they would replay against it a gesture the
+  // touch path has already answered
+  if (d.touch) {
+    touchAt = Date.now();
+    swallowNextClick();
+  }
+
+  if (d.moved) {
+    emit("pan", "end");
+    emit("change", d.last);
+    return;
+  }
+  // nothing moved — a click, whether or not the hold had armed the band —
+  // and the press never reached Quasar, so do what a click anywhere else on
+  // the track does
+  const next = withEdge(d.start, d.edge, valueAt(d.startX, d.rect));
+  emit("update:modelValue", next);
+  emit("change", next);
+}
+
+function swallowNextClick() {
+  const el = rangeEl.value;
+  if (!el) return;
+  const stop = (e: Event) => {
+    e.stopPropagation();
+    e.preventDefault();
+  };
+  el.addEventListener("click", stop, { capture: true, once: true });
+  setTimeout(() => el.removeEventListener("click", stop, true), 400);
+}
+
+/** when a touch gesture of ours last ended — see endDrag */
+let touchAt = 0;
+const COMPAT_MOUSE_MS = 700;
+
+function onMouseDown(e: MouseEvent) {
+  if (Date.now() - touchAt < COMPAT_MOUSE_MS) {
+    e.stopPropagation();
+    e.preventDefault();
+    return;
+  }
+  if (e.button === 0) onDown(e, e.clientX, e.clientY);
+}
+function onMouseMove(e: MouseEvent) {
+  onMove(e, e.clientX, e.clientY);
+}
+function onMouseUp() {
+  endDrag();
+}
+function onTouchStart(e: TouchEvent) {
+  const touch = e.touches.length === 1 ? e.touches[0] : undefined;
+  if (touch) onDown(e, touch.clientX, touch.clientY);
+}
+function onTouchMove(e: TouchEvent) {
+  const touch = e.touches.length === 1 ? e.touches[0] : undefined;
+  if (touch) onMove(e, touch.clientX, touch.clientY);
+}
+function onTouchEnd() {
+  endDrag();
+}
+
+onMounted(() => {
+  const el = rangeEl.value;
+  if (!el) return;
+  // capture, so the press is answered before Quasar's own listeners on the
+  // track container below
+  el.addEventListener("mousedown", onMouseDown, true);
+  el.addEventListener("touchstart", onTouchStart, {
+    capture: true,
+    passive: false
+  });
+});
+
+onBeforeUnmount(() => {
+  endDrag();
+  const el = rangeEl.value;
+  if (!el) return;
+  el.removeEventListener("mousedown", onMouseDown, true);
+  el.removeEventListener("touchstart", onTouchStart, true);
+});
 </script>
 
 <style scoped lang="scss">
@@ -458,6 +755,42 @@ function cancelEdit() {
   display: inline-flex;
   align-items: baseline;
   color: var(--color-text-secondary);
+}
+
+// the range's wrapper exists to catch the band's press (see the script) —
+// it must not add a box of its own, and `q-slider--h` is width:100% inside it
+.h-lslider__range {
+  display: block;
+}
+
+// Quasar animates a range that is at REST into position — `--inactive`
+// carries a .28s transition on the thumb's `left` and the selection's
+// `width`/`left` — and drops it while IT is dragging. Our gesture never makes
+// it active, so every frame we emitted was being animated over 280ms: the
+// band lagged the pointer and stuttered along behind it. Live gesture, no
+// transition, same as Quasar's own drag.
+.h-lslider__range--live :deep(.q-slider__thumb),
+.h-lslider__range--live :deep(.q-slider__selection),
+.h-lslider__range--live :deep(.q-slider__text-container) {
+  transition: none;
+}
+
+// The press state, which Quasar would otherwise put on itself: our gesture
+// never reaches it, so `.q-slider--active` (styles/_quasar.scss — the M3 slim on the
+// handle bar) never fires. On the band's hold this is the only sign the hold
+// landed, and a finger has no cursor to read it any other way. The thumbs are
+// the last two children of the track, min then max.
+.h-lslider__range--band :deep(.q-slider__thumb-shape path),
+.h-lslider__range--press-min
+  :deep(.q-slider__thumb:nth-last-child(2) .q-slider__thumb-shape path),
+.h-lslider__range--press-max
+  :deep(.q-slider__thumb:last-child .q-slider__thumb-shape path) {
+  transform: scaleX(0.55);
+}
+
+// held: the band has the gesture, and says so the way any grabbed thing does
+.h-lslider__range--band :deep(.q-slider__track-container) {
+  cursor: grabbing;
 }
 
 // with a reset value, the label is a button that looks exactly like the

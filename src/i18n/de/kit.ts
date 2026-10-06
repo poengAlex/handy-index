@@ -6,11 +6,29 @@ import type enUS from "../en-US/kit";
 // hardcode. That keeps the folder portable (drop it in any app and it still
 // reads correctly) while letting this app hand them a translation.
 //
-// Only the components this app actually renders have keys here; the rest keep
-// their English defaults until something uses them.
+// It carries the kit's whole label table, so any kit component the app may
+// use is already translated; a key the kit adds later keeps its English until
+// it is added here.
 const kit: typeof enUS = {
   close: "Schließen",
+  copy: "Kopieren",
+  // `connection key` stays English, as everywhere in this locale
+  copyKey: "Connection key kopieren",
+  dismiss: "Ausblenden",
+  readFullText: "Ganzen Text lesen",
   loading: "Wird geladen",
+  recommended: "Empfohlen",
+  expert: "Für Experten",
+
+  // "Fixiert", not "Gesperrt": the tip is held open, nothing is locked away.
+  tipLocked: "Fixiert — zum Schließen Esc drücken oder außerhalb klicken",
+  tipLockedTouch: "Fixiert — zum Schließen außerhalb tippen",
+
+  // Label in front, verb last, the way `reset` does it below. `value` stands
+  // in for a missing label, so it is a capitalized noun: "Wert erhöhen".
+  increase: "{label} erhöhen",
+  decrease: "{label} verringern",
+  value: "Wert",
 
   // HLabeledSlider builds seven internal aria labels around the slider's own
   // name ("Reset image speed"). It can't assemble them from pieces — English
@@ -29,7 +47,24 @@ const kit: typeof enUS = {
   sliderMin: "Mindestwert für {label}",
   sliderEditMin: "Mindestwert für {label} ändern",
   sliderMax: "Höchstwert für {label}",
-  sliderEditMax: "Höchstwert für {label} ändern"
+  sliderEditMax: "Höchstwert für {label} ändern",
+
+  sliderMenuValue: "{label}: {value}",
+
+  yes: "Ja",
+  no: "Nein",
+
+  // "Dunkelmodus" is the settings toggle's word; "Heller Modus" its pair.
+  themeToLight: "Zum hellen Modus wechseln",
+  themeToDark: "Zum Dunkelmodus wechseln",
+  themeLight: "Heller Modus",
+  themeDark: "Dunkelmodus",
+
+  // "Nicht verbunden" pairs with "Verbunden", and is how the rest of this
+  // locale describes a device that is offline ("ohne Verbindung").
+  connected: "Verbunden",
+  connecting: "Wird verbunden",
+  offline: "Nicht verbunden"
 };
 
 export default kit;

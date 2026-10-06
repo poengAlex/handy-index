@@ -48,6 +48,7 @@
     "edit_note",
     "equal",
     "error",
+    "expand_more",
     "explore_off",
     "favorite",
     "files",
@@ -138,6 +139,7 @@
     "repeat",
     "resize",
     "save",
+    "scale",
     "scene",
     "schedule",
     "script",
@@ -182,6 +184,7 @@
     "volume_off",
     "warning",
     "wash",
+    "width",
     "wifi_tethering",
     "woman",
     "workspace_premium"

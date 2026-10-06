@@ -33,7 +33,7 @@
 //       </template>
 //     </HModal>
 //   </q-dialog>
-import { kitLabel } from "@/components/handy/labels";
+import { kitLabel } from "./labels";
 
 withDefaults(defineProps<{ title?: string; closable?: boolean }>(), {
   title: "",
@@ -84,7 +84,7 @@ const emit = defineEmits<{ close: [] }>();
   flex: 1 1 auto;
   min-height: 0;
   overflow-y: auto;
-  // the slim scrollbar skin is global now (app.scss, "Scrollbars")
+  // the slim scrollbar skin is global now (styles/_layout.scss, "Scrollbars")
 
   // A modal must never scroll sideways, and the usual reason it does is a
   // slider: Quasar's handle is a 40px box centred on its position, so at
@@ -97,9 +97,9 @@ const emit = defineEmits<{ close: [] }>();
   // where it always did; only the scrollbar moves outward, into padding the
   // card already had (--space-lg is 32px, so 12px still remains).
   //
-  // This is the app.scss `.slider-thumb-room` utility, inlined: HModal owes
-  // the guarantee to every project that copies it, and app.scss is
-  // hand-merged per repo rather than synced.
+  // This is the kit's `.slider-thumb-room` utility (styles/_layout.scss),
+  // inlined: HModal owes the guarantee to every project that uses it,
+  // whatever that project's own global CSS does.
   --slider-thumb-overhang: 20px;
 
   padding-inline: var(--slider-thumb-overhang);

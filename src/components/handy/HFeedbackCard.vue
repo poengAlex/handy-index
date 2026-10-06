@@ -38,7 +38,7 @@
 // optional secondary action. Severity color + icon, never color alone (§11).
 import { computed } from "vue";
 import HBtn from "./HBtn.vue";
-import { kitLabel } from "@/components/handy/labels";
+import { kitLabel } from "./labels";
 
 const props = withDefaults(
   defineProps<{

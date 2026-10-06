@@ -42,7 +42,7 @@
 //     @copy-error="hToast('negative', 'Couldn’t copy — select it instead.')"
 //   />
 import { computed } from "vue";
-import { kitLabel } from "@/components/handy/labels";
+import { kitLabel } from "./labels";
 
 const props = defineProps<{ value: string }>();
 
