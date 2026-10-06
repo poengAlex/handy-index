@@ -13,6 +13,8 @@ export default {
   sort: {
     aria: "Sort performers",
     count: "Most videos",
+    // script plays summed over all their videos
+    plays: "Most played",
     rating: "Best rated",
     // an alphabet range, so it changes with the language
     name: "A–Z",

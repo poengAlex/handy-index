@@ -11,6 +11,7 @@ const performers: typeof enUS = {
   sort: {
     aria: "Sorter skuespillere",
     count: "Flest videoer",
+    plays: "Mest spilt",
     rating: "Best vurdert",
     // the Norwegian alphabet ends at Å
     name: "A–Å",

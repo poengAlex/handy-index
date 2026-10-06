@@ -15,6 +15,7 @@ const performers: typeof enUS = {
   sort: {
     aria: "Darsteller sortieren",
     count: "Meiste Videos",
+    plays: "Meistgespielt",
     rating: "Bestbewertet",
     // an alphabet range, so it changes with the language
     name: "A–Z",

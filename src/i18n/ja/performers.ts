@@ -15,6 +15,7 @@ const performers: typeof enUS = {
   sort: {
     aria: "出演者を並べ替え",
     count: "動画数順",
+    plays: "Script再生数順",
     rating: "評価順",
     // an alphabet range, so it changes with the language
     name: "名前順",

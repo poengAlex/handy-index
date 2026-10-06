@@ -742,6 +742,8 @@ export interface PerformerSummary {
   avgRating: number;
   /** how many of their videos carry a rating */
   ratedCount: number;
+  /** script plays summed across their videos, as `performerStats` sums them */
+  plays: number;
 }
 
 /** Every performer in the catalog with their video count, biggest first. */
@@ -765,11 +767,13 @@ export function performersOf(
           count: 0,
           avgRating: 0,
           ratedCount: 0,
+          plays: 0,
           ratingSum: 0
         };
         performers.set(performer.performerId, entry);
       }
       entry.count += 1;
+      entry.plays += video.scriptPlays ?? 0;
       entry.avatar ??= performer.avatar;
       if (rating > 0) {
         entry.ratingSum += rating;

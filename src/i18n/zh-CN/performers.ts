@@ -15,6 +15,7 @@ const performers: typeof enUS = {
   sort: {
     aria: "演员排序",
     count: "视频最多",
+    plays: "播放最多",
     rating: "评分最高",
     // an alphabet range, so it changes with the language
     name: "A–Z",

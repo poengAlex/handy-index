@@ -5,6 +5,15 @@
      words. Newest release on top. Format: "## <version> — <date>", then
      "### <group>" headings and "- " lines. Keep it English-only. -->
 
+## 2.9.1 — 6 October 2026
+
+### Performers
+
+- The Performers page can now be sorted by "Most played": the performers
+  whose scripts people have played the most, counted across all their videos.
+- While sorted that way, each card shows that play count instead of the
+  rating.
+
 ## 2.9.0 — 6 October 2026
 
 ### Privacy

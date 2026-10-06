@@ -15,6 +15,7 @@ const performers: typeof enUS = {
   sort: {
     aria: "출연자 정렬",
     count: "동영상 많은 순",
+    plays: "재생 많은 순",
     rating: "평점 높은 순",
     // an alphabet range, so it changes with the language
     name: "이름순",

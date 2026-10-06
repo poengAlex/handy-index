@@ -124,9 +124,22 @@
                   </div>
                   <div class="text-caption performer-card__videos">
                     <span>{{ videoLabel(performer) }}</span>
+                    <!-- sorted by plays, the card shows the number the order
+                         comes from; otherwise the partner sites' rating -->
+                    <template v-if="sortKey === 'plays'">
+                      <span
+                        v-if="performer.plays"
+                        class="performer-card__stat"
+                        :title="playsLabel(performer)"
+                        :aria-label="playsLabel(performer)"
+                      >
+                        <q-icon name="play_arrow" size="1.2em" />
+                        {{ num(performer.plays) }}
+                      </span>
+                    </template>
                     <span
-                      v-if="performer.avgRating"
-                      class="performer-card__rating"
+                      v-else-if="performer.avgRating"
+                      class="performer-card__stat"
                     >
                       {{
                         $t("performers.ratingBadge", {
@@ -173,12 +186,13 @@ import { useSettingsStore } from "@/stores/settings";
 
 const PAGE_SIZE = 48;
 
-type SortKey = "count" | "rating" | "name";
+type SortKey = "count" | "plays" | "rating" | "name";
 type SortDir = "asc" | "desc";
 
 // the direction each sort naturally produces; flipping away reverses the list
 const NATURAL_DIR: Record<SortKey, SortDir> = {
   count: "desc",
+  plays: "desc",
   rating: "desc",
   name: "asc"
 };
@@ -201,6 +215,7 @@ const sortDir = ref<SortDir>(NATURAL_DIR[sortKey.value]);
 // language changes, and a `const` at import time would freeze them in English
 const sortOptions = computed<{ label: string; value: SortKey }[]>(() => [
   { label: t("performers.sort.count"), value: "count" },
+  { label: t("performers.sort.plays"), value: "plays" },
   { label: t("performers.sort.rating"), value: "rating" },
   { label: t("performers.sort.name"), value: "name" }
 ]);
@@ -245,6 +260,12 @@ const filtered = computed(() => {
   let ordered: readonly PerformerSummary[];
   if (sortKey.value === "name") {
     ordered = [...matches].sort((a, b) => a.name.localeCompare(b.name));
+  } else if (sortKey.value === "plays") {
+    // summed, not averaged: a performer people come back to across many
+    // videos is more popular than one with a single well-played script
+    ordered = [...matches].sort(
+      (a, b) => b.plays - a.plays || b.count - a.count
+    );
   } else if (sortKey.value === "rating") {
     ordered = [...matches].sort((a, b) => {
       const aEstablished = a.ratedCount >= RATED_VIDEO_FLOOR;
@@ -304,6 +325,14 @@ function videoLabel(performer: PerformerSummary): string {
   return counts
     ? ofTotal(counts.get(performer.performerId) ?? 0, performer.count, "videos")
     : total;
+}
+
+function playsLabel(performer: PerformerSummary): string {
+  return t(
+    "performers.profile.plays",
+    { count: num(performer.plays) },
+    performer.plays
+  );
 }
 
 function performerTo(performer: PerformerSummary): string {
@@ -388,7 +417,9 @@ function performerTo(performer: PerformerSummary): string {
   flex-wrap: wrap;
 }
 
-.performer-card__rating {
+.performer-card__stat {
+  display: inline-flex;
+  align-items: center;
   white-space: nowrap;
 }
 </style>
