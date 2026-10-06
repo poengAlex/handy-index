@@ -464,6 +464,12 @@ export const useSettingsStore = defineStore(
         // a retired or hand-typed locale tag must not strand the UI on a
         // bundle that no longer exists — fall back to following the browser
         if (!isLocale(settings.locale)) settings.locale = null;
+        // Explicit previews are what the consent modal is asking about, so
+        // they stay off until it has been answered. v1 persisted under this
+        // same "settings" key with its own nsfw switch and no consentAnswered,
+        // so a v1 visitor who had it on arrived with explicit thumbnails
+        // already showing behind the modal. Only an explicit true survives.
+        settings.nsfw = settings.consentAnswered && settings.nsfw === true;
         // a hand-edited blob can still carry a non-boolean
         settings.showPremiumScripts = Boolean(settings.showPremiumScripts);
         settings.showPaidVideos = Boolean(settings.showPaidVideos);

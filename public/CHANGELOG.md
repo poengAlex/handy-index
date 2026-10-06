@@ -5,6 +5,14 @@
      words. Newest release on top. Format: "## <version> — <date>", then
      "### <group>" headings and "- " lines. Keep it English-only. -->
 
+## 2.9.3 — 6 October 2026
+
+### Privacy
+
+- Explicit previews now stay off until you have answered the first-visit
+  question. Visitors who had them switched on in the old version of the site
+  could see them behind that question before agreeing.
+
 ## 2.9.2 — 6 October 2026
 
 ### Help
