@@ -63,8 +63,11 @@ export default {
     // one row of any picker: the tag, site or performer name, then how
     // many videos picking it would leave on screen
     option: "{name} ({count})",
-    vrLabel: "VR only",
-    vrCaption: "Only virtual-reality videos",
+    vrLabel: "VR videos",
+    vrCaption: "Show virtual-reality videos",
+    flatLabel: "Flat videos",
+    flatCaption: "Show regular, non-VR videos",
+    formatLastOn: "VR or flat has to stay on — switch the other on first",
     orientation: "Orientation",
     access: "Access",
     premiumScriptsLabel: "Premium scripts",

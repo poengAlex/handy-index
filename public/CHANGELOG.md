@@ -5,6 +5,18 @@
      words. Newest release on top. Format: "## <version> — <date>", then
      "### <group>" headings and "- " lines. Keep it English-only. -->
 
+## 2.10.2 — 6 October 2026
+
+### Finding videos
+
+- The video filters have two switches, VR videos and flat videos, both on to
+  begin with: switch either off to see only the other kind.
+
+### Performer pages
+
+- A performer's clip reel keeps looping. With only one clip, it plays again
+  instead of stopping after the first time.
+
 ## 2.10.1 — 6 October 2026
 
 ### Performers

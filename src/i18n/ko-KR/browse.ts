@@ -61,8 +61,11 @@ const browse: typeof enUS = {
     // one row of any picker: the tag, site or performer name, then how
     // many videos picking it would leave on screen
     option: "{name} ({count})",
-    vrLabel: "VR만",
-    vrCaption: "VR 동영상만 보여줘요",
+    vrLabel: "VR 동영상",
+    vrCaption: "가상 현실 동영상 보기",
+    flatLabel: "일반 동영상",
+    flatCaption: "VR이 아닌 일반 동영상 보기",
+    formatLastOn: "VR과 일반 중 하나는 켜 둬야 해요. 먼저 다른 쪽을 켜 주세요",
     orientation: "성향",
     access: "이용 범위",
     premiumScriptsLabel: "유료 script",

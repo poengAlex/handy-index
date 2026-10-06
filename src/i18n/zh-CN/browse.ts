@@ -60,8 +60,11 @@ const browse: typeof enUS = {
     // one row of any picker: the tag, site or performer name, then how
     // many videos picking it would leave on screen
     option: "{name}（{count}）",
-    vrLabel: "仅 VR",
-    vrCaption: "只显示 VR 视频",
+    vrLabel: "VR 视频",
+    vrCaption: "显示虚拟现实视频",
+    flatLabel: "普通视频",
+    flatCaption: "显示非 VR 的普通视频",
+    formatLastOn: "VR 和普通视频至少要开启一项——请先开启另一项",
     orientation: "取向",
     access: "访问权限",
     premiumScriptsLabel: "付费 scripts",

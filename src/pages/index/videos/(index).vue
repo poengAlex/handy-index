@@ -293,12 +293,26 @@
                 {{ $t("browse.filters.sectionVideo") }}
               </h4>
               <HList>
+                <!-- which kinds of video to show, both on by default; the
+                     one left on can't be switched off, or the grid would
+                     always be empty -->
                 <HToggleRow
-                  :model-value="vr"
+                  :model-value="!flat"
                   icon="view_in_ar"
                   :label="$t('browse.filters.vrLabel')"
                   :caption="$t('browse.filters.vrCaption')"
-                  @update:model-value="setVr"
+                  :disable="vr"
+                  :tooltip="vr ? $t('browse.filters.formatLastOn') : ''"
+                  @update:model-value="showVr"
+                />
+                <HToggleRow
+                  :model-value="!vr"
+                  icon="fit_screen"
+                  :label="$t('browse.filters.flatLabel')"
+                  :caption="$t('browse.filters.flatCaption')"
+                  :disable="flat"
+                  :tooltip="flat ? $t('browse.filters.formatLastOn') : ''"
+                  @update:model-value="showFlat"
                 />
                 <HToggleRow
                   :model-value="clip"
@@ -496,6 +510,7 @@ import {
   topRated,
   unmeasuredCount,
   vrOnly,
+  nonVr,
   withPreview
 } from "@/services/script-index/queries";
 import type { PartnerVideo } from "@/services/script-index/types";
@@ -627,7 +642,10 @@ const tags = computed(() => allParams(route.query.tag));
 const partnerId = computed(() => firstParam(route.query.partnerId));
 const performerId = computed(() => firstParam(route.query.performerId));
 const performerName = computed(() => firstParam(route.query.performerName));
+// one parameter for both: vr=1 is VR only, vr=0 everything but — so the
+// home page's long-standing vr=1 links keep their meaning
 const vr = computed(() => firstParam(route.query.vr) === "1");
+const flat = computed(() => firstParam(route.query.vr) === "0");
 const clip = computed(() => firstParam(route.query.clip) === "1");
 const scripter = computed(() => firstParam(route.query.scripter));
 
@@ -743,6 +761,8 @@ interface Filters {
   sort: SortKey;
   dir: SortDir;
   vr: boolean;
+  /** the inverse of vr: non-VR videos only; never both */
+  flat: boolean;
   /** only videos shipping a roll clip */
   clip: boolean;
   /** scripter name; "" = any */
@@ -775,6 +795,7 @@ function currentFilters(): Filters {
     sort: sortKey.value,
     dir: sortDir.value,
     vr: vr.value,
+    flat: flat.value,
     clip: clip.value,
     scripter: scripter.value,
     since: since.value,
@@ -804,6 +825,7 @@ function apply(filters: Filters) {
   if (filters.sort !== "recent") query.sort = filters.sort;
   if (filters.dir !== NATURAL_DIR[filters.sort]) query.dir = filters.dir;
   if (filters.vr) query.vr = "1";
+  else if (filters.flat) query.vr = "0";
   if (filters.clip) query.clip = "1";
   if (filters.scripter) query.scripter = filters.scripter;
   if (filters.since) query.since = String(filters.since);
@@ -833,8 +855,14 @@ function flipDir() {
   });
 }
 
-function setVr(value: boolean) {
-  apply({ ...currentFilters(), vr: value });
+// Two switches, VR and flat, both on by default. Switching one off leaves
+// only the other: VR off is flat only (vr=0), flat off is VR only (vr=1).
+function showVr(on: boolean) {
+  apply({ ...currentFilters(), vr: false, flat: !on });
+}
+
+function showFlat(on: boolean) {
+  apply({ ...currentFilters(), flat: false, vr: !on });
 }
 
 function setClip(value: boolean) {
@@ -882,6 +910,7 @@ function clearAll() {
     sort: "recent",
     dir: NATURAL_DIR.recent,
     vr: false,
+    flat: false,
     clip: false,
     scripter: "",
     since: 0,
@@ -960,6 +989,7 @@ const advancedCount = computed(
     (partnerId.value ? 1 : 0) +
     (performerId.value ? 1 : 0) +
     (vr.value ? 1 : 0) +
+    (flat.value ? 1 : 0) +
     (clip.value ? 1 : 0) +
     (scripter.value ? 1 : 0) +
     (since.value ? 1 : 0) +
@@ -982,6 +1012,7 @@ function clearAdvanced() {
     performerId: "",
     performerName: "",
     vr: false,
+    flat: false,
     clip: false,
     scripter: "",
     since: 0,
@@ -1325,6 +1356,7 @@ function filterPool(pool: readonly PartnerVideo[]): PartnerVideo[] {
   if (partnerId.value) out = byPartner(out, partnerId.value);
   if (performerId.value) out = byPerformer(out, performerId.value);
   if (vr.value) out = vrOnly(out);
+  if (flat.value) out = nonVr(out);
   if (clip.value) out = withPreview(out);
   if (scripter.value) out = byScripter(out, scripter.value);
   if (since.value) out = publishedWithin(out, since.value);
@@ -1401,6 +1433,7 @@ function sendFiltered() {
     performer: Boolean(performerId.value),
     scripter: Boolean(scripter.value),
     vr: vr.value,
+    flat: flat.value,
     clip: clip.value,
     published: Boolean(since.value),
     duration: durationMin.value > 0 || durationMax.value < DURATION_MAX,
@@ -1431,6 +1464,7 @@ watch(
       sortKey.value,
       sortDir.value,
       vr.value,
+      flat.value,
       clip.value,
       since.value,
       durationMin.value,

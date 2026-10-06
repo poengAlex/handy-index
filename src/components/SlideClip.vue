@@ -61,6 +61,9 @@ const props = defineProps<{
   playing: boolean;
   /** the pointer or focus is on the slideshow: stay on this video */
   held: boolean;
+  /** the only slide in the reel: there is no next one to hand over to, so
+   * the clip plays again from the start, and the stills start over */
+  alone?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -112,6 +115,9 @@ function stepStills() {
     if (frame.value + 1 < stills.value.length) {
       frame.value += 1;
       stepStills();
+    } else if (props.alone) {
+      frame.value = 0;
+      stepStills();
     } else {
       emit("done");
     }
@@ -125,8 +131,10 @@ function onCanPlay() {
   void clipEl.value?.play().catch(fail);
 }
 
+/** The clip has played through: the next slide — or, held or alone, this one
+ * again from the start, so a reel never just stops. */
 function finish() {
-  if (props.held && clipEl.value) {
+  if ((props.held || props.alone) && clipEl.value) {
     clipEl.value.currentTime = 0;
     void clipEl.value.play().catch(fail);
   } else {

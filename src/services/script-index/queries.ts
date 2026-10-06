@@ -563,6 +563,12 @@ export function vrOnly(videos: readonly PartnerVideo[]): PartnerVideo[] {
   return videos.filter(video => video.format?.format === "vr");
 }
 
+/** Everything that isn't VR — flat videos, and the few whose format the
+ * index doesn't know, which are not VR as far as anyone can tell. */
+export function nonVr(videos: readonly PartnerVideo[]): PartnerVideo[] {
+  return videos.filter(video => video.format?.format !== "vr");
+}
+
 export function byIds(
   videos: readonly PartnerVideo[],
   ids: readonly string[]

@@ -110,6 +110,8 @@ export interface EventProps {
     performer: boolean;
     scripter: boolean;
     vr: boolean;
+    /** the inverse: non-VR videos only */
+    flat: boolean;
     clip: boolean;
     published: boolean;
     duration: boolean;

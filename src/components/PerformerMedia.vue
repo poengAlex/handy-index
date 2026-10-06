@@ -58,6 +58,7 @@
             :mode="reelMode"
             :playing="playing"
             :held="held"
+            :alone="reelItems.length === 1"
             @done="next"
             @dead="deadClips.add($event)"
           />
