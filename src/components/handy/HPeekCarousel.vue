@@ -9,7 +9,7 @@
       { 'h-peek--contained': contained, 'h-peek--idle': !arrowsVisible }
     ]"
     :style="{ '--peek-item': itemWidth }"
-    @wheel="onWheel"
+    @wheel.passive="onWheel"
     @pointerenter="showArrows()"
     @pointerleave="fadeArrowsSoon()"
     @pointerdown="onPointerDown"
@@ -128,13 +128,18 @@ onBeforeUnmount(() => clearTimeout(arrowTimer));
 // would move the cards — we don't want that. Here ONLY a horizontal-intent
 // gesture (trackpad sideways, shift+wheel) advances the carousel; a vertical
 // wheel is ignored so it scrolls the page normally.
+//
+// The listener is PASSIVE and never cancels. Safari 27 won't scroll the page
+// for a trackpad swipe that starts over an element with a non-passive wheel
+// listener, even one that never calls preventDefault: every carousel row was
+// a dead zone for vertical scrolling (tested 2026-10-06, 11 of 12 swipes
+// stuck with nothing cancelled). The cancel bought nothing anyway: the page
+// can't pan sideways (overflow-x: clip on the root), and in the same test a
+// sideways swipe over a passive row didn't trigger Safari's swipe-back.
 let lastWheel = 0;
 function onWheel(e: WheelEvent) {
   // vertical-dominant gesture → leave it alone so the page scrolls
   if (Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return;
-  // horizontal-dominant → the carousel owns it: always capture so the page
-  // never pans sideways, even on the small momentum deltas a trackpad emits
-  e.preventDefault();
   showArrows();
   // threshold + throttle only gate whether we actually advance a slide
   if (Math.abs(e.deltaX) < 10 || e.timeStamp - lastWheel < 220) return;

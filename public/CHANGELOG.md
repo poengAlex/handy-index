@@ -5,6 +5,14 @@
      words. Newest release on top. Format: "## <version> — <date>", then
      "### <group>" headings and "- " lines. Keep it English-only. -->
 
+## 2.9.4 — 6 October 2026
+
+### Browsing
+
+- In Safari, scrolling the page with a trackpad works again while the pointer
+  is over a row of videos. Before, the page stayed put until you moved the
+  pointer off the row.
+
 ## 2.9.3 — 6 October 2026
 
 ### Privacy
