@@ -122,6 +122,10 @@ export default {
     appCaption: "What this site is, who makes it, and which version you're on",
     changelogCaption: "Everything that has changed on the site, newest first",
     privacyCaption:
-      "What's stored, what leaves your browser, and the age requirement"
+      "What's stored, what leaves your browser, and the age requirement",
+    nextSite:
+      "Want new features first? {link} gets every change as soon as it's ready, before it reaches this site.",
+    onNextSite:
+      "You're on the preview site: changes go live here first and may still be a little rough. The regular site is at {link}."
   }
 };

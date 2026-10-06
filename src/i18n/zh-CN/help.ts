@@ -117,7 +117,11 @@ const help: typeof enUS = {
     title: "关于本站",
     appCaption: "本站是什么、由谁制作，以及你正在使用的版本",
     changelogCaption: "网站的所有改动，最新的在最前面",
-    privacyCaption: "哪些内容会被保存、哪些会离开浏览器，以及年龄要求"
+    privacyCaption: "哪些内容会被保存、哪些会离开浏览器，以及年龄要求",
+    nextSite:
+      "想抢先体验新功能？每项改动完成后都会先发布到 {link}，之后才会来到这里。",
+    onNextSite:
+      "这里是预览站点：改动会先在这里上线，可能还不够稳定。正式站点位于 {link}。"
   }
 };
 

@@ -154,7 +154,19 @@
           />
         </HList>
 
-        <OldSiteNote />
+        <SiteNote keypath="home.oldSite" href="https://old.ivdb.io/" />
+        <SiteNote
+          v-if="onNextSite"
+          keypath="help.about.onNextSite"
+          href="https://ivdb.io/"
+          icon="preview"
+        />
+        <SiteNote
+          v-else
+          keypath="help.about.nextSite"
+          href="https://next.ivdb.io/"
+          icon="preview"
+        />
 
         <!-- Small print, and the only place the build announces itself
              without being asked. -->
@@ -176,14 +188,18 @@
 import { ref } from "vue";
 import AboutDialog from "@/components/AboutDialog.vue";
 import ChangelogDialog from "@/components/ChangelogDialog.vue";
-import OldSiteNote from "@/components/OldSiteNote.vue";
 import PrivacyDialog from "@/components/PrivacyDialog.vue";
+import SiteNote from "@/components/SiteNote.vue";
 import { HList, HListRow } from "@/components/handy";
 import { useBuildMeta } from "@/composables/useBuildMeta";
 
 const aboutOpen = ref(false);
 const changelogOpen = ref(false);
 const privacyOpen = ref(false);
+
+// next.ivdb.io is the same app built from the newest changes; there the note
+// points back to the regular site instead of to itself
+const onNextSite = window.location.hostname === "next.ivdb.io";
 
 const { line: buildMeta } = useBuildMeta();
 </script>

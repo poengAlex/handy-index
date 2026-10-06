@@ -127,7 +127,11 @@ const help: typeof enUS = {
     changelogCaption:
       "Alles, was sich auf der Seite geändert hat, das Neueste zuerst",
     privacyCaption:
-      "Was gespeichert wird, was deinen Browser verlässt und die Altersgrenze"
+      "Was gespeichert wird, was deinen Browser verlässt und die Altersgrenze",
+    nextSite:
+      "Neue Funktionen zuerst ausprobieren? Auf {link} landet jede Änderung, sobald sie fertig ist – noch bevor sie hierherkommt.",
+    onNextSite:
+      "Du bist auf der Vorschau-Seite: Änderungen gehen hier zuerst live und können noch etwas holprig sein. Die reguläre Seite findest du unter {link}."
   }
 };
 

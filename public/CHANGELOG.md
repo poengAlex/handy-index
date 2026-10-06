@@ -5,6 +5,14 @@
      words. Newest release on top. Format: "## <version> — <date>", then
      "### <group>" headings and "- " lines. Keep it English-only. -->
 
+## 2.9.2 — 6 October 2026
+
+### Help
+
+- The help page now points to next.ivdb.io, where every change goes live as
+  soon as it is ready, before it reaches ivdb.io. On next.ivdb.io itself it
+  points back to the regular site.
+
 ## 2.9.1 — 6 October 2026
 
 ### Performers

@@ -128,7 +128,11 @@ const help: typeof enUS = {
     changelogCaption:
       "Tout ce qui a changé sur le site, du plus récent au plus ancien",
     privacyCaption:
-      "Ce qui est stocké, ce qui quitte ton navigateur et la condition d'âge"
+      "Ce qui est stocké, ce qui quitte ton navigateur et la condition d'âge",
+    nextSite:
+      "Envie d'essayer les nouveautés en premier ? {link} reçoit chaque changement dès qu'il est prêt, avant qu'il n'arrive ici.",
+    onNextSite:
+      "Tu es sur le site de prévisualisation : les changements y arrivent en premier et peuvent encore être un peu bruts. Le site habituel est sur {link}."
   }
 };
 

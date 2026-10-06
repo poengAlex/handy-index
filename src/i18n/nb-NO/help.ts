@@ -129,7 +129,11 @@ const help: typeof enUS = {
       "Hva nettstedet er, hvem som lager det, og hvilken versjon du bruker",
     changelogCaption: "Alt som har endret seg på nettstedet, nyeste først",
     privacyCaption:
-      "Hva som lagres, hva som forlater nettleseren din, og aldersgrensen"
+      "Hva som lagres, hva som forlater nettleseren din, og aldersgrensen",
+    nextSite:
+      "Vil du prøve det nyeste først? {link} får hver endring så snart den er klar, før den kommer hit.",
+    onNextSite:
+      "Du er på forhåndsvisningssiden: endringer kommer hit først og kan være litt uferdige. Den vanlige siden finner du på {link}."
   }
 };
 

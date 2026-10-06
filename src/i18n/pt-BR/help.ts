@@ -123,7 +123,11 @@ const help: typeof enUS = {
     changelogCaption:
       "Tudo o que mudou no site, das mais recentes para as mais antigas",
     privacyCaption:
-      "O que fica guardado, o que sai do seu navegador e a exigência de idade"
+      "O que fica guardado, o que sai do seu navegador e a exigência de idade",
+    nextSite:
+      "Quer testar as novidades primeiro? {link} recebe cada mudança assim que fica pronta, antes de chegar aqui.",
+    onNextSite:
+      "Você está no site de prévia: as mudanças chegam aqui primeiro e ainda podem ter alguns problemas. O site normal fica em {link}."
   }
 };
 
