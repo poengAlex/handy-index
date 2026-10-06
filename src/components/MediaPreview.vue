@@ -87,11 +87,6 @@ const props = withDefaults(
   { images: () => [], preview: "", alt: "", enabled: true }
 );
 
-/** `active` reports the preview starting and stopping, whatever caused it
- * — hover, touch, another card taking the stage, or a scroll away — so a
- * play button somewhere can show the state truthfully. */
-const emit = defineEmits<{ active: [playing: boolean] }>();
-
 const CLIP_TIMEOUT_MS = 1500;
 
 const catalog = useCatalogStore();
@@ -165,7 +160,6 @@ function start() {
   // take the stage first: this stops whatever was playing elsewhere
   if (root.value) claimPreview(root.value);
   active.value = true;
-  emit("active", true);
   // the stills run even when a clip is loading: if the clip never plays, the
   // preview has already been showing something the whole time
   startCycling(!clip.value);
@@ -181,7 +175,6 @@ function stop() {
   window.clearTimeout(clipTimer);
   clipTimer = 0;
   stopCycling();
-  if (active.value) emit("active", false);
   active.value = false;
   clipReady.value = false;
   frame.value = 0;
@@ -250,9 +243,6 @@ onMounted(() => {
   card = root.value.closest(".tile-card") ?? root.value;
   card.addEventListener("touchstart", start, { passive: true });
 });
-
-// for a play button on the card: the same start and stop hover and touch use
-defineExpose({ start, stop });
 
 onBeforeUnmount(() => {
   card?.removeEventListener("touchstart", start);

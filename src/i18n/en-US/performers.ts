@@ -47,10 +47,7 @@ export default {
     age: "Age {age}",
     height: "{feet}′{inches}″",
     weight: "{lb} lb",
-    cup: "Cup {cup}",
-    // the play button on a card on touch devices; {name} is the performer's
-    previewPlay: "Play preview: {name}",
-    previewStop: "Stop preview: {name}"
+    cup: "Cup {cup}"
   },
 
   errorTitle: "Couldn't load performers",

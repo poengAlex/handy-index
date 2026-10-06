@@ -48,10 +48,7 @@ const performers: typeof enUS = {
     age: "{age} ans",
     height: "{cm} cm",
     weight: "{kg} kg",
-    cup: "Bonnet {cup}",
-    // the play button on a card on touch devices; {name} is the performer's
-    previewPlay: "Lire l’aperçu : {name}",
-    previewStop: "Arrêter l’aperçu : {name}"
+    cup: "Bonnet {cup}"
   },
 
   errorTitle: "Impossible de charger les acteurs",

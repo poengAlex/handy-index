@@ -5,6 +5,13 @@
      words. Newest release on top. Format: "## <version> — <date>", then
      "### <group>" headings and "- " lines. Keep it English-only. -->
 
+## 2.10.1 — 6 October 2026
+
+### Performers
+
+- Performer cards preview like video cards: hover them, or touch one on a
+  phone or tablet. The separate play button is gone.
+
 ## 2.10.0 — 6 October 2026
 
 ### Performers

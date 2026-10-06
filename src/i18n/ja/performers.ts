@@ -48,10 +48,7 @@ const performers: typeof enUS = {
     age: "{age}歳",
     height: "{cm} cm",
     weight: "{kg} kg",
-    cup: "{cup}カップ",
-    // the play button on a card on touch devices; {name} is the performer's
-    previewPlay: "プレビューを再生：{name}",
-    previewStop: "プレビューを停止：{name}"
+    cup: "{cup}カップ"
   },
 
   errorTitle: "出演者を読み込めませんでした",

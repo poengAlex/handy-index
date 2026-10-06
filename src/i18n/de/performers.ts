@@ -50,10 +50,7 @@ const performers: typeof enUS = {
     age: "Alter {age}",
     height: "{cm} cm",
     weight: "{kg} kg",
-    cup: "Körbchen {cup}",
-    // the play button on a card on touch devices; {name} is the performer's
-    previewPlay: "Vorschau abspielen: {name}",
-    previewStop: "Vorschau stoppen: {name}"
+    cup: "Körbchen {cup}"
   },
 
   errorTitle: "Darsteller konnten nicht geladen werden",

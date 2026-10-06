@@ -36,9 +36,7 @@ const performers: typeof enUS = {
     age: "{age} år",
     height: "{cm} cm",
     weight: "{kg} kg",
-    cup: "Cup {cup}",
-    previewPlay: "Spill av forhåndsvisning: {name}",
-    previewStop: "Stopp forhåndsvisning: {name}"
+    cup: "Cup {cup}"
   },
 
   errorTitle: "Kunne ikke laste skuespillerne",

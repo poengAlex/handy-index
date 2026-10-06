@@ -48,10 +48,7 @@ const performers: typeof enUS = {
     age: "{age}세",
     height: "{cm} cm",
     weight: "{kg} kg",
-    cup: "{cup}컵",
-    // the play button on a card on touch devices; {name} is the performer's
-    previewPlay: "미리보기 재생: {name}",
-    previewStop: "미리보기 정지: {name}"
+    cup: "{cup}컵"
   },
 
   errorTitle: "출연자를 불러오지 못했어요",

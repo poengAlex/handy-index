@@ -44,9 +44,7 @@ const performers: typeof enUS = {
     age: "Возраст: {age}",
     height: "{cm} cm",
     weight: "{kg} kg",
-    cup: "Чашка {cup}",
-    previewPlay: "Воспроизвести превью: {name}",
-    previewStop: "Остановить превью: {name}"
+    cup: "Чашка {cup}"
   },
 
   errorTitle: "Не удалось загрузить актёров",

@@ -182,56 +182,15 @@
                          their picture — the video cards' own preview -->
                     <MediaPreview
                       v-if="settings.nsfw && avatarOf(performer)"
-                      :ref="el => setPreview(performer.performerId, el)"
                       :poster="avatarOf(performer)"
                       :preview="previews.get(performer.performerId) ?? ''"
                       :alt="performer.name"
                       :enabled="settings.performerCardPreviews"
                       class="tile-card__img"
-                      @active="on => onPreviewActive(performer.performerId, on)"
                     />
                     <div v-else class="tile-card__placeholder">
                       <q-icon name="person" size="32px" />
                     </div>
-                  </template>
-                  <!-- on touch, a tap opens the performer, so the preview
-                       hover gives a mouse gets a button of its own here —
-                       outside the card's link, like the video cards' menu -->
-                  <template
-                    v-if="
-                      !canHover &&
-                      settings.nsfw &&
-                      settings.performerCardPreviews &&
-                      avatarOf(performer) &&
-                      previews.has(performer.performerId)
-                    "
-                    #action
-                  >
-                    <button
-                      type="button"
-                      class="performer-card__play"
-                      :aria-label="
-                        playing === performer.performerId
-                          ? $t('performers.card.previewStop', {
-                              name: performer.name
-                            })
-                          : $t('performers.card.previewPlay', {
-                              name: performer.name
-                            })
-                      "
-                      :aria-pressed="playing === performer.performerId"
-                      @touchstart.stop
-                      @click="togglePreview(performer.performerId)"
-                    >
-                      <q-icon
-                        :name="
-                          playing === performer.performerId
-                            ? 'pause'
-                            : 'play_arrow'
-                        "
-                        size="22px"
-                      />
-                    </button>
                   </template>
                   <div class="text-body-compact performer-card__name">
                     {{ performer.name }}
@@ -304,7 +263,6 @@ import { useI18n } from "vue-i18n";
 import { HBtn, HChip, HEmptyState, HandyLoader } from "@/components/handy";
 import GateNotice from "@/components/GateNotice.vue";
 import MediaPreview from "@/components/MediaPreview.vue";
-import { canHover } from "@/composables/useCanHover";
 import PerformerFiltersDialog from "@/components/PerformerFiltersDialog.vue";
 import TileCard from "@/components/TileCard.vue";
 import { useFormat } from "@/composables/useFormat";
@@ -418,37 +376,6 @@ const previews = computed(() =>
     ? topPreviewByPerformer(catalog.visible)
     : new Map<string, string>()
 );
-
-// --- the play button on touch: the card's own preview, started and stopped
-// by hand ---
-
-interface PreviewHandle {
-  start: () => void;
-  stop: () => void;
-}
-
-const previewHandles = new Map<string, PreviewHandle>();
-
-function setPreview(id: string, el: unknown) {
-  if (el) previewHandles.set(id, el as PreviewHandle);
-  else previewHandles.delete(id);
-}
-
-/** the performer whose card is previewing, "" for none — kept from the
- * preview's own reports, so the button turns back when the preview stops for
- * any reason (another card, a scroll away) */
-const playing = ref("");
-
-function onPreviewActive(id: string, on: boolean) {
-  if (on) playing.value = id;
-  else if (playing.value === id) playing.value = "";
-}
-
-function togglePreview(id: string) {
-  const handle = previewHandles.get(id);
-  if (playing.value === id) handle?.stop();
-  else handle?.start();
-}
 
 // --- property filters ---
 
@@ -750,34 +677,6 @@ function performerTo(performer: PerformerSummary): string {
 
 .performers-page__sentinel {
   height: 1px;
-}
-
-// round and translucent over the picture, like the slideshow's arrows
-.performer-card__play {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  padding: 0;
-  border: 0;
-  border-radius: var(--radius-full);
-  background: color-mix(in srgb, var(--color-bg-card) 75%, transparent);
-  color: var(--color-text-primary);
-  box-shadow: var(--shadow-md);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  cursor: pointer;
-
-  &[aria-pressed="true"] {
-    background: var(--color-action-primary);
-    color: var(--color-action-primary-label);
-  }
-
-  &:focus-visible {
-    outline: 2px solid var(--color-stroke-focus);
-    outline-offset: 2px;
-  }
 }
 
 .performer-card__name {

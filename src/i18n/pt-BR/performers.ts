@@ -44,9 +44,7 @@ const performers: typeof enUS = {
     age: "{age} anos",
     height: "{cm} cm",
     weight: "{kg} kg",
-    cup: "Bojo {cup}",
-    previewPlay: "Reproduzir prévia: {name}",
-    previewStop: "Parar prévia: {name}"
+    cup: "Bojo {cup}"
   },
 
   errorTitle: "Não foi possível carregar os artistas",

@@ -47,10 +47,7 @@ const performers: typeof enUS = {
     age: "{age}岁",
     height: "{cm} cm",
     weight: "{kg} kg",
-    cup: "{cup}罩杯",
-    // the play button on a card on touch devices; {name} is the performer's
-    previewPlay: "播放预览：{name}",
-    previewStop: "停止预览：{name}"
+    cup: "{cup}罩杯"
   },
 
   errorTitle: "无法加载演员",
