@@ -5,6 +5,13 @@
      words. Newest release on top. Format: "## <version> — <date>", then
      "### <group>" headings and "- " lines. Keep it English-only. -->
 
+## 2.10.3 — 8 October 2026
+
+### Loading
+
+- On your first visit, the page no longer dims and blurs itself a moment after
+  loading. The welcome message is simply there when the page appears.
+
 ## 2.10.2 — 6 October 2026
 
 ### Finding videos
