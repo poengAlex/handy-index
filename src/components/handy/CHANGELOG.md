@@ -13,6 +13,29 @@ Format, which the CLI reads (`tools/kit/lib/changelog.mjs`):
 - Any number of `Consumer action:` lines, each an instruction an app's AI can
   carry out on its own. An entry without one is information only.
 
+## unreleased — A click inside a drag-range band moves the nearer handle even when it wobbles
+
+On `HLabeledSlider` with `drag-range`, a press inside the band only counted as
+a click while it stayed within 4px. An ordinary tap moves further than that,
+so a tap that lasted past the 120ms hold nudged the whole band one step
+instead of moving the nearer handle. A tap that drifted downward was handed
+back as a page scroll and did nothing. A press now counts as a click within
+6px for a mouse and 12px for a finger, however long it lasts. A touch the
+browser cancels no longer counts as a tap. The hold stays at 120ms. Nothing
+changes for the host.
+
+## unreleased — Slider cursors say what a press does: pointer on the track, grab on what can be grabbed
+
+Quasar shows `grab` along the whole track of every editable slider and
+range, but a press on the track (or on a plain range's band) moves the
+nearer handle to that point, so nothing there is grabbed. The track now
+shows `pointer` and the handles `grab`. `HLabeledSlider`'s `drag-range` band
+shows `grab`, because a hold picks it up. Its own gestures (the band, and a
+handle moved from inside the band) now put `grabbing` on the whole page
+while they run, the same way Quasar's handle drag does. Disabled
+(`not-allowed`) and readonly (default arrow) are unchanged. Nothing changes
+for the host.
+
 ## unreleased — HPeekCarousel's wheel listener is passive, so Safari scrolls the page over it
 
 Safari 27 won't scroll the page for a trackpad swipe that starts over an

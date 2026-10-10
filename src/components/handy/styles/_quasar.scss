@@ -155,6 +155,22 @@ input[type="number"] {
   -webkit-user-select: none;
 }
 
+// The cursor says what a press does there. Quasar shows `grab` along the
+// whole track, but only a handle is ever grabbed: a press anywhere else —
+// the bare track, or a range's band — moves the nearer handle to that point,
+// which makes the track a click target and its cursor the pointer. The
+// handles keep `grab`; while one drags, Quasar puts `grabbing` on the whole
+// page. Disabled (not-allowed) and readonly (default) are Quasar's own and
+// untouched here — neither is --editable. HLabeledSlider's drag-range band is
+// the one other thing that can be grabbed, and says so itself.
+.q-slider--editable .q-slider__track-container {
+  cursor: pointer;
+}
+
+.q-slider--editable .q-slider__thumb {
+  cursor: grab;
+}
+
 .q-slider__thumb-shape {
   stroke-width: 0;
 

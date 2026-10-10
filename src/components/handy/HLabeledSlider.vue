@@ -118,6 +118,7 @@
       ref="rangeEl"
       class="h-lslider__range"
       :class="{
+        'h-lslider__range--drag': dragRange && !disable,
         'h-lslider__range--live': press !== null,
         'h-lslider__range--band': press === 'band',
         'h-lslider__range--press-min': press === 'min',
@@ -473,8 +474,13 @@ function cancelEdit() {
  * unhurried click that dwells past the threshold does what it always did,
  * rather than arming the band and dying there. */
 const HOLD_MS = 120;
-/** movement that ends the "is this a click?" question */
-const MOVE_SLOP = 4;
+/** how far a press may wander and still be a click. Under it nothing moves,
+ * and the release moves the nearer handle — however long the press lasted,
+ * and whether or not the hold landed. A finger gets the larger allowance: a
+ * tap lands, rolls and lifts several pixels apart, and at a mouse-sized 4px
+ * a tap that outlasted the hold read as a band drag (the band nudged a step,
+ * no handle moved), or, drifting down, as a page scroll (nothing moved). */
+const CLICK_SLOP = { mouse: 6, touch: 12 };
 /** half the default thumb — the strip at each end of the band that stays
  * Quasar's, so grabbing a handle still grabs the handle */
 const THUMB_RADIUS = 10;
@@ -572,12 +578,13 @@ function onDown(
     if (!drag) return;
     drag.mode = "band";
     press.value = "band";
+    if (!drag.touch) grabbingCursor(true);
   }, HOLD_MS);
 
   if (touch) {
     window.addEventListener("touchmove", onTouchMove, { passive: false });
     window.addEventListener("touchend", onTouchEnd);
-    window.addEventListener("touchcancel", onTouchEnd);
+    window.addEventListener("touchcancel", onTouchCancel);
   } else {
     window.addEventListener("mousemove", onMouseMove);
     window.addEventListener("mouseup", onMouseUp);
@@ -594,7 +601,8 @@ function onMove(
   const dy = clientY - drag.startY;
 
   if (!drag.moved) {
-    if (Math.abs(dx) < MOVE_SLOP && Math.abs(dy) < MOVE_SLOP) return;
+    const slop = drag.touch ? CLICK_SLOP.touch : CLICK_SLOP.mouse;
+    if (Math.abs(dx) < slop && Math.abs(dy) < slop) return;
     // a finger heading down the page is scrolling it, not editing the range —
     // hand the gesture back before anything moves (the band, once held, is
     // committed and keeps the touch)
@@ -610,6 +618,7 @@ function onMove(
     }
     if (drag.timer !== null) clearTimeout(drag.timer);
     drag.timer = null;
+    if (!drag.touch) grabbingCursor(true);
     emit("pan", "start");
   }
 
@@ -633,17 +642,19 @@ function onMove(
 }
 
 /** `abort`: the gesture was handed back (a finger that turned out to be
- * scrolling the page) — nothing was ours to commit */
+ * scrolling the page, or a touch the browser cancelled) — nothing was ours to
+ * commit */
 function endDrag(abort = false) {
   if (!drag) return;
   const d = drag;
   drag = null;
   if (d.timer !== null) clearTimeout(d.timer);
   press.value = null;
+  grabbingCursor(false);
   if (d.touch) {
     window.removeEventListener("touchmove", onTouchMove);
     window.removeEventListener("touchend", onTouchEnd);
-    window.removeEventListener("touchcancel", onTouchEnd);
+    window.removeEventListener("touchcancel", onTouchCancel);
   } else {
     window.removeEventListener("mousemove", onMouseMove);
     window.removeEventListener("mouseup", onMouseUp);
@@ -669,6 +680,29 @@ function endDrag(abort = false) {
   const next = withEdge(d.start, d.edge, valueAt(d.startX, d.rect));
   emit("update:modelValue", next);
   emit("change", next);
+}
+
+/** The page-wide `grabbing` Quasar's own drag puts up (its TouchPan does the
+ * same two things): the cursor on <html>, and everything under <body> out of
+ * hit-testing, so no element's own cursor — the track's pointer, a button's —
+ * wins over it mid-drag. Our listeners are on window, so they still hear the
+ * gesture out. Mouse only: a finger has no cursor. */
+let restoreCursor: (() => void) | null = null;
+
+function grabbingCursor(on: boolean) {
+  if (on && !restoreCursor) {
+    const root = document.documentElement;
+    const before = root.style.cursor;
+    root.style.cursor = "grabbing";
+    document.body.classList.add("no-pointer-events--children");
+    restoreCursor = () => {
+      root.style.cursor = before;
+      document.body.classList.remove("no-pointer-events--children");
+    };
+  } else if (!on && restoreCursor) {
+    restoreCursor();
+    restoreCursor = null;
+  }
 }
 
 function swallowNextClick() {
@@ -710,6 +744,12 @@ function onTouchMove(e: TouchEvent) {
 }
 function onTouchEnd() {
   endDrag();
+}
+/** the browser took the touch (a scroll, a system gesture): a drag already
+ * under way finishes where it stands, but a press that never moved was not a
+ * tap, and must not move a handle on its way out */
+function onTouchCancel() {
+  endDrag(!drag?.moved);
 }
 
 onMounted(() => {
@@ -788,9 +828,12 @@ onBeforeUnmount(() => {
   transform: scaleX(0.55);
 }
 
-// held: the band has the gesture, and says so the way any grabbed thing does
-.h-lslider__range--band :deep(.q-slider__track-container) {
-  cursor: grabbing;
+// with drag-range the band can be held and moved, so it says so. A plain
+// range's band is track like any other — a press there moves the nearer
+// handle — and keeps the track's pointer (styles/_quasar.scss). Once held,
+// the gesture puts `grabbing` on the whole page (see grabbingCursor).
+.h-lslider__range--drag :deep(.q-slider__selection) {
+  cursor: grab;
 }
 
 // with a reset value, the label is a button that looks exactly like the

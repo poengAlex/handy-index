@@ -632,14 +632,7 @@ tabular number on the right. It takes a number for a single slider or
 
 ```vue
 <HLabeledSlider v-model="depth" label="Stroke depth" unit="%" :reset="50" />
-<HLabeledSlider
-  v-model="zone"
-  label="Stroke zone"
-  :min="0"
-  :max="110"
-  unit="mm"
-  drag-range
-/>
+<HLabeledSlider v-model="zone" label="Stroke zone" unit="%" drag-range />
 <HLabeledSlider
   v-model="spanMs"
   label="View window"
