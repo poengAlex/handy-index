@@ -4,7 +4,9 @@ Interactive Video Database — a browser for Handy-scripted interactive videos,
 built on the [handyfeeling.com Script Index API](https://scripts01.handyfeeling.com/api/script/index/v0/spec).
 
 Quasar (Vite) + Vue 3 + TypeScript + Pinia. All UI follows the Handy design
-system (`design.md` in the brand-ux project) and its component kit.
+system (`design.md` in brand-ux, which lives in
+[handy-playground](https://github.com/poengAlex/handy-playground) at
+`projects/brand-ux`) and its component kit.
 
 ## Architecture
 
@@ -17,7 +19,7 @@ system (`design.md` in the brand-ux project) and its component kit.
 - `src/stores/settings.ts` — persisted preferences (consent, NSFW, premium,
   orientation, connection key, favorite ids).
 - `src/components/handy/` — the Handy design-system kit, a read-only copy of
-  brand-ux's. Don't fork it; sync it with `npm run kit -- status|pull|upstream`
+  brand-ux's (handy-playground `main`). Don't fork it; sync it with `npm run kit -- status|pull|upstream`
   (the handy-kit skill has the flow, `handy-kit.lock.json` the commit).
 - `src/components/` — app components (VideoCard, CarouselRow, dialogs).
 - `src/pages/` — filename-based routing: `index.vue` is the shell (nav bar,

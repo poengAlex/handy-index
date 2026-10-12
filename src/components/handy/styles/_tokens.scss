@@ -148,8 +148,19 @@
 
 // ------------------------------------------------------------
 // Dark mode  [DESIGN.md §3]
+// A mixin because the same tokens serve two states: the stamped
+// choice ([data-theme="dark"], written by useHandyTheme on mount)
+// and the frame before it, where no attribute exists yet and the
+// browser's prefers-color-scheme decides. Without the media block a
+// dark-scheme browser paints a white page and flips once the bundle
+// runs. (From scripter4, 2026-10-04.)
+//
+// The selector is (0,1,0), the same as :root, and matches only while
+// no data-theme is stamped: it wins over the light :root by coming
+// later, and it can never outrank an app's own [data-theme="dark"]
+// override once the attribute is there.
 // ------------------------------------------------------------
-[data-theme="dark"] {
+@mixin dark-tokens {
   /* Surfaces */
   --color-bg-page: #1c1e21;
   --color-bg-page-alt: #2a2d31;
@@ -188,6 +199,16 @@
 
   /* Semantic feedback */
   --color-feedback-info: #47a5fa;
+}
+
+[data-theme="dark"] {
+  @include dark-tokens;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:where(:not([data-theme])) {
+    @include dark-tokens;
+  }
 }
 
 // ------------------------------------------------------------

@@ -49,6 +49,12 @@ export function useHandyTheme() {
     apply(!dark.value);
   }
 
+  /** forget the stored choice and go back to following the browser */
+  function followSystem() {
+    localStorage.removeItem(STORAGE_KEY);
+    set(systemQuery()?.matches ?? false);
+  }
+
   /** restore the persisted choice, or follow the OS — from the shell's onMounted */
   function init() {
     const stored = localStorage.getItem(STORAGE_KEY);
@@ -70,5 +76,5 @@ export function useHandyTheme() {
     }
   }
 
-  return { dark, apply, toggle, init };
+  return { dark, apply, toggle, followSystem, init };
 }

@@ -9,9 +9,26 @@ Format, which the CLI reads (`tools/kit/lib/changelog.mjs`):
 - One `## <commit> — <summary>` heading per entry. `<commit>` is the brand-ux
   commit, or `unreleased` until someone stamps it. The summary identifies the
   entry, so keep it unique and don't reword it after release. Stamping the
-  commit later doesn't announce the entry a second time.
+  commit later doesn't announce the entry a second time. Since 2026-10-12 a
+  commit is handy-playground's; the ones named before that are commits of the
+  old poengAlex/brand-ux repository.
 - Any number of `Consumer action:` lines, each an instruction an app's AI can
   carry out on its own. An entry without one is information only.
+
+## unreleased — brand-ux moved into handy-playground, and the sync follows it
+
+brand-ux is no longer its own repository: it is `projects/brand-ux` in
+handy-playground (github.com/poengAlex/handy-playground, branch `main`), with
+its history. The kit is unchanged; the tooling moved with it. An app in
+handy-playground (scripter4, the classifier) now syncs from the checkout's
+own `projects/brand-ux` with no network, and makes a kit change there in the
+same commit as the apps that take it. An app elsewhere syncs from
+handy-playground `main` through a partial clone in
+`~/.cache/handy-kit/handy-playground`, and `upstream start` makes a sparse
+worktree with only `projects/brand-ux` in it.
+
+- Consumer action: The bootstrap an app has still asks the old repository, so pull once with the new CLI, from the app's root: `node ../brand-ux/tools/kit/cli.mjs pull` in handy-playground, `node <a handy-playground checkout>/projects/brand-ux/tools/kit/cli.mjs pull` elsewhere. That replaces the bootstrap, the hooks and the skill; commit them with the lock.
+- Consumer action: Replace every link or path to the old brand-ux repository in the app's own docs (github.com/poengAlex/brand-ux, `~/code/test_projects/brand-ux`, "brand-ux master") with handy-playground's `projects/brand-ux` and `main`.
 
 ## unreleased — A click inside a drag-range band moves the nearer handle even when it wobbles
 
@@ -44,6 +61,39 @@ anything, so every carousel row blocked vertical scrolling under the pointer.
 The listener is now passive and no longer cancels sideways swipes; the root's
 `overflow-x: clip` already stops the page panning sideways. Nothing changes
 for the host.
+
+## unreleased — A dark-scheme browser paints dark before the app mounts, from scripter4
+
+The dark tokens also apply under `@media (prefers-color-scheme: dark)` while
+`<html>` has no `data-theme` yet, so the frame before `useHandyTheme` stamps
+the attribute is no longer white for a dark-scheme visitor. Once the
+attribute is stamped, `[data-theme="dark"]` alone decides, as before.
+
+- Consumer action: If the app's `app.scss` has its own `prefers-color-scheme: dark` copy of the dark tokens, delete it; keep only app-specific variables in such a block.
+
+## unreleased — useHandyTheme gains followSystem(), from scripter4
+
+`followSystem()` forgets the stored theme choice and goes back to following
+the OS, as on a first visit. scripter4's settings "reset to defaults" uses
+it. Nothing to do for an app that doesn't need it.
+
+## unreleased — Firmer light glass and a blurred drawer backdrop, from onboardingv4
+
+`.glass-light` is `rgba(241, 244, 247, 0.94)` instead of 0.8, so a light bar
+over a capped content column no longer shows the column's edge as a step.
+`.q-drawer__backdrop` gets the dialogs' 4px blur. Both were onboardingv4's
+own rules.
+
+- Consumer action: If the app's `app.scss` re-declares `.glass-light` with the 0.94 background or blurs `.q-drawer__backdrop`, delete those rules; the kit has them now.
+
+## unreleased — Kit-label resolvers must hand back the {label} and {value} slots, from scripter4
+
+The kit fills `{label}` and `{value}` in after the resolver returns. A
+vue-i18n `t("kit.increase")` called without them blanks the slot, so
+"Increase {label}" was announced as "Increase ". The README's example
+resolver did exactly that; it now passes the slots through.
+
+- Consumer action: If the app's kit-label resolver calls vue-i18n's `t()` without the slots as named values (a bare `t(path)`, or `t(path, fallback)` as the old README example did), pass `{ label: "{label}", value: "{value}" }` so they survive (see README §15).
 
 ## unreleased — The kit is self-contained: global CSS, Quasar setup and build fixes moved into the folder
 
@@ -80,7 +130,7 @@ skips the hover preview.
 `HSuccessMark` is the system's single "done" animation, and `HSuccessMoment`
 draws it by default.
 
-- Consumer action: onboardingv4 only: `WifiConnectStages.vue` carries the original inline copy of this mark. Reduce it to `HSuccessMark`, so there is one implementation and not two that drift.
+An app with its own drawn "done" mark should switch to `HSuccessMark`. (onboardingv4's `WifiConnectStages.vue`, where the mark came from, already uses it.)
 
 ## b02c1bf — Connected indicator: a third state, connecting (HConnectedDot)
 

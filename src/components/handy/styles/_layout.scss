@@ -39,7 +39,12 @@
 // Glassmorphism  [DESIGN.md §6] — only over imagery / sticky nav
 // ------------------------------------------------------------
 .glass-light {
-  background: rgba(241, 244, 247, 0.8);
+  // 0.94, not 0.8: the light bar sits over pages whose content column caps
+  // at 1440px, so on a wide window the grey sections end under the bar and
+  // the white page margin carries on — at 0.8 that edge showed through as a
+  // step in the bar. Firm enough to read as one surface, still glass.
+  // (onboardingv4, upstreamed 2026-10-04.)
+  background: rgba(241, 244, 247, 0.94);
   backdrop-filter: blur(16px) saturate(140%);
   -webkit-backdrop-filter: blur(16px) saturate(140%);
 }

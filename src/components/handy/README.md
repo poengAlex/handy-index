@@ -44,9 +44,10 @@ component once, `/showcase/*` shows each family in depth, and `/design` shows
 The folder is self-contained. Everything a host needs from brand-ux lives
 inside it: the components, the global CSS (`styles/`), the Quasar setup
 (`install.ts`), the build fixes (`vite.ts`) and the list of peer dependencies
-(`kit.json`). brand-ux `master` is the only source. An app takes the whole
-folder, never a subset, never edits it, and syncs it with `npm run kit`
-(below).
+(`kit.json`). brand-ux is the only source. It lives in handy-playground
+(github.com/poengAlex/handy-playground), in `projects/brand-ux`, and `main`
+is its released state. An app takes the whole folder, never a subset, never
+edits it, and syncs it with `npm run kit` (below).
 
 ### Setting up a host
 
@@ -129,23 +130,33 @@ it anyway, and `pull` refuses to run over a copy that differs from its lock.
 
 Each app carries a small bootstrap and two Claude Code hooks in
 `scripts/handy-kit/`, a `handy-kit` skill, a `kit` npm script, and
-`handy-kit.lock.json`. The lock records the brand-ux commit and a sha256 of
-every kit file, so a hash mismatch is a local edit. The CLI itself lives in
-brand-ux (`tools/kit/`). The bootstrap keeps a clone of brand-ux in
-`~/.cache/handy-kit/brand-ux` and runs the CLI from the brand-ux ref being
-synced, so tooling changes reach apps the same way kit changes do.
+`handy-kit.lock.json`. The lock records where the copy came from and a
+sha256 of every kit file, so a hash mismatch is a local edit. The CLI itself
+lives in brand-ux (`tools/kit/`), and how it syncs depends on where the app
+is:
 
-| Command                                 | What it does                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| --------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `npm run kit -- status`                 | In sync, behind (kit files or tooling), or locally edited? Compared with what the copy follows: `master`, or the branch or local checkout it was last pulled from. Also lists missing peers and changelog entries the copy hasn't seen. Exit 0 in sync, 10 behind, 11 local edits, 12 both. Offline isn't an error: it says so, and only local edits change the exit code. A `SessionStart` hook runs it at the start of every session. |
-| `npm run kit -- pull`                   | Replaces the whole folder from brand-ux `master` (`--ref <ref>`, or `--from <checkout>`, uncommitted files included). Then writes the lock, refreshes the hooks and skill, checks peers, and prints the changelog entries with their `Consumer action:` lines. Refuses on local edits. On a copy that follows a branch or a local checkout, a plain `pull` asks which source to use instead of guessing.                                |
-| `npm run kit -- upstream start <slug>`  | Creates a brand-ux worktree on the branch `kit/<app>-<slug>` from `origin/master`, for making a kit change.                                                                                                                                                                                                                                                                                                                             |
-| `npm run kit -- upstream finish <slug>` | Requires a new `CHANGELOG.md` entry, runs brand-ux's gates in the worktree, commits, and prints the push command and the compare URL. It never pushes.                                                                                                                                                                                                                                                                                  |
+- **An app in handy-playground** (`projects/<app>`, like scripter4 and the
+  classifier) syncs from the checkout's own `projects/brand-ux`, uncommitted
+  files included, with no network. A kit change is made there and committed
+  together with the apps that take it.
+- **An app in another repository** syncs from GitHub. The bootstrap keeps a
+  clone of handy-playground in `~/.cache/handy-kit/handy-playground` (no file
+  contents up front, nothing checked out) and runs the CLI from the ref being
+  synced, so tooling changes reach apps the same way kit changes do. A kit
+  change goes back as a handy-playground branch and pull request.
+
+| Command                                 | What it does                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| --------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `npm run kit -- status`                 | In sync, behind (kit files or tooling), or locally edited? Compared with what the copy follows: in handy-playground, `projects/brand-ux`; elsewhere `main`, or the branch or local checkout it was last pulled from. Also lists missing peers and changelog entries the copy hasn't seen. Exit 0 in sync, 10 behind, 11 local edits, 12 both. Offline isn't an error: it says so, and only local edits change the exit code. A `SessionStart` hook runs it at the start of every session. |
+| `npm run kit -- pull`                   | Replaces the whole folder from brand-ux: `projects/brand-ux` in handy-playground, `main` elsewhere (`--ref <ref>`, or `--from <brand-ux folder or checkout>`, uncommitted files included). Then writes the lock, refreshes the hooks and skill, checks peers, and prints the changelog entries with their `Consumer action:` lines. Refuses on local edits. On a copy that follows a branch or a local checkout, a plain `pull` asks which source to use instead of guessing.             |
+| `npm run kit -- upstream start <slug>`  | Creates a handy-playground worktree on the branch `kit/<app>-<slug>` from `origin/main`, with only `projects/brand-ux` checked out, for making a kit change. In handy-playground it only says where to make the change.                                                                                                                                                                                                                                                                   |
+| `npm run kit -- upstream finish <slug>` | Requires a new `CHANGELOG.md` entry, runs brand-ux's gates in the worktree, commits, and prints the push command and the compare URL. It never pushes. In handy-playground: the entry and the gates in `projects/brand-ux`, no commit.                                                                                                                                                                                                                                                    |
 
 First-time setup in an app:
 
-1. `node ~/code/test_projects/brand-ux/tools/kit/cli.mjs init` (bootstrap,
-   hooks, skill and npm script; existing `.claude/settings.json` is merged).
+1. `node ~/code/handy-playground/projects/brand-ux/tools/kit/cli.mjs init`
+   (bootstrap, hooks, skill and npm script; existing `.claude/settings.json`
+   is merged).
 2. Add `"src/components/handy/"` to the formatter's ignore list. A formatter
    whose settings differ (trailing commas, print width) rewrites the copy, and
    from then on every file looks edited.
@@ -154,7 +165,9 @@ First-time setup in an app:
 The rules, and what enforces them:
 
 - **Never edit the copy.** A `PreToolUse` hook blocks Claude's edit tools in
-  the folder. A change the app needs goes upstream: `upstream start`, edit in
+  the folder. A change the app needs goes into brand-ux. In handy-playground:
+  edit `projects/brand-ux`, `pull`, `upstream finish` for the gates, and
+  commit the kit and the apps together. Elsewhere: `upstream start`, edit in
   the worktree, test with `pull --from <worktree>`, `upstream finish`, then a
   pull request.
 - **Every kit change gets a `CHANGELOG.md` entry** in this folder. Anything a
@@ -2259,15 +2272,21 @@ field layouts, the config I/O (`buildConfig`, `parseConfig`,
 
 ### `useHandyTheme()`
 
-The theme contract in one place. It returns `{ dark, apply, toggle, init }`.
+The theme contract in one place. It returns
+`{ dark, apply, toggle, followSystem, init }`.
 The state is module-scoped, so every caller shares one `dark` ref.
 
 - `init()`, called once from each shell's `onMounted`, restores the stored
   choice (`localStorage["handy-theme"]` = `"light" | "dark"`). Otherwise it
   **follows the OS**, live, until the user makes a choice.
 - `apply(value)` paints and records an explicit choice. `toggle()` flips it.
+- `followSystem()` forgets the stored choice and follows the OS again, as on
+  a first visit (a settings "reset to defaults", say).
 - Painting sets **both** `data-theme` on `<html>` (the tokens) and
   `$q.dark` (Quasar's internals). It requires Quasar's `Dark` plugin.
+- Before the first paint, while `<html>` has no `data-theme` yet, the dark
+  tokens follow `prefers-color-scheme` (`styles/_tokens.scss`), so a
+  dark-scheme browser never flashes a white page.
 
 ### `useGlassOnScroll(threshold = 24)`
 
@@ -2373,13 +2392,22 @@ English in `labels.ts`.
 
 The kit must stay copy-pasteable, so nothing in this folder may import a host
 app's i18n instance — the copy would then only build in the project it came
-from. Instead the kit offers a hook. A host with a translator installs one
-once, at boot, before anything renders:
+from. Instead the kit offers a hook. A host with a translator passes one to
+`installHandyKit` (or `setKitLabelResolver`) once, at boot, before anything
+renders:
 
 ```ts
-import { setKitLabelResolver } from "@/components/handy";
+// {label} and {value} are the kit's own slots, filled in after the resolver
+// returns: hand them back to vue-i18n as themselves, or it blanks them and
+// "Increase {label}" is announced as "Increase ".
+const SLOTS = { label: "{label}", value: "{value}" };
 
-setKitLabelResolver((key, fallback) => t(`kit.${key}`, fallback));
+installHandyKit({
+  labels: (key, fallback) => {
+    const path = `kit.${key}`;
+    return i18n.global.te(path) ? i18n.global.t(path, SLOTS) : fallback;
+  }
+});
 ```
 
 A host without one installs nothing and gets the English defaults. The

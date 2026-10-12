@@ -5,8 +5,10 @@
 //
 // src/components/handy/ is a read-only copy of brand-ux's kit. This blocks
 // Claude's file-editing tools inside it (exit 2: the call is refused and
-// stderr goes back to Claude) and points at the upstream flow instead.
-// Anything it can't read is let through, so a hook bug never blocks work.
+// stderr goes back to Claude) and points at where the change goes instead:
+// brand-ux's own folder when the app is in the same handy-playground
+// checkout, the upstream flow otherwise. Anything it can't read is let
+// through, so a hook bug never blocks work.
 import { existsSync, readFileSync, realpathSync } from "node:fs";
 import { homedir } from "node:os";
 import {
@@ -22,6 +24,17 @@ import { fileURLToPath } from "node:url";
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..", "..");
 const KIT = join(ROOT, "src", "components", "handy");
 const FOLD = process.platform === "darwin" || process.platform === "win32";
+
+/** brand-ux's folder when this app is inside a handy-playground checkout. */
+function upstreamInRepo() {
+  for (let d = ROOT; ; d = dirname(d)) {
+    const up = join(d, "projects", "brand-ux");
+    if (existsSync(join(up, "src", "components", "handy", "kit.json"))) {
+      return up;
+    }
+    if (dirname(d) === d) return null;
+  }
+}
 
 /** realpath of the deepest existing ancestor, plus the rest: /tmp ≡ /private/tmp. */
 function real(path) {
@@ -73,9 +86,22 @@ const hit = paths(input?.tool_input ?? {})
   .find(inKit);
 if (!hit) process.exit(0);
 
+const upstream = upstreamInRepo();
+// both sides through real(): the hook's own path is resolved, a tool's isn't
+const root = real(ROOT);
+const target = real(hit);
+const lead = `Blocked: ${relative(root, target)} is inside src/components/handy/, a read-only copy of the Handy kit from brand-ux (see handy-kit.lock.json). Don't edit it here, and don't work around this with shell commands.`;
 process.stderr.write(
-  `Blocked: ${relative(ROOT, hit)} is inside src/components/handy/, a read-only copy of the Handy kit from brand-ux (see handy-kit.lock.json). Don't edit it here, and don't work around this with shell commands. A kit change goes upstream:
-  1. npm run kit -- upstream start <slug>     (prints a brand-ux worktree)
+  upstream
+    ? `${lead} brand-ux is in this repository, so make the change there:
+  1. edit ${relative(root, join(real(upstream), "src", "components", "handy", relative(real(KIT), target)))} instead, and add a CHANGELOG.md entry
+  2. npm run kit -- pull                      (take it into this app)
+  3. npm run kit -- upstream finish <slug>    (brand-ux's gates)
+  4. commit the kit change and the app's pull together
+If the app only needs different behaviour, give the kit a prop or option for it. The handy-kit skill has the details.
+`
+    : `${lead} A kit change goes upstream:
+  1. npm run kit -- upstream start <slug>     (prints a handy-playground worktree)
   2. edit the kit in that worktree, add a CHANGELOG.md entry
   3. npm run kit -- pull --from <worktree>    (test it in this app)
   4. npm run kit -- upstream finish <slug>    (gates, commit, compare URL)

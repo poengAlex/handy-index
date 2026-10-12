@@ -2,20 +2,24 @@
 // handy-kit bootstrap: `npm run kit -- <command>`.
 //
 // Installed from brand-ux's tools/kit by `init` and refreshed by every `pull`,
-// so don't edit it here. It keeps a clone of brand-ux in
-// ~/.cache/handy-kit/brand-ux and runs the kit CLI from the brand-ux ref the
-// command is about, which means the tooling updates through brand-ux exactly
-// like the kit does.
+// so don't edit it here. brand-ux lives in handy-playground, at
+// projects/brand-ux. In an app inside a handy-playground checkout (scripter4,
+// the classifier) this runs the CLI from that checkout. Anywhere else it
+// keeps a clone of handy-playground in ~/.cache/handy-kit/handy-playground
+// (no file contents up front, nothing checked out) and runs the kit CLI from
+// the ref the command is about, which means the tooling updates through
+// brand-ux exactly like the kit does.
 //
 // Which CLI runs:
-//   --from <checkout>      that checkout's tools/kit (also tests tooling edits)
-//   --ref <ref>            the CLI at that brand-ux ref
+//   --from <path>          that brand-ux folder's (or checkout's) tools/kit
+//   --ref <ref>            the CLI at that handy-playground ref
+//   in handy-playground    the checkout's own projects/brand-ux/tools/kit
 //   status, no flags       the CLI of whatever the copy was pulled from
-//   anything else          the CLI on brand-ux master
+//   anything else          the CLI on handy-playground main
 //
 // Overrides, for working on the tooling itself:
 //   HANDY_KIT_HOME     cache root (default ~/.cache/handy-kit)
-//   HANDY_KIT_REMOTE   the brand-ux clone URL (default GitHub)
+//   HANDY_KIT_REMOTE   the handy-playground clone URL (default GitHub)
 //   HANDY_KIT_CLI      run this cli.mjs and nothing else
 import { spawnSync } from "node:child_process";
 import {
@@ -26,13 +30,18 @@ import {
   rmSync
 } from "node:fs";
 import { homedir } from "node:os";
-import { join, resolve } from "node:path";
+import { dirname, join, resolve } from "node:path";
 
+const UPSTREAM = "projects/brand-ux";
+const TOOLS = `${UPSTREAM}/tools/kit`;
+const DEFAULT_REF = "main";
+const OLD_REPO = "poengAlex/brand-ux"; // where brand-ux lived until 2026-10-12
 const HOME =
   process.env.HANDY_KIT_HOME || join(homedir(), ".cache", "handy-kit");
 const REMOTE =
-  process.env.HANDY_KIT_REMOTE || "https://github.com/poengAlex/brand-ux.git";
-const CLONE = join(HOME, "brand-ux");
+  process.env.HANDY_KIT_REMOTE ||
+  "https://github.com/poengAlex/handy-playground.git";
+const CLONE = join(HOME, "handy-playground");
 const ENV = {
   ...process.env,
   GIT_TERMINAL_PROMPT: "0",
@@ -89,6 +98,28 @@ function resolveCommit(ref) {
   return null;
 }
 
+/** A brand-ux folder with the CLI in it: `dir` itself or `dir`/projects/brand-ux. */
+function upstreamAt(dir) {
+  for (const d of [dir, join(dir, UPSTREAM)]) {
+    if (existsSync(join(d, "tools/kit/cli.mjs"))) return d;
+  }
+  return null;
+}
+
+/** brand-ux's folder when this app is inside a handy-playground checkout. */
+function upstreamInRepo(dir) {
+  for (let d = dir; ; d = dirname(d)) {
+    const up = join(d, UPSTREAM);
+    if (
+      existsSync(join(up, "tools/kit/cli.mjs")) &&
+      existsSync(join(up, "src/components/handy/kit.json"))
+    ) {
+      return up;
+    }
+    if (dirname(d) === d) return null;
+  }
+}
+
 let lock = null;
 try {
   lock = JSON.parse(readFileSync("handy-kit.lock.json", "utf8"));
@@ -100,11 +131,18 @@ if (process.env.HANDY_KIT_CLI) run(resolve(process.env.HANDY_KIT_CLI));
 
 const from = flag("from");
 if (from) {
-  const cli = resolve(from, "tools/kit/cli.mjs");
-  if (!existsSync(cli)) {
-    fail(`${from} has no tools/kit/cli.mjs; is it a brand-ux checkout?`);
+  const dir = upstreamAt(resolve(from));
+  if (!dir) {
+    fail(
+      `${from} has no tools/kit/cli.mjs (nor ${TOOLS}/cli.mjs); is it brand-ux, or a handy-playground checkout?`
+    );
   }
-  run(cli);
+  run(join(dir, "tools/kit/cli.mjs"));
+}
+
+if (!flag("ref")) {
+  const here = upstreamInRepo(process.cwd());
+  if (here) run(join(here, "tools/kit/cli.mjs"));
 }
 
 const lockPath = lock?.source?.kind === "path" ? lock.source.path : null;
@@ -116,15 +154,22 @@ if (isStatus && !flag("ref") && lockPath) {
 mkdirSync(HOME, { recursive: true });
 let offline = false;
 if (!existsSync(join(CLONE, ".git"))) {
-  const r = spawnSync("git", ["clone", "--quiet", REMOTE, CLONE], {
-    encoding: "utf8",
-    timeout: isStatus ? 20_000 : 300_000,
-    env: ENV
-  });
+  // the same flags as CLONE_ARGS in lib/git.mjs
+  const r = spawnSync(
+    "git",
+    ["clone", "--quiet", "--filter=blob:none", "--no-checkout", REMOTE, CLONE],
+    {
+      encoding: "utf8",
+      timeout: isStatus ? 20_000 : 300_000,
+      env: ENV
+    }
+  );
   if (r.status !== 0) {
     rmSync(CLONE, { recursive: true, force: true });
     const why = (r.stderr ?? "").trim().split("\n").pop() || "timed out";
-    fail(`could not reach GitHub to clone brand-ux (${why}); status unknown.`);
+    fail(
+      `could not reach GitHub to clone handy-playground (${why}); status unknown.`
+    );
   }
 } else {
   offline = !git(
@@ -133,55 +178,55 @@ if (!existsSync(join(CLONE, ".git"))) {
   ).ok;
 }
 
-const lockRef = lock?.source?.kind === "github" ? lock.source.ref : null;
+// a ref from the old brand-ux repository means nothing in handy-playground
+const lockRef =
+  lock?.source?.kind === "github" && lock.source.repo !== OLD_REPO
+    ? lock.source.ref
+    : null;
 let ref =
   flag("ref") ||
   (isStatus && lockRef) ||
   (command === "upstream" && flag("base")) ||
-  "master";
+  DEFAULT_REF;
 let commit = resolveCommit(ref);
-if (!commit && isStatus && !flag("ref") && ref !== "master") {
-  ref = "master"; // the branch the copy came from is gone (merged); the CLI says so
+if (!commit && isStatus && !flag("ref") && ref !== DEFAULT_REF) {
+  ref = DEFAULT_REF; // the branch the copy came from is gone (merged); the CLI says so
   commit = resolveCommit(ref);
 }
 if (!commit) {
   fail(
-    `brand-ux has no ref "${ref}"${offline ? " (and GitHub could not be reached)" : ""}.`
+    `handy-playground has no ref "${ref}"${offline ? " (and GitHub could not be reached)" : ""}.`
   );
 }
-if (!git(["cat-file", "-e", `${commit}:tools/kit/cli.mjs`]).ok) {
+if (!git(["cat-file", "-e", `${commit}:${TOOLS}/cli.mjs`]).ok) {
   fail(
-    `brand-ux ${ref} (${commit.slice(0, 7)}) has no kit tooling (tools/kit) yet. ` +
-      "Use --ref <a branch that has it> or --from <a local brand-ux checkout>."
+    `handy-playground ${ref} (${commit.slice(0, 7)}) has no kit tooling (${TOOLS}) yet. ` +
+      "Use --ref <a branch that has it> or --from <a local handy-playground checkout>."
   );
 }
 
 const dir = join(HOME, "cli", commit);
-if (!existsSync(join(dir, "tools/kit/cli.mjs"))) {
+if (!existsSync(join(dir, TOOLS, "cli.mjs"))) {
   const tmp = `${dir}.tmp-${process.pid}`;
   rmSync(tmp, { recursive: true, force: true });
   mkdirSync(tmp, { recursive: true });
-  const archive = spawnSync(
-    "git",
-    ["archive", "--format=tar", commit, "tools/kit"],
-    {
-      cwd: CLONE,
-      env: ENV,
-      maxBuffer: 64 * 1024 * 1024
-    }
-  );
+  const archive = spawnSync("git", ["archive", "--format=tar", commit, TOOLS], {
+    cwd: CLONE,
+    env: ENV,
+    maxBuffer: 64 * 1024 * 1024
+  });
   const tar = spawnSync("tar", ["-x", "-f", "-", "-C", tmp], {
     input: archive.stdout
   });
   if (archive.status !== 0 || tar.status !== 0) {
     rmSync(tmp, { recursive: true, force: true });
-    fail(`could not extract tools/kit at ${commit.slice(0, 7)}.`);
+    fail(`could not extract ${TOOLS} at ${commit.slice(0, 7)}.`);
   }
   rmSync(dir, { recursive: true, force: true });
   renameSync(tmp, dir);
 }
 
-run(join(dir, "tools/kit/cli.mjs"), {
+run(join(dir, TOOLS, "cli.mjs"), {
   HANDY_KIT_FETCHED: "1",
   HANDY_KIT_OFFLINE: offline ? "1" : ""
 });

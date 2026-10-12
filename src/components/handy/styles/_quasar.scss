@@ -264,6 +264,13 @@ input[type="number"] {
   -webkit-backdrop-filter: blur(4px);
 }
 
+// Drawer backdrop — same 4px blur as dialogs so the page softens behind an
+// open drawer (Quasar keeps its own dark scrim; we just add the blur)
+.q-drawer__backdrop {
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
 // Notify toasts — card bg, semantic border-left accent [§7]
 .q-notification {
   border-radius: var(--radius-md);

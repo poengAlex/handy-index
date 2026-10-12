@@ -5,6 +5,17 @@
      words. Newest release on top. Format: "## <version> — <date>", then
      "### <group>" headings and "- " lines. Keep it English-only. -->
 
+## 2.10.4 — 12 October 2026
+
+### Look and feel
+
+- If your device is set to dark mode, the page is dark from the very first
+  moment instead of flashing white while it loads.
+- In light mode, the top bar and the back-to-top button are a little more
+  solid once you scroll, so the page behind them no longer shows through as
+  a visible edge on wide screens.
+- On phones, the page behind the menu blurs softly while the menu is open.
+
 ## 2.10.3 — 8 October 2026
 
 ### Loading

@@ -85,7 +85,11 @@ export const KIT_LABELS = {
 
 export type KitLabel = keyof typeof KIT_LABELS;
 
-/** What a host installs to translate them. `fallback` is the English above. */
+/**
+ * What a host installs to translate them. `fallback` is the English above.
+ * Return `{label}` and `{value}` untouched: the kit fills them in after the
+ * resolver returns (a vue-i18n `t()` called without them blanks them).
+ */
 export type KitLabelResolver = (key: KitLabel, fallback: string) => string;
 
 const ENGLISH: KitLabelResolver = (_key, fallback) => fallback;
