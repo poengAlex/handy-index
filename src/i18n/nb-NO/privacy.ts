@@ -41,7 +41,9 @@ const privacy: typeof enUS = {
 
   catalog: {
     title: "Hvor katalogen kommer fra",
-    body: "Katalogen, metadataene og alle scripts lastes fra API-et til script-indeksen på handyfeeling.com. Når du laster ned et script, sender inn en videoforespørsel eller stemmer på en, sendes din connection key til det API-et som autorisasjon. Når bruksstatistikken er på, sendes den også til Handy-API-et for å sjekke om din Handy er tilkoblet — se nedenfor. Det er de eneste gangene noe du har skrevet inn forlater nettleseren din."
+    body: "Katalogen, metadataene og alle scripts lastes fra API-et til script-indeksen på handyfeeling.com. Når du laster ned et script, sender inn en videoforespørsel eller stemmer på en, sendes din connection key til det API-et som autorisasjon. Når bruksstatistikken er på, sendes den også til Handy-API-et for å sjekke om din Handy er tilkoblet — se nedenfor. Det er de eneste gangene noe du har skrevet inn forlater nettleseren din.",
+    aiScripts:
+      "AI-script på forespørselssiden kommer fra auto-scripteren til Handy på playground.handyfeeling.com. Når du laster ned et, sendes ingenting du har skrevet inn."
   },
 
   statistics: {

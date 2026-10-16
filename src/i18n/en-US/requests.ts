@@ -74,6 +74,21 @@ export default {
     rank: "#{rank}"
   },
 
+  // The AI script on a tile, when Handy's auto-scripter has made one for
+  // the video. `note` sits under the button and says what it is: `{when}`
+  // is a relative time ("3 hours ago") of when the script was made or last
+  // replaced. `gone*` is the toast when the script was taken down since the
+  // board loaded; the button then hides.
+  ai: {
+    action: "Download AI auto script",
+    note: "Made by AI, not checked by a human · {when}",
+    goneTitle: "AI script taken down",
+    goneBody:
+      "This AI script isn't available anymore. If a new one is made, it shows up here again.",
+    failedTitle: "Download failed",
+    failedBody: "The AI script server didn't answer. Try again in a moment."
+  },
+
   // The control row above the list.
   filters: {
     searchPlaceholder: "Search requests",

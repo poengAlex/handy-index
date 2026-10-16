@@ -75,6 +75,22 @@ const requests: typeof enUS = {
     rank: "#{rank}"
   },
 
+  // The AI script on a tile, when Handy's auto-scripter has made one for
+  // the video. `note` sits under the button and says what it is: `{when}`
+  // is a relative time ("3 hours ago") of when the script was made or last
+  // replaced. `gone*` is the toast when the script was taken down since the
+  // board loaded; the button then hides.
+  ai: {
+    action: "AI 자동 Script 다운로드",
+    note: "AI가 만들었고 사람이 확인하지 않았어요 · {when}",
+    goneTitle: "AI script가 내려갔어요",
+    goneBody:
+      "이 AI script는 더 이상 받을 수 없어요. 새로 만들어지면 여기에 다시 나타나요.",
+    failedTitle: "다운로드 실패",
+    failedBody:
+      "AI script 서버가 응답하지 않았어요. 잠시 후 다시 시도해 주세요."
+  },
+
   // The control row above the list.
   filters: {
     searchPlaceholder: "요청 검색",

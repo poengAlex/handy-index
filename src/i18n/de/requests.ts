@@ -78,6 +78,22 @@ const requests: typeof enUS = {
     rank: "#{rank}"
   },
 
+  // The AI script on a tile, when Handy's auto-scripter has made one for
+  // the video. `note` sits under the button and says what it is: `{when}`
+  // is a relative time ("3 hours ago") of when the script was made or last
+  // replaced. `gone*` is the toast when the script was taken down since the
+  // board loaded; the button then hides.
+  ai: {
+    action: "KI-Auto-Script herunterladen",
+    note: "Von KI erstellt, nicht von Menschen geprüft · {when}",
+    goneTitle: "KI-Script entfernt",
+    goneBody:
+      "Dieses KI-Script ist nicht mehr verfügbar. Wird ein neues erstellt, erscheint es hier wieder.",
+    failedTitle: "Download fehlgeschlagen",
+    failedBody:
+      "Der Server für KI-Scripts hat nicht geantwortet. Versuche es gleich noch einmal."
+  },
+
   // The control row above the list.
   filters: {
     searchPlaceholder: "Anfragen suchen",

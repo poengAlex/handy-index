@@ -24,8 +24,13 @@ export type EventGroup =
   | "settings"
   | "health";
 
-/** Where on screen an action was taken. */
-export type Surface = "video_page" | "quick_menu" | "playlist";
+/** Where on screen an action was taken. `request_board` is the download of
+ * an AI script on a request tile. */
+export type Surface =
+  | "video_page"
+  | "quick_menu"
+  | "playlist"
+  | "request_board";
 
 /** How a key-gated or network action ended. `no_key` means the key prompt
  * opened instead; `key_rejected` that the API refused the saved key. */
@@ -197,7 +202,7 @@ export const EVENTS: { readonly [K in EventName]: EventSpec } = {
     group: "core",
     enabled: true,
     description:
-      "Get script, the quick-menu download, or a playlist's Get all scripts"
+      "Get script, the quick-menu download, a playlist's Get all scripts, or a request's AI script"
   },
   partner_outbound_click: {
     group: "core",

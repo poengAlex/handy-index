@@ -127,6 +127,9 @@
                 :key="request.requestId"
                 :request="request"
                 :rank="ranks.get(request.requestId) ?? 0"
+                :ai-script="aiScriptFor(request)"
+                :ai-loading="downloadingId === aiScriptFor(request)?.id"
+                @ai-download="downloadAi"
               >
                 <span class="text-caption requests-page__votes">
                   {{ voteLabel(request) }}
@@ -164,7 +167,7 @@
     <ConnectionKeyDialog
       v-model="keyDialog"
       reason="requests"
-      @saved="loadUnlessReady"
+      @saved="loadBoard"
     >
       {{ $t("requests.key.boardDialog") }}
     </ConnectionKeyDialog>
@@ -174,13 +177,15 @@
 <script setup lang="ts">
 // The community voting board: submit a video URL, then upvote what should
 // get scripted next, with each tile carrying its place in the scripting
-// order. Every API call here needs the Handy connection key.
+// order. Every API call here needs the Handy connection key — except the AI
+// scripts Handy's auto-scripter has made for requests, which are public.
 import { computed, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { HBtn, HEmptyState, HandyLoader, hToast } from "@/components/handy";
 import ConnectionKeyDialog from "@/components/ConnectionKeyDialog.vue";
 import RequestCard from "@/components/RequestCard.vue";
 import RequestFilters from "@/components/RequestFilters.vue";
+import { useAiScripts } from "@/composables/useAiScripts";
 import { useFormat } from "@/composables/useFormat";
 import { useIncrementalReveal } from "@/composables/useIncrementalReveal";
 import { useRequestFilters } from "@/composables/useRequestFilters";
@@ -191,6 +196,11 @@ import {
   voteForRequest
 } from "@/services/script-index/client";
 import { track } from "@/services/analytics";
+import {
+  aiScriptFailure,
+  downloadAiScript,
+  type AiScript
+} from "@/services/ai-scripts";
 import { rankByVotes, votesOf } from "@/services/script-index/requests";
 import type { VideoRequest } from "@/services/script-index/types";
 import { useSettingsStore } from "@/stores/settings";
@@ -231,11 +241,18 @@ const ranks = computed(() => rankByVotes(requests.value));
 
 const { shown, done, sentinel } = useIncrementalReveal(results, 30);
 
+const {
+  load: loadAiScripts,
+  forRequest: aiScriptFor,
+  markGone
+} = useAiScripts();
+
 const keyDialog = ref(false);
 
 const url = ref("");
 const submitting = ref(false);
 const votingId = ref("");
+const downloadingId = ref("");
 
 const validUrl = computed(() => {
   const raw = url.value.trim();
@@ -311,6 +328,30 @@ async function vote(request: VideoRequest) {
   }
 }
 
+async function downloadAi(script: AiScript) {
+  if (downloadingId.value) return;
+  downloadingId.value = script.id;
+  try {
+    await downloadAiScript(script);
+    track("script_download", { surface: "request_board", outcome: "ok" });
+  } catch (error) {
+    track("script_download", { surface: "request_board", outcome: "failed" });
+    if (aiScriptFailure(error) === "gone") {
+      // hidden until a later sync brings a newer script for the video
+      markGone(script);
+      hToast("negative", t("requests.ai.goneTitle"), t("requests.ai.goneBody"));
+    } else {
+      hToast(
+        "negative",
+        t("requests.ai.failedTitle"),
+        t("requests.ai.failedBody")
+      );
+    }
+  } finally {
+    downloadingId.value = "";
+  }
+}
+
 async function submit() {
   if (!validUrl.value || submitting.value) return;
   const key = settings.connectionKey.trim();
@@ -343,8 +384,16 @@ async function submit() {
   }
 }
 
+/** after the key dialog saves — a board that already loaded stays put */
+function loadBoard() {
+  loadUnlessReady();
+  void loadAiScripts();
+}
+
 onMounted(() => {
-  if (hasKey.value) void load();
+  if (!hasKey.value) return;
+  void load();
+  void loadAiScripts();
 });
 </script>
 

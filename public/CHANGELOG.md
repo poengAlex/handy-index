@@ -5,6 +5,16 @@
      words. Newest release on top. Format: "## <version> — <date>", then
      "### <group>" headings and "- " lines. Keep it English-only. -->
 
+## 2.11.0 — 16 October 2026
+
+### Script requests
+
+- Some requests now come with a script made by Handy's AI, ready before a
+  person has scripted the video. Look for the "Download AI auto script"
+  button on a request. These scripts are made by AI and have not been
+  checked by a human; the note under the button says when it was made.
+- The privacy page says where these AI scripts come from.
+
 ## 2.10.4 — 12 October 2026
 
 ### Look and feel

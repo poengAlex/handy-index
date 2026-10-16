@@ -32,8 +32,29 @@
       {{ caption }}
     </div>
 
-    <template #footer>
-      <slot />
+    <template v-if="aiScript || $slots.default" #footer>
+      <div class="request-card__footer">
+        <!-- the auto-scripter's script, when it has made one: a real link
+             (copyable, opens anywhere), fetched in place on a plain click so
+             a taken-down script can say so instead of opening an error -->
+        <div v-if="aiScript" class="request-card__ai">
+          <HBtn
+            size="sm"
+            icon="download"
+            :label="$t('requests.ai.action')"
+            :href="aiScript.download"
+            :loading="aiLoading"
+            class="request-card__ai-btn"
+            @click="downloadAi"
+          />
+          <span class="text-caption request-card__ai-note">
+            {{ $t("requests.ai.note", { when: relative(aiScript.updated) }) }}
+          </span>
+        </div>
+        <div v-if="$slots.default" class="request-card__actions">
+          <slot />
+        </div>
+      </div>
     </template>
   </TileCard>
 </template>
@@ -45,13 +66,16 @@
 // is a video you can go and look at — which is why the vote controls sit in
 // TileCard's footer slot, outside that link. Hovering previews it the way it
 // does a video: the roll clip when the request has one, else the stills.
+// When Handy's auto-scripter has made a script for the video, its download
+// sits above the page's actions, marked as made by AI.
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
-import { HChip } from "@/components/handy";
+import { HBtn, HChip } from "@/components/handy";
 import MediaPreview from "@/components/MediaPreview.vue";
 import TileCard from "@/components/TileCard.vue";
 import { useFormat } from "@/composables/useFormat";
 import { artworkOf } from "@/services/script-index/queries";
+import type { AiScript } from "@/services/ai-scripts";
 import type { VideoRequest } from "@/services/script-index/types";
 import { useSettingsStore } from "@/stores/settings";
 
@@ -60,9 +84,19 @@ const props = withDefaults(
     request: VideoRequest;
     /** 1-based place in the scripting order; omitted on the voting board */
     rank?: number;
+    /** the auto-scripter's script for this video, if it has one */
+    aiScript?: AiScript | undefined;
+    aiLoading?: boolean;
   }>(),
-  { rank: 0 }
+  { rank: 0, aiScript: undefined, aiLoading: false }
 );
+
+const emit = defineEmits<{ aiDownload: [script: AiScript] }>();
+
+function downloadAi(event: Event) {
+  event.preventDefault();
+  if (props.aiScript) emit("aiDownload", props.aiScript);
+}
 
 const settings = useSettingsStore();
 const { t } = useI18n();
@@ -130,5 +164,36 @@ const caption = computed(() =>
 
 .request-card__caption {
   color: var(--color-text-tertiary);
+}
+
+// TileCard's footer is one row; this stacks the AI script over the page's
+// actions, which keep that row's spread
+.request-card__footer {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.request-card__ai {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.request-card__ai-btn {
+  width: 100%;
+}
+
+.request-card__ai-note {
+  color: var(--color-text-tertiary);
+}
+
+.request-card__actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-xs);
 }
 </style>

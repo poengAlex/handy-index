@@ -48,7 +48,9 @@ const privacy: typeof enUS = {
 
   catalog: {
     title: "Woher der Katalog kommt",
-    body: "Der Katalog, seine Metadaten und die scripts werden von der Script-Index-API auf handyfeeling.com geladen. Wenn du ein script herunterlädst, ein Video anfragst oder für eines abstimmst, geht dein connection key zur Autorisierung an diese API. Ist die Nutzungsstatistik an, geht er außerdem an die API von The Handy, um zu prüfen, ob dein Gerät online ist — siehe unten. Nur dann verlässt etwas, das du eingegeben hast, deinen Browser."
+    body: "Der Katalog, seine Metadaten und die scripts werden von der Script-Index-API auf handyfeeling.com geladen. Wenn du ein script herunterlädst, ein Video anfragst oder für eines abstimmst, geht dein connection key zur Autorisierung an diese API. Ist die Nutzungsstatistik an, geht er außerdem an die API von The Handy, um zu prüfen, ob dein Gerät online ist — siehe unten. Nur dann verlässt etwas, das du eingegeben hast, deinen Browser.",
+    aiScripts:
+      "KI-Scripts auf der Anfrageliste kommen vom Auto-Scripter von The Handy auf playground.handyfeeling.com. Beim Herunterladen wird nichts gesendet, was du eingegeben hast."
   },
 
   statistics: {

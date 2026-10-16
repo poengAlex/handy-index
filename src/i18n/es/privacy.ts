@@ -48,7 +48,9 @@ const privacy: typeof enUS = {
 
   catalog: {
     title: "De dónde sale el catálogo",
-    body: "El catálogo, sus metadatos y los scripts se cargan desde la API del índice de scripts de handyfeeling.com. Cuando descargas un script, envías una solicitud de vídeo o votas una, tu connection key se manda a esa API como autorización. Con las estadísticas de uso activadas, también se manda a la API de Handy para comprobar si tu Handy está conectado — mira más abajo. Son las únicas veces que algo que has escrito sale de tu navegador."
+    body: "El catálogo, sus metadatos y los scripts se cargan desde la API del índice de scripts de handyfeeling.com. Cuando descargas un script, envías una solicitud de vídeo o votas una, tu connection key se manda a esa API como autorización. Con las estadísticas de uso activadas, también se manda a la API de Handy para comprobar si tu Handy está conectado — mira más abajo. Son las únicas veces que algo que has escrito sale de tu navegador.",
+    aiScripts:
+      "Los scripts de IA del tablero de solicitudes vienen del auto-scripter de Handy, en playground.handyfeeling.com. Al descargar uno no se envía nada que hayas escrito."
   },
 
   statistics: {
