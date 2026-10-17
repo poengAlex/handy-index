@@ -48,7 +48,7 @@ export default {
     title: "Where the catalog comes from",
     body: "The catalog, its metadata, and the scripts are loaded from the handyfeeling.com script index API. When you download a script, submit a video request, or vote on one, your connection key is sent to that API as authorization. With usage statistics on, it is also sent to the Handy API, to check whether your Handy is online — see below. Those are the only times something you've entered leaves your browser.",
     aiScripts:
-      "AI scripts on the request board come from Handy's auto-scripter, on playground.handyfeeling.com. Downloading one sends nothing you've entered."
+      "AI scripts on the request board and the AI scripts page come from Handy's auto-scripter, on playground.handyfeeling.com. Downloading one sends nothing you've entered."
   },
 
   // What the usage statistics send and never send. Each sentence is a claim

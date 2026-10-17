@@ -5,6 +5,15 @@
      words. Newest release on top. Format: "## <version> — <date>", then
      "### <group>" headings and "- " lines. Keep it English-only. -->
 
+## 2.12.0 — 17 October 2026
+
+### Script requests
+
+- A new AI scripts page lists every script Handy's AI has made, newest
+  first, with a search and a download button for each. It is highly
+  experimental: none of these scripts have been checked by a human. You find
+  it under Help.
+
 ## 2.11.0 — 16 October 2026
 
 ### Script requests

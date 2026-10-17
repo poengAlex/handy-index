@@ -49,7 +49,7 @@ const privacy: typeof enUS = {
     title: "카탈로그의 출처",
     body: "카탈로그와 메타데이터, script는 handyfeeling.com script 색인 API에서 불러와요. Script를 다운로드하거나, 동영상을 요청하거나, 요청에 투표할 때 connection key 값이 인증 정보로 그 API에 전송돼요. 사용 통계가 켜져 있으면 Handy가 온라인인지 확인하려고 Handy API에도 전송돼요(아래 참고). 여러분이 입력한 것이 브라우저 밖으로 나가는 경우는 이때뿐이에요.",
     aiScripts:
-      "요청 게시판의 AI script는 playground.handyfeeling.com에 있는 Handy의 자동 script 생성기에서 가져와요. 다운로드할 때 여러분이 입력한 것은 아무것도 전송되지 않아요."
+      "요청 게시판과 AI script 페이지의 AI script는 playground.handyfeeling.com에 있는 Handy의 자동 script 생성기에서 가져와요. 다운로드할 때 여러분이 입력한 것은 아무것도 전송되지 않아요."
   },
 
   statistics: {

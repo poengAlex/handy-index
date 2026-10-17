@@ -25,12 +25,14 @@ export type EventGroup =
   | "health";
 
 /** Where on screen an action was taken. `request_board` is the download of
- * an AI script on a request tile. */
+ * an AI script on a request tile, `ai_scripts_page` one from the AI scripts
+ * page's list. */
 export type Surface =
   | "video_page"
   | "quick_menu"
   | "playlist"
-  | "request_board";
+  | "request_board"
+  | "ai_scripts_page";
 
 /** How a key-gated or network action ended. `no_key` means the key prompt
  * opened instead; `key_rejected` that the API refused the saved key. */

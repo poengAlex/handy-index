@@ -48,7 +48,7 @@ const privacy: typeof enUS = {
     title: "片库从哪里来",
     body: "片库、它的元数据以及 scripts，都从 handyfeeling.com 的 script 索引 API 加载。当你下载 script、提交视频请求或为请求投票时，你的 connection key 会作为授权发送给该 API。开启使用统计时，它还会发送给 Handy API，用来检查你的 Handy 是否在线——详见下文。只有在这些时候，你输入的内容才会离开浏览器。",
     aiScripts:
-      "请求榜上的 AI scripts 来自 Handy 的自动 script 生成器，位于 playground.handyfeeling.com。下载时不会发送任何你输入的内容。"
+      "请求榜和 AI scripts 页面上的 AI scripts 来自 Handy 的自动 script 生成器，位于 playground.handyfeeling.com。下载时不会发送任何你输入的内容。"
   },
 
   statistics: {

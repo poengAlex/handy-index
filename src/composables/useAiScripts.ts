@@ -1,4 +1,4 @@
-import { reactive, shallowRef } from "vue";
+import { computed, reactive, ref, shallowRef } from "vue";
 import {
   aiScriptFor,
   getAiScripts,
@@ -17,13 +17,21 @@ const index = shallowRef(indexAiScripts([]));
 /** id → the `updated` of a version whose download answered 404. That version
  * stays hidden; a newer one, from a later sync, shows again. */
 const gone = reactive(new Map<string, string>());
+/** every video's newest script, newest first — the AI scripts page */
+const newest = shallowRef<AiScript[]>([]);
+/** a load has landed at least once */
+const loaded = ref(false);
+/** the last load failed and nothing loaded before it */
+const failed = ref(false);
 let loadedAt = 0;
 let pending: Promise<void> | null = null;
 
 /**
- * The AI scripts Handy's auto-scripter has made, matched to board requests.
- * Having none — or failing to load them — is a board without the download
- * buttons, not an error state: the board itself works either way.
+ * The AI scripts Handy's auto-scripter has made, matched to board requests
+ * and listed whole on the AI scripts page. Having none — or failing to load
+ * them — is a board without the download buttons, not an error state: the
+ * board itself works either way. The page, which has nothing else, reads
+ * `failed` to say so.
  */
 export function useAiScripts() {
   function load(): Promise<void> {
@@ -32,10 +40,16 @@ export function useAiScripts() {
     pending = getAiScripts()
       .then(scripts => {
         index.value = indexAiScripts(scripts);
+        newest.value = [...index.value.byVideo.values()].sort((a, b) =>
+          b.updated.localeCompare(a.updated)
+        );
         loadedAt = Date.now();
+        loaded.value = true;
+        failed.value = false;
       })
       .catch(() => {
         // keeps whatever an earlier load had; the next visit tries again
+        failed.value = !loaded.value;
       })
       .finally(() => {
         pending = null;
@@ -54,5 +68,9 @@ export function useAiScripts() {
     gone.set(script.id, script.updated);
   }
 
-  return { load, forRequest, markGone };
+  const all = computed(() =>
+    newest.value.filter(script => gone.get(script.id) !== script.updated)
+  );
+
+  return { load, forRequest, markGone, all, loaded, failed };
 }

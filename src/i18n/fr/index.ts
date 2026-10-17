@@ -1,4 +1,5 @@
 import about from "./about";
+import aiScripts from "./aiScripts";
 import browse from "./browse";
 import common from "./common";
 import errors from "./errors";
@@ -24,6 +25,7 @@ import type enUSMessages from "../en-US";
 // this re-assertion catches a whole namespace going missing.
 const fr: typeof enUSMessages = {
   about,
+  aiScripts,
   browse,
   common,
   errors,

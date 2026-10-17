@@ -22,6 +22,11 @@ export interface AiScript {
   /** the request it was made for; null for a popular video scripted
    * between requests */
   requestId: string | null;
+  /** the video's title as the auto-scripter found it — third-party text */
+  title: string | null;
+  /** the video's page, http(s) only */
+  url: string | null;
+  durationS: number | null;
   actions: number | null;
   /** ISO time it was made, or last replaced by a newer script */
   updated: string;
@@ -68,6 +73,20 @@ function safeDownload(value: unknown): string | null {
   }
 }
 
+/** A video page address, if it is one we'll link. */
+function safePage(value: unknown): string | null {
+  const raw = str(value);
+  if (!raw) return null;
+  try {
+    const url = new URL(raw);
+    return url.protocol === "https:" || url.protocol === "http:"
+      ? url.href
+      : null;
+  } catch {
+    return null;
+  }
+}
+
 /** One entry of either list (ours or the auto-scripter's — same fields), or
  * null for one that can't be offered. */
 function parseEntry(entry: unknown): AiScript | null {
@@ -80,6 +99,9 @@ function parseEntry(entry: unknown): AiScript | null {
   return {
     id,
     requestId: str(raw.request_id),
+    title: str(raw.title),
+    url: safePage(raw.url),
+    durationS: typeof raw.duration_s === "number" ? raw.duration_s : null,
     actions: typeof raw.actions === "number" ? raw.actions : null,
     updated,
     download

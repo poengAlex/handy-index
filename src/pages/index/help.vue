@@ -98,6 +98,14 @@
             chevron
             to="/requests"
           />
+          <!-- the AI scripts page's only way in: it stays out of the nav -->
+          <HListRow
+            icon="science"
+            :label="$t('help.scripts.aiScripts.label')"
+            :caption="$t('help.scripts.aiScripts.caption')"
+            chevron
+            to="/ai-scripts"
+          />
         </HList>
 
         <HList :title="$t('help.personalize.title')">

@@ -45,7 +45,7 @@ function str(value) {
   return typeof value === "string" ? value : null;
 }
 
-/** What the board reads of one entry; null for one it couldn't use. The
+/** What the board and the AI scripts page read of one entry; null for one it couldn't use. The
  * SPA checks the download address before linking it — this only drops
  * entries that are not entries at all. */
 function slim(entry) {
@@ -53,6 +53,9 @@ function slim(entry) {
   return {
     id: entry.id,
     request_id: str(entry.request_id),
+    title: str(entry.title),
+    url: str(entry.url),
+    duration_s: typeof entry.duration_s === "number" ? entry.duration_s : null,
     actions: typeof entry.actions === "number" ? entry.actions : null,
     updated: str(entry.updated),
     download: entry.download

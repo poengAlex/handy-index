@@ -37,6 +37,7 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       Record<never, never>,
       | '//(index)'
+      | '//ai-scripts'
       | '//favorites'
       | '//help'
       | '//history'
@@ -53,6 +54,13 @@ declare module 'vue-router/auto-routes' {
     '//(index)': RouteRecordInfo<
       '//(index)',
       '/',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '//ai-scripts': RouteRecordInfo<
+      '//ai-scripts',
+      '/ai-scripts',
       Record<never, never>,
       Record<never, never>,
       | never
@@ -165,6 +173,7 @@ declare module 'vue-router/auto-routes' {
       routes:
         | '/'
         | '//(index)'
+        | '//ai-scripts'
         | '//favorites'
         | '//help'
         | '//history'
@@ -185,6 +194,14 @@ declare module 'vue-router/auto-routes' {
     'src/pages/index/(index).vue': {
       routes:
         | '//(index)'
+      views:
+        | never
+      pathParamNames:
+        | never
+    }
+    'src/pages/index/ai-scripts.vue': {
+      routes:
+        | '//ai-scripts'
       views:
         | never
       pathParamNames:

@@ -49,7 +49,7 @@ const privacy: typeof enUS = {
     title: "カタログの出どころ",
     body: "カタログとそのメタデータ、そしてscriptは、handyfeeling.comのscriptインデックスAPIから読み込まれます。scriptをダウンロードしたとき、動画リクエストを送信したとき、リクエストに投票したときには、認証情報としてconnection keyがそのAPIに送信されます。利用統計がオンの場合は、Handyがオンラインかどうかを確認するため、HandyのAPIにも送信されます（詳しくは下記）。入力した情報がブラウザの外に出るのは、これらのときだけです。",
     aiScripts:
-      "リクエストのAI scriptは、playground.handyfeeling.comにあるHandyの自動script生成ツールから取得されます。ダウンロードしても、入力した情報は何も送信されません。"
+      "リクエストとAI scriptページのAI scriptは、playground.handyfeeling.comにあるHandyの自動script生成ツールから取得されます。ダウンロードしても、入力した情報は何も送信されません。"
   },
 
   statistics: {
