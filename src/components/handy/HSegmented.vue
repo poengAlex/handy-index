@@ -3,7 +3,7 @@
     ref="root"
     class="h-segmented"
     :class="[
-      `h-segmented--${tone}`,
+      `h-segmented--${paint}`,
       `h-segmented--${size}`,
       { 'h-segmented--spread': spread, 'h-segmented--disabled': disable }
     ]"
@@ -81,10 +81,11 @@
 // feedback, and ink spreading on top of a moving pill is two answers to one
 // question.
 //
-// `tone` is not decoration. Primary is the default and means "this is the
-// setting". Warning is for a segment that changes what a WARNING-coloured
-// thing is doing, so the control and the thing it drives are the same colour;
-// using it for emphasis breaks that.
+// `severity` is not decoration. Without it the thumb is Brand Blue and means
+// "this is the setting". Warning is for a segment that changes what a
+// WARNING-coloured thing is doing, so the control and the thing it drives are
+// the same colour; using it for emphasis breaks that. (Only warning: a white
+// label on the other feedback fills fails contrast.)
 import {
   computed,
   nextTick,
@@ -125,10 +126,18 @@ const props = withDefaults(
      *  Compact is a proportional redraw, not the same box squashed: only the
      *  groove tightens, because the radius is already as round as it goes. */
     size?: "xs" | "sm" | "md";
+    severity?: "warning";
+    /** @deprecated The kit's name for a feedback colour is `severity`. */
     tone?: "primary" | "warning";
     disable?: boolean;
   }>(),
   { spread: false, size: "md", tone: "primary", disable: false }
+);
+
+const paint = computed(() =>
+  props.severity === "warning" || props.tone === "warning"
+    ? "warning"
+    : "primary"
 );
 
 const emit = defineEmits<{ "update:modelValue": [value: T] }>();
@@ -264,6 +273,12 @@ async function onKeydown(event: KeyboardEvent) {
   opacity: 0.7;
 }
 
+// ...and only that. Its segments are [disabled] too, and the kit's global
+// disabled rule would dim them again on top, to 35%.
+.h-segmented--disabled .h-segmented__seg:disabled {
+  opacity: 1 !important;
+}
+
 .h-segmented__thumb {
   position: absolute;
   top: var(--h-segmented-inset);
@@ -310,7 +325,7 @@ async function onKeydown(event: KeyboardEvent) {
   // roomier than a rectangle would need: the curve eats into the corners, so
   // the first and last labels sit closer to the edge than the number says
   padding: 0 var(--space-md);
-  font-size: 14px;
+  font-size: var(--text-button-size);
   // only the ink moves — the thumb underneath carries the fill
   transition: color 180ms ease;
 
@@ -324,8 +339,12 @@ async function onKeydown(event: KeyboardEvent) {
   }
 }
 
+// A spread segment gets its room from the share of the row, so it doesn't
+// need the natural width's extra padding; without trimming it, three labels
+// like "Whole clip / Visible / Bookmark" ran past the track on a phone.
 .h-segmented--spread .h-segmented__seg {
   flex: 1 1 0;
+  padding: 0 var(--space-sm);
 }
 
 .h-segmented--primary .h-segmented__seg--active,
@@ -349,7 +368,7 @@ async function onKeydown(event: KeyboardEvent) {
 .h-segmented--sm .h-segmented__seg {
   min-height: 28px;
   padding: 0 var(--space-sm);
-  font-size: 13px;
+  font-size: var(--text-compact-size);
 }
 
 // Denser still — a strip of icon segments over a chart or a canvas, where the
@@ -357,7 +376,7 @@ async function onKeydown(event: KeyboardEvent) {
 .h-segmented--xs .h-segmented__seg {
   min-height: 22px;
   padding: 0 var(--space-xs);
-  font-size: 12px;
+  font-size: var(--text-caption-size);
 }
 
 // The slide is decorative: under reduced motion the thumb still moves, it

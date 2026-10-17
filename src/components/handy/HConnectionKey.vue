@@ -88,9 +88,8 @@ async function copy() {
 }
 
 .h-key__value {
-  font-family:
-    ui-monospace, "SF Mono", "Cascadia Mono", "Roboto Mono", Menlo, monospace;
-  font-size: 16px;
+  font-family: var(--font-mono);
+  font-size: var(--text-body-size);
   font-weight: 600;
   letter-spacing: 2px;
   padding-inline: var(--space-xs);

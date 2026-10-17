@@ -18,11 +18,20 @@ body {
   overscroll-behavior: none;
 }
 
+// The theme switches in one frame (useHandyTheme): no transition runs while
+// the tokens flip, so nothing cross-fades between the two themes' colours.
+.h-theme-switching,
+.h-theme-switching *,
+.h-theme-switching *::before,
+.h-theme-switching *::after {
+  transition: none !important;
+}
+
 body {
   font-family: var(--font-brand);
   background: var(--color-bg-page);
   color: var(--color-text-primary);
-  font-size: 16px;
+  font-size: var(--text-body-size);
   line-height: 144%;
   -webkit-font-smoothing: antialiased;
 }

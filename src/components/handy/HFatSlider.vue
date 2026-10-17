@@ -1,11 +1,19 @@
 <template>
-  <div ref="rootEl" :class="['h-fat', vertical ? 'h-fat--v' : 'h-fat--h']">
+  <div
+    ref="rootEl"
+    :class="[
+      'h-fat',
+      vertical ? 'h-fat--v' : 'h-fat--h',
+      { disabled: disable }
+    ]"
+  >
     <q-slider
       :model-value="modelValue"
       :vertical="vertical"
       :reverse="vertical"
       :min="min"
       :max="max"
+      :disable="disable"
       color="primary"
       track-size="56px"
       thumb-size="72px"
@@ -51,6 +59,8 @@ const props = withDefaults(
     vertical?: boolean;
     /** track length when vertical */
     height?: string;
+    /** The whole control, symbol included, at the kit's disabled 50%. */
+    disable?: boolean;
   }>(),
   {
     min: 0,
@@ -58,7 +68,8 @@ const props = withDefaults(
     icon: "",
     iconOff: "",
     vertical: false,
-    height: "220px"
+    height: "220px",
+    disable: false
   }
 );
 

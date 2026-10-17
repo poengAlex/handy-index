@@ -6,14 +6,16 @@
         title
       }}</div>
       <div class="h-feedback__body text-body-sm"><slot /></div>
-      <div v-if="actionLabel" class="h-feedback__action">
-        <HBtn
-          variant="secondary"
-          size="sm"
-          :label="actionLabel"
-          @click="emit('action')"
-        />
-      </div>
+    </div>
+    <!-- after the text in the DOM, so focus reaches the action before the
+         close; CSS `order` moves it onto a row of its own below both -->
+    <div v-if="actionLabel" class="h-feedback__action">
+      <HBtn
+        variant="secondary"
+        size="sm"
+        :label="actionLabel"
+        @click="emit('action')"
+      />
     </div>
     <q-btn
       v-if="dismissible"
@@ -30,12 +32,10 @@
 </template>
 
 <script setup lang="ts">
-// Proposed spec for the #1 gap in the legacy gap list
-// (design_system_needs_to_change.md → Legacy §1):
-// the inline alert / banner / callout surface (FeedbackCard).
-// Shape: card bg, 16px radius, 4px semantic left accent (echoes the
-// q-notify skin in §7), 24px outlined leading icon, title + body,
-// optional secondary action. Severity color + icon, never color alone (§11).
+// The inline alert, banner or callout (design.md 6.6, Inline feedback).
+// Shape: card bg, 16px radius, 4px semantic left accent (echoes the toast
+// skin), 24px outlined leading icon, title + body, optional secondary action.
+// Severity shows in colour and icon, never colour alone (design.md 8).
 import { computed } from "vue";
 import HBtn from "./HBtn.vue";
 import { kitLabel } from "./labels";
@@ -66,7 +66,8 @@ const iconName = computed(() => props.icon || icons[props.severity] || "info");
 <style scoped lang="scss">
 .h-feedback {
   display: flex;
-  gap: var(--space-sm);
+  flex-wrap: wrap;
+  column-gap: var(--space-sm);
   align-items: flex-start;
   padding: var(--space-sm) var(--space-md) var(--space-sm) var(--space-md);
   border-radius: var(--radius-md);
@@ -88,16 +89,20 @@ const iconName = computed(() => props.icon || icons[props.severity] || "info");
   color: var(--color-text-secondary);
 }
 
-// action sits bottom-right — breaks the text block's left edge; a full
-// --space-sm above it separates it from the body so it reads as a distinct
-// action, not a crowded last line
+// action sits bottom-right on a row of its own, the card's full width, so it
+// lines up with the card's right edge (under the close button) rather than
+// with the end of the text; a full --space-sm above it separates it from the
+// body so it reads as a distinct action, not a crowded last line
 .h-feedback__action {
+  order: 2;
+  flex-basis: 100%;
   margin-top: var(--space-sm);
   display: flex;
   justify-content: flex-end;
 }
 
 .h-feedback__close {
+  order: 1;
   color: var(--color-text-tertiary);
 }
 
@@ -120,8 +125,10 @@ const iconName = computed(() => props.icon || icons[props.severity] || "info");
 .h-feedback--warning {
   border-color: var(--color-feedback-warning);
 
+  // amber is 1.76:1 on a white card; the icon takes the readable warning
+  // tier, and the accent bar beside it stays amber
   .h-feedback__icon {
-    color: var(--color-feedback-warning);
+    color: var(--color-text-warning);
   }
 }
 

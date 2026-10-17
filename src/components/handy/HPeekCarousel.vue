@@ -237,7 +237,6 @@ const config = computed(() => {
 .h-peek__carousel :deep(.carousel__next) {
   box-shadow: var(--shadow-md);
   backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
   transition: opacity 220ms ease;
 }
 

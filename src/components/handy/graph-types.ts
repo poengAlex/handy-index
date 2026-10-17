@@ -74,6 +74,6 @@ export interface GraphTheme {
   cursor: string;
   /** Selected-point ring — a focus state, so it wears the focus token. */
   selection: string;
-  /** Default series ramp, in emphasis order (design.md §7.3). */
+  /** Default series ramp, in emphasis order (design.md 6.7). */
   series: [string, string, string, string];
 }

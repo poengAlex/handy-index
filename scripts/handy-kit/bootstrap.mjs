@@ -227,6 +227,7 @@ if (!existsSync(join(dir, TOOLS, "cli.mjs"))) {
 }
 
 run(join(dir, TOOLS, "cli.mjs"), {
-  HANDY_KIT_FETCHED: "1",
+  // which clone was fetched: the old brand-ux bootstrap set "1" for its own
+  HANDY_KIT_FETCHED: CLONE,
   HANDY_KIT_OFFLINE: offline ? "1" : ""
 });

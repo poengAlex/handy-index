@@ -3,7 +3,7 @@
 `src/components/handy/` is the Handy design system as Vue 3 + Quasar 2
 components: 40 single-file components, a canvas graph kit, a self-contained
 gradient-background sub-kit, and the composables and helpers they share. It is
-the implementation of `design.md` chapter 5, and it is the folder that other
+the implementation of `design.md` chapters 5–10, and it is the folder that other
 Handy apps carry a copy of (scripter4, onboardingv4 and handy-index), kept in
 sync with `npm run kit` (§1).
 
@@ -36,6 +36,7 @@ component once, `/showcase/*` shows each family in depth, and `/design` shows
 15. [Translating the kit (`labels.ts`)](#15-translating-the-kit-labelsts)
 16. [Tests](#16-tests)
 17. [Adding or changing a component](#17-adding-or-changing-a-component)
+18. [Notes on Quasar](#18-notes-on-quasar)
 
 ---
 
@@ -92,22 +93,22 @@ no `@` alias. The sync tooling expects it at `src/components/handy/`.
 This is the checklist hosts used to copy by hand, and where each item lives
 now:
 
-| What                                                                                                       | In the kit                                                    | Without it                                                                                                |
-| ---------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| **Semantic tokens**: `:root`, CJK font stacks, `[data-theme="dark"]`, `.section-dark`, `.section-light`    | `styles/_tokens.scss`                                         | colours, spacing, radii and shadows resolve to nothing                                                    |
-| **Per-scope helper variables** `--h-chip-bg` and `--h-slider-gap`, declared in every scope                 | `styles/_tokens.scss`                                         | chips and the `?` hover lose their fill; slider handles and `HPlayhead` wear a wrong-coloured halo        |
-| **Base**: page surface and type, links (`a:hover:not(.q-btn)`), `:focus-visible`, no sideways pan          | `styles/_base.scss`                                           | no focus ring, buttons that navigate grow an underline                                                    |
-| **Type classes**: `.text-display` … `.text-caption`, `.prose`, `.text-*-token`, `.text-tabular`            | `styles/_typography.scss`                                     | titles, labels and captions fall back to Quasar's type scale                                              |
-| **Toast classes** `.h-toast`, `.h-toast--*`, `.h-toast--dismissable`, `.h-toast__dismiss`                  | `styles/_toast.scss`                                          | `hToast()` shows Quasar's default coloured notification                                                   |
-| **Layout**: `.h-container`, `.h-section`, glass, scrollbars, `.slider-thumb-room`                          | `styles/_layout.scss`                                         | pages lose their column and bands                                                                         |
-| **Quasar re-skins**: buttons, fields, cards, tabs, chips, menus, dialogs, notifications, and the M3 slider | `styles/_quasar.scss`                                         | `HLabeledSlider`, `HFatSlider` and `HSliderMenu` look like stock Quasar and lose touch dragging on mobile |
-| **Route transitions** and their reduced-motion block                                                       | `styles/_motion.scss`                                         | `route-forward`/`route-back`/`route-fade` do nothing                                                      |
-| **Figtree**, self-hosted as `@fontsource-variable/figtree` (the family name is `'Figtree Variable'`)       | `styles/kit.scss`                                             | everything falls back to the system font                                                                  |
-| **Slider prop defaults** (16px track, 40px thumb, bar-shaped `thumb-path`)                                 | `install.ts`                                                  | standard sliders render Quasar's round thumb (`HFatSlider` passes its own sizes and is unaffected)        |
-| **Icon map** that rewrites plain names to `sym_o_…`                                                        | `install.ts` (`mapIconName`)                                  | every `icon="refresh"` in the kit renders as raw text or as the wrong icon set                            |
-| **Toast position**: top-right on desktop, bottom on phones                                                 | `install.ts`                                                  | toasts appear wherever Quasar's default puts them                                                         |
-| **Kit-label resolver**                                                                                     | `install.ts`, passing `labels` to `setKitLabelResolver` (§15) | the kit's own strings stay English                                                                        |
-| **`HGraph` build fixes**                                                                                   | `vite.ts` (see [Build flags](#build-flags-hgraph))            | an empty chart with no error, `uPlot is not a constructor`, or a blank page                               |
+| What                                                                                                                                                                                                                                                            | In the kit                                                    | Without it                                                                                                                                                                                                              |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Semantic tokens**: `:root` (colours, spacing, radii, shadows, type sizes, `--font-mono`), CJK font stacks, `[data-theme="dark"]`, and the `.section-dark` / `.section-light` islands, which take the same `dark-tokens` / `light-tokens` mixins as the themes | `styles/_tokens.scss`                                         | colours, spacing, radii, shadows and type sizes resolve to nothing                                                                                                                                                      |
+| **Per-scope helper variables** `--h-chip-bg` and `--h-slider-gap`, declared in every scope                                                                                                                                                                      | `styles/_tokens.scss`                                         | chips and the `?` hover lose their fill; slider handles wear a wrong-coloured halo and `HPlayhead`'s wash the wrong surface                                                                                             |
+| **Base**: page surface and type, links (`a:hover:not(.q-btn)`), `:focus-visible`, no sideways pan                                                                                                                                                               | `styles/_base.scss`                                           | no focus ring, buttons that navigate grow an underline                                                                                                                                                                  |
+| **Type classes**: `.text-display` … `.text-caption`, `.prose`, `.text-*-token`, `.text-tabular`                                                                                                                                                                 | `styles/_typography.scss`                                     | titles, labels and captions fall back to Quasar's type scale                                                                                                                                                            |
+| **Toast classes** `.h-toast`, `.h-toast--*`, `.h-toast--dismissable`, `.h-toast__dismiss`                                                                                                                                                                       | `styles/_toast.scss`                                          | `hToast()` shows Quasar's default coloured notification                                                                                                                                                                 |
+| **Layout**: `.h-container`, `.h-section`, glass, scrollbars, `.slider-thumb-room`                                                                                                                                                                               | `styles/_layout.scss`                                         | pages lose their column and bands                                                                                                                                                                                       |
+| **Quasar re-skins**: buttons, fields, cards (flat by default, plus `.h-lifted` and `.h-outlined`), tabs, chips, menus, tooltips, dialogs, notifications, disabled at 50%, and the M3 slider                                                                     | `styles/_quasar.scss`                                         | `HLabeledSlider`, `HFatSlider` and `HSliderMenu` look like stock Quasar and lose touch dragging on mobile; tooltips are Quasar's grey at 10px, cards carry a shadow, and disabled controls dim anywhere from 30% to 75% |
+| **Route transitions** and their reduced-motion block                                                                                                                                                                                                            | `styles/_motion.scss`                                         | `route-forward`/`route-back`/`route-fade` do nothing                                                                                                                                                                    |
+| **Figtree**, self-hosted as `@fontsource-variable/figtree` (the family name is `'Figtree Variable'`)                                                                                                                                                            | `styles/kit.scss`                                             | everything falls back to the system font                                                                                                                                                                                |
+| **Slider prop defaults** (16px track, 40px thumb, bar-shaped `thumb-path`)                                                                                                                                                                                      | `install.ts`                                                  | standard sliders render Quasar's round thumb (`HFatSlider` passes its own sizes and is unaffected)                                                                                                                      |
+| **Icon map** that rewrites plain names to `sym_o_…`                                                                                                                                                                                                             | `install.ts` (`mapIconName`)                                  | every `icon="refresh"` in the kit renders as raw text or as the wrong icon set                                                                                                                                          |
+| **Toast position**: top-right on desktop, bottom on phones                                                                                                                                                                                                      | `install.ts`                                                  | toasts appear wherever Quasar's default puts them                                                                                                                                                                       |
+| **Kit-label resolver**                                                                                                                                                                                                                                          | `install.ts`, passing `labels` to `setKitLabelResolver` (§15) | the kit's own strings stay English                                                                                                                                                                                      |
+| **`HGraph` build fixes**                                                                                                                                                                                                                                        | `vite.ts` (see [Build flags](#build-flags-hgraph))            | an empty chart with no error, `uPlot is not a constructor`, or a blank page                                                                                                                                             |
 
 Not in the kit: `quasar.variables.scss`, which Quasar injects into every style
 block itself, so the kit's CSS never reads it; and brand-ux's showcase-only
@@ -209,7 +210,7 @@ is off. `uPlot is not a constructor` means the alias is missing.
 
 ## 2. Conventions every component follows
 
-**API shape** (design.md 5.6, "API conventions"):
+**API shape** (design.md 6.1, "API conventions"):
 
 - Primary text is `label`, a secondary line is `caption`, a card heading is `title`.
 - Semantic colour is `severity: "info" | "positive" | "warning" | "negative"`.
@@ -231,14 +232,11 @@ They paint from `$q.dark`, so a `q-input` inside `.section-dark` still needs an
 explicit `dark` prop. `useHandyTheme` keeps `data-theme` and `$q.dark` in step
 for the page as a whole.
 
-> **Known issue: the island scopes are incomplete.** `.section-dark` and
-> `.section-light` do not re-bind `--color-text-error`, `--color-text-warning`,
-> `--color-text-success`, `--color-stroke-error`, `--color-text-inverse`,
-> `--color-bg-overlay` or `--color-bg-hero-dark`. Inside an island those tokens
-> keep the page's values. A success badge in a `.section-dark` island on a
-> light page measures 1.85:1 instead of 7.39:1, and a warning badge 2.06:1
-> instead of 5.62:1. This affects `HStatusBadge`, the `HInfoCard` highlight, and
-> field error text. The fix belongs in `styles/_tokens.scss`, not in the components.
+The islands carry the whole set: `.section-dark` includes the same
+`dark-tokens` mixin as `[data-theme="dark"]`, and `.section-light` the
+`light-tokens` mixin `:root` uses, so a token added to a theme reaches its
+island too. (Until 2026-10-13 they kept shorter copies, and error, warning and
+success text kept the page's values inside them.)
 
 **A link-rendering component never wears a link underline.** A component that
 renders as an `<a>` (anything given `to` or `href`: `HBtn`, `HNavCard`,
@@ -253,22 +251,28 @@ at the source with `a:hover:not(.q-btn)`. The per-component guard is still what
 protects a host whose stylesheet does not.)
 
 **Motion.** Every component that animates carries its own
-`prefers-reduced-motion` block, following design.md 5.8. Decorative motion
+`prefers-reduced-motion` block, following design.md 5.6. Decorative motion
 stops, and essential indicators (a spinner, a progress ring, a playhead during
 playback) keep working. There is no global duration clamp, because one would
 also stop the indicators.
 
 **Class names.** Component classes use an `h-` prefix with BEM-style parts
-(`h-lslider__value`). Two components break the pattern: `HHoldBtn` uses
-`hold-btn`, and `HandyLoader` uses `handy-loader`. Several components also ship
-unscoped (`<style lang="scss">`) blocks for dark-mode hover rules and for
-popups that portal to `<body>`.
+(`h-lslider__value`), every one of them (`HHoldBtn` is `.h-hold-btn`,
+`HandyLoader` `.h-loader`, and `HSectionCard` `.h-section-card`, apart from
+the `.h-section` page band). Several components also ship unscoped
+(`<style lang="scss">`) blocks for dark-mode hover rules and for popups that
+portal to `<body>`.
 
-> **Known issue: `HSectionCard` shares its root class `h-section` with the
-> global page-band class of the same name.** brand-ux's `app.scss` works around
-> it with child combinators (see its "Site backdrop" block). Any host rule
-> written for `.h-section` page bands also lands on every `HSectionCard`.
-> onboardingv4's `handyverse.vue` already outlines both.
+**Disabled** is 50% on every control, through Quasar's own `.disabled` /
+`[disabled]` hooks (`styles/_quasar.scss`). A component that wants its whole
+body dimmed puts `disabled` on its root, and the controls inside it don't dim
+a second time. `HSegmented` is the one deliberate exception (70%, so the
+chosen segment stays readable).
+
+**Card variants.** Plain is a card as it comes (`q-card` is flat by default).
+Lifted is `.h-lifted`: `--shadow-sm` on light, a hairline on dark. Outlined is
+`bordered` on a `q-card`, `.h-outlined` on anything else. They go on any
+card-shaped surface, kit cards included.
 
 **Accessibility baseline.** There is a visible 2px focus ring on every
 interactive element (a global `:focus-visible` in `styles/_base.scss`, or the
@@ -292,7 +296,7 @@ graphics are `aria-hidden`.
 | [HSliderMenu](#hslidermenu)                       | Inputs     | A labeled slider folded behind an icon + value chip                     | `q-menu` + `HLabeledSlider` | `/showcase/forms`            |
 | [HHelpTip](#hhelptip)                             | Inputs     | The `?` beside a control's label: hover previews, click locks           | `q-menu`                    | `/showcase/help`             |
 | [HInfoCard](#hinfocard)                           | Surfaces   | Key/value card with pills, badges, highlights, notes                    | —                           | `/showcase/data`             |
-| [HSectionCard](#hsectioncard)                     | Surfaces   | Titled card with hint, `?`, "Expert" marker and one action              | `HHelpTip`                  | _none in brand-ux_           |
+| [HSectionCard](#hsectioncard)                     | Surfaces   | Titled card with hint, `?`, "Expert" marker and one action              | `HHelpTip`                  | `/components`                |
 | [HTextCard](#htextcard)                           | Surfaces   | Long-form copy, optionally height-capped with an expand-to-modal        | `q-scroll-area`, `HModal`   | `/components`                |
 | [HNavCard](#hnavcard)                             | Surfaces   | "Tap to go deeper" tile: icon chip, label, caption, chevron             | —                           | `/showcase/navigation`       |
 | [HProductCard](#hproductcard)                     | Surfaces   | Product render, name, price, sale pill, rating                          | —                           | `/showcase/cards`            |
@@ -359,7 +363,9 @@ slot renders before the label, and `#loading` is pre-filled with
 `q-spinner-dots` (design.md's "inline three-dot spinner replaces the label").
 
 Hover: primary darkens to `--color-action-primary-hover` (it lightens on
-dark). The secondary border turns Brand Blue, danger dims with
+dark). The secondary border turns `--color-action-secondary-hover-stroke`
+(Brand Blue, and Brand Blue Light on dark, where Brand Blue would be dimmer
+than the white resting border), danger dims with
 `brightness(0.88)`, and tertiary text turns to the tertiary hover token. The
 icon-to-label gap is `--space-xs` (8px), where Quasar ships 6px.
 
@@ -517,14 +523,14 @@ When each option needs a caption, use radio rows.
 </HSegmented>
 ```
 
-| Prop         | Type                                    | Default     | Notes                                                                                              |
-| ------------ | --------------------------------------- | ----------- | -------------------------------------------------------------------------------------------------- |
-| `modelValue` | `T extends string \| number \| boolean` | required    | The chosen value                                                                                   |
-| `options`    | `SegmentedOption<T>[]`                  | required    | See below                                                                                          |
-| `spread`     | `boolean`                               | `false`     | Fill the row, segments sharing it equally                                                          |
-| `size`       | `"xs" \| "sm" \| "md"`                  | `"md"`      | `md` standalone (34px), `sm` inside a row or toolbar (28px), `xs` icon strips over a canvas (22px) |
-| `tone`       | `"primary" \| "warning"`                | `"primary"` | Warning **only** when the segments drive something already drawn in warning                        |
-| `disable`    | `boolean`                               | `false`     | Dims to 0.7 and keeps the fill readable                                                            |
+| Prop         | Type                                    | Default  | Notes                                                                                                                |
+| ------------ | --------------------------------------- | -------- | -------------------------------------------------------------------------------------------------------------------- |
+| `modelValue` | `T extends string \| number \| boolean` | required | The chosen value                                                                                                     |
+| `options`    | `SegmentedOption<T>[]`                  | required | See below                                                                                                            |
+| `spread`     | `boolean`                               | `false`  | Fill the row, segments sharing it equally                                                                            |
+| `size`       | `"xs" \| "sm" \| "md"`                  | `"md"`   | `md` standalone (34px), `sm` inside a row or toolbar (28px), `xs` icon strips over a canvas (22px)                   |
+| `severity`   | `"warning"`                             | —        | Warning **only** when the segments drive something already drawn in warning. `tone="warning"` is the deprecated name |
+| `disable`    | `boolean`                               | `false`  | Dims to 0.7 and keeps the fill readable                                                                              |
 
 `SegmentedOption<V>`: `{ label?, icon?, value: V, ariaLabel?, slot?, disable? }`.
 An icon-only option needs `ariaLabel`. `slot` names a slot rendered inside
@@ -542,7 +548,7 @@ children, such as a `q-tooltip` over the whole control.
   `ResizeObserver`, and its transition is gated until after the first painted
   frame, so it never animates in from the left edge. Under reduced motion it
   still moves, just instantly.
-- It is deliberately not a `q-btn-toggle`: design.md 5.12 records the four
+- It is deliberately not a `q-btn-toggle`: §18 records the four
   fights that caused the rewrite.
 
 > **Known issue:** if `modelValue` matches no option, no segment has
@@ -552,7 +558,7 @@ children, such as a `q-tooltip` over the whole control.
 
 Label on the left, `−` / value / `+` on the right. The buttons **disable at
 the bounds** instead of clamping silently. Press and hold to repeat,
-accelerating with the length of the hold, which is what lets `stepSize` be as
+accelerating with the length of the hold, which is what lets `step` be as
 fine as the value deserves.
 
 ```vue
@@ -562,26 +568,28 @@ fine as the value deserves.
   label="Offset"
   :min="-2000"
   :max="2000"
-  :step-size="10"
+  :step="10"
   unit="ms"
   editable
 />
 ```
 
-| Prop         | Type      | Default  | Notes                                                           |
-| ------------ | --------- | -------- | --------------------------------------------------------------- |
-| `modelValue` | `number`  | required |                                                                 |
-| `label`      | `string`  | `""`     | Also used in the buttons' accessible names ("Increase Repeats") |
-| `min`        | `number`  | `0`      |                                                                 |
-| `max`        | `number`  | `100`    |                                                                 |
-| `stepSize`   | `number`  | `1`      |                                                                 |
-| `unit`       | `string`  | `""`     | Suffix on the readout ("%", "ms", " fps")                       |
-| `editable`   | `boolean` | `false`  | Click the number to type it. **Off by default** (see below)     |
-| `decimals`   | `number`  | `0`      | Decimal places a typed value accepts                            |
+| Prop          | Type      | Default  | Notes                                                             |
+| ------------- | --------- | -------- | ----------------------------------------------------------------- |
+| `modelValue`  | `number`  | required |                                                                   |
+| `label`       | `string`  | `""`     | Also used in the buttons' accessible names ("Increase Repeats")   |
+| `min`         | `number`  | `0`      |                                                                   |
+| `max`         | `number`  | `100`    |                                                                   |
+| `step`        | `number`  | `1`      | `stepSize` is the deprecated name and still works                 |
+| `unit`        | `string`  | `""`     | Suffix on the readout ("%", "ms", " fps")                         |
+| `editable`    | `boolean` | `false`  | Click the number to type it. **Off by default** (see below)       |
+| `decimals`    | `number`  | `0`      | Decimal places a typed value accepts                              |
+| `maxDecimals` | `number`  | `3`      | Most places the readout shows; `step` or `decimals` can need more |
+| `disable`     | `boolean` | `false`  | The whole control: label and readout dim with the buttons         |
 
 - **Hold behaviour.** The repeat starts after 400 ms. The interval eases from
   150 ms to 45 ms over the first second. After one second the increment
-  doubles every 300 ms, capped at 1% of the range and always on the `stepSize`
+  doubles every 300 ms, capped at 1% of the range and always on the `step`
   lattice, so a stepper fenced into a narrow range never accelerates.
   Enter/Space step once, and only the pointer holds.
 - **Typing** is opt-in because the two buttons are the stepper's whole
@@ -592,10 +600,14 @@ fine as the value deserves.
 - The readout is `HTabularNum` at h4/700 with a 48px minimum width, so digits
   don't jiggle.
 
-> **Known issue: fractional steps show float noise.** `bump()` adds `stepSize`
-> without rounding, so `:step-size="0.1"` reaches `0.30000000000000004` on the
-> third tap, and the readout prints it verbatim. The model drifts too.
-> `slider-format.ts` solves exactly this for the sliders but isn't used here.
+- A step lands on the step's own places: `:step="0.1"` goes 0.1, 0.2, 0.3,
+  never `0.30000000000000004`. A value set finer than the step keeps its own
+  places, up to what the readout shows.
+- **The readout shows at most three decimals** (`maxDecimals`), or more when
+  `step` or `decimals` needs them, and drops trailing zeros. A value the app
+  hands in as `0.30000000000000004` reads 0.3, a third reads 0.333, and a whole
+  number reads without a point. The model keeps whatever the app stored until
+  the next step rounds it.
 
 ### HFatSlider
 
@@ -625,6 +637,7 @@ the bottom). A 20px symbol sits inside the track at the fill's origin.
 | `iconOff`    | `string`  | `""`      | Swapped in at exactly `min` (`volume_up` → `volume_off`) |
 | `vertical`   | `boolean` | `false`   | Vertical, filling from the bottom                        |
 | `height`     | `string`  | `"220px"` | Track length when vertical                               |
+| `disable`    | `boolean` | `false`   | The whole control, symbol included, at 50%               |
 
 - **Icon colour follows what is behind it.** It stays white while the fill
   still covers the glyph's midpoint (34px from the origin, measured with a
@@ -721,9 +734,6 @@ the header), and default (out-of-flow children such as a `q-tooltip`).
 > **Known issue: typed values and label resets don't emit `change`.** They
 > emit `update:modelValue` only. A wrapper that commits to a device on `change`
 > (the "smart slider" pattern the component is designed for) misses them.
->
-> The in-code comment on `editable` says "single-value mode only". That is out
-> of date, because range ends are editable too.
 
 ### HSliderMenu
 
@@ -828,13 +838,13 @@ The line names the exits that exist: `tipLocked` mentions Esc for a cursor,
 />
 ```
 
-| Prop     | Type     | Default  | Notes                                                                            |
-| -------- | -------- | -------- | -------------------------------------------------------------------------------- |
-| `text`   | `string` | required | What the control is. One or two sentences                                        |
-| `title`  | `string` | `""`     | Bold lead-in, normally the control's own label                                   |
-| `detail` | `string` | `""`     | The trade the control makes (a second paragraph, skippable)                      |
-| `note`   | `string` | `""`     | Set apart below a hairline: the symptom that should send someone to this control |
-| `size`   | `string` | `"15px"` | Icon size inside the 18px mark                                                   |
+| Prop     | Type               | Default  | Notes                                                                            |
+| -------- | ------------------ | -------- | -------------------------------------------------------------------------------- |
+| `text`   | `string`           | required | What the control is. One or two sentences                                        |
+| `title`  | `string`           | `""`     | Bold lead-in, normally the control's own label                                   |
+| `detail` | `string`           | `""`     | The trade the control makes (a second paragraph, skippable)                      |
+| `note`   | `string`           | `""`     | Set apart below a hairline: the symptom that should send someone to this control |
+| `size`   | `number \| string` | `15`     | Icon size in px inside the 18px mark (a CSS length still works)                  |
 
 `HLabeledSlider`, `HToggleRow` and `HSectionCard` take the same three parts as
 `help` / `help-detail` / `help-note` props and render the ? in the right
@@ -909,9 +919,9 @@ Slots: default (above the list) and `#action` (one control on the title row's
 right edge, zero-height so it never grows the row). Booleans never render as
 raw `true`/`false`.
 
-> **Known issue: empty values don't become an em-dash.** design.md 5.6 says an
-> empty value renders `—`, but the component renders whatever it is given.
-> Callers currently pass `"—"` by hand (`/showcase/graphs` does).
+- **A row with nothing to show** (no `value`, or an empty one, and no `bool` or
+  `badge`) reads as an em dash (—) in the tertiary text colour, never a blank
+  cell. Passing `"—"` yourself still works, but there's no need.
 
 ### HSectionCard
 
@@ -961,17 +971,16 @@ and the header and does not care what is inside. The card sets
 `--h-slider-gap` to its own surface colour, so sliders inside it get the
 right gap.
 
-> **Known issues.** (1) Its root class `h-section` collides with the global
-> page-band class (see §2). (2) The "Expert" label is resolved once at setup,
-> so it does not follow a runtime language change. (3) Nothing in brand-ux
-> renders it. It has no specimen on `/components` or `/showcase`, and it is
-> only exercised downstream (onboardingv4 uses it).
+Its root class is `.h-section-card`, apart from the `.h-section` page band, so
+a rule written for page bands never lands on it. The Expert pill is sentence
+case and reads its kit label at render. The live reference is `/components`.
 
 ### HTextCard
 
 Long-form copy on a card: terms, care guides, release notes, lesson text.
 Give it a `height` and the text scrolls inside the card, with the slim themed
-scrollbar living inside the 20px radius. A pinned top-right button opens the
+scrollbar running down the card's right edge, between the top and bottom
+padding and so clear of the 20px corners. A pinned top-right button opens the
 full text in an `HModal`. Omit `height` and the card grows naturally.
 
 ```vue
@@ -992,7 +1001,9 @@ full text in an `HModal`. Omit `height` and the card grows naturally.
   overflows. It fades to 35% while the reader is scrolled in, and comes back on
   hover, focus, or at the top.
 - `<p>` margins inside are normalised (16px between, none after the last).
-- The scroll area uses the shared skin from `scroll.ts`.
+- The scroll area uses the shared skin from `scroll.ts`, held 4px in from the
+  card's edge. It reaches across the card's right padding to get there, and
+  the text takes that padding back, so its margins are 24px on both sides.
 
 > **Note:** the default slot is rendered twice, once in the card and once in
 > the modal when it opens. Stateful content (a component with its own state)
@@ -1090,19 +1101,29 @@ spacing, never by lines.
 </q-dialog>
 ```
 
-| Prop       | Type      | Default | Notes                                                  |
-| ---------- | --------- | ------- | ------------------------------------------------------ |
-| `title`    | `string`  | `""`    | Rendered as an `h3` in the h4 type style               |
-| `closable` | `boolean` | `false` | Round × top-right (`v-close-popup`, and emits `close`) |
+| Prop       | Type      | Default | Notes                                                                                                       |
+| ---------- | --------- | ------- | ----------------------------------------------------------------------------------------------------------- |
+| `title`    | `string`  | `""`    | Rendered as an `h3` in the h4 type style                                                                    |
+| `closable` | `boolean` | `false` | Round × top-right (`v-close-popup`, and emits `close`)                                                      |
+| `sheet`    | `boolean` | `false` | The bottom-sheet form: top corners rounded, a centred drag handle. Use it in `<q-dialog position="bottom">` |
 
 Slots: default (the body) and `#actions`. Event: `close`.
 
 - **Tall content scrolls inside the body, not the card.** The card is capped
   at `100dvh − 64px`, so the title and the actions stay pinned and the
   confirming action can never scroll out of sight.
+- The body's scrollbar runs down the card's right edge: the body reaches
+  across the card's side padding and gives it back as its own. The top and
+  bottom need nothing, since the padding and the body's margins already keep
+  the bar clear of the 20px corners.
 - The body reserves room for a slider handle's overhang, and the card sets
   `--h-slider-gap` to the card colour, so a slider inside a modal never grows a
   horizontal scrollbar or a page-coloured halo.
+- **It holds still while it closes,** on any Quasar version. See "A dialog's
+  scroll lock and a clipped root" in Notes on Quasar.
+- **The body's reach follows `--h-modal-pad-x`,** the card's side padding. To
+  change that padding, set the variable rather than `padding`, or the body
+  reaches past the card and it scrolls sideways.
 
 > **Known issue:** the title is not wired up as the dialog's accessible name.
 > Quasar puts `role="dialog"` on its inner element and forwards `q-dialog`'s
@@ -1196,14 +1217,15 @@ options of one choice in one `HList`.
 </HList>
 ```
 
-| Prop          | Type                         | Default  | Notes                       |
-| ------------- | ---------------------------- | -------- | --------------------------- |
-| `modelValue`  | `T extends string \| number` | required | The group's current value   |
-| `val`         | `T`                          | required | This option's value         |
-| `label`       | `string`                     | required |                             |
-| `caption`     | `string`                     | `""`     |                             |
-| `icon`        | `string`                     | `""`     |                             |
-| `recommended` | `boolean`                    | `false`  | The kit label "Recommended" |
+| Prop          | Type                         | Default  | Notes                                                                    |
+| ------------- | ---------------------------- | -------- | ------------------------------------------------------------------------ |
+| `modelValue`  | `T extends string \| number` | required | The group's current value                                                |
+| `val`         | `T`                          | required | This option's value                                                      |
+| `label`       | `string`                     | required |                                                                          |
+| `caption`     | `string`                     | `""`     |                                                                          |
+| `icon`        | `string`                     | `""`     |                                                                          |
+| `recommended` | `boolean`                    | `false`  | The kit label "Recommended"                                              |
+| `disable`     | `boolean`                    | `false`  | The radio greys out and the row stops taking the click, as on HToggleRow |
 
 Event: `update:modelValue`.
 
@@ -1225,7 +1247,7 @@ no checkboxes).
   v-model="beta"
   label="Beta firmware"
   disable
-  tooltip="Only available on Handy 2 Pro"
+  tooltip="Only available on The Handy 2 Pro"
 />
 ```
 
@@ -1281,14 +1303,15 @@ doubles as the stat dial, so there is no separate gauge component.
 <HCircleProgress :value="t" display="3.9V" :size="80" />
 ```
 
-| Prop      | Type     | Default  | Notes                                                                  |
-| --------- | -------- | -------- | ---------------------------------------------------------------------- |
-| `value`   | `number` | required | 0–100                                                                  |
-| `size`    | `number` | `96`     | Diameter in px                                                         |
-| `stroke`  | `number` | `0`      | Arc width in px. `0` means proportional: `max(3, round(size × 0.085))` |
-| `caption` | `string` | `""`     | Label below the ring                                                   |
-| `display` | `string` | `""`     | Centre text override (default `"{value}%"`)                            |
-| `color`   | `string` | `""`     | Arc colour (`--ring-fill`), for example a feedback token               |
+| Prop       | Type                                              | Default  | Notes                                                                   |
+| ---------- | ------------------------------------------------- | -------- | ----------------------------------------------------------------------- |
+| `value`    | `number`                                          | required | 0–100                                                                   |
+| `size`     | `number`                                          | `96`     | Diameter in px                                                          |
+| `stroke`   | `number`                                          | `0`      | Arc width in px. `0` means proportional: `max(3, round(size × 0.085))`  |
+| `caption`  | `string`                                          | `""`     | Label below the ring                                                    |
+| `display`  | `string`                                          | `""`     | Centre text override (default `"{value}%"`)                             |
+| `severity` | `"info" \| "positive" \| "warning" \| "negative"` | —        | Arc in that feedback colour instead of Brand Blue                       |
+| `color`    | `string`                                          | `""`     | Deprecated: a free CSS colour for the arc; used only without `severity` |
 
 The default slot replaces the centre text. The centre type is
 `max(11, round(size × 0.2))` px, weight 600, tabular. The ring **animates
@@ -1596,7 +1619,7 @@ chart on any new options object.
 #### Colours
 
 Series colours are optional. Omitted, a series takes its slot in the
-design.md §7.3 chart ramp — hero Brand Blue, then Dark Charcoal → Slate Gray →
+design.md 6.7 (Graph) chart ramp — hero Brand Blue, then Dark Charcoal → Slate Gray →
 Divider Gray (a white-opacity ladder on dark). Slots are assigned by position
 in the `series` array and stay put when a series is hidden.
 
@@ -1612,8 +1635,8 @@ Canvas can't read CSS custom properties, so `graph-theme.ts` resolves the
 tokens off the graph's own host element at mount and re-reads them when
 `data-theme` flips — which is also why a graph inside a `.section-dark` island
 on a light page gets the dark ramp. Override any of them per instance with the
-`theme` prop. The playhead uses `--color-feedback-negative`, the hover
-crosshair the axis colour (`--color-text-secondary`), the selection ring and
+`theme` prop. The playhead uses the surface's ink (`--color-text-primary`,
+the colour of `HPlayhead`'s beam), the hover crosshair the axis colour (`--color-text-secondary`), the selection ring and
 marquee `--color-stroke-focus`, and optional
 `--color-chart-hero` / `--color-chart-2..4` tokens override the ramp (none
 exist yet).
@@ -1629,18 +1652,22 @@ exist yet).
 ### HPlayhead
 
 The current-position marker for a strip that stands for time — a heatmap, a
-waveform, a filmstrip. It is the M3 slider handle borrowed out of the slider:
-a skinny rounded bar in a gap cut through whatever is behind it, slimming
-while dragged (the same `0.55` press ratio `styles/_quasar.scss` gives
-`.q-slider`), with
-the value on a label beside it.
+waveform, a filmstrip. It is a **light beam**: a small glowing cap at the top
+casting a slim beam down the strip that fades as it falls, in the surface's
+own ink — white on dark, near-black on light — with the value on a label
+beside it while it is pointed at or dragged. (Owner ruling 2026-10-16, picked
+from eight handles on scripter4's previews page; until then it was the M3
+slider handle in feedback-negative red.)
 
 It replaces the hairline rule most canvas strips draw. A rule competes with
 the picture at every pixel, carries no state — you can't tell it is
-draggable — and says nothing about how far in you are. The three parts answer
-those in turn: the surface-coloured **gap** detaches the handle from the field
-so it survives any colour behind it, the **press-slim** confirms the grab, and
-the **ahead-wash** splits the strip into played and not-played.
+draggable — and says nothing about how far in you are. The parts answer those
+in turn: the **cap** is something definite to take hold of, and its **glow**
+lifts it off a field of any colour; the **beam** is strong where the hand is
+and soft over the picture it crosses; the cap **burns brighter** while it is
+held; and the **ahead-wash** splits the strip into played and not-played.
+Ink rather than a colour, because the strips it marks are usually colour
+already — a heatmap is every colour at once.
 
 ```vue
 <div class="strip">
@@ -1659,7 +1686,7 @@ the **ahead-wash** splits the strip into played and not-played.
 ```scss
 .strip {
   position: relative; // HPlayhead fills its parent
-  overflow: hidden; // so the handle clips to the strip's own radius
+  overflow: hidden; // so the cap clips to the strip's own radius
 }
 ```
 
@@ -1690,17 +1717,21 @@ Nothing moves on its own: `seek` reports where the scrub asked to go and the
 host writes `value` back. `pan("start" | "end")` brackets a drag, same shape
 `HLabeledSlider` uses.
 
-| Custom property          | Default                     | What it paints             |
-| ------------------------ | --------------------------- | -------------------------- |
-| `--h-playhead-color`     | `--color-feedback-negative` | the handle and its label   |
-| `--h-playhead-surface`   | `--h-slider-gap`            | the gap and the ahead-wash |
-| `--h-playhead-width`     | `4px`                       | handle thickness           |
-| `--h-playhead-gap-width` | `3px`                       | the cut either side of it  |
-| `--h-playhead-inset`     | `2px`                       | top/bottom inset           |
+| Custom property           | Default                | What it paints                  |
+| ------------------------- | ---------------------- | ------------------------------- |
+| `--h-playhead-color`      | `--color-text-primary` | the beam, its cap and the label |
+| `--h-playhead-on-color`   | `--color-text-inverse` | the label's text                |
+| `--h-playhead-surface`    | `--h-slider-gap`       | the ahead-wash                  |
+| `--h-playhead-width`      | `2px`                  | the beam's thickness            |
+| `--h-playhead-cap-width`  | `8px`                  | the cap's width                 |
+| `--h-playhead-cap-height` | `10px`                 | the cap's height                |
 
 The colour default is deliberate: it is the same token `graph-theme.ts` gives
 `HGraph`'s playhead, so a chart and the strip under it read as one instrument
-rather than two. The surface default follows the slider's own gap token, which
+rather than two. A strip that wants a colour instead — the connected purple
+while a device drives the script, say — sets `--h-playhead-color` and, for
+the label's text, `--h-playhead-on-color` (`--color-text-on-fill` on any
+saturated colour). The surface default follows the slider's own gap token, which
 `styles/_tokens.scss` re-declares per scope — set `--h-playhead-surface` on the strip when
 its background isn't the page's (a heatmap on `--color-bg-page-alt` sets it to
 that).
@@ -1743,16 +1774,19 @@ optionally an action and a dismiss button. Severity is signalled by colour
 | ------------- | ------------------------------------------------- | -------- | --------------------------------------------------------- |
 | `severity`    | `"info" \| "positive" \| "warning" \| "negative"` | `"info"` | Default icons: `info`, `check_circle`, `warning`, `error` |
 | `title`       | `string`                                          | `""`     |                                                           |
-| `actionLabel` | `string`                                          | `""`     | A small secondary `HBtn`, bottom-right                    |
+| `actionLabel` | `string`                                          | `""`     | A small secondary `HBtn`, bottom-right under the ×        |
 | `dismissible` | `boolean`                                         | `false`  | A round × (kit label "Dismiss")                           |
 | `icon`        | `string`                                          | `""`     | Overrides the severity icon                               |
 
 Slot: default (the body). Events: `action` and `dismiss` (the page removes the
 card). The root has `role="status"`.
 
-> **Known issue (open spec bug 2.2 in the tracker):** the warning icon and
-> accent use `--color-feedback-warning` (`#F7B928`). On a white card that is
-> 1.76:1, under the 3:1 WCAG asks of non-text UI.
+- The action has a row of its own across the whole card, so its right edge
+  lines up with the ×'s, not with the end of the text. It comes before the ×
+  in the focus order.
+
+- The warning icon uses `--color-text-warning`, the readable tier; the accent
+  bar beside it stays `--color-feedback-warning`.
 
 ### HStatusBadge
 
@@ -1773,8 +1807,8 @@ warning yellow on a yellow tint would fail). The tints are derived with
 | `icon`     | `string`                                          | `""`     |
 
 The default slot overrides `label`. The icon is 14px and the text is 12px/500.
-See the island-scope known issue in §2: badges inside `.section-dark` /
-`.section-light` currently lose most of their contrast.
+Inside a `.section-dark` or `.section-light` island the badge takes that
+island's text tiers, so it keeps its contrast there too.
 
 ### HEmptyState
 
@@ -1819,8 +1853,8 @@ saving, a device pairing.
 
 Three things worth knowing before you use it somewhere new:
 
-- **`duration` is the whole beat, not one phase.** The ring, the tick and the
-  halo are all `calc()` fractions of it, so a host that must close its dialog
+- **`duration` is the whole beat, not one phase.** The ring and the tick are
+  both `calc()` fractions of it, so a host that must close its dialog
   in 600ms passes `:duration="600"` and gets a faster complete animation
   instead of one cut off half-drawn. Match it to the beat the host holds on —
   never time the two independently.
@@ -1831,9 +1865,8 @@ Three things worth knowing before you use it somewhere new:
   it some, or put it inside `HSuccessMoment`, which supplies them.
 
 Colour follows `--color-feedback-positive`; override per instance with
-`--h-mark-color`. The halo is bounded so it stays inside the 52-unit viewBox
-at full size — an SVG that paints outside its box grows a scrolling parent's
-scroll height and flashes its scrollbar for the length of the animation.
+`--h-mark-color`. There is no halo: a filled one flashed in as the tick
+started and read as a press, so it was removed (2026-10-13).
 
 It is a **moment**, not a status: a row that is merely "done" wears a badge,
 and a list of ten finished items does not draw ten marks.
@@ -1888,9 +1921,10 @@ splash screens. Overuse cheapens it.
 ```
 
 Prop: `size?: number` (default `48`). Colour follows `--color-text-primary`.
-It has `role="status"` with the kit label "Loading". SMIL animation ignores
-`prefers-reduced-motion`, which is acceptable for an essential indicator, but
-it is worth knowing.
+It has `role="status"` with the kit label "Loading". Under
+`prefers-reduced-motion` it holds the "h" still (design.md 5.6: an essential
+indicator turns static). That takes script: the morph is SMIL, which no CSS
+media query can pause, so the component leaves the `<animate>` out.
 
 ### Toasts: `hToast` and `hNotify`
 
@@ -1916,9 +1950,6 @@ hNotify("Saved."); // the quiet one: no icon, no ×, gone in 1.5s
 - `hNotify(message, timeout = 1500)` is an unstyled short confirmation.
 - It requires Quasar's `Notify` plugin and the `.h-toast*` classes from
   `styles/_toast.scss` (the toast portals out of any scoped style).
-
-> **Known issue:** design.md 5.6 caps the stack at three toasts. Nothing
-> enforces that.
 
 ---
 
@@ -1977,7 +2008,7 @@ still has to call `useHandyTheme().init()` once when it mounts.
 
 ### HLogo
 
-Every official lockup of The Handy, plus the Handyverse concepts, as inline
+Every official lockup of The Handy, plus the two Handyverse lockups, as inline
 SVG in `currentColor`. The logo is **strictly black or white**: black on light
 surfaces and `.section-light`, white on dark and `.section-dark`. Glass
 surfaces decide by their own ink (black on `.glass-light` even in dark mode).
@@ -1989,7 +2020,7 @@ It is never tinted by theme greys.
 <HLogo mark :height="20" />
 <!-- the "h" pictogram only -->
 <HLogo variant="stacked" :height="48" />
-<HLogo variant="handyverse-v1-horizontal" :height="32" />
+<HLogo variant="handyverse" :height="32" />
 ```
 
 | Prop      | Type           | Default        | Notes                                     |
@@ -1999,20 +2030,22 @@ It is never tinted by theme greys.
 | `mark`    | `boolean`      | `false`        | Back-compat shortcut for `variant="mark"` |
 
 Variants: `horizontal`, `stacked`, `horizontal-2line`, `wordmark`,
-`wordmark-2line`, `mark`, `handyverse-v1-horizontal`, `handyverse-v1-stacked`,
-`handyverse-v2-horizontal`, `handyverse-v3-horizontal`,
-`handyverse-v4-horizontal`, `handyverse-v4-stacked`. It is `role="img"` named
+`wordmark-2line`, `mark`, `handyverse` (the mark and the wordmark) and
+`handyverse-wordmark`. The old Handyverse names still render: `-v2-horizontal`
+is `handyverse` and `-v3-horizontal` is `handyverse-wordmark`, and the retired
+"the handyverse" lockups (`-v1-*`, `-v4-*`) fall back to the nearest of the
+two. It is `role="img"` named
 "The Handy" or "Handyverse" (product names are never translated, per
-design.md 5.14).
+design.md chapter 10).
 
 - Never redraw the mark. `mark` is the lockup's own first two paths.
 - The lockup's viewBox reserves descender space, so text flex-centred next to
   it rides about 2px high at nav sizes. Nudge the neighbour down onto the
   wordmark's baseline.
 
-> **Note:** all twelve lockups live in one lookup table (`handy-logo-art.ts` +
-> `handyverse-logo-art.ts`, ~46 KB of source, a 44 KB chunk in the build).
-> Rendering only the mark still ships them all.
+> **Note:** all eight lockups live in one lookup table (`handy-logo-art.ts` +
+> `handyverse-logo-art.ts`, about 27 KB of source). Rendering only the mark
+> still ships them all.
 
 ### HConnectedDot
 
@@ -2108,11 +2141,9 @@ disabled.
 <HIconTile icon="tune" label="Calibrate" @click="calibrate" />
 ```
 
-Props: `icon` (required), `label` (required) and `disabled?: boolean`. Event:
-`click`.
-
-> **Known issue:** it is a `<button>` without `type="button"`, so it submits an
-> enclosing form.
+Props: `icon` (required), `label` (required) and `disable?: boolean`
+(`disabled` is the deprecated name). Event: `click`. It is a
+`<button type="button">`, so it never submits an enclosing form.
 
 ### HFeaturePoint
 
@@ -2121,11 +2152,12 @@ stacked above a short label, centred, max 220px wide, not interactive.
 
 ```vue
 <HFeaturePoint icon="bolt" label="Up to 7 hours" />
-<HFeaturePoint icon="bolt" label="Up to 7 hours" lg />
+<HFeaturePoint icon="bolt" label="Up to 7 hours" size="lg" />
 ```
 
-Props: `icon` (required), `label` (required) and `lg?: boolean` (40px icon
-with a 16px label instead of 32px/14px).
+Props: `icon` (required), `label` (required) and `size?: "md" | "lg"` (`lg`
+is a 40px icon with a 16px label instead of 32px/14px; the boolean `lg` is
+the deprecated form).
 
 ---
 
@@ -2491,7 +2523,7 @@ build) before it commits a change proposed from an app.
 ## 17. Adding or changing a component
 
 1. **Spec first, or at least alongside.** New behaviour is logged in
-   `design_system_needs_to_change.md` §0 and lands in `design.md` chapter 5.
+   `design_system_needs_to_change.md` §0 and lands in `design.md` (chapters 5–10).
 2. **Import siblings relatively** (`./HBtn.vue`, `./labels`). `@/components/handy/…`
    would tie the kit to one host's alias and folder.
 3. **Tokens only**, never raw hex. Labels on fills use `--color-text-on-fill`
@@ -2514,3 +2546,33 @@ build) before it commits a change proposed from an app.
     at the top, and a `Consumer action:` line for anything a host must change
     (a renamed label key, a new peer dependency in `kit.json`, a new global
     rule). `npm run kit -- pull` prints it to every app that takes the copy.
+
+---
+
+## 18. Notes on Quasar
+
+The mechanics behind the kit's Quasar skin, moved here from design.md (until
+version 3, its section 5.12) when design.md became a spec only. The rules they
+serve are in design.md; these are the how.
+
+- **The underline guard.** A global `a:hover { text-decoration: underline }`
+  is (0,1,1) and beats Quasar's `.q-btn { text-decoration: none }` (0,1,0), so
+  a button, card, row or tile given a `to` grows an underline on hover. The
+  kit guards it twice: at the source in `styles/_base.scss`
+  (`a:hover:not(.q-btn)`), and inside each link-rendering component
+  (`text-decoration: none !important`), which protects a host whose own
+  stylesheet re-adds the rule.
+
+- **Determinate progress runs forward only.** Quasar transitions its meters in **both** directions — the ring's `stroke-dashoffset`, the bar's `transform` — so a meter reset to zero **unwinds backwards** for the length of the animation before it starts again, which reads as "something just finished and is being undone", the opposite of "starting". The same transition on the very first paint sweeps the meter in from empty before the page has settled. Both `q-circular-progress` and `q-linear-progress` take an `instant-feedback` prop that drops the transition while it is true: hold it true whenever the value **decreases** and for the whole of the first paint, and expose a **`flush()`** for the jumps that are not decreases (a re-measure after a reconnect, a state restored rather than changed) — there has to be a way to force the meter to the value it is actually at. One composable owns that timing for every meter, and a component that wraps one does it **inside**: every caller would otherwise have to know. **Restore the transition only after a painted frame** — a `nextTick` runs before paint, so the transition comes off and goes back on inside one frame, the compositor never sees it leave, and the meter eases down anyway. Two nested `requestAnimationFrame`s is the shortest wait that guarantees a composited frame in between; the flag must also be set in a pre-flush watcher, so it lands before the render that carries the new value. **A bare `q-linear-progress` dropped on a page gets none of this for free** — a wrapped ring is already safe, a raw bar next to it is not.
+
+- **Room for a slider handle, inside anything that scrolls.** Quasar's handle is a 40px box centred on its own position, so a slider at either end of its track hangs **20px outside** the width it was given. Inside a scroll container that overhang is scrollable overflow — and because `overflow-y: auto` forces the other axis to compute to `auto` too, the region grows a horizontal scrollbar with exactly 20px of travel: drag to the end and the panel starts sliding sideways. It bites where the box's width is fixed rather than shrink-to-fit (a dialog body, most often). The fix goes on the **scrolling element**, which pads by the overhang and takes the same amount back as negative margin — content lands where it did, and only the scrollbar moves outward, into padding the parent already had. **Clipping is the wrong fix:** `overflow-x: clip` slices the handle in half at exactly 0 and 100, which is where it spends most of its life. A component that is a scroll container itself (a dialog card, a slider inside a menu) owes this to anyone who copies it and must inline it rather than rely on a stylesheet class. A fatter handle needs a bigger number — measure it.
+
+- **Scrollbar skin.** Set the slim thumb globally (`scrollbar-width` / `scrollbar-color` plus the `::-webkit-scrollbar` trio) at specificity 0, so the scroll-area component's own suppression still wins inside it. That one block covers the window, popups and dialogs — every surface the framework scrolls natively — and is what keeps the "never a browser scrollbar" rule (design.md 5.9) true without each component fighting for it.
+
+- **A dialog's scroll lock and a clipped root.** Quasar up to 2.23 locks the page under a dialog by fixing `<body>` and forcing a scrollbar onto it (`q-body--force-scrollbar-y`), which is meant to reach the window and keep the page's bar where it was. Any overflow other than `visible` on `<html>` stops it reaching the window, and the kit's `overflow-x: clip` there (the page never pans sideways) is one. So the window lost its bar while a dialog was open, and because Quasar lifts the lock as the dialog **starts** to leave, the bar came back mid-animation and the window narrowed under it: anything centred slid half a scrollbar sideways on its way out. Only classic scrollbars show it (a mouse on macOS, Windows). The kit lifts the clip on `<html>` for as long as that class is on the body, so the page's bar stays put, thumb-less, beside the backdrop. Quasar 2.34 rewrote the lock: it clips `<html>` and reserves the bar's space with `scrollbar-gutter`, which looks the same and needs no help, and the kit's rule never matches there. (A fix that centred dialogs in `100vw` instead was tried and dropped: on 2.34 it pushed every open dialog half a scrollbar off centre.)
+
+- **Know when to stop skinning a framework control and just draw it.** The segmented control (design.md 6.4) was built on Quasar's button toggle and fought it at four separate points: the `size` prop arrives as an **inline** `font-size` and scales padding in `em`, so it beats every rule in the component (a "compact" size came out at 10px type whatever the stylesheet asked for); there is **no active class** — the chosen segment is marked by being handed a `color`, so a rule written against `.q-btn--active` is silently dead code; that colour paints through `bg-<name>` palette classes declared `!important`, so the fill cannot be restyled without a specificity war; and the button group squares off every segment's inner corners from three classes deep. The travelling thumb settled it: a fill that **moves** has to be one element that moves, not a background that changes owner, so the control has to own its own painting. Rebuilt as a row of `<button>`s and one absolutely-positioned span, all four workarounds disappeared. The rule generalises — when the workarounds outnumber the things the framework is still doing for you, the framework has stopped being the engine.
+
+- **Animate a travelling indicator with `transform` and `width`, never `left`.** The compositor can carry a transform without laying the row out again on every frame. Measure the target from the active element's `offsetLeft` / `offsetWidth`, re-measure on a `ResizeObserver` (segment widths follow their text, so a font swap or a container resize moves the indicator without the value changing), and **gate the transition until after the first painted frame** — the same trap as the progress ring, or the indicator animates in from the left edge on load.
+
+- **Sliders on touch:** Quasar's slider wins the drag by cancelling the first `touchmove`, which loses the race against native page scroll — declare intent up front with `touch-action: pan-y` (horizontal) / `pan-x` (vertical) on editable sliders.

@@ -26,6 +26,7 @@
       :style="{ opacity: dimAhead }"
     />
     <div v-if="showHandle" class="h-playhead__handle" />
+    <div v-if="showHandle" class="h-playhead__cap" />
     <div
       v-if="showHandle && labelShown"
       class="h-playhead__label"
@@ -38,19 +39,24 @@
 
 <script setup lang="ts">
 // The current-position marker for a strip that represents time — a heatmap,
-// a waveform, a filmstrip, a progress bar with a picture in it. It is the
-// M3 slider handle, borrowed: a skinny rounded bar sitting in a gap cut
-// through whatever is behind it, slimming while dragged, with the value on a
-// label beside it.
+// a waveform, a filmstrip, a progress bar with a picture in it. It is a light
+// beam: a small glowing cap at the top casting a slim beam down the strip
+// that fades as it falls, in the surface's own ink — white on dark,
+// near-black on light — with the value on a label beside it while it is
+// pointed at or dragged.
 //
 // A hairline rule over a busy strip is the thing this replaces. It competes
 // with the picture at every pixel, it has no state (you can't tell it is
-// draggable), and it says nothing about *how far in* you are. The three
-// pieces here answer those in turn: the gap detaches the handle from the
-// field so it survives any colour behind it, the press-slim (same 0.55 scaleX
-// the sliders use in styles/_quasar.scss) confirms the grab, and the
-// ahead-wash splits
-// the strip into played and not-played.
+// draggable), and it says nothing about *how far in* you are. The pieces here
+// answer those in turn: the cap is something definite to take hold of, its
+// glow lifts it off a field of any colour, the beam is strong where the hand
+// is and soft over the picture it crosses, the cap burns brighter while it is
+// held, and the ahead-wash splits the strip into played and not-played.
+//
+// Ink rather than a colour, so it never competes with a field that already
+// is every colour — and the same ink the kit's graph-theme.ts gives HGraph's
+// cursor, so a chart and the strip under it read as one instrument. (Owner
+// ruling 2026-10-16; it was the M3 slider handle in feedback-negative red.)
 //
 // Portable: props in, events out. No Quasar, no design-token imports, no
 // stores — every colour is a CSS custom property with a token default and a
@@ -73,11 +79,12 @@
 // why this is a component and not four lines of CSS in each host.
 //
 // Theming, per instance or per surface:
-//   --h-playhead-color     the handle and its label   (default: feedback-negative)
-//   --h-playhead-surface   the gap and the ahead-wash (default: --h-slider-gap)
-//   --h-playhead-width     handle thickness           (default: 4px)
-//   --h-playhead-gap-width the cut either side of it  (default: 3px)
-//   --h-playhead-inset     top/bottom inset           (default: 2px)
+//   --h-playhead-color      the beam, its cap and the label (default: text-primary)
+//   --h-playhead-on-color   the label's text               (default: text-inverse)
+//   --h-playhead-surface    the ahead-wash                 (default: --h-slider-gap)
+//   --h-playhead-width      the beam's thickness           (default: 2px)
+//   --h-playhead-cap-width  the cap's width                (default: 8px)
+//   --h-playhead-cap-height the cap's height               (default: 10px)
 
 import { computed, ref } from "vue";
 
@@ -245,17 +252,22 @@ function onKeydown(e: KeyboardEvent) {
   // an indicator must never eat the host's own gestures
   pointer-events: none;
 
-  --h-playhead-width: 4px;
-  --h-playhead-gap-width: 3px;
-  --h-playhead-inset: 2px;
-  // --h-slider-gap is the kit's existing "colour of the surface a handle is
-  // cut into", declared per scope in styles/_tokens.scss so dark islands don't inherit
-  // a white halo. Same job here.
+  --h-playhead-width: 2px;
+  --h-playhead-cap-width: 8px;
+  --h-playhead-cap-height: 10px;
+  // --h-slider-gap is the kit's "colour of the surface a handle sits on",
+  // declared per scope in styles/_tokens.scss so dark islands don't inherit a
+  // light wash. The wash over what is still to come is cut in it.
   --h-playhead-surface: var(--h-slider-gap, var(--color-bg-page, #ffffff));
-  // the playhead colour the charts already use (graph-theme.ts cursor)
+  // the surface's ink — the colour graph-theme.ts gives HGraph's cursor
   --h-playhead-fill: var(
     --h-playhead-color,
-    var(--color-feedback-negative, #e41e3f)
+    var(--color-text-primary, #1c2b33)
+  );
+  // and the ink on it, for the label
+  --h-playhead-on-fill: var(
+    --h-playhead-on-color,
+    var(--color-text-inverse, #ffffff)
   );
 }
 
@@ -284,36 +296,52 @@ function onKeydown(e: KeyboardEvent) {
   background: var(--h-playhead-surface);
 }
 
+// The beam: full strength under the cap, half by 60% of the way down, nearly
+// gone at the floor — strong where the hand takes hold, soft over the
+// picture it crosses, so it marks the moment without striking through it.
+// No transform: the position is `left`, and a beam that eased would lag the
+// clock it shows.
 .h-playhead__handle {
   position: absolute;
-  top: var(--h-playhead-inset);
-  bottom: var(--h-playhead-inset);
+  top: 0;
+  bottom: 0;
   left: var(--h-playhead-x);
   width: var(--h-playhead-width);
-  // centred on the position without spending `transform`, which the
-  // press-slim below owns
   margin-left: calc(var(--h-playhead-width) / -2);
-  border-radius: var(--radius-full, 9999px);
-  background: var(--h-playhead-fill);
-  // the M3 gap: a ring of the host surface painted around the bar, so the
-  // handle never touches the field and survives any colour behind it
-  box-shadow: 0 0 0 var(--h-playhead-gap-width) var(--h-playhead-surface);
-  transition:
-    width 120ms ease,
-    margin-left 120ms ease;
+  border-radius: var(--h-playhead-width);
+  background: linear-gradient(
+    to bottom,
+    var(--h-playhead-fill) 0%,
+    color-mix(in srgb, var(--h-playhead-fill) 45%, transparent) 60%,
+    color-mix(in srgb, var(--h-playhead-fill) 8%, transparent) 100%
+  );
 }
 
-// M3 press state, and the same 0.55 the sliders use: thickness only, never
-// length. Width rather than the sliders' scaleX, because a transform would
-// shrink the gap along with the bar — and the gap is the whole reason the
-// handle survives the picture behind it.
-.h-playhead--scrubbing .h-playhead__handle {
-  width: calc(var(--h-playhead-width) * 0.55);
-  margin-left: calc(var(--h-playhead-width) * -0.275);
+// The cap the beam falls from: square on top, where the strip's own edge is,
+// rounded below. Its glow is what lifts it off a field of any colour, which
+// is the job the M3 gap did on the old handle.
+.h-playhead__cap {
+  position: absolute;
+  top: 0;
+  left: var(--h-playhead-x);
+  width: var(--h-playhead-cap-width);
+  height: var(--h-playhead-cap-height);
+  margin-left: calc(var(--h-playhead-cap-width) / -2);
+  border-radius: 0 0 calc(var(--h-playhead-cap-width) / 2)
+    calc(var(--h-playhead-cap-width) / 2);
+  background: var(--h-playhead-fill);
+  box-shadow: 0 0 9px var(--h-playhead-fill);
+  transition: box-shadow 120ms ease;
+}
+
+// held, it burns brighter: the press answer every kit slider gives, here as
+// light rather than a slimmer bar
+.h-playhead--scrubbing .h-playhead__cap {
+  box-shadow: 0 0 14px var(--h-playhead-fill);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .h-playhead__handle {
+  .h-playhead__cap {
     transition: none;
   }
 }
@@ -327,8 +355,8 @@ function onKeydown(e: KeyboardEvent) {
   padding: 1px 6px;
   border-radius: var(--radius-xs, 8px);
   background: var(--h-playhead-fill);
-  color: var(--color-text-on-fill, #ffffff);
-  font-size: 11px;
+  color: var(--h-playhead-on-fill);
+  font-size: var(--text-caption-size, 12px);
   font-weight: 600;
   line-height: 1.5;
   font-variant-numeric: tabular-nums;

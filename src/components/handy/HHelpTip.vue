@@ -10,7 +10,7 @@
     @pointerdown="notePointer"
     @click.stop.prevent="togglePin"
   >
-    <q-icon name="help_outline" :size="size" />
+    <q-icon name="help_outline" :size="iconSize" />
 
     <q-menu
       ref="menuRef"
@@ -82,9 +82,14 @@ const props = withDefaults(
     /** A closing line, set apart: normally the symptom that should send
      * someone to this control in the first place. */
     note?: string;
-    size?: string;
+    /** The mark's glyph in px. A CSS length string still works. */
+    size?: number | string;
   }>(),
-  { title: "", detail: "", note: "", size: "15px" }
+  { title: "", detail: "", note: "", size: 15 }
+);
+
+const iconSize = computed(() =>
+  typeof props.size === "number" ? `${props.size}px` : props.size
 );
 
 const {
@@ -160,8 +165,9 @@ const ariaLabel = computed(() =>
 </style>
 
 <!-- QMenu portals to the body, so its content sits outside this component's
-     scope and has to be styled globally. Qualified with .q-menu so the sheet
-     keeps its own radius against the kit's dropdown rule (styles/_quasar.scss). -->
+     scope and has to be styled globally. Qualified with .q-menu so the sheet's
+     own background, shadow, display and overflow beat Quasar's .q-menu rule
+     and the kit's menu skin (styles/_quasar.scss). -->
 <style lang="scss">
 // inline-flex, not the flex a column would normally ask for: q-menu is
 // inline-block so that a two-word tip comes out two words wide, and going
@@ -172,12 +178,12 @@ const ariaLabel = computed(() =>
   overflow: hidden; // the body scrolls; the footer must not
   background: var(--color-bg-card);
   color: var(--color-text-secondary);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   box-shadow:
     inset 0 0 0 1px var(--color-stroke-subtle),
-    0 8px 24px rgba(0, 0, 0, 0.28);
+    var(--shadow-lg);
   padding: 0;
-  font-size: 13px;
+  font-size: var(--text-compact-size);
   line-height: 1.45;
   // 340px where there is room for it. The cap is CSS rather than q-menu's
   // max-width prop because the prop is a fixed pixel string: on a 360px
@@ -190,7 +196,10 @@ const ariaLabel = computed(() =>
   min-height: 0; // or the flex item refuses to shrink and never scrolls
   overflow-y: auto;
   overflow-x: hidden;
-  padding: var(--space-sm);
+  // the vertical room is margin, not padding, so the scroll box and its bar
+  // start and end 16px in, clear of the sheet's 16px corners
+  padding: 0 var(--space-sm);
+  margin: var(--space-sm) 0;
 }
 
 // Locked it is a surface you can land on, so it says so: a real border and a
@@ -201,7 +210,7 @@ const ariaLabel = computed(() =>
 .q-menu.h-helptip__tip--pinned {
   box-shadow:
     inset 0 0 0 1px var(--color-stroke-default),
-    var(--shadow-lg);
+    var(--shadow-xl);
   user-select: text;
 }
 
@@ -243,7 +252,7 @@ const ariaLabel = computed(() =>
   padding: 5px var(--space-sm) 6px;
   border-top: 1px solid var(--color-stroke-subtle);
   background: var(--color-bg-card);
-  font-size: 11px;
+  font-size: var(--text-caption-size);
   color: var(--color-text-tertiary);
 }
 </style>

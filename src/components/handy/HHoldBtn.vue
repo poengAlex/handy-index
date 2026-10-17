@@ -1,13 +1,13 @@
 <template>
   <HBtn
     :class="[
-      'hold-btn',
+      'h-hold-btn',
       {
-        'hold-btn--pressing': pressing && windUp,
-        'hold-btn--fired': justFired,
-        'hold-btn--active': isActive,
-        'hold-btn--spin': spinWhileActive,
-        'hold-btn--busy': busy && spinWhileBusy && !isActive
+        'h-hold-btn--pressing': pressing && windUp,
+        'h-hold-btn--fired': justFired,
+        'h-hold-btn--active': isActive,
+        'h-hold-btn--spin': spinWhileActive,
+        'h-hold-btn--busy': busy && spinWhileBusy && !isActive
       }
     ]"
     :style="styleVars"
@@ -375,7 +375,7 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped lang="scss">
-.hold-btn {
+.h-hold-btn {
   // a long press must not select text or raise the platform's own menu
   user-select: none;
   -webkit-touch-callout: none;
@@ -390,40 +390,40 @@ onBeforeUnmount(() => {
 // a completed hold ends at 360° — snap to 0° invisibly (same angle) instead
 // of transitioning a full turn backwards. Sits BEFORE --pressing so an
 // immediate re-press wins the tie and winds up normally.
-.hold-btn--fired :deep(.q-icon) {
+.h-hold-btn--fired :deep(.q-icon) {
   transition: none;
 }
 
 // finger down: wind up one full turn over the hold window (--hold-ms is the
 // holdMs prop), ease-in so it starts gently and accelerates — by the time
 // it whips around, the hold fires.
-.hold-btn--pressing :deep(.q-icon) {
+.h-hold-btn--pressing :deep(.q-icon) {
   transform: rotate(360deg);
   transition: transform var(--hold-ms) cubic-bezier(0.5, 0, 0.85, 0.4);
 }
 
 // the active tint always applies; the slow spin only with spinWhileActive
 // (--spin), so a stilled active state keeps its color
-.hold-btn--active :deep(.q-icon) {
+.h-hold-btn--active :deep(.q-icon) {
   color: var(--hold-active-color, var(--color-accent));
 }
 
-.hold-btn--active.hold-btn--spin :deep(.q-icon) {
-  animation: hold-btn-spin var(--hold-spin-active-ms) linear infinite;
+.h-hold-btn--active.h-hold-btn--spin :deep(.q-icon) {
+  animation: h-hold-btn-spin var(--hold-spin-active-ms) linear infinite;
 }
 
-.hold-btn--busy :deep(.q-icon) {
-  animation: hold-btn-spin var(--hold-spin-busy-ms) linear infinite;
+.h-hold-btn--busy :deep(.q-icon) {
+  animation: h-hold-btn-spin var(--hold-spin-busy-ms) linear infinite;
 }
 
 // pressing pauses any spin: a running transform animation overrides the
 // wind-up transition and would freeze the icon for the whole press. Placed
 // after the spin rules (and compounded for specificity) so it wins.
-.hold-btn.hold-btn--pressing :deep(.q-icon) {
+.h-hold-btn.h-hold-btn--pressing :deep(.q-icon) {
   animation: none;
 }
 
-@keyframes hold-btn-spin {
+@keyframes h-hold-btn-spin {
   to {
     transform: rotate(360deg);
   }
@@ -432,7 +432,7 @@ onBeforeUnmount(() => {
 // !important: the compound spin selectors out-rank a bare reset, and a
 // media query adds no specificity of its own
 @media (prefers-reduced-motion: reduce) {
-  .hold-btn :deep(.q-icon) {
+  .h-hold-btn :deep(.q-icon) {
     animation: none !important;
     transition: none !important;
     transform: none !important;

@@ -15,6 +15,273 @@ Format, which the CLI reads (`tools/kit/lib/changelog.mjs`):
 - Any number of `Consumer action:` lines, each an instruction an app's AI can
   carry out on its own. An entry without one is information only.
 
+## unreleased — The playhead is a light beam in the surface's ink, on the strip and the chart
+
+- `HPlayhead` is a **light beam** (owner ruling 2026-10-16, picked from
+  eight handles on scripter4's previews page): a small glowing cap at the top
+  casting a 2px beam down the strip that fades as it falls. The cap glows
+  brighter while the strip is dragged; the label still shows only while it
+  is pointed at or dragged (`showLabel: "auto"`), and the ahead-wash is as
+  before.
+- It is drawn in the surface's **ink**, `--color-text-primary` — white on
+  dark, near-black on light — instead of `--color-feedback-negative` red.
+  `HGraph`'s playhead line (`graph-theme.ts` `cursor`) moves to the same
+  token, so a chart and the strip under it still read as one instrument.
+- The label's text is `--h-playhead-on-color` (default `--color-text-inverse`),
+  so it reads on the ink. New: `--h-playhead-cap-width` (8px) and
+  `--h-playhead-cap-height` (10px); `--h-playhead-width` is now the beam's
+  thickness (2px). Gone, with the gap: `--h-playhead-gap-width` and
+  `--h-playhead-inset`.
+
+- Consumer action: If the app sets `--h-playhead-gap-width` or `--h-playhead-inset`, delete those lines; they no longer do anything. If it sets `--h-playhead-width` to thicken the old handle, delete that too unless a beam that thick is wanted.
+- Consumer action: If the app sets `--h-playhead-color` to a saturated colour, also set `--h-playhead-on-color: var(--color-text-on-fill)` beside it, or the label's text is the inverse ink on that colour.
+- Consumer action: If the app's own words or code say the playhead or the chart's cursor is red (help text, a legend, a comment, a test), update them: both are the surface's ink now.
+
+## unreleased — Glass blurs in Chrome again, rings draw their track, and rows and tiles fit a phone
+
+- **Every blur was missing in Chrome**, live too: the glass header, dialog
+  and drawer backdrops, the carousel arrows. Rules that wrote the `-webkit-`
+  form beside the standard `backdrop-filter` came out of the build with the
+  prefixed one only, which Chrome ignores. The kit now writes the standard
+  property alone and autoprefixer adds the prefix Safari needs.
+- `HCircleProgress` draws its track: Quasar draws it only when a track colour
+  is given, and the kit never gave one, so a ring at 0 was bare text.
+- `HListRow`: a trailing control too wide to sit beside the text (a
+  segmented control on a phone) wraps under it, right-aligned, instead of
+  running over the caption.
+- `HIconTile` grows taller than square when its label needs a second line;
+  on a narrow tile the label was sliced in half.
+- `HSegmented`: spread segments drop the natural width's extra padding, so
+  three labels fit a phone's width.
+- `HGraph`: a region's `label` is drawn, top left inside its shading, and a
+  series of one point shows as a dot (uPlot draws nothing for a single point).
+
+- Consumer action: If the app writes `-webkit-backdrop-filter` beside `backdrop-filter`, delete the prefixed line (and its entry in a `transition` list); otherwise its blur is missing in Chrome.
+
+## unreleased — Menus on the card surface, quiet field helpers, an instant theme switch, and fixes from the kit review
+
+- Every `q-menu` and `q-select` popup is on the card surface with
+  `--shadow-lg`, as design.md 5.5 says. Quasar painted them white with its own
+  shadow, and on dark in the page colour, so `HSliderMenu`'s handle wore a
+  card-coloured halo there.
+- A field's helper text is caption size in the tertiary ink; Quasar's dense
+  fields set it at 11px. Errors keep Quasar's error colour.
+- The theme switches in one frame: `useHandyTheme` turns transitions off until
+  the new theme has painted, so labels no longer cross-fade between the two
+  themes' colours (design.md 9.2).
+- `HCircleProgress` never sets its number under 12px; `HIconTile` lifts on
+  `--shadow-md`; `HGraph`'s axis labels name the variable Figtree first;
+  `HHelpTip`'s scrollbar stops short of the sheet's corners; `HPlayhead`'s
+  label size has a fallback.
+- `HNumberStepper`: float dust in a computed `step` no longer lifts the
+  decimal cap, and opening the field and leaving it untouched no longer
+  rounds the value. `HInfoCard`: a `null` or blank value reads as a dash too.
+
+- Consumer action: If the app restyles `q-menu` to put it on the card colour or give it a shadow, delete that rule unless it means to differ.
+
+## unreleased — Handyverse has two lockups, and an empty info-card row reads as a dash
+
+- `HLogo`: the Handyverse logo is two lockups now, `handyverse` (the mark and
+  the wordmark) and `handyverse-wordmark`. The "the handyverse" concepts (V1,
+  V4) are retired. The old names keep rendering: `handyverse-v2-horizontal` is
+  `handyverse`, `handyverse-v3-horizontal` is `handyverse-wordmark`, and the
+  retired ones fall back to the nearer of the two. The art table drops from
+  about 46 KB to 27 KB of source.
+- `HInfoCard`: a row with no value, yes/no or badge shows an em dash in the
+  tertiary text colour instead of an empty cell, as design.md 6.5 says.
+- Comments only: `HLabeledSlider`'s `editable` note (each end of a range can be
+  typed), `HConnectedDot`'s colour name (Connected Purple).
+
+- Consumer action: Replace `variant="handyverse-v2-horizontal"` with `variant="handyverse"` and `variant="handyverse-v3-horizontal"` with `variant="handyverse-wordmark"`.
+- Consumer action: If the app uses `handyverse-v1-*` (with the mark), switch to `handyverse`; if it uses `handyverse-v4-*` (without), switch to `handyverse-wordmark`. A stacked one becomes a single line, about 1.7 times as wide at the same height, so check the space it sits in.
+- Consumer action: Optional: where the app passes `"—"` as an info-card value by hand, it can drop it.
+
+## unreleased — Modal and text-card scrollbars run down the card's edge, a closing sheet holds still, and the stepper rounds its readout
+
+- `HModal`: the body's scrollbar sits on the card's right edge instead of 12px
+  inside it. The body reaches across the card's side padding and takes it back
+  as its own, so the content doesn't move.
+- `HTextCard`: the same for its scroll area, with the thumb held 4px in from
+  the edge. The text now keeps 24px on both sides; it used to keep 40px on the
+  right to clear the thumb.
+- Dialogs no longer slide sideways while they close, which was clearest on a
+  bottom sheet. On Quasar up to 2.23 the page's scrollbar vanished under an
+  open dialog (the kit's clip on `<html>` kept Quasar's forced bar off the
+  window) and came back mid-animation as it left. The kit now lifts that clip
+  for the length of the lock (`styles/_quasar.scss`), so the bar stays put.
+  Quasar 2.34 reserves the bar's space itself and is untouched. Only classic
+  scrollbars showed it.
+- `HFeedbackCard`: the action moves to a row of its own, so it lines up with
+  the close button at the card's right edge instead of stopping short of it.
+- `HNumberStepper`: the readout shows at most three decimals (new prop
+  `maxDecimals`, default 3; a `step` or `decimals` that needs more wins) and
+  drops trailing zeros. A value the app hands in as `0.30000000000000004` reads
+  0.3. A step now rounds the value to what the readout shows (it kept up to
+  six places before), and a step with float dust in it, like
+  `(1.1 - 0.4) / 100`, counts as the 0.007 it means.
+
+- Consumer action: If the app styles `.h-feedback__action` as a child of `.h-feedback__content`, select it as a child of `.h-feedback`; it moved.
+- Consumer action: If the app needs a stepper readout finer than three decimals without a step that fine, pass `:max-decimals`.
+- Consumer action: If the app wraps an `HModal`'s content in its own `q-scroll-area`, drop the wrapper and let the body scroll, so the bar sits on the card's edge; if it must stay, give it `margin-right: calc(-1 * var(--h-modal-pad-x))` and `:horizontal-offset="[0, 4]"`.
+
+## unreleased — The completion mark draws its ring and tick, and nothing else
+
+`HSuccessMark` no longer flashes a filled halo in as the tick starts. It read
+as a button being pressed. The ring draws, then the tick; the timing and
+`duration` are unchanged.
+
+- Consumer action: If the app styles `.h-mark__halo`, delete that rule; the element is gone.
+
+## unreleased — Tooltips take 8px corners, 13px becomes the named compact size, and nothing is set below 12px
+
+Rulings from the design.md version 4 review. A tooltip's corners are 8px
+(`--radius-xs`): at the menus' 16px a one-line tooltip turned into a pill and
+read as a chip. The 13px used by `HSegmented`'s compact size and the
+`HHelpTip` sheet is now a token, `--text-compact-size`, for dense tool UI only.
+The help tip's foot and `HPlayhead`'s label move from 11px to 12px, the type
+scale's floor. The help-tip sheet takes the menus' 16px corners.
+
+- Consumer action: Optional: where the app sets 13px on a dense control of its own, use `var(--text-compact-size)`; where it sets 11px, move it to 12px.
+
+## unreleased — Light glass is back to 0.8
+
+`.glass-light` is `rgba(241, 244, 247, 0.8)` again, the spec's value. 0.94 came
+from onboardingv4, whose grey sections stopped at the 1440px column so the
+edge showed through the bar on a wide window; the fix for that is full-bleed
+sections, which the spec asks for anyway. At 0.94 the bar was nearly opaque
+over imagery, which is the one place glass is for.
+
+- Consumer action: If the app's own section backgrounds stop at the content column, make them full-bleed (the background edge to edge, the content in the container); otherwise the column's edge shows through the light glass.
+- Consumer action: If the app re-declares `.glass-light` at 0.94, delete it.
+
+## unreleased — Warning icons use the readable warning colour
+
+Palette amber is 1.76:1 on a white card. `HFeedbackCard`'s warning icon and the
+warning toast's icon now use `--color-text-warning`; the amber accent bar beside
+them stays.
+
+## unreleased — Rulings on onboardingv4's overrides
+
+The design.md version 4 review ruled on three of onboardingv4's app overrides.
+Two are rejected:
+
+- The swapped light surfaces (Soft Gray cards on a white page): cards stay white
+  on Soft Gray sections, and a card on a surface of its own colour takes
+  `.h-lifted`.
+- The blanket reduced-motion clamp (`* { animation-duration: 0.01ms !important; … }`):
+  it stops spinners and progress too. The kit's per-class handling covers it.
+
+The third, its stepper with step numbers, is still open.
+
+- Consumer action: If the app swaps the light surfaces, delete the swap (`--color-bg-card: #f1f4f7` and `--color-bg-page-alt: #ffffff` in light mode) and put `.h-lifted` on any card that now sits on a surface of its own colour.
+- Consumer action: If the app has a blanket `prefers-reduced-motion` clamp, delete it. First check what it was also stopping: if the app relied on it for Quasar's own dialog, menu or drawer transitions, give those a reduced-motion rule of their own.
+
+## unreleased — design.md version 4: the Quasar mechanics live in this README
+
+design.md became a spec only, restructured into foundations, components,
+patterns, accessibility, surfaces and content. The Quasar mechanics it used to
+carry in section 5.12 are now §18 here, and the README's references follow
+the new section numbers. Nothing changes for the host.
+
+## unreleased — Dark and light islands carry the whole token set, so nothing in them keeps the page's colours
+
+`.section-dark` and `.section-light` used to re-declare a shorter list of their
+own. Error, warning and success text, the error stroke, inverse text, the
+overlay and the hero surface kept the page's values inside them, so a success
+badge in a dark island on a light page rendered `#1f6b3a` on `#1c1e21` (2.6:1)
+and a light island on a dark page fell to 1.6–2.3:1. Both now include the
+same token mixins as the themes (`light-tokens`, `dark-tokens` in
+`styles/_tokens.scss`), so they can't drift again. `.section-light` also gets
+its own `--h-chip-bg`: a light island on a dark page used to inherit the dark
+chip fill, 10% white on white, and every HChip and help-tip `?` in it
+disappeared.
+
+- Consumer action: If the app's `app.scss` patches tokens inside `.section-dark` or `.section-light` (error, warning or success text, the chip fill), delete those lines; the kit sets them now. Keep anything app-specific.
+
+## unreleased — Every disabled control is 50%
+
+Quasar dims disabled things with its own !important rules: 60% generally,
+70% on `q-btn`, 75% on `q-toggle` and `q-radio`. They beat the kit's 50%, so
+a disabled control looked different from one kind to the next, from 30% (a
+text field, dimmed three times over) to 75%. The kit now sets 50% for all of
+them, and a disabled control inside a disabled control (a stepper's buttons)
+doesn't dim a second time. `HSegmented` keeps its documented 70% for a whole
+disabled control, so the chosen segment stays readable.
+
+- Consumer action: If the app sets its own opacity for disabled controls (`.disabled`, `[disabled]`, `.q-btn.disabled`, `.q-field--disabled`), delete it unless it is a deliberate exception.
+
+## unreleased — Tooltips, flat cards and HModal's bottom sheet ship in the kit
+
+Three things the spec defines lived only as page CSS in the brand-ux
+showcase:
+
+- **Tooltip.** Every `q-tooltip` now wears the kit's skin: a small dark label
+  (`--color-bg-hero-dark` with `--color-text-on-fill`), the menus' 16px
+  radius, caption type (Quasar's 14px stays on a phone), and a hairline on a
+  dark page. Quasar's default was grey from outside the palette at 10px.
+- **Cards.** `q-card` is flat by default; Quasar gave every card without
+  `flat` a shadow. A lifted card takes `.h-lifted` (`--shadow-sm` on light, a
+  hairline on dark); an outlined one takes `bordered`, now on
+  `--color-stroke-subtle`, or `.h-outlined` on a card that isn't a `q-card`.
+- **Sheet.** `HModal sheet`, inside `<q-dialog position="bottom">`, rounds only
+  its top corners and carries a centred drag handle.
+
+- Consumer action: If the app styles `.q-tooltip` or adds a class to its tooltips to restyle them, delete what the kit now covers.
+- Consumer action: Replace any app-local "lifted card" shadow with `.h-lifted`, and any hand-built bottom sheet with `HModal sheet`. `flat` on a `q-card` is harmless and can stay.
+
+## unreleased — Tokens for the type scale, monospace, a 4px step and the secondary button's hover
+
+New in `styles/_tokens.scss`, all with the values components already used:
+`--text-display-size` … `--text-caption-size` (one per type role; the
+`.text-*` classes read them), `--font-mono`, `--space-2xs` (4px, for the
+inside of a component only) and `--color-action-secondary-hover-stroke`.
+The last one fixes a spec bug: a secondary `HBtn`'s border turned Brand Blue
+on hover, which on dark is dimmer than its white resting border, so the
+button faded when you pointed at it. On dark it now turns Brand Blue Light.
+The kit's components use the new tokens instead of literals; only four
+off-scale sizes are left as they were (13px in `HSegmented` sm and the
+`HHelpTip` sheet, 11px in its foot and in `HPlayhead`'s label).
+
+- Consumer action: Optional: where the app's own CSS repeats a type-role size, the monospace stack or a 4px gap inside a component, use the token.
+
+## unreleased — Prop names line up: disable, step, severity, size
+
+The kit's API conventions (README §2) are now true everywhere:
+
+- `HIconTile` takes `disable` (was `disabled`).
+- `HNumberStepper` takes `step` (was `stepSize`), and a new `disable` takes the
+  whole control out. Stepping rounds to the step's places, so 0.1 + 0.2 reads
+  0.3.
+- `HCircleProgress` takes `severity: info | positive | warning | negative`
+  for the arc (was a free CSS `color`).
+- `HSegmented` takes `severity="warning"` (was `tone="warning"`).
+- `HFeaturePoint` takes `size: md | lg` (was the boolean `lg`).
+- `HHelpTip`'s `size` takes a px number; a CSS length still works.
+- `HFatSlider` and `HRadioRow` gain `disable`, as `HToggleRow` already had.
+
+Every old name still works, marked deprecated.
+
+- Consumer action: Rename at the call sites: `:step-size` → `:step` on HNumberStepper, `tone=` → `severity=` on HSegmented, `color="var(--color-feedback-x)"` → `severity="x"` on HCircleProgress, `disabled` → `disable` on HIconTile, `lg` → `size="lg"` on HFeaturePoint.
+
+## unreleased — Class names all take the h- prefix, and small fixes from the design-system audit
+
+`HSectionCard`'s root class is `.h-section-card`, no longer the page band's
+`.h-section`, so a rule written for page bands stops landing on every
+section card. `HHoldBtn` is `.h-hold-btn` (was `.hold-btn`) and `HandyLoader`
+is `.h-loader` (was `.handy-loader`). Also:
+
+- `HSectionCard`'s Expert pill is sentence case (it was uppercase, against the
+  no-all-caps rule), and its label is read at render, so a language switch
+  reaches it.
+- `HandyLoader` holds the "h" still under reduced motion. Its morph is SMIL,
+  which no CSS media query can pause, so it kept animating.
+- `HIconTile` is `type="button"`, so it no longer submits an enclosing form.
+- Shadows come from the scale: `HGraph`'s readout chip is `--shadow-sm`, the
+  `HHelpTip` sheet `--shadow-lg` (locked: `--shadow-xl`). Card hover lifts and
+  the toast's × fade take the system's 180ms.
+
+- Consumer action: If the app's CSS targets `.h-section` or one of its element classes (`.h-section__action`, `__head`, `__title`, `__hint`, `__body`) to reach an HSectionCard, use `.h-section-card` and `.h-section-card__*`; rename `.hold-btn` / `.handy-loader` selectors to `.h-hold-btn` / `.h-loader` the same way. A page-band rule on `.h-section` no longer touches HSectionCard, which is the point.
+
 ## unreleased — brand-ux moved into handy-playground, and the sync follows it
 
 brand-ux is no longer its own repository: it is `projects/brand-ux` in

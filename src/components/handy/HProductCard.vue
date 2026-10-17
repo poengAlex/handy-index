@@ -137,7 +137,7 @@ function onKeydown(e: KeyboardEvent) {
   background: var(--color-bg-card);
   border-radius: var(--radius-lg);
   overflow: hidden;
-  transition: box-shadow 200ms ease;
+  transition: box-shadow 180ms ease;
   color: inherit;
   text-decoration: none !important;
   // fill the height the row gives us, so cards in a stretch grid/flex row
@@ -176,7 +176,7 @@ function onKeydown(e: KeyboardEvent) {
   left: var(--space-sm);
   z-index: 1;
   background: var(--color-action-primary);
-  color: #fff;
+  color: var(--color-action-primary-label);
   font-weight: 500;
   padding: 4px 12px;
   border-radius: var(--radius-full);

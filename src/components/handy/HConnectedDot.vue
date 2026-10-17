@@ -30,9 +30,9 @@ import { computed } from "vue";
 import HBtn from "./HBtn.vue";
 import { kitLabel } from "./labels";
 
-// Connection-state LED (design.md §13). Three states:
+// Connection-state LED (design.md 6.9). Three states:
 //   connected  — purple, with faint rings pulsing steadily outward. Purple is
-//                the *connected colour*, the same Oculus Purple as the
+//                the *connected colour*, the same Connected Purple as the
 //                device's hardware LED when it's linked to our online
 //                services, so the UI mirrors the device.
 //   connecting — amber, with a hairline arc sweeping around it: the handshake

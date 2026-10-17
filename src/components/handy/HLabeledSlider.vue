@@ -238,7 +238,8 @@ const props = withDefaults(
     step?: number;
     /** appended to the value text, e.g. "%" or "mm" */
     unit?: string;
-    /** click the number to type it (default on; single-value mode only) */
+    /** click the number to type it (default on; in range mode each end can
+     * be typed) */
     editable?: boolean;
     /** typed values may go outside min/max (the track still pins) */
     unclamped?: boolean;
@@ -784,7 +785,7 @@ onBeforeUnmount(() => {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  margin-bottom: 4px;
+  margin-bottom: var(--space-2xs);
 }
 
 .h-lslider__value {

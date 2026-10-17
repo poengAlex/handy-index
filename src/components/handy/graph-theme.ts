@@ -8,7 +8,7 @@
 
 import type { GraphTheme } from "./graph-types";
 
-/** design.md §7.3 — hero Brand Blue, then Dark Charcoal → Slate Gray →
+/** design.md 6.7 — hero Brand Blue, then Dark Charcoal → Slate Gray →
  * Divider Gray. The ramp is an emphasis ladder, not a set of equal hues:
  * one series is the point, the rest are context. */
 const LIGHT_SERIES: GraphTheme["series"] = [
@@ -19,7 +19,7 @@ const LIGHT_SERIES: GraphTheme["series"] = [
 ];
 
 /** On dark, hierarchy comes from white opacity rather than new greys
- * (design.md §5.2); the hero stays Brand Blue Light. */
+ * (design.md 5.2.2); the hero stays Brand Blue Light. */
 const DARK_SERIES: GraphTheme["series"] = [
   "#47a5fa",
   "rgba(255, 255, 255, 0.85)",
@@ -31,7 +31,7 @@ const FALLBACK_LIGHT: GraphTheme = {
   axis: "#5d6c7b",
   grid: "#dee3e9",
   text: "#5d6c7b",
-  cursor: "#e41e3f",
+  cursor: "#1c2b33",
   selection: "#0064e0",
   series: LIGHT_SERIES
 };
@@ -40,7 +40,7 @@ const FALLBACK_DARK: GraphTheme = {
   axis: "rgba(255, 255, 255, 0.72)",
   grid: "rgba(255, 255, 255, 0.08)",
   text: "rgba(255, 255, 255, 0.72)",
-  cursor: "#e41e3f",
+  cursor: "#ffffff",
   selection: "#47a5fa",
   series: DARK_SERIES
 };
@@ -49,7 +49,9 @@ const TOKEN_MAP = {
   axis: "--color-text-secondary",
   grid: "--color-stroke-subtle",
   text: "--color-text-secondary",
-  cursor: "--color-feedback-negative",
+  // the surface's ink, as HPlayhead's beam is, so a chart and the strip under
+  // it read as one instrument (owner ruling 2026-10-16; it was red)
+  cursor: "--color-text-primary",
   selection: "--color-stroke-focus"
 } as const;
 

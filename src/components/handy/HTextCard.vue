@@ -19,14 +19,18 @@
       <q-tooltip>{{ kitLabel("readFullText") }}</q-tooltip>
     </q-btn>
 
-    <!-- fixed height: q-scroll-area keeps the scrollbar inside the card's
-         radius (native overflow would run under the rounded corners) -->
+    <!-- fixed height: q-scroll-area reaches across the card's right padding
+         so its bar runs down the card's own edge, between the top and bottom
+         padding and so clear of the rounded corners (a native scrollbar
+         would run under them) -->
     <q-scroll-area
       v-if="height"
       ref="scrollRef"
+      class="h-text-card__scroll"
       :style="{ height }"
       :thumb-style="H_SCROLL_THUMB_STYLE"
-      :bar-style="H_SCROLL_BAR_STYLE"
+      :bar-style="BAR_STYLE"
+      :horizontal-offset="[0, EDGE_INSET]"
       @scroll="onScroll"
     >
       <div ref="contentEl" class="h-text-card__content text-body">
@@ -64,6 +68,13 @@ import type { QScrollArea } from "quasar";
 import HModal from "./HModal.vue";
 import { kitLabel } from "./labels";
 import { H_SCROLL_BAR_STYLE, H_SCROLL_THUMB_STYLE } from "./scroll";
+
+// the shared skin, held 4px (--space-2xs) in from the card's edge, about
+// where a native thin scrollbar draws its thumb (HModal's body scrolls
+// natively). Quasar sets the thumb's `right` itself, from the second number
+// of horizontal-offset, so the inset goes there; the bar takes it as style.
+const EDGE_INSET = 4;
+const BAR_STYLE = { ...H_SCROLL_BAR_STYLE, right: `${EDGE_INSET}px` };
 
 const props = withDefaults(
   defineProps<{
@@ -139,8 +150,8 @@ onUnmounted(() => resizeObserver?.disconnect());
   padding-right: 40px;
 }
 
-// stays on top while everything scrolls beneath it; transparent so the
-// scrollbar thumb at the card's edge stays visible behind it
+// stays on top while everything scrolls beneath it, clear of the thumb,
+// which runs 4px in from the card's edge
 .h-text-card__expand {
   position: absolute;
   top: var(--space-sm);
@@ -155,10 +166,13 @@ onUnmounted(() => resizeObserver?.disconnect());
   opacity: 0.35;
 }
 
+// across the card's right padding, so the bar sits on the card's edge ...
+.h-text-card__scroll {
+  margin-right: calc(-1 * var(--space-md));
+}
+
 .h-text-card__content {
   color: var(--color-text-secondary);
-  // clear the inset thumb so the last characters never sit under it
-  padding-right: var(--space-sm);
 
   :deep(p) {
     margin: 0 0 var(--space-sm);
@@ -167,5 +181,11 @@ onUnmounted(() => resizeObserver?.disconnect());
   :deep(p:last-child) {
     margin-bottom: 0;
   }
+}
+
+// ... and the text gets that padding back, so it keeps the same 24px margin
+// on both sides and stays 16px clear of the thumb
+.h-text-card__scroll .h-text-card__content {
+  padding-right: var(--space-md);
 }
 </style>

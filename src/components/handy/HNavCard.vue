@@ -44,7 +44,7 @@ const emit = defineEmits<{ click: [] }>();
   cursor: pointer;
   text-decoration: none !important;
   color: var(--color-text-primary);
-  transition: box-shadow 200ms ease;
+  transition: box-shadow 180ms ease;
   font-family: var(--font-brand);
 
   &:hover {

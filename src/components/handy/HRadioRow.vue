@@ -3,6 +3,7 @@
     :label="label"
     :caption="caption"
     :icon="icon"
+    :clickable="!disable"
     @click="emit('update:modelValue', val)"
   >
     <template #leading>
@@ -11,6 +12,7 @@
         :val="val"
         color="primary"
         :aria-label="label"
+        :disable="disable"
         @update:model-value="emit('update:modelValue', $event)"
         @click.stop
       />
@@ -26,6 +28,8 @@
 // the radio wiring baked in: the whole row selects, the control leads, and
 // `recommended` rides a quiet pill next to the label. Group the options in
 // one HList — picking a boot mode is one choice, so it's one card (§6).
+// `disable` works as on HToggleRow: the radio greys and the row stops taking
+// the click.
 import HListRow from "./HListRow.vue";
 import { kitLabel } from "./labels";
 
@@ -37,8 +41,9 @@ withDefaults(
     caption?: string;
     icon?: string;
     recommended?: boolean;
+    disable?: boolean;
   }>(),
-  { caption: "", icon: "", recommended: false }
+  { caption: "", icon: "", recommended: false, disable: false }
 );
 
 const emit = defineEmits<{ "update:modelValue": [value: T] }>();
@@ -46,7 +51,7 @@ const emit = defineEmits<{ "update:modelValue": [value: T] }>();
 
 <style scoped lang="scss">
 .h-radio-row__pill {
-  font-size: 12px;
+  font-size: var(--text-caption-size);
   font-weight: 600;
   line-height: 133%;
   padding: 1px 10px;

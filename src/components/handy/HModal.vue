@@ -1,5 +1,6 @@
 <template>
-  <div class="h-modal">
+  <div :class="['h-modal', { 'h-modal--sheet': sheet }]">
+    <span v-if="sheet" class="h-modal__handle" aria-hidden="true" />
     <q-btn
       v-if="closable"
       v-close-popup
@@ -19,7 +20,7 @@
 </template>
 
 <script setup lang="ts">
-// The dialog card (§7 modal): 20px radius, 560px max, generous padding,
+// The dialog card (design.md 6.5): 20px radius, 560px max, generous padding,
 // optional close top-right, actions right-aligned — separation inside via
 // spacing, never lines. Use INSIDE a q-dialog (which owns backdrop, focus
 // trap, ESC):
@@ -33,12 +34,18 @@
 //       </template>
 //     </HModal>
 //   </q-dialog>
+//
+// `sheet` is the mobile form (design.md 6.5, Modal and sheet): put it in a
+// `<q-dialog position="bottom">` and it rounds only its top corners and
+// carries a centred drag handle. Quasar runs it edge to edge on a phone and
+// caps it at the same 560px above that. The handle is a cue, not a control:
+// the dialog closes the usual ways.
 import { kitLabel } from "./labels";
 
-withDefaults(defineProps<{ title?: string; closable?: boolean }>(), {
-  title: "",
-  closable: false
-});
+withDefaults(
+  defineProps<{ title?: string; closable?: boolean; sheet?: boolean }>(),
+  { title: "", closable: false, sheet: false }
+);
 
 const emit = defineEmits<{ close: [] }>();
 </script>
@@ -49,12 +56,15 @@ const emit = defineEmits<{ close: [] }>();
   // surface is a card, not the page — on dark the two genuinely differ, so
   // without this the handle wears a page-coloured halo
   --h-slider-gap: var(--color-bg-card);
+  // the card's side padding, which the body (below) reaches across so its
+  // scrollbar lands on the card's edge
+  --h-modal-pad-x: var(--space-lg);
 
   position: relative;
   background: var(--color-bg-card);
   color: var(--color-text-primary);
   border-radius: var(--radius-lg);
-  padding: var(--space-lg);
+  padding: var(--space-lg) var(--h-modal-pad-x);
   width: 100%;
   max-width: 560px;
   box-shadow: var(--shadow-xl);
@@ -68,6 +78,25 @@ const emit = defineEmits<{ close: [] }>();
     margin: 0;
     padding-right: 48px;
   }
+}
+
+.h-modal--sheet {
+  --h-modal-pad-x: var(--space-md);
+
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  padding: var(--space-sm) var(--h-modal-pad-x)
+    calc(var(--space-md) + env(safe-area-inset-bottom));
+  max-height: calc(100dvh - var(--space-2xl));
+}
+
+.h-modal__handle {
+  flex: none;
+  align-self: center;
+  width: 32px;
+  height: var(--space-2xs);
+  border-radius: var(--radius-full);
+  background: var(--color-stroke-default);
+  margin-bottom: var(--space-sm);
 }
 
 .h-modal__close {
@@ -94,16 +123,24 @@ const emit = defineEmits<{ close: [] }>();
   // about 20px of travel. Clipping is the wrong answer — it slices the handle
   // in half exactly at 0 and 100 — so instead the box is padded by the
   // overhang and given the same amount back as negative margin. Content lands
-  // where it always did; only the scrollbar moves outward, into padding the
-  // card already had (--space-lg is 32px, so 12px still remains).
+  // where it always did; only the box's edges move outward, into padding the
+  // card already had.
   //
   // This is the kit's `.slider-thumb-room` utility (styles/_layout.scss),
   // inlined: HModal owes the guarantee to every project that uses it,
   // whatever that project's own global CSS does.
   --slider-thumb-overhang: 20px;
 
-  padding-inline: var(--slider-thumb-overhang);
-  margin-inline: calc(-1 * var(--slider-thumb-overhang));
+  padding-left: var(--slider-thumb-overhang);
+  margin-left: calc(-1 * var(--slider-thumb-overhang));
+  // The right side takes the same trick the whole way, across all of the
+  // card's padding, so the scrollbar runs down the card's own edge rather
+  // than floating inside it (and the padding still covers the overhang).
+  // Nothing is needed at the top and bottom: the card's padding plus the
+  // body's own margins keep both ends of the bar well clear of the 20px
+  // corners, with or without a title and actions.
+  padding-right: var(--h-modal-pad-x);
+  margin-right: calc(-1 * var(--h-modal-pad-x));
 }
 
 .h-modal__actions {

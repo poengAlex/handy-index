@@ -97,6 +97,22 @@ function onClick() {
   text-decoration: none !important;
 }
 
+// A trailing control too wide to sit beside the text (a segmented control on
+// a phone) wraps under it, right-aligned, instead of running over the
+// caption: the text keeps at least 8em before the row gives up its one line.
+// Toggles, chevrons and short values never get near that.
+.h-list-row {
+  flex-wrap: wrap;
+}
+
+.h-list-row > .q-item__section--main {
+  min-width: min(8em, 100%);
+}
+
+.h-list-row__trailing {
+  margin-left: auto;
+}
+
 // keep the leading icon / control tight rather than the 56px avatar gutter
 .h-list-row__leading {
   min-width: 0;
@@ -130,7 +146,7 @@ function onClick() {
 // supplementary block under the caption — quiet by default, its own content
 // decides the type scale
 .h-list-row__below {
-  margin-top: 4px;
+  margin-top: var(--space-2xs);
   color: var(--color-text-secondary);
 }
 

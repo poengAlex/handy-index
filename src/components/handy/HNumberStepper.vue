@@ -1,5 +1,5 @@
 <template>
-  <div class="h-stepperctl">
+  <div :class="['h-stepperctl', { disabled: disable }]">
     <span v-if="label" class="text-body-compact h-stepperctl__label">{{
       label
     }}</span>
@@ -9,7 +9,7 @@
         unelevated
         icon="remove"
         class="h-stepperctl__btn"
-        :disable="modelValue <= min"
+        :disable="disable || modelValue <= min"
         :aria-label="kitLabelFor('decrease', label)"
         @pointerdown="press($event, -1)"
         @click="tap(-1)"
@@ -31,7 +31,7 @@
         @blur="commitEdit"
       />
       <button
-        v-else-if="editable"
+        v-else-if="editable && !disable"
         type="button"
         class="h-stepperctl__value-btn"
         :aria-label="kitLabelFor('sliderEditValue', label)"
@@ -49,7 +49,7 @@
         unelevated
         icon="add"
         class="h-stepperctl__btn"
-        :disable="modelValue >= max"
+        :disable="disable || modelValue >= max"
         :aria-label="kitLabelFor('increase', label)"
         @pointerdown="press($event, 1)"
         @click="tap(1)"
@@ -59,14 +59,18 @@
 </template>
 
 <script setup lang="ts">
-// Proposed spec for a number stepper: label left, minus/value/plus right.
+// The number stepper (design.md 6.4): label left, minus/value/plus right.
 // 40px icon-only round buttons on the alt surface, tabular value
 // (HTabularNum), buttons disable at the bounds instead of clamping silently.
 //
 // Press and hold to repeat, and the longer it is held the further each repeat
 // moves — see the constants below. A stepper is only as fine as its step size,
 // and a fine step size is unusable if crossing the range takes 600 clicks; the
-// hold is what lets `stepSize` be as small as the value deserves.
+// hold is what lets `step` be as small as the value deserves.
+//
+// `disable` takes the whole control out — label and readout dim with the
+// buttons, through Quasar's `.disabled` (50%, not-allowed), and the buttons
+// inside it don't dim a second time.
 //
 // `editable` opens a third way in: click the number and type it. It is OFF by
 // default, because the stepper's whole promise is that the two buttons are
@@ -75,6 +79,11 @@
 // stepper whose range is wide enough that reaching the far end by holding is
 // absurd. The mask, the commit-on-blur and the step lattice all match
 // HLabeledSlider's click-to-type, so the two controls behave alike.
+//
+// The readout shows at most `maxDecimals` places, 3 unless set, or more when
+// `step` or `decimals` needs them, and drops trailing zeros: a value that
+// arrives as 0.30000000000000004 reads 0.3, a third reads 0.333, and a whole
+// number reads as one.
 import { computed, nextTick, onBeforeUnmount, ref, useTemplateRef } from "vue";
 import HTabularNum from "./HTabularNum.vue";
 import { kitLabelFor } from "./labels";
@@ -85,6 +94,8 @@ const props = withDefaults(
     label?: string;
     min?: number;
     max?: number;
+    step?: number;
+    /** @deprecated The kit's name is `step`, as on the sliders. */
     stepSize?: number;
     /** Suffix on the readout — "%", "ms", " fps". */
     unit?: string;
@@ -92,21 +103,48 @@ const props = withDefaults(
     editable?: boolean;
     /** Decimal places the typed value accepts; 0 = whole steps only. */
     decimals?: number;
+    /** Most decimal places the readout shows; `step` or `decimals` can need
+     * more, and win. */
+    maxDecimals?: number;
+    disable?: boolean;
   }>(),
   {
     label: "",
     min: 0,
     max: 100,
-    stepSize: 1,
     unit: "",
     editable: false,
-    decimals: 0
+    decimals: 0,
+    maxDecimals: 3,
+    disable: false
   }
 );
 
+// `step` wins over the old `stepSize`; 1 when neither is given.
+const stepBy = computed(() => props.step ?? props.stepSize ?? 1);
+// The places a step can land on: 0.1 steps keep one, so 0.1 + 0.2 reads 0.3
+// and not the float sum. A typed value may carry `decimals` more.
+// Counted on the number rounded to 12 significant digits, so float dust in a
+// computed step or value (0.007000000000000001) counts as what it means.
+const decimalsOf = (n: number) =>
+  (String(Number(n.toPrecision(12))).split(".")[1] ?? "").length;
+const places = computed(() =>
+  Math.max(props.decimals, decimalsOf(stepBy.value))
+);
+// The places the readout keeps: the cap, unless the step or the typing
+// precision needs more.
+const shown = computed(() => Math.max(props.maxDecimals, places.value));
+
+/** The value as the readout and the field print it: rounded to `shown`,
+ * trailing zeros dropped. */
+function format(value: number): string {
+  if (!Number.isFinite(value)) return String(value);
+  return String(Number(value.toFixed(Math.min(shown.value, 20))));
+}
+
 // Handed to HTabularNum as ONE string, so its tabular figures and min-width
 // cover the unit too and the readout stops shifting as digits come and go.
-const display = computed(() => `${props.modelValue}${props.unit}`);
+const display = computed(() => `${format(props.modelValue)}${props.unit}`);
 
 const emit = defineEmits<{ "update:modelValue": [value: number] }>();
 
@@ -114,12 +152,16 @@ const emit = defineEmits<{ "update:modelValue": [value: number] }>();
 
 const editing = ref(false);
 const draft = ref("");
+// what the field opened with: leaving it untouched must not round the value
+// to the typing precision behind the person's back
+let draftStart = "";
 const inputEl = useTemplateRef<HTMLInputElement>("inputEl");
 
 function startEdit() {
   // the raw number, without the unit — the unit is the readout's, not the
   // value's, and typing "40ms" into a field that wants 40 is a trap
-  draft.value = String(props.modelValue);
+  draft.value = format(props.modelValue);
+  draftStart = draft.value;
   editing.value = true;
   void nextTick(() => {
     inputEl.value?.focus();
@@ -129,7 +171,7 @@ function startEdit() {
 
 // the mask: digits and a single leading minus, plus one decimal separator
 // when `decimals` allows it. Disallowed characters never land in the field,
-// typed or pasted (§6 Inputs).
+// typed or pasted (design.md 6.4, Text field).
 function onDraftInput(e: Event) {
   const el = e.target as HTMLInputElement;
   let value = el.value.replace(/[^\d.,-]/g, "");
@@ -155,6 +197,7 @@ function onDraftInput(e: Event) {
 function commitEdit() {
   if (!editing.value) return;
   editing.value = false;
+  if (draft.value === draftStart) return;
   const parsed = Number(draft.value.replace(",", "."));
   if (!Number.isFinite(parsed)) return; // empty/gibberish → keep the old value
   // typed precision is the contract when decimals are allowed; otherwise the
@@ -163,9 +206,11 @@ function commitEdit() {
   const settled =
     props.decimals > 0
       ? Number(parsed.toFixed(props.decimals))
-      : props.stepSize > 0
+      : stepBy.value > 0
         ? Number(
-            (Math.round(parsed / props.stepSize) * props.stepSize).toFixed(6)
+            (Math.round(parsed / stepBy.value) * stepBy.value).toFixed(
+              places.value
+            )
           )
         : parsed;
   const bounded = Math.min(props.max, Math.max(props.min, settled));
@@ -204,20 +249,18 @@ let repeated = false;
  * (a value bounded by its neighbours, say) never accelerates at all.
  */
 function incrementAt(heldMs: number): number {
-  if (heldMs < GROW_AFTER_MS) return props.stepSize;
+  const step = stepBy.value;
+  if (heldMs < GROW_AFTER_MS) return step;
   const span = props.max - props.min;
   const ceiling =
     Number.isFinite(span) && span > 0
-      ? Math.max(props.stepSize, span * MAX_SHARE_OF_RANGE)
-      : props.stepSize;
-  const grown = props.stepSize * 2 ** ((heldMs - GROW_AFTER_MS) / GROW_HALF_MS);
-  // kept on the stepSize lattice, so a fast run still lands on values a
-  // single step could have reached
-  const ticks = Math.max(
-    1,
-    Math.round(Math.min(ceiling, grown) / props.stepSize)
-  );
-  return ticks * props.stepSize;
+      ? Math.max(step, span * MAX_SHARE_OF_RANGE)
+      : step;
+  const grown = step * 2 ** ((heldMs - GROW_AFTER_MS) / GROW_HALF_MS);
+  // kept on the step lattice, so a fast run still lands on values a single
+  // step could have reached
+  const ticks = Math.max(1, Math.round(Math.min(ceiling, grown) / step));
+  return ticks * step;
 }
 
 function intervalAt(heldMs: number): number {
@@ -227,10 +270,15 @@ function intervalAt(heldMs: number): number {
 
 /** Move by `by`, clamped. False when the value could not move — at a bound. */
 function bump(dir: 1 | -1, by: number): boolean {
-  const next = Math.min(
-    props.max,
-    Math.max(props.min, props.modelValue + dir * by)
+  // rounded to the step's places, or the value's own when a caller set one
+  // finer, up to what the readout shows (so float noise in it isn't kept as
+  // precision, and the next value is never finer than the one on screen)
+  const keep = Math.max(
+    places.value,
+    Math.min(shown.value, decimalsOf(props.modelValue))
   );
+  const sum = Number((props.modelValue + dir * by).toFixed(keep));
+  const next = Math.min(props.max, Math.max(props.min, sum));
   if (next === props.modelValue) return false;
   emit("update:modelValue", next);
   return true;
@@ -258,7 +306,7 @@ function release(): void {
  * also what a keyboard Enter/Space fires, so both paths step once and only
  * the hold needs the pointer. */
 function press(event: PointerEvent, dir: 1 | -1): void {
-  if (event.button !== 0) return;
+  if (event.button !== 0 || props.disable) return;
   release();
   repeated = false;
   holdStart = performance.now();
@@ -273,7 +321,8 @@ function tap(dir: 1 | -1): void {
     repeated = false;
     return;
   }
-  bump(dir, props.stepSize);
+  if (props.disable) return;
+  bump(dir, stepBy.value);
 }
 
 onBeforeUnmount(release);

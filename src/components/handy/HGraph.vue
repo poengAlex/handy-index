@@ -47,11 +47,11 @@
 // is wide and lives in a scrolling grid, so over any graph that can't zoom,
 // the wheel stays what it is everywhere else on the page — scroll.
 //
-// Series colours come from the design.md §7.3 chart ramp — hero Brand Blue,
+// Series colours come from the design.md 6.7 chart ramp — hero Brand Blue,
 // then Dark Charcoal → Slate Gray → Divider Gray (white-opacity ladder on
 // dark). That ramp is an emphasis ladder, not a set of equal hues: the quiet
 // steps are hard to tell apart on their own, so any multi-series chart needs a
-// legend or direct labels beside it. The component ships none — per §5.6
+// legend or direct labels beside it. The component ships none — per design.md 6.1
 // components emit and pages decide, and the page owns that legend.
 //
 // Editing follows the same rule: every gesture is reported, none is applied.
@@ -458,7 +458,7 @@ function buildOptions(): uPlot.Options {
         // read at draw time, so switching xMode never rebuilds the chart
         incrs: () => (timeAxis.value ? TIME_INCRS : NUMERIC_INCRS),
         space: 90,
-        font: "12px Figtree, sans-serif"
+        font: '12px "Figtree Variable", Figtree, sans-serif'
       },
       {
         show: props.showAxes,
@@ -468,7 +468,7 @@ function buildOptions(): uPlot.Options {
         splits: () => ySplits.value,
         values: (_u, splits) => splits.map(v => fmtY.value(v)),
         size: props.yAxisSize,
-        font: "12px Figtree, sans-serif"
+        font: '12px "Figtree Variable", Figtree, sans-serif'
       }
     ],
     series: [
@@ -741,8 +741,10 @@ function drawOverlay(u: uPlot) {
   // dots-only series — the marker IS the datum, drawn here because uPlot's
   // own point rendering filters by density and cannot be trusted with a
   // handful of isolated values in a joined grid
+  // A series of ONE point gets the same dot: uPlot needs two points to draw
+  // a line, so a lone value (a script with one action) otherwise drew nothing.
   for (const s of visibleSeries.value) {
-    if (s.dots !== true) continue;
+    if (s.dots !== true && s.points.length !== 1) continue;
     ctx.fillStyle = colorFor(s.id);
     for (const point of s.points) {
       const px = u.valToPos(point.x, "x", true);
@@ -764,6 +766,22 @@ function drawOverlay(u: uPlot) {
     ctx.globalAlpha = region.selected ? 0.3 : 0.14;
     ctx.fillRect(from, top, to - from, height);
     ctx.globalAlpha = 1;
+    // its label, top left inside the shading, in the axis labels' type and
+    // ink; clipped to the region so a narrow one never writes over the next
+    if (region.label && to - from > 0) {
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(from, top, to - from, height);
+      ctx.clip();
+      ctx.font = `${12 * dpr}px "Figtree Variable", Figtree, sans-serif`;
+      ctx.fillStyle = colors.value.text;
+      // set both: uPlot leaves its own alignment on the context, and a
+      // right-aligned label ended at the region's edge, clipped to one letter
+      ctx.textAlign = "left";
+      ctx.textBaseline = "top";
+      ctx.fillText(region.label, from + 6 * dpr, top + 6 * dpr);
+      ctx.restore();
+    }
     if (!region.selected) continue;
     // edge rules: they carry the emphasis, and they are the only thing a
     // zero-length region (a freshly dropped marker) can draw at all
@@ -1898,8 +1916,8 @@ watch(
   border: 1px solid var(--color-stroke-subtle);
   // the chip floats over the plot, and on a card-surfaced panel its background
   // is the panel's own — without a shadow the border is all that separates them
-  box-shadow: 0 2px 8px rgb(0 0 0 / 12%);
-  font-size: 12px;
+  box-shadow: var(--shadow-sm);
+  font-size: var(--text-caption-size);
   line-height: 1.4;
   // values wear text tokens; the dot carries series identity
   color: var(--color-text-secondary);

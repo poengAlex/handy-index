@@ -26,7 +26,7 @@ withDefaults(defineProps<{ label?: string; icon?: string }>(), {
   border-radius: var(--radius-full);
   background: var(--h-chip-bg);
   color: var(--color-text-primary);
-  font-size: 14px;
+  font-size: var(--text-body-sm-size);
   font-weight: 500;
   letter-spacing: -0.14px;
 }

@@ -2,9 +2,14 @@
 // Semantic tokens and the per-scope helper variables that ride on them.
 
 // ------------------------------------------------------------
-// Semantic tokens — light mode (default)  [DESIGN.md §3]
+// Semantic tokens — light mode (default)  [design.md 5.2.2]
+// A mixin because two scopes take the whole light set: :root, and
+// .section-light below, the light island inside dark mode. One list means the
+// island can't fall out of step with the page. It did while it carried its own
+// shorter copy: error, warning and success text kept the dark page's values
+// there and failed contrast. dark-tokens is the same arrangement.
 // ------------------------------------------------------------
-:root {
+@mixin light-tokens {
   /* Surfaces */
   --color-bg-page: #ffffff;
   --color-bg-page-alt: #f1f4f7;
@@ -36,6 +41,10 @@
   --color-action-primary-label: #ffffff;
   --color-action-secondary-stroke: #1c2b33;
   --color-action-secondary-label: #1c2b33;
+  /* the secondary button's border on hover: Brand Blue on light, and Brand
+     Blue Light on dark, where Brand Blue is dimmer than the white resting
+     border and the button would fade as you point at it */
+  --color-action-secondary-hover-stroke: #0064e0;
   --color-action-tertiary-label: #1c2b33;
   --color-action-tertiary-hover: #0064e0;
 
@@ -51,7 +60,7 @@
   --color-feedback-info: #0064e0;
 
   /* Accent — the one decorative accent AND the connected-state colour
-     (v16 §2.1: one purple, two roles, one token — the device LED purple).
+     (design.md 5.2.1: one purple, two roles, one token — the device LED purple).
      Theme-independent. */
   --color-accent: #a121ce;
   /* the connected colour as TEXT — like --color-text-link it needs a
@@ -62,8 +71,15 @@
      saturated in both themes). Amber is the exception: it needs dark ink. */
   --color-text-on-fill: #ffffff;
   --color-text-on-warning: #1c2b33;
+}
 
-  /* Spacing — 8px base grid [§5] */
+:root {
+  @include light-tokens;
+
+  /* Spacing — 8px base grid [design.md 5.4]. 2xs is the half step, for the inside of a
+     component only (a badge's icon gap, a caption tucked under its label);
+     the space between components stays on the 8px grid. */
+  --space-2xs: 4px;
   --space-xs: 8px;
   --space-sm: 16px;
   --space-md: 24px;
@@ -73,7 +89,7 @@
   --space-3xl: 80px;
   --space-4xl: 96px;
 
-  /* Radius [§5] */
+  /* Radius [design.md 5.4] */
   --radius-none: 0px;
   --radius-xs: 8px;
   --radius-sm: 12px;
@@ -82,7 +98,7 @@
   --radius-xl: 32px;
   --radius-full: 9999px;
 
-  /* Elevation [§6] — dual-layer (ambient + sharp) at every tier */
+  /* Elevation [design.md 5.5] — dual-layer (ambient + sharp) at every tier */
   --shadow-none: none;
   --shadow-sm:
     0 4px 12px 0 rgba(0, 0, 0, 0.12), 0 1px 3px 0 rgba(0, 0, 0, 0.14);
@@ -91,7 +107,7 @@
   --shadow-xl:
     0 16px 48px 0 rgba(0, 0, 0, 0.25), 0 4px 8px 0 rgba(0, 0, 0, 0.1);
 
-  /* Scrims [§6] */
+  /* Scrims [design.md 5.5] */
   --scrim-bottom-dark: linear-gradient(
     180deg,
     rgba(0, 0, 0, 0) 0%,
@@ -107,6 +123,29 @@
   --font-brand:
     "Figtree Variable", "Figtree", -apple-system, BlinkMacSystemFont, "Inter",
     "Helvetica Neue", Helvetica, Arial, sans-serif;
+  /* Technical strings: connection keys, MACs, hashes [design.md 5.3] */
+  --font-mono:
+    ui-monospace, "SF Mono", "Cascadia Mono", "Roboto Mono", Menlo, monospace;
+
+  /* Type scale [design.md 5.3] — the size of each role. The .text-* classes in
+     _typography.scss read these, and so does component CSS that needs a
+     role's size without its class, so a size changes in one place. */
+  --text-display-size: clamp(40px, 17.1px + 3.81vw, 72px);
+  --text-h1-size: clamp(32px, 20.6px + 1.9vw, 48px);
+  --text-h2-size: clamp(26px, 18.9px + 1.19vw, 36px);
+  --text-h3-size: clamp(22px, 16.3px + 0.95vw, 30px);
+  --text-h4-size: clamp(20px, 17.1px + 0.48vw, 24px);
+  --text-h5-size: clamp(16px, 14.6px + 0.24vw, 18px);
+  --text-h6-size: 12px;
+  --text-body-lg-size: 18px;
+  --text-body-size: 16px;
+  --text-body-compact-size: 16px;
+  --text-body-sm-size: 14px;
+  --text-caption-size: 12px;
+  --text-button-size: 14px;
+  /* The compact step, for dense tool UI only: a compact segmented control,
+     the help-tip sheet. Not a reading size. */
+  --text-compact-size: 13px;
 }
 
 // ------------------------------------------------------------
@@ -147,7 +186,7 @@
 }
 
 // ------------------------------------------------------------
-// Dark mode  [DESIGN.md §3]
+// Dark mode  [design.md 5.2.2]
 // A mixin because the same tokens serve two states: the stamped
 // choice ([data-theme="dark"], written by useHandyTheme on mount)
 // and the frame before it, where no attribute exists yet and the
@@ -193,6 +232,7 @@
   --color-action-primary-label: #ffffff;
   --color-action-secondary-stroke: #ffffff;
   --color-action-secondary-label: #ffffff;
+  --color-action-secondary-hover-stroke: #47a5fa;
   --color-action-tertiary-label: #ffffff;
   --color-action-tertiary-hover: #47a5fa;
   --color-row-hover: rgba(71, 165, 250, 0.14);
@@ -212,60 +252,24 @@
 }
 
 // ------------------------------------------------------------
-// Hero invert — dark section embedded in a light page [§3, §12]
+// Hero invert — dark section embedded in a light page [design.md 9.1]
+// The whole dark set, from the same mixin as the dark theme, so nothing
+// inside the island keeps the light page's value.
 // ------------------------------------------------------------
 .section-dark {
-  --color-bg-page: #1c1e21;
-  --color-bg-page-alt: #2a2d31;
-  --color-bg-card: #26282b;
-  --color-bg-input: #26282b;
-  --color-text-primary: #ffffff;
-  --color-text-secondary: rgba(255, 255, 255, 0.72);
-  --color-text-tertiary: rgba(255, 255, 255, 0.56);
-  --color-text-link: #47a5fa;
-  --color-text-connected: #c86ee8;
-  --color-stroke-subtle: rgba(255, 255, 255, 0.08);
-  --color-stroke-default: rgba(255, 255, 255, 0.16);
-  --color-stroke-strong: #ffffff;
-  --color-stroke-focus: #47a5fa;
-  --color-action-primary-hover: #47a5fa;
-  --color-action-secondary-stroke: #ffffff;
-  --color-action-secondary-label: #ffffff;
-  --color-action-tertiary-label: #ffffff;
-  --color-action-tertiary-hover: #47a5fa;
-  --color-row-hover: rgba(71, 165, 250, 0.14);
-  --color-feedback-info: #47a5fa;
+  @include dark-tokens;
 
   background: var(--color-bg-page);
   color: var(--color-text-primary);
 }
 
 // ------------------------------------------------------------
-// Light section — pinned light surface inside dark mode [§12]
+// Light section — pinned light surface inside dark mode [design.md 9.1]
 // (counterpart of .section-dark; Quasar components inside need an
 // explicit :dark="false")
 // ------------------------------------------------------------
 .section-light {
-  --color-bg-page: #ffffff;
-  --color-bg-page-alt: #f1f4f7;
-  --color-bg-card: #ffffff;
-  --color-bg-input: #ffffff;
-  --color-text-primary: #1c2b33;
-  --color-text-secondary: #5d6c7b;
-  --color-text-tertiary: #5d6c7b;
-  --color-text-link: #0064e0;
-  --color-text-connected: #a121ce;
-  --color-stroke-subtle: #dee3e9;
-  --color-stroke-default: #5d6c7b;
-  --color-stroke-strong: #1c2b33;
-  --color-stroke-focus: #0064e0;
-  --color-action-primary-hover: #0143b5;
-  --color-action-secondary-stroke: #1c2b33;
-  --color-action-secondary-label: #1c2b33;
-  --color-action-tertiary-label: #1c2b33;
-  --color-action-tertiary-hover: #0064e0;
-  --color-row-hover: rgba(0, 100, 224, 0.07);
-  --color-feedback-info: #0064e0;
+  @include light-tokens;
 
   background: var(--color-bg-page);
   color: var(--color-text-primary);
@@ -276,7 +280,7 @@
 // dark, and on a Soft Gray (page-alt) section it flips to card-white so it
 // stays visible. The flip rides --h-chip-bg, re-declared per surface scope
 // (a var() inside a custom property resolves where it's DECLARED, so each
-// scope needs its own). [DESIGN.md §7]
+// scope needs its own). [design.md 6.9, Annotation chip]
 :root {
   --h-chip-bg: var(--color-bg-page-alt);
 }
@@ -284,6 +288,12 @@
 [data-theme="dark"],
 .section-dark {
   --h-chip-bg: rgba(255, 255, 255, 0.1);
+}
+
+// without this a light island on a dark page inherits the dark pill: 10%
+// white on white, and every chip and help-tip "?" in it disappears
+.section-light {
+  --h-chip-bg: var(--color-bg-page-alt);
 }
 
 .h-section--alt {

@@ -17,7 +17,7 @@
         </dt>
         <dd class="text-body-compact">
           <span
-            v-if="item.value !== undefined"
+            v-if="!isBlank(item.value)"
             :class="{ 'h-info__value--highlight': item.highlight }"
             >{{ item.value
             }}<q-tooltip
@@ -40,6 +40,7 @@
             ]"
             >{{ item.badge }}</span
           >
+          <span v-if="isEmpty(item)" class="h-info__empty">—</span>
         </dd>
       </div>
     </dl>
@@ -47,9 +48,9 @@
 </template>
 
 <script setup lang="ts">
-// Proposed spec for the InfoCard key/value pattern (device info):
-// plain card + key/value rows. Label = secondary small, value =
-// body-compact. Hairline dividers only because rows are dense (§7 Lists).
+// The info card (design.md 6.5): a plain card of key/value rows for device
+// data. Label = secondary small, value = body-compact. Hairline dividers
+// only because rows are dense.
 // Booleans render as state pills, never raw true/false: on-and-good =
 // positive, on-and-bad (error flag) = negative, off = muted. Highlighted
 // values use the success text token. Slot above the list hosts gauges; the
@@ -82,6 +83,16 @@ function boolLabel(item: InfoItem): string {
   return item.bool
     ? (item.trueLabel ?? kitLabel("yes"))
     : (item.falseLabel ?? kitLabel("no"));
+}
+
+// a row with nothing to show reads as an em dash (design.md 6.5), never a
+// blank cell that looks like a value failed to load
+function isBlank(value: string | null | undefined): boolean {
+  return value == null || value.trim() === "";
+}
+
+function isEmpty(item: InfoItem): boolean {
+  return isBlank(item.value) && item.bool === undefined && !item.badge;
 }
 
 function boolTone(item: InfoItem): string {
@@ -151,14 +162,17 @@ function boolTone(item: InfoItem): string {
   color: var(--color-text-tertiary);
 }
 
+.h-info__empty {
+  color: var(--color-text-tertiary);
+}
+
 .h-info__value--highlight {
   color: var(--color-text-success);
 }
 
 // long identifiers (hashes, uids) tooltip their full form; monospace wrap
 :global(.h-info__tooltip) {
-  font-family:
-    ui-monospace, "SF Mono", "Cascadia Mono", "Roboto Mono", Menlo, monospace;
+  font-family: var(--font-mono);
   word-break: break-all;
 }
 
@@ -167,7 +181,7 @@ function boolTone(item: InfoItem): string {
   align-items: center;
   padding: 2px 10px;
   border-radius: var(--radius-full);
-  font-size: 12px;
+  font-size: var(--text-caption-size);
   font-weight: 600;
   line-height: 144%;
 }

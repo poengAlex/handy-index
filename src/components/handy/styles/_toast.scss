@@ -21,6 +21,12 @@
 
 .h-toast--warning {
   border-color: var(--color-feedback-warning);
+
+  // Quasar paints the icon with its palette class (`.text-warning`, amber,
+  // !important), 1.76:1 on the card; the readable warning tier instead
+  .q-notification__icon {
+    color: var(--color-text-warning) !important;
+  }
 }
 
 .h-toast--negative {
@@ -38,7 +44,7 @@
   margin-left: var(--space-xs);
   color: var(--color-text-secondary);
   opacity: 0.7;
-  transition: opacity 150ms ease-out;
+  transition: opacity 180ms ease;
 
   &:hover,
   &:focus-visible {

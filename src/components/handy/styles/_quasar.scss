@@ -63,9 +63,42 @@
   color: var(--color-text-link);
 }
 
+// Disabled is 50% [§5.6], every control. Quasar ships a global 60%
+// (`.disabled, [disabled] { opacity: .6 !important }`) and its own figure on
+// a few controls on top (`.q-btn.disabled` 70%, `.q-toggle.disabled` and
+// `.q-radio.disabled` 75%), all !important. That beat every component rule
+// written without one, so the kit's own 50% rules never applied and a
+// disabled control looked different from one kind to the next.
+.disabled,
+[disabled] {
+  opacity: 0.5 !important;
+}
+
+.q-btn.disabled,
+.q-toggle.disabled,
+.q-radio.disabled,
+.q-checkbox.disabled {
+  opacity: 0.5 !important;
+}
+
 .q-field--disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+// The field's own 50% is the whole state. Quasar dims the control's insides
+// again (60%), and the native input once more as [disabled], which left a
+// disabled value at a fifth of its ink.
+.q-field--disabled .q-field__control > div,
+.q-field--disabled [disabled] {
+  opacity: 1 !important;
+}
+
+// Once, though: a disabled control inside a disabled control (a stepper's
+// buttons, a slider inside a disabled fat slider) doesn't dim a second time.
+// After the rules above, which it ties with on specificity.
+:is(.disabled, [disabled]) :is(.disabled, [disabled]) {
+  opacity: 1 !important;
 }
 
 // Number inputs — hide native spin buttons; steppers and inline ±
@@ -81,10 +114,44 @@ input[type="number"] {
   }
 }
 
-// Cards — 20px radius is set via $generic-border-radius; keep them flat
+// Cards [§5.6 Card] — 20px radius is set via $generic-border-radius. Flat by
+// default: Quasar gives every q-card a shadow unless it is `flat`, so the
+// reset lives here instead of in a prop every page has to remember. Outlined
+// is Quasar's `bordered`, on the subtle stroke rather than Quasar's separator
+// grey.
 .q-card {
   background: var(--color-bg-card);
   color: var(--color-text-primary);
+  box-shadow: none;
+}
+
+.q-card--bordered {
+  border-color: var(--color-stroke-subtle);
+}
+
+// The other two card variants, for any card-shaped surface: a q-card or a kit
+// card alike. Plain is the default and needs nothing. !important because a
+// `flat` q-card carries Quasar's `.no-shadow`, which is !important itself.
+//
+// Lifted: a card on a surface of its own colour. A shadow on light; on dark a
+// shadow doesn't read, so the lift is a hairline instead.
+.h-lifted {
+  box-shadow: var(--shadow-sm) !important;
+}
+
+[data-theme="dark"] .h-lifted,
+.section-dark .h-lifted {
+  box-shadow: inset 0 0 0 1px var(--color-stroke-default) !important;
+}
+
+.section-light .h-lifted {
+  box-shadow: var(--shadow-sm) !important;
+}
+
+// Outlined, for a card that isn't a q-card: an explicit boundary (comparison
+// tables, plan tiers). Inset, so the hairline never changes the card's size.
+.h-outlined {
+  box-shadow: inset 0 0 0 1px var(--color-stroke-subtle) !important;
 }
 
 // Tabs — active underline, brand blue [§7]
@@ -252,23 +319,80 @@ input[type="number"] {
   border-radius: 2px;
 }
 
-// Dropdowns are --radius-md (16px) per §7, not the 20px card radius
+// Dropdowns (design.md 5.5, 6.5): --radius-md (16px), not the 20px card
+// radius, lifted on --shadow-lg, on the card surface. Quasar paints menus
+// white with its own shadow, and on dark in the page colour (--q-dark) with a
+// white-tinted one. Components with a sheet of their own (HHelpTip,
+// HSliderMenu) qualify their selectors and keep it.
 .q-menu {
   border-radius: var(--radius-md);
+  background: var(--color-bg-card);
+  box-shadow: var(--shadow-lg);
+}
+
+// Helper text under a field (design.md 6.4): caption size, tertiary ink.
+// Quasar's dense field drops it to 11px, under the type scale's floor. An
+// error keeps Quasar's error colour.
+.q-field .q-field__bottom {
+  font-size: var(--text-caption-size);
+}
+
+.q-field:not(.q-field--error) .q-field__bottom {
+  color: var(--color-text-tertiary);
+}
+
+// Tooltips [design.md, Tooltip] — a small dark label in caption type, 8px
+// radius: at the menus' 16px a one-line tooltip turns into a pill and reads
+// as a chip. Quasar's default is a grey from outside the palette at 10px,
+// under the type scale's 12px floor. Dark in both themes, so on a dark page
+// it takes a hairline: dark on dark has no edge of its own.
+.q-tooltip--style {
+  background: var(--color-bg-hero-dark);
+  color: var(--color-text-on-fill);
+  border-radius: var(--radius-xs);
+  font-size: var(--text-caption-size);
+  line-height: 133%;
+  padding: 6px 12px;
+}
+
+[data-theme="dark"] .q-tooltip--style {
+  box-shadow: inset 0 0 0 1px var(--color-stroke-default);
+}
+
+// Quasar enlarges tooltips on a phone (14px), where one is read rarely and
+// at arm's length. Keep that rather than shrinking it back to caption.
+@media (max-width: 599.98px) {
+  .q-tooltip--style {
+    font-size: var(--text-body-sm-size);
+    padding: var(--space-xs) var(--space-sm);
+  }
 }
 
 // Dialogs — overlay token + 4px blur (overrides design.md v2's no-blur rule)
 .q-dialog__backdrop {
   background: var(--color-bg-overlay);
   backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+}
+
+// A dialog holds still while it closes. Quasar up to 2.23 locks the page
+// under a dialog by fixing <body> and forcing a scrollbar onto it, and that
+// bar keeps the page's own in place only if body's overflow reaches the
+// window. The clip on <html> (_base.scss) stops it, so the window's bar
+// vanished while a dialog was open and came back the moment it started to
+// leave: the window narrowed mid-animation and a centred dialog slid half a
+// scrollbar sideways (a bottom sheet made it obvious). Lifting the clip for
+// as long as the lock forces that bar lets it stay where it was; the body is
+// fixed then, so nothing can pan sideways anyway. Quasar 2.34 locks <html>
+// itself and reserves the bar's space (`q-document--reserve-scrollbar`), so
+// the forcing class never appears there and this rule stays out of its way.
+html:has(> body.q-body--force-scrollbar-y) {
+  overflow-x: visible;
 }
 
 // Drawer backdrop — same 4px blur as dialogs so the page softens behind an
 // open drawer (Quasar keeps its own dark scrim; we just add the blur)
 .q-drawer__backdrop {
   backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
 }
 
 // Notify toasts — card bg, semantic border-left accent [§7]

@@ -183,7 +183,7 @@ function pick(value: number) {
   gap: 6px;
   padding: 4px 8px 4px 10px;
   border-radius: var(--radius-full);
-  font-size: 12px;
+  font-size: var(--text-caption-size);
   font-weight: 500;
   color: var(--color-text-secondary);
   cursor: pointer;
@@ -265,7 +265,7 @@ function pick(value: number) {
   all: unset;
   padding: 3px 10px;
   border-radius: var(--radius-full);
-  font-size: 12px;
+  font-size: var(--text-caption-size);
   font-weight: 500;
   color: var(--color-text-secondary);
   cursor: pointer;

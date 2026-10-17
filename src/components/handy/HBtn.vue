@@ -46,7 +46,7 @@ withDefaults(
   text-decoration: none !important;
 
   border-radius: var(--radius-full);
-  font-size: 14px;
+  font-size: var(--text-button-size);
   line-height: 143%;
   transition:
     background 180ms ease,
@@ -102,7 +102,7 @@ withDefaults(
   }
 
   &:hover:before {
-    border-color: var(--color-action-primary);
+    border-color: var(--color-action-secondary-hover-stroke);
   }
 }
 

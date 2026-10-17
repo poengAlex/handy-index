@@ -15,7 +15,7 @@ export type HLogoVariant =
   | "wordmark" // single-line wordmark only
   | "wordmark-2line" // two-line wordmark only
   | "mark" // the "h" pictogram only
-  | HandyverseLogoVariant; // four Handyverse concepts, six supplied lockups
+  | HandyverseLogoVariant; // the two Handyverse lockups (and retired names)
 
 // 1D — pictogram only
 const mark = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 105.64 142.88" fill="currentColor">

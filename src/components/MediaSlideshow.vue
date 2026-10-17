@@ -348,7 +348,6 @@ onBeforeUnmount(() => {
   color: var(--color-text-primary);
   box-shadow: var(--shadow-md);
   backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
   cursor: pointer;
   opacity: 0;
   transition: opacity 180ms ease;
