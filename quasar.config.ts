@@ -1,7 +1,9 @@
 // Configuration for your app
 // https://v2.quasar.dev/quasar-cli-vite/quasar-config-file
 
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
+import { homedir } from "node:os";
+import { join } from "node:path";
 import { defineConfig } from "#q-app";
 import { handyViteConfig } from "./src/components/handy/vite";
 
@@ -14,6 +16,17 @@ const { version } = JSON.parse(
 
 // Stamped when this bundle was built (dev: when the dev server started).
 const buildDate = new Date().toISOString();
+
+// The dev server's certificate: this Mac's own localhost certificate when it
+// has one (~/.localhost-certs, signed by a localhost-only CA the keychain
+// trusts, so every browser takes it, the Claude app's browser pane included),
+// else Quasar's self-signed one. Quasar reads the two files itself.
+function devHttps() {
+  const dir = join(homedir(), ".localhost-certs");
+  const cert = join(dir, "localhost.pem");
+  const key = join(dir, "localhost-key.pem");
+  return existsSync(cert) && existsSync(key) ? { cert, key } : true;
+}
 
 export default defineConfig(ctx => {
   return {
@@ -58,7 +71,7 @@ export default defineConfig(ctx => {
     },
 
     devServer: {
-      https: true,
+      https: devHttps(),
       open: false
     },
 
