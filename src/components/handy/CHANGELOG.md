@@ -15,6 +15,150 @@ Format, which the CLI reads (`tools/kit/lib/changelog.mjs`):
 - Any number of `Consumer action:` lines, each an instruction an app's AI can
   carry out on its own. An entry without one is information only.
 
+## unreleased — The playhead is grabbed near its handle, looks held while dragged, and takes its sizes from the strip
+
+`HPlayhead` answers a drag with more than a brighter glow, and a drag no
+longer jumps the handle to the pointer (owner requests 2026-10-20, design.md
+v4.5).
+
+- **Held:** the cap scales 1.5 × 1.4 down from the strip's edge and its glow
+  goes from 9px to 16px; the beam scales 1.5× wide and keeps 80% of its
+  strength at 60% down and 30% at the floor (45% and 8% at rest). It eases in
+  120ms, instantly under reduced motion. Scales rather than sizes, so a host
+  that set `--h-playhead-width` or the cap's size keeps its proportions.
+- **Grab radius:** new prop `grabRadius` (default 12px; a touch gets at least
+  22px). Within it of the handle the cursor is `grab`, and a press takes hold
+  of the handle where it is: it doesn't jump to the pointer, it moves by
+  however far the hand does. Anywhere else on an interactive strip the cursor
+  stays `pointer` and a press seeks to that spot, then drags from there, as
+  before. `grabbing` while held either way; pointer capture keeps it when the
+  drag leaves the strip.
+- **New prop `held`:** draws the held look, and the `auto` label, on a
+  playhead that isn't the one scrubbing. It is for an indicator over a strip
+  that keeps its own gestures (the classifier's timeline, where a drag can
+  also move a scene boundary) and does the dragging itself; that host gives
+  the strip its cursors and its own grab radius.
+- **Fix, per-surface theming:** `--h-playhead-width`, `-cap-width`,
+  `-cap-height` and `-surface` set on the strip around the playhead were
+  ignored, because the component declared its own defaults on its root and
+  those shadowed the inherited values. Only the two colours worked from the
+  strip. All six now work from the strip or on the component. This changes
+  how the wash looks wherever a host already set `--h-playhead-surface` on
+  the strip: scripter4's density heatmap sets it to `--color-bg-page-alt`, so
+  its wash turns from the page colour to the strip's own, as intended.
+- Consumer action: If the app sets `--h-playhead-width`, `--h-playhead-cap-width`, `--h-playhead-cap-height` or `--h-playhead-surface` anywhere, check the playhead after the pull: a value that was silently ignored before now applies.
+- The showcase's graphs page puts it on a real script strip, scripter4's
+  heatmap with its time ruler along the floor, in place of the banded
+  stand-in: under the script's timeline with a script and a device to pick
+  (Handy 1 at 400 mm/s, Handy 2 Pro OC at 800 mm/s), and the same script on
+  both devices side by side. New specimens show each customisation: the
+  label modes, no handle, a heavier wash, a bigger handle and another ink set
+  on the strip, light and dark surfaces, keyboard steps and the `pan` event.
+
+## unreleased — The fat slider leaves 0% without its corners jumping
+
+`HFatSlider`'s track no longer switches its corners at the minimum (owner
+request 2026-10-19). At exactly 0% the corners beside the handle were squared
+so 0% read like 100%, and one step later they jumped back to the full 20px
+curve, which showed beside the handle until the fill covered it.
+
+- **The start corners follow the fill:** their radius along the track is the
+  fill's length, from 2px at 0% to the track's 20px, so the corner rounds
+  under the fill, the way the far end's cap comes out from under the handle
+  near 100%. Across the track it stays 20px. Horizontal and vertical (the
+  bottom corners) alike.
+- It eases with Quasar's own fill animation (0.28s) and is instant mid-drag.
+- The root carries `--h-fat-ratio` (0–1) for it; the `h-fat__slider--zero`
+  class is gone.
+
+## unreleased — The stepper's buttons hold still
+
+`HNumberStepper`'s value keeps the width of the widest it can show, so the −
+and + buttons no longer move as it changes (owner ruling 2026-10-19,
+design.md v4.4, 6.4).
+
+- **The widest value** comes from the bounds, the step, `decimals`,
+  `maxDecimals` and the unit. It is laid invisibly under the number (a
+  zero-height `::after` from `data-widest` on the readout), so the width is
+  the font's own in tabular figures. A value with more places than that (a
+  third reads 0.333) widens the readout, which keeps that width until the
+  bounds, step or unit change.
+- **Click-to-type keeps the box too:** the field takes the readout's width.
+  It took the browser's default width, about twenty characters, and pushed
+  the − button some 70px aside.
+- An app that reserved the readout's width itself (a `min-width` on
+  `.h-stepperctl__value`, as the classifier's settings do to line two
+  steppers up) can keep it: a minimum still applies on top.
+
+## unreleased — Segmented tracks show on Soft Gray and on dark cards
+
+`HSegmented`'s track, `--h-segmented-track`, takes per-surface fills the way
+the chip fill does, in `styles/_tokens.scss` (owner ruling 2026-10-17,
+design.md v4.3, 5.2.2 and 6.4).
+
+- **Every scope declares the track** and the two fills a surface picks from,
+  `--h-segmented-track-page` (on the page and on cards) and
+  `--h-segmented-track-page-alt` (on a Soft Gray surface), beside the chip's.
+  The OS-dark block before `data-theme` is stamped declares both. Light is as
+  before: Soft Gray on the page and on cards, card white on Soft Gray.
+- **Dark is 10% white on every surface**, as the chip. It was the dark
+  page-alt tint: 1.07:1 on a dark card, so every track in a dark card, panel
+  or dialog nearly vanished, and 1.21:1 on the page. Now about 1.37:1 on the
+  page, on cards and on Soft Gray. Only on pure black (`--color-bg-hero-dark`)
+  is it lower than before, 1.21:1 against 1.52:1.
+- **`.h-section--alt` sets the track** to the Soft Gray fill. A track on the
+  band was the page-alt tint on page-alt, so only its hairline ring showed,
+  in both themes. A card on the band (the same list as for the chip) takes
+  the page's fill back. The list also names the vanilla kit's `.h-card` and
+  `.h-feedback-card` now, which no Vue app uses; on the band, their chips,
+  "?"s and tracks were white on white in light.
+- `HSegmented` is unchanged apart from comments. Its `var()` fallback, the
+  page-alt tint, now applies only on a page without the kit's tokens.
+
+- Consumer action: If the app has a Soft Gray (`--color-bg-page-alt`) surface of its own with an `HSegmented` on it, set `--h-segmented-track: var(--h-segmented-track-page-alt)` on that surface, replacing any colour it sets there (`var(--color-bg-card)` is right on light only), and `--h-segmented-track: var(--h-segmented-track-page)` on any card that sits on it. Until then the track there is Soft Gray on Soft Gray in light.
+- Consumer action: If the app lifts segmented tracks off dark cards, panels or dialogs with its own rule (a background on `.h-segmented`, or `--h-segmented-track` set on those surfaces), delete it: the kit's dark track is 10% white on every surface.
+
+## unreleased — Chips show on the Soft Gray band and on an unstamped dark page, graphs follow the OS theme, and the playhead and carousel arrows translate
+
+Three bugs the vanilla kit's port found and worked around, fixed at the source.
+
+- **The chip fill (`--h-chip-bg`, which `HChip` and the `HHelpTip` "?"
+  paint)**, in `styles/_tokens.scss`:
+  - Before `data-theme` is stamped on a dark OS it was the dark page-alt
+    instead of 10% white, so a chip on a dark card was card on card. In an
+    app that stamps the theme at mount that was the first frame; on a page
+    that never stamps one, it was every frame.
+  - A card on a Soft Gray `.h-section--alt` band inherited the band's card
+    white, so every chip and "?" on it was white on white. A card on the band
+    (`q-card`, `HSectionCard`, `HInfoCard`, `HList`, `HProductCard`,
+    `HTextCard`, `HFeedbackCard`) now takes the page's fill back.
+  - On dark the band handed out the card colour too, darker than the band
+    itself and close to invisible on it. It is 10% white now, as design.md
+    5.2.2 has it for every dark surface.
+  - New: every scope also declares the two fills a surface picks from,
+    `--h-chip-bg-page` (on the page and on cards) and `--h-chip-bg-page-alt`
+    (on a Soft Gray surface). A surface that names one of them instead of a
+    colour is right in both themes and inside either island.
+- **`.h-section--alt` sets `--h-slider-gap`** to its own colour. A slider on
+  the band wore a page-coloured halo, white on light and the darker page on
+  dark. A card on the band sets its own colour back.
+- **`graph-theme.ts` follows the OS theme while `<html>` has no
+  `data-theme`**, as the tokens do. A page that followed a dark OS without
+  stamping one drew the light series ramp (Brand Blue and Dark Charcoal) on
+  dark tokens. `watchGraphTheme` also re-runs when the OS theme changes. The
+  new `test/graph-theme.spec.ts` covers both.
+- **Three new kit labels.** `playhead` ("Playhead") names an interactive
+  `HPlayhead` that is given no `ariaLabel` (the prop's default is now `""`;
+  the inline English was the one kit string that bypassed `labels.ts`).
+  `carouselPrevious` and `carouselNext` ("Navigate to previous slide",
+  "Navigate to next slide", vue3-carousel's own words) name `HPeekCarousel`'s
+  arrows: the button, its tooltip and its icon's title. Untranslated, nothing
+  reads differently.
+
+- Consumer action: If the app translates the kit's labels (it passes `labels` to `installHandyKit`), add `playhead`, `carouselPrevious` and `carouselNext` to every locale's kit block, with the English "Playhead", "Navigate to previous slide" and "Navigate to next slide". Until then those three stay English.
+- Consumer action: If the app sets `--h-chip-bg: var(--color-bg-card)` (or another colour) on a Soft Gray surface of its own, set it to `var(--h-chip-bg-page-alt)` instead, which is right on dark too, and put `--h-chip-bg: var(--h-chip-bg-page)` on any card that sits on that surface.
+- Consumer action: If the app works around any of these bugs (its own `--h-chip-bg` rule for `prefers-color-scheme: dark`, chip-fill or slider-gap rules for cards or sliders on `.h-section--alt`, a `matchMedia` check around `resolveGraphTheme`), delete the workaround.
+
 ## unreleased — The playhead is a light beam in the surface's ink, on the strip and the chart
 
 - `HPlayhead` is a **light beam** (owner ruling 2026-10-16, picked from

@@ -6,6 +6,7 @@
       vertical ? 'h-fat--v' : 'h-fat--h',
       { disabled: disable }
     ]"
+    :style="{ '--h-fat-ratio': ratio }"
   >
     <q-slider
       :model-value="modelValue"
@@ -18,7 +19,7 @@
       track-size="56px"
       thumb-size="72px"
       :thumb-path="vertical ? FAT_THUMB_V : FAT_THUMB_H"
-      :class="['h-fat__slider', { 'h-fat__slider--zero': modelValue === min }]"
+      class="h-fat__slider"
       :aria-label="label"
       @update:model-value="onInput"
     />
@@ -109,10 +110,19 @@ onMounted(() => {
 
 onUnmounted(() => resizeObserver?.disconnect());
 
+// how far along the fill reaches, 0–1; the track's start corners follow it
+const ratio = computed(() =>
+  props.max > props.min
+    ? Math.min(
+        1,
+        Math.max(0, (props.modelValue - props.min) / (props.max - props.min))
+      )
+    : 0
+);
+
 const iconCovered = computed(() => {
   if (props.max <= props.min) return false;
-  const fraction = (props.modelValue - props.min) / (props.max - props.min);
-  return fraction * trackLength.value > ICON_CLEARANCE;
+  return ratio.value * trackLength.value > ICON_CLEARANCE;
 });
 
 // fat-slider handle: a bar perpendicular to the track, at full length so it
@@ -180,17 +190,32 @@ const FAT_THUMB_H =
   stroke-width: 3.4;
 }
 
-// At exactly 0% the fill is gone, so the bare track shows its rounded cap
-// on the handle side (at 100% the fill's flat-cut edge squares that end).
-// Flatten just the handle-side corners at the extreme so 0% reads squared
-// like 100% — the far end keeps the standard radius. (vertical sliders are
-// `reverse` → handle at the bottom; horizontal → handle at the left.)
-.h-fat--v .h-fat__slider--zero :deep(.q-slider__track) {
-  border-radius: var(--radius-lg) var(--radius-lg) 2px 2px;
+// The track's corners at the fill's origin follow the fill: square (2px)
+// while the fill is shorter than the track's radius, rounding as it grows to
+// it. At 0% the bare track meets the handle squared, so 0% reads like 100%
+// (where the fill's flat-cut edge squares that end), and leaving 0% changes
+// nothing beside the handle: the corner rounds under the fill, the way the
+// far end's cap comes out from under the handle. The radius along the track
+// is a share of its length; across, it stays the track's. (Vertical sliders
+// are `reverse` → the fill grows from the bottom; horizontal → from the
+// left.) Quasar's inner bar inherits the track's corners.
+.h-fat__slider :deep(.q-slider__track) {
+  --h-fat-start: clamp(2px, calc(var(--h-fat-ratio) * 100%), var(--radius-lg));
 }
 
-.h-fat--h .h-fat__slider--zero :deep(.q-slider__track) {
-  border-radius: 2px var(--radius-lg) var(--radius-lg) 2px;
+.h-fat--h .h-fat__slider :deep(.q-slider__track) {
+  border-radius: var(--h-fat-start) var(--radius-lg) var(--radius-lg)
+    var(--h-fat-start) / var(--radius-lg);
+}
+
+.h-fat--v .h-fat__slider :deep(.q-slider__track) {
+  border-radius: var(--radius-lg) / var(--radius-lg) var(--radius-lg)
+    var(--h-fat-start) var(--h-fat-start);
+}
+
+// in step with Quasar's own fill animation, and instant mid-drag
+.h-fat__slider.q-slider--inactive :deep(.q-slider__track) {
+  transition: border-radius 0.28s;
 }
 
 // press (and keyboard focus, which shares the press treatment): same

@@ -24,6 +24,7 @@
         type="text"
         inputmode="decimal"
         class="text-h4 h-stepperctl__value h-stepperctl__input"
+        :style="{ width: editWidth }"
         :aria-label="kitLabelFor('sliderValue', label)"
         @input="onDraftInput"
         @keydown.enter.prevent="commitEdit"
@@ -32,17 +33,23 @@
       />
       <button
         v-else-if="editable && !disable"
+        ref="valueBtn"
         type="button"
         class="h-stepperctl__value-btn"
         :aria-label="kitLabelFor('sliderEditValue', label)"
         @click="startEdit"
       >
-        <HTabularNum class="text-h4 h-stepperctl__value" :value="display" />
+        <HTabularNum
+          class="text-h4 h-stepperctl__value"
+          :value="display"
+          :data-widest="reserve"
+        />
       </button>
       <HTabularNum
         v-else
         class="text-h4 h-stepperctl__value"
         :value="display"
+        :data-widest="reserve"
       />
       <q-btn
         round
@@ -61,7 +68,8 @@
 <script setup lang="ts">
 // The number stepper (design.md 6.4): label left, minus/value/plus right.
 // 40px icon-only round buttons on the alt surface, tabular value
-// (HTabularNum), buttons disable at the bounds instead of clamping silently.
+// (HTabularNum) held at the width of the widest it can show, so the buttons
+// never move; they disable at the bounds instead of clamping silently.
 //
 // Press and hold to repeat, and the longer it is held the further each repeat
 // moves — see the constants below. A stepper is only as fine as its step size,
@@ -84,7 +92,14 @@
 // `step` or `decimals` needs them, and drops trailing zeros: a value that
 // arrives as 0.30000000000000004 reads 0.3, a third reads 0.333, and a whole
 // number reads as one.
-import { computed, nextTick, onBeforeUnmount, ref, useTemplateRef } from "vue";
+import {
+  computed,
+  nextTick,
+  onBeforeUnmount,
+  ref,
+  useTemplateRef,
+  watch
+} from "vue";
 import HTabularNum from "./HTabularNum.vue";
 import { kitLabelFor } from "./labels";
 
@@ -142,9 +157,44 @@ function format(value: number): string {
   return String(Number(value.toFixed(Math.min(shown.value, 20))));
 }
 
-// Handed to HTabularNum as ONE string, so its tabular figures and min-width
-// cover the unit too and the readout stops shifting as digits come and go.
+// Handed to HTabularNum as ONE string, so its tabular figures cover the unit
+// too.
 const display = computed(() => `${format(props.modelValue)}${props.unit}`);
+
+// The readout holds one width, so the buttons either side never move as the
+// value changes (design.md 6.4). In tabular figures every digit is as wide
+// as a 0, so the widest value it can show is a string of zeros: the longer
+// whole part of the two bounds, every place a step, a typed value or a bound
+// can land on, a minus when the range dips below zero, and the unit. It sits
+// invisibly under the number (data-widest and the ::after below), so the
+// width is the font's own.
+const widest = computed(() => {
+  const whole = (n: number) =>
+    Number.isFinite(n) ? String(Math.trunc(Math.abs(n))).length : 1;
+  const fraction = Math.min(
+    shown.value,
+    Math.max(places.value, decimalsOf(props.min), decimalsOf(props.max))
+  );
+  return [
+    props.min < 0 ? "-" : "",
+    "0".repeat(Math.max(whole(props.min), whole(props.max))),
+    fraction > 0 ? `.${"0".repeat(fraction)}` : "",
+    props.unit
+  ].join("");
+});
+// A value given with more places than that (a third reads 0.333) widens the
+// readout, and it keeps that width: shrinking back as the steps walk on
+// would move the buttons all the same. New bounds, step or unit start over
+// from their own widest.
+const reserve = ref("");
+watch(
+  [widest, display],
+  ([wide, text], previous) => {
+    const base = previous?.[0] === wide ? reserve.value : wide;
+    reserve.value = text.length > base.length ? text : base;
+  },
+  { immediate: true }
+);
 
 const emit = defineEmits<{ "update:modelValue": [value: number] }>();
 
@@ -156,8 +206,15 @@ const draft = ref("");
 // to the typing precision behind the person's back
 let draftStart = "";
 const inputEl = useTemplateRef<HTMLInputElement>("inputEl");
+// The field takes the readout's box: a text input's own width is the
+// browser's default, about twenty characters, which pushed the − button
+// aside the moment you clicked the number.
+const valueBtn = useTemplateRef<HTMLButtonElement>("valueBtn");
+const editWidth = ref("");
 
 function startEdit() {
+  const width = valueBtn.value?.getBoundingClientRect().width;
+  editWidth.value = width ? `${width}px` : "";
   // the raw number, without the unit — the unit is the readout's, not the
   // value's, and typing "40ms" into a field that wants 40 is a trap
   draft.value = format(props.modelValue);
@@ -362,6 +419,17 @@ onBeforeUnmount(release);
   font-weight: 700;
   min-width: 48px;
   text-align: center;
+
+  // the widest value the readout can show (`reserve`), as a line of no
+  // height under the number: the readout takes its width, so the buttons
+  // hold still. Hidden, it is neither seen nor read out.
+  &::after {
+    content: attr(data-widest);
+    display: block;
+    height: 0;
+    overflow: hidden;
+    visibility: hidden;
+  }
 }
 
 // the button is only a hit area — it must not change the readout's metrics,

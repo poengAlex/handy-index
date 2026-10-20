@@ -276,28 +276,81 @@
 }
 
 // Annotation chip — a pill tag that never shares its background with the
-// surface behind it. Soft Gray on white surfaces, translucent white on
-// dark, and on a Soft Gray (page-alt) section it flips to card-white so it
-// stays visible. The flip rides --h-chip-bg, re-declared per surface scope
-// (a var() inside a custom property resolves where it's DECLARED, so each
-// scope needs its own). [design.md 6.9, Annotation chip]
-:root {
-  --h-chip-bg: var(--color-bg-page-alt);
+// surface behind it [design.md 5.2.2, 6.9]: Soft Gray on the page and on
+// cards, translucent white on dark, and card white on a Soft Gray band. It
+// rides --h-chip-bg, re-declared per scope (a var() inside a custom property
+// resolves where it's DECLARED, so each scope needs its own), and every scope
+// also declares the two fills its surfaces pick from:
+//
+//   --h-chip-bg-page      on the page, and on a card
+//   --h-chip-bg-page-alt  on a Soft Gray (page-alt) surface
+//
+// A surface that changes the fill names one of those rather than a colour,
+// so it is right in both themes and inside either island: the band and the
+// cards on it below, or a host's own Soft Gray panel.
+//
+// .section-light needs its own as much as the dark scopes do: a light island
+// on a dark page would inherit the dark pill, 10% white on white, and every
+// chip and help-tip "?" in it would disappear.
+:root,
+.section-light {
+  --h-chip-bg-page: var(--color-bg-page-alt);
+  --h-chip-bg-page-alt: var(--color-bg-card);
+  --h-chip-bg: var(--h-chip-bg-page);
+}
+
+// 10% white shows on every dark surface, the page-alt band included, so the
+// two dark fills are the same
+[data-theme="dark"],
+.section-dark {
+  --h-chip-bg-page: rgba(255, 255, 255, 0.1);
+  --h-chip-bg-page-alt: rgba(255, 255, 255, 0.1);
+  --h-chip-bg: var(--h-chip-bg-page);
+}
+
+// The frame before data-theme is stamped, when the OS alone says dark: the
+// same gate as the dark tokens above. :root's own --h-chip-bg reads these,
+// so it is 10% white here too, not the dark page-alt it used to resolve to.
+@media (prefers-color-scheme: dark) {
+  :root:where(:not([data-theme])) {
+    --h-chip-bg-page: rgba(255, 255, 255, 0.1);
+    --h-chip-bg-page-alt: rgba(255, 255, 255, 0.1);
+  }
+}
+
+// Segmented track — the groove HSegmented paints behind its thumb
+// [design.md 5.2.2, 6.4], arranged as the chip fill above and for the same
+// reason: on a surface of its own colour the groove disappears and the thumb
+// floats. It rides --h-segmented-track, re-declared per scope, and every
+// scope declares the two fills a surface picks from:
+//
+//   --h-segmented-track-page      on the page, and on a card
+//   --h-segmented-track-page-alt  on a Soft Gray (page-alt) surface
+//
+// Light: Soft Gray on the page and on cards, card white on Soft Gray. Dark:
+// 10% white on every surface, as the chip (the owner's call, 2026-10-17).
+// The dark page-alt it was is 1.07:1 on a dark card, and the card colour
+// Soft Gray hosts handed it is 1.07:1 on the dark band.
+:root,
+.section-light {
+  --h-segmented-track-page: var(--color-bg-page-alt);
+  --h-segmented-track-page-alt: var(--color-bg-card);
+  --h-segmented-track: var(--h-segmented-track-page);
 }
 
 [data-theme="dark"],
 .section-dark {
-  --h-chip-bg: rgba(255, 255, 255, 0.1);
+  --h-segmented-track-page: rgba(255, 255, 255, 0.1);
+  --h-segmented-track-page-alt: rgba(255, 255, 255, 0.1);
+  --h-segmented-track: var(--h-segmented-track-page);
 }
 
-// without this a light island on a dark page inherits the dark pill: 10%
-// white on white, and every chip and help-tip "?" in it disappears
-.section-light {
-  --h-chip-bg: var(--color-bg-page-alt);
-}
-
-.h-section--alt {
-  --h-chip-bg: var(--color-bg-card);
+// the frame before data-theme is stamped, as for the chip fills
+@media (prefers-color-scheme: dark) {
+  :root:where(:not([data-theme])) {
+    --h-segmented-track-page: rgba(255, 255, 255, 0.1);
+    --h-segmented-track-page-alt: rgba(255, 255, 255, 0.1);
+  }
 }
 
 // M3 sliders: thick rounded track, skinny handle bar (path set in
@@ -313,4 +366,38 @@
 .section-dark,
 .section-light {
   --h-slider-gap: var(--color-bg-page);
+}
+
+// The Soft Gray band (.h-section--alt, _layout.scss) is a surface of its own:
+// a chip and a segmented track on it take the page-alt fills, and a slider's
+// gap its colour (the page's was a white halo on it, a dark one on dark). A
+// card on the band is its own surface again and takes the page's fills and
+// its own colour back; without that it inherits the band's card white, and
+// every chip, "?" and track on it is white on white. The list names the Vue
+// kit's cards and the vanilla kit's .h-card and .h-feedback-card (its info
+// and product cards declare their own fills). :where() keeps the card list
+// at the band's specificity, so a component's own declaration (HSectionCard's
+// gap) still wins. After the scopes above, so a band that is also an island
+// takes the band's values (from the island's own fills).
+.h-section--alt {
+  --h-chip-bg: var(--h-chip-bg-page-alt);
+  --h-slider-gap: var(--color-bg-page-alt);
+  --h-segmented-track: var(--h-segmented-track-page-alt);
+}
+
+.h-section--alt
+  :where(
+    .q-card,
+    .h-section-card,
+    .h-info,
+    .h-list,
+    .h-product,
+    .h-text-card,
+    .h-feedback,
+    .h-card,
+    .h-feedback-card
+  ) {
+  --h-chip-bg: var(--h-chip-bg-page);
+  --h-slider-gap: var(--color-bg-card);
+  --h-segmented-track: var(--h-segmented-track-page);
 }

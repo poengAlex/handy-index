@@ -55,9 +55,10 @@
 // options are few, short, and worth comparing side by side. More than four,
 // or labels longer than a word or two, and it becomes a select (§6).
 //
-// A track on the alt-surface tint, and the chosen segment a solid fill of the
-// tone sitting INSIDE it with a hairline of track showing all the way round —
-// a thumb in a groove. Fully rounded, like every other action in this system:
+// A track in the chip's fills (Soft Gray on light, card white on Soft Gray,
+// 10% white on dark), and the chosen segment a solid fill of the tone sitting
+// INSIDE it with a hairline of track showing all the way round — a thumb in a
+// groove. Fully rounded, like every other action in this system:
 // the buttons are pills and so are the chips.
 //
 // That fill is the entire signal — no second border, no chevron, no check —
@@ -242,10 +243,10 @@ async function onKeydown(event: KeyboardEvent) {
 .h-segmented {
   // How deep the thumb sits. The groove's COLOUR is deliberately not declared
   // here: a custom property set on the element itself beats one inherited
-  // from an ancestor, so declaring the default locally would make the
-  // override impossible. It lives in the var() fallback instead, which keeps
-  // the default inside the component (it must not depend on a host's styles)
-  // while still letting a surface on the same tint re-point it.
+  // from an ancestor, so declaring it locally would make the override
+  // impossible. The kit's tokens declare --h-segmented-track per scope and
+  // per surface (styles/_tokens.scss), and the var() fallback keeps a default
+  // inside the component for a page without them.
   --h-segmented-inset: 3px;
 
   position: relative;

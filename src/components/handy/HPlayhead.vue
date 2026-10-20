@@ -4,7 +4,8 @@
     class="h-playhead"
     :class="{
       'h-playhead--interactive': interactive,
-      'h-playhead--scrubbing': scrubbing
+      'h-playhead--near': nearHandle,
+      'h-playhead--scrubbing': scrubbing || held
     }"
     :style="{ '--h-playhead-x': `${percent}%` }"
     v-bind="a11y"
@@ -14,7 +15,7 @@
     @pointercancel="onPointerUp"
     @lostpointercapture="onPointerUp"
     @pointerenter="hovering = true"
-    @pointerleave="hovering = false"
+    @pointerleave="onPointerLeave"
     @keydown="onKeydown"
   >
     <!-- what hasn't played yet, washed toward the strip's own surface: the
@@ -50,8 +51,10 @@
 // draggable), and it says nothing about *how far in* you are. The pieces here
 // answer those in turn: the cap is something definite to take hold of, its
 // glow lifts it off a field of any colour, the beam is strong where the hand
-// is and soft over the picture it crosses, the cap burns brighter while it is
-// held, and the ahead-wash splits the strip into played and not-played.
+// is and soft over the picture it crosses, the ahead-wash splits the strip
+// into played and not-played — and while it is held the cap swells and burns
+// brighter and the beam thickens and carries further down, so the hand can
+// see it has hold of it.
 //
 // Ink rather than a colour, so it never competes with a field that already
 // is every colour — and the same ink the kit's graph-theme.ts gives HGraph's
@@ -72,8 +75,12 @@
 //                @seek="t => seek(t)" />
 //   </div>
 //
-// Interactive turns it into a real scrubber: the whole strip takes the
-// gesture (drag anywhere, not just on the handle), and it becomes a proper
+// Interactive turns it into a real scrubber, and the strip answers two
+// gestures. Within `grabRadius` of the handle it is a grab: the cursor is an
+// open hand, and a drag carries the handle by however far the hand moves —
+// it never jumps to the pointer, so taking hold of it a few pixels off-centre
+// costs nothing. Anywhere else the cursor is a pointer, a press seeks to that
+// spot, and holding on drags from there. It also becomes a proper
 // keyboard slider — arrows step, PageUp/Down jump, Home/End go to the ends.
 // A canvas strip has no keyboard story of its own, which is the other half of
 // why this is a component and not four lines of CSS in each host.
@@ -87,6 +94,7 @@
 //   --h-playhead-cap-height the cap's height               (default: 10px)
 
 import { computed, ref } from "vue";
+import { kitLabel } from "./labels";
 
 const props = withDefaults(
   defineProps<{
@@ -106,11 +114,20 @@ const props = withDefaults(
     showLabel?: "auto" | "always" | "never";
     /** Opacity of the wash over the not-yet-played side; 0 turns it off. */
     dimAhead?: number;
+    /** Draw the held look (and the `auto` label) though this component is
+     * not the one scrubbing: for an indicator over a strip that keeps its own
+     * gestures and drags the position itself. The host also gives that strip
+     * its cursors — `grab` near the handle, `grabbing` while held. */
+    held?: boolean;
+    /** How far either side of the handle, in CSS px, a press takes hold of
+     * it instead of seeking. A touch gets at least 22px, a finger's half. */
+    grabRadius?: number;
     /** Arrow-key increment. 0 = a hundredth of the range. */
     step?: number;
     /** PageUp/PageDown increment. 0 = a tenth of the range. */
     pageStep?: number;
-    /** Accessible name — say what is being scrubbed ("Video position"). */
+    /** Accessible name — say what is being scrubbed ("Video position").
+     * Empty falls back to the kit label `playhead` ("Playhead"). */
     ariaLabel?: string;
     /** Spoken value; falls back to `label`, then the raw number. */
     ariaValueText?: string;
@@ -123,9 +140,11 @@ const props = withDefaults(
     label: "",
     showLabel: "auto",
     dimAhead: 0.22,
+    held: false,
+    grabRadius: 12,
     step: 0,
     pageStep: 0,
-    ariaLabel: "Playhead",
+    ariaLabel: "",
     ariaValueText: ""
   }
 );
@@ -141,6 +160,11 @@ const emit = defineEmits<{
 const rootEl = ref<HTMLElement | null>(null);
 const scrubbing = ref(false);
 const hovering = ref(false);
+/** The pointer is within grab range of the handle (open-hand cursor). */
+const nearHandle = ref(false);
+/** Pointer x minus handle x at the press, in px: a grab keeps it for the whole
+ * drag so the handle moves with the hand instead of snapping under it. */
+let grabOffset = 0;
 
 const span = computed(() => Math.max(0, props.max - props.min));
 
@@ -158,7 +182,7 @@ const percent = computed(() =>
 const labelShown = computed(() => {
   if (!props.label || props.showLabel === "never") return false;
   if (props.showLabel === "always") return true;
-  return scrubbing.value || hovering.value;
+  return scrubbing.value || props.held || hovering.value;
 });
 
 // role=slider only when the thing is actually operable — an indicator that
@@ -168,7 +192,7 @@ const a11y = computed(() => {
   return {
     role: "slider",
     tabindex: 0,
-    "aria-label": props.ariaLabel,
+    "aria-label": props.ariaLabel || kitLabel("playhead"),
     "aria-orientation": "horizontal" as const,
     "aria-valuemin": props.min,
     "aria-valuemax": props.max,
@@ -184,31 +208,62 @@ function valueFromEvent(e: PointerEvent): number {
   if (!el) return clamped.value;
   const rect = el.getBoundingClientRect();
   if (rect.width === 0) return clamped.value;
-  const frac = Math.min(1, Math.max(0, (e.clientX - rect.left) / rect.width));
+  const x = e.clientX - grabOffset - rect.left;
+  const frac = Math.min(1, Math.max(0, x / rect.width));
   return props.min + frac * span.value;
+}
+
+/** Signed px from the handle to the pointer, or null with no handle drawn. */
+function offsetFromHandle(e: PointerEvent): number | null {
+  const el = rootEl.value;
+  if (!el || !props.showHandle) return null;
+  const rect = el.getBoundingClientRect();
+  return e.clientX - (rect.left + (percent.value / 100) * rect.width);
+}
+
+function inGrabRange(e: PointerEvent): boolean {
+  const offset = offsetFromHandle(e);
+  if (offset === null) return false;
+  const radius =
+    e.pointerType === "touch"
+      ? Math.max(22, props.grabRadius)
+      : props.grabRadius;
+  return Math.abs(offset) <= radius;
 }
 
 function onPointerDown(e: PointerEvent) {
   // primary button only: a middle-drag over a strip is normally the host's
   // own gesture (marquee zoom, pan), and a right-click is the context menu
   if (!props.interactive || e.button !== 0) return;
+  const grab = inGrabRange(e);
+  grabOffset = grab ? (offsetFromHandle(e) ?? 0) : 0;
   scrubbing.value = true;
   rootEl.value?.setPointerCapture(e.pointerId);
   // a click hands the keyboard the control it just used — :focus-visible
   // keeps the ring off for the pointer that did it
   rootEl.value?.focus();
   emit("pan", "start");
-  emit("seek", valueFromEvent(e));
+  // a grab is already where it should be; a press elsewhere is a seek
+  if (!grab) emit("seek", valueFromEvent(e));
 }
 
 function onPointerMove(e: PointerEvent) {
   if (scrubbing.value) emit("seek", valueFromEvent(e));
+  else if (props.interactive) nearHandle.value = inGrabRange(e);
 }
 
-function onPointerUp() {
+function onPointerUp(e?: PointerEvent) {
   if (!scrubbing.value) return;
   scrubbing.value = false;
+  grabOffset = 0;
+  // the handle is under the hand that let go, so it is still in grab range
+  if (e) nearHandle.value = inGrabRange(e);
   emit("pan", "end");
+}
+
+function onPointerLeave() {
+  hovering.value = false;
+  if (!scrubbing.value) nearHandle.value = false;
 }
 
 function onKeydown(e: KeyboardEvent) {
@@ -252,13 +307,20 @@ function onKeydown(e: KeyboardEvent) {
   // an indicator must never eat the host's own gestures
   pointer-events: none;
 
-  --h-playhead-width: 2px;
-  --h-playhead-cap-width: 8px;
-  --h-playhead-cap-height: 10px;
+  // The public knobs are only ever READ here, into private names, never
+  // declared: a default declared on this element would shadow the same
+  // variable set on the strip around it, and "per surface" would quietly stop
+  // working (it did, for these four, until 2026-10-20).
+  --h-playhead-beam-w: var(--h-playhead-width, 2px);
+  --h-playhead-cap-w: var(--h-playhead-cap-width, 8px);
+  --h-playhead-cap-h: var(--h-playhead-cap-height, 10px);
   // --h-slider-gap is the kit's "colour of the surface a handle sits on",
   // declared per scope in styles/_tokens.scss so dark islands don't inherit a
   // light wash. The wash over what is still to come is cut in it.
-  --h-playhead-surface: var(--h-slider-gap, var(--color-bg-page, #ffffff));
+  --h-playhead-wash: var(
+    --h-playhead-surface,
+    var(--h-slider-gap, var(--color-bg-page, #ffffff))
+  );
   // the surface's ink — the colour graph-theme.ts gives HGraph's cursor
   --h-playhead-fill: var(
     --h-playhead-color,
@@ -273,6 +335,7 @@ function onKeydown(e: KeyboardEvent) {
 
 .h-playhead--interactive {
   pointer-events: auto;
+  // a press here seeks; only the handle's own neighbourhood is a grab
   cursor: pointer;
   // the strip owns the horizontal drag; the page keeps vertical scroll
   touch-action: pan-y;
@@ -285,6 +348,16 @@ function onKeydown(e: KeyboardEvent) {
   }
 }
 
+.h-playhead--near {
+  cursor: grab;
+}
+
+// pointer capture keeps the closed hand on screen when the drag leaves the
+// strip
+.h-playhead--scrubbing {
+  cursor: grabbing;
+}
+
 // no transition on the wash: it tracks a clock, and easing a playhead makes
 // it lag its own position
 .h-playhead__ahead {
@@ -293,7 +366,7 @@ function onKeydown(e: KeyboardEvent) {
   bottom: 0;
   left: var(--h-playhead-x);
   right: 0;
-  background: var(--h-playhead-surface);
+  background: var(--h-playhead-wash);
 }
 
 // The beam: full strength under the cap, half by 60% of the way down, nearly
@@ -306,15 +379,29 @@ function onKeydown(e: KeyboardEvent) {
   top: 0;
   bottom: 0;
   left: var(--h-playhead-x);
-  width: var(--h-playhead-width);
-  margin-left: calc(var(--h-playhead-width) / -2);
-  border-radius: var(--h-playhead-width);
+  width: var(--h-playhead-beam-w);
+  margin-left: calc(var(--h-playhead-beam-w) / -2);
+  border-radius: var(--h-playhead-beam-w);
   background: linear-gradient(
     to bottom,
     var(--h-playhead-fill) 0%,
-    color-mix(in srgb, var(--h-playhead-fill) 45%, transparent) 60%,
-    color-mix(in srgb, var(--h-playhead-fill) 8%, transparent) 100%
+    color-mix(
+        in srgb,
+        var(--h-playhead-fill) var(--h-playhead-beam-mid),
+        transparent
+      )
+      60%,
+    color-mix(
+        in srgb,
+        var(--h-playhead-fill) var(--h-playhead-beam-floor),
+        transparent
+      )
+      100%
   );
+  --h-playhead-beam-mid: 45%;
+  --h-playhead-beam-floor: 8%;
+  // scale, never translate: the size may ease, the position may not
+  transition: transform 120ms ease;
 }
 
 // The cap the beam falls from: square on top, where the strip's own edge is,
@@ -324,24 +411,40 @@ function onKeydown(e: KeyboardEvent) {
   position: absolute;
   top: 0;
   left: var(--h-playhead-x);
-  width: var(--h-playhead-cap-width);
-  height: var(--h-playhead-cap-height);
-  margin-left: calc(var(--h-playhead-cap-width) / -2);
-  border-radius: 0 0 calc(var(--h-playhead-cap-width) / 2)
-    calc(var(--h-playhead-cap-width) / 2);
+  width: var(--h-playhead-cap-w);
+  height: var(--h-playhead-cap-h);
+  margin-left: calc(var(--h-playhead-cap-w) / -2);
+  border-radius: 0 0 calc(var(--h-playhead-cap-w) / 2)
+    calc(var(--h-playhead-cap-w) / 2);
   background: var(--h-playhead-fill);
   box-shadow: 0 0 9px var(--h-playhead-fill);
-  transition: box-shadow 120ms ease;
+  // grows downward from the strip's edge, so the square top stays on it
+  transform-origin: 50% 0;
+  transition:
+    transform 120ms ease,
+    box-shadow 120ms ease;
 }
 
-// held, it burns brighter: the press answer every kit slider gives, here as
-// light rather than a slimmer bar
-.h-playhead--scrubbing .h-playhead__cap {
-  box-shadow: 0 0 14px var(--h-playhead-fill);
+// Held, it takes hold back: the cap swells and burns brighter, and the beam
+// thickens and keeps its strength further down the strip — the press answer
+// every kit slider gives, here as light and weight rather than a slimmer bar.
+// As scales, so a host that resized the cap or beam keeps its proportions.
+.h-playhead--scrubbing {
+  .h-playhead__cap {
+    transform: scale(1.5, 1.4);
+    box-shadow: 0 0 16px var(--h-playhead-fill);
+  }
+
+  .h-playhead__handle {
+    transform: scaleX(1.5);
+    --h-playhead-beam-mid: 80%;
+    --h-playhead-beam-floor: 30%;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .h-playhead__cap {
+  .h-playhead__cap,
+  .h-playhead__handle {
     transition: none;
   }
 }

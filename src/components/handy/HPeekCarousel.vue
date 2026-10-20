@@ -64,6 +64,7 @@
 import { computed, onBeforeUnmount, ref } from "vue";
 import { Carousel, Navigation, Slide } from "vue3-carousel";
 import "vue3-carousel/carousel.css";
+import { kitLabel } from "./labels";
 
 const props = withDefaults(
   defineProps<{
@@ -167,7 +168,17 @@ const config = computed(() => {
     ...(wrap ? {} : { preventExcessiveDragging: true }),
     ...(props.autoplay && !props.skeleton
       ? { autoplay: props.autoplay, pauseAutoplayOnHover: true }
-      : {})
+      : {}),
+    // The arrows' names are kit labels, so a host's translator reaches them.
+    // The library names each arrow twice, the button and the icon inside it
+    // (whose <title> is the tooltip over most of the button), so both say
+    // the same thing. The row runs left to right, so left is previous.
+    i18n: {
+      ariaPreviousSlide: kitLabel("carouselPrevious"),
+      ariaNextSlide: kitLabel("carouselNext"),
+      iconArrowLeft: kitLabel("carouselPrevious"),
+      iconArrowRight: kitLabel("carouselNext")
+    }
   };
 });
 </script>

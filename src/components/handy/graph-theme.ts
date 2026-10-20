@@ -1,7 +1,7 @@
 // Canvas color resolution for HGraph. Reads the Handy design tokens off the
 // host element when they exist, falls back to hand-picked defaults, and
-// follows data-theme flips on <html> — so the kit drops into token-less
-// projects unchanged.
+// follows data-theme flips on <html> and, while no theme is stamped, the
+// OS's own — so the kit drops into token-less projects unchanged.
 //
 // Reading from the HOST element (not :root) is what makes a graph inside a
 // .section-dark island on a light page pick up that island's tokens.
@@ -64,12 +64,21 @@ const SERIES_TOKENS = [
   "--color-chart-4"
 ] as const;
 
+const OS_DARK = "(prefers-color-scheme: dark)";
+
 /** Which fallback set applies — the host's own surface decides, so a graph in
- * a .section-dark island on a light page still gets the dark ramp. */
+ * a .section-dark island on a light page still gets the dark ramp. Without a
+ * data-theme on <html> the OS decides, as it does for the tokens
+ * (styles/_tokens.scss): a page that never stamps one still has dark tokens
+ * on a dark OS, and the light ramp drew Dark Charcoal series on them. */
 function isDarkContext(host: HTMLElement | null): boolean {
   if (host?.closest(".section-dark")) return true;
   if (host?.closest(".section-light")) return false;
-  return document.documentElement.getAttribute("data-theme") === "dark";
+  const root = document.documentElement;
+  if (root.hasAttribute("data-theme")) {
+    return root.getAttribute("data-theme") === "dark";
+  }
+  return typeof matchMedia !== "undefined" && matchMedia(OS_DARK).matches;
 }
 
 export function resolveGraphTheme(
@@ -94,12 +103,18 @@ export function resolveGraphTheme(
   return { ...out, ...override };
 }
 
-/** Re-run `callback` whenever the document theme attribute flips. */
+/** Re-run `callback` whenever the document theme attribute flips, or the OS
+ * theme does (which is the page's theme while no data-theme is stamped). */
 export function watchGraphTheme(callback: () => void): () => void {
   const observer = new MutationObserver(callback);
   observer.observe(document.documentElement, {
     attributes: true,
     attributeFilter: ["data-theme", "class"]
   });
-  return () => observer.disconnect();
+  const os = typeof matchMedia !== "undefined" ? matchMedia(OS_DARK) : null;
+  os?.addEventListener("change", callback);
+  return () => {
+    observer.disconnect();
+    os?.removeEventListener("change", callback);
+  };
 }

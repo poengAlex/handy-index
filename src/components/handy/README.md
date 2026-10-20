@@ -93,22 +93,22 @@ no `@` alias. The sync tooling expects it at `src/components/handy/`.
 This is the checklist hosts used to copy by hand, and where each item lives
 now:
 
-| What                                                                                                                                                                                                                                                            | In the kit                                                    | Without it                                                                                                                                                                                                              |
-| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Semantic tokens**: `:root` (colours, spacing, radii, shadows, type sizes, `--font-mono`), CJK font stacks, `[data-theme="dark"]`, and the `.section-dark` / `.section-light` islands, which take the same `dark-tokens` / `light-tokens` mixins as the themes | `styles/_tokens.scss`                                         | colours, spacing, radii, shadows and type sizes resolve to nothing                                                                                                                                                      |
-| **Per-scope helper variables** `--h-chip-bg` and `--h-slider-gap`, declared in every scope                                                                                                                                                                      | `styles/_tokens.scss`                                         | chips and the `?` hover lose their fill; slider handles wear a wrong-coloured halo and `HPlayhead`'s wash the wrong surface                                                                                             |
-| **Base**: page surface and type, links (`a:hover:not(.q-btn)`), `:focus-visible`, no sideways pan                                                                                                                                                               | `styles/_base.scss`                                           | no focus ring, buttons that navigate grow an underline                                                                                                                                                                  |
-| **Type classes**: `.text-display` … `.text-caption`, `.prose`, `.text-*-token`, `.text-tabular`                                                                                                                                                                 | `styles/_typography.scss`                                     | titles, labels and captions fall back to Quasar's type scale                                                                                                                                                            |
-| **Toast classes** `.h-toast`, `.h-toast--*`, `.h-toast--dismissable`, `.h-toast__dismiss`                                                                                                                                                                       | `styles/_toast.scss`                                          | `hToast()` shows Quasar's default coloured notification                                                                                                                                                                 |
-| **Layout**: `.h-container`, `.h-section`, glass, scrollbars, `.slider-thumb-room`                                                                                                                                                                               | `styles/_layout.scss`                                         | pages lose their column and bands                                                                                                                                                                                       |
-| **Quasar re-skins**: buttons, fields, cards (flat by default, plus `.h-lifted` and `.h-outlined`), tabs, chips, menus, tooltips, dialogs, notifications, disabled at 50%, and the M3 slider                                                                     | `styles/_quasar.scss`                                         | `HLabeledSlider`, `HFatSlider` and `HSliderMenu` look like stock Quasar and lose touch dragging on mobile; tooltips are Quasar's grey at 10px, cards carry a shadow, and disabled controls dim anywhere from 30% to 75% |
-| **Route transitions** and their reduced-motion block                                                                                                                                                                                                            | `styles/_motion.scss`                                         | `route-forward`/`route-back`/`route-fade` do nothing                                                                                                                                                                    |
-| **Figtree**, self-hosted as `@fontsource-variable/figtree` (the family name is `'Figtree Variable'`)                                                                                                                                                            | `styles/kit.scss`                                             | everything falls back to the system font                                                                                                                                                                                |
-| **Slider prop defaults** (16px track, 40px thumb, bar-shaped `thumb-path`)                                                                                                                                                                                      | `install.ts`                                                  | standard sliders render Quasar's round thumb (`HFatSlider` passes its own sizes and is unaffected)                                                                                                                      |
-| **Icon map** that rewrites plain names to `sym_o_…`                                                                                                                                                                                                             | `install.ts` (`mapIconName`)                                  | every `icon="refresh"` in the kit renders as raw text or as the wrong icon set                                                                                                                                          |
-| **Toast position**: top-right on desktop, bottom on phones                                                                                                                                                                                                      | `install.ts`                                                  | toasts appear wherever Quasar's default puts them                                                                                                                                                                       |
-| **Kit-label resolver**                                                                                                                                                                                                                                          | `install.ts`, passing `labels` to `setKitLabelResolver` (§15) | the kit's own strings stay English                                                                                                                                                                                      |
-| **`HGraph` build fixes**                                                                                                                                                                                                                                        | `vite.ts` (see [Build flags](#build-flags-hgraph))            | an empty chart with no error, `uPlot is not a constructor`, or a blank page                                                                                                                                             |
+| What                                                                                                                                                                                                                                                                                                                                                          | In the kit                                                    | Without it                                                                                                                                                                                                              |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Semantic tokens**: `:root` (colours, spacing, radii, shadows, type sizes, `--font-mono`), CJK font stacks, `[data-theme="dark"]`, and the `.section-dark` / `.section-light` islands, which take the same `dark-tokens` / `light-tokens` mixins as the themes                                                                                               | `styles/_tokens.scss`                                         | colours, spacing, radii, shadows and type sizes resolve to nothing                                                                                                                                                      |
+| **Per-scope helper variables** `--h-chip-bg`, `--h-segmented-track` and `--h-slider-gap`, declared in every scope, with the two fills a surface picks from for chips (`--h-chip-bg-page`, `--h-chip-bg-page-alt`) and for segmented tracks (`--h-segmented-track-page`, `--h-segmented-track-page-alt`); the Soft Gray band and the cards on it set their own | `styles/_tokens.scss`                                         | chips and the `?` hover lose their fill, and segmented tracks vanish on cards and Soft Gray; slider handles wear a wrong-coloured halo and `HPlayhead`'s wash the wrong surface                                         |
+| **Base**: page surface and type, links (`a:hover:not(.q-btn)`), `:focus-visible`, no sideways pan                                                                                                                                                                                                                                                             | `styles/_base.scss`                                           | no focus ring, buttons that navigate grow an underline                                                                                                                                                                  |
+| **Type classes**: `.text-display` … `.text-caption`, `.prose`, `.text-*-token`, `.text-tabular`                                                                                                                                                                                                                                                               | `styles/_typography.scss`                                     | titles, labels and captions fall back to Quasar's type scale                                                                                                                                                            |
+| **Toast classes** `.h-toast`, `.h-toast--*`, `.h-toast--dismissable`, `.h-toast__dismiss`                                                                                                                                                                                                                                                                     | `styles/_toast.scss`                                          | `hToast()` shows Quasar's default coloured notification                                                                                                                                                                 |
+| **Layout**: `.h-container`, `.h-section`, glass, scrollbars, `.slider-thumb-room`                                                                                                                                                                                                                                                                             | `styles/_layout.scss`                                         | pages lose their column and bands                                                                                                                                                                                       |
+| **Quasar re-skins**: buttons, fields, cards (flat by default, plus `.h-lifted` and `.h-outlined`), tabs, chips, menus, tooltips, dialogs, notifications, disabled at 50%, and the M3 slider                                                                                                                                                                   | `styles/_quasar.scss`                                         | `HLabeledSlider`, `HFatSlider` and `HSliderMenu` look like stock Quasar and lose touch dragging on mobile; tooltips are Quasar's grey at 10px, cards carry a shadow, and disabled controls dim anywhere from 30% to 75% |
+| **Route transitions** and their reduced-motion block                                                                                                                                                                                                                                                                                                          | `styles/_motion.scss`                                         | `route-forward`/`route-back`/`route-fade` do nothing                                                                                                                                                                    |
+| **Figtree**, self-hosted as `@fontsource-variable/figtree` (the family name is `'Figtree Variable'`)                                                                                                                                                                                                                                                          | `styles/kit.scss`                                             | everything falls back to the system font                                                                                                                                                                                |
+| **Slider prop defaults** (16px track, 40px thumb, bar-shaped `thumb-path`)                                                                                                                                                                                                                                                                                    | `install.ts`                                                  | standard sliders render Quasar's round thumb (`HFatSlider` passes its own sizes and is unaffected)                                                                                                                      |
+| **Icon map** that rewrites plain names to `sym_o_…`                                                                                                                                                                                                                                                                                                           | `install.ts` (`mapIconName`)                                  | every `icon="refresh"` in the kit renders as raw text or as the wrong icon set                                                                                                                                          |
+| **Toast position**: top-right on desktop, bottom on phones                                                                                                                                                                                                                                                                                                    | `install.ts`                                                  | toasts appear wherever Quasar's default puts them                                                                                                                                                                       |
+| **Kit-label resolver**                                                                                                                                                                                                                                                                                                                                        | `install.ts`, passing `labels` to `setKitLabelResolver` (§15) | the kit's own strings stay English                                                                                                                                                                                      |
+| **`HGraph` build fixes**                                                                                                                                                                                                                                                                                                                                      | `vite.ts` (see [Build flags](#build-flags-hgraph))            | an empty chart with no error, `uPlot is not a constructor`, or a blank page                                                                                                                                             |
 
 Not in the kit: `quasar.variables.scss`, which Quasar injects into every style
 block itself, so the kit's CSS never reads it; and brand-ux's showcase-only
@@ -541,9 +541,13 @@ children, such as a `q-tooltip` over the whole control.
   control is one tab stop. The arrow keys move the selection (wrapping and
   skipping disabled options) and focus follows. Pass `aria-label`; it lands on
   the group.
-- **Styling hooks.** `--h-segmented-track` re-points the groove colour on a
-  surface that already uses page-alt, and `--h-segmented-inset` sets the thumb
-  inset.
+- **Styling hooks.** `--h-segmented-track` is the groove colour, which each
+  surface scope re-declares as it does the chip fill (see `HChip`): Soft Gray
+  on the page and on cards, card white on a light `.h-section--alt`, 10% white
+  on dark. A host's own Soft Gray panel sets
+  `--h-segmented-track: var(--h-segmented-track-page-alt)`, and
+  `var(--h-segmented-track-page)` on a card inside it; either is right in both
+  themes and inside either island. `--h-segmented-inset` sets the thumb inset.
 - The thumb is one element moved with `transform` + `width`, re-measured by a
   `ResizeObserver`, and its transition is gated until after the first painted
   frame, so it never animates in from the left edge. Under reduced motion it
@@ -597,8 +601,11 @@ fine as the value deserves.
   _masked_, not validated: digits, a leading minus, and one decimal separator
   when `decimals > 0`. Enter/blur commits and Esc cancels. The typed value
   snaps to the same lattice the buttons walk and is clamped to min/max.
-- The readout is `HTabularNum` at h4/700 with a 48px minimum width, so digits
-  don't jiggle.
+- The readout is `HTabularNum` at h4/700, as wide as the widest value it can
+  show (from the bounds, the places and the unit; at least 48px), so the
+  buttons hold still as the value changes. A value with more places than
+  that widens it once, and it stays that wide. The typing field takes the
+  same box.
 
 - A step lands on the step's own places: `:step="0.1"` goes 0.1, 0.2, 0.3,
   never `0.30000000000000004`. A value set finer than the step keeps its own
@@ -643,7 +650,10 @@ the bottom). A 20px symbol sits inside the track at the fill's origin.
   still covers the glyph's midpoint (34px from the origin, measured with a
   `ResizeObserver`), then drops to the secondary ink on the bare track. This
   is newer than design.md's "dims at zero" wording.
-- At exactly 0% the handle-side corners are squared, so 0% reads like 100%.
+- **The track's start corners follow the fill.** Their radius along the track
+  is the fill's length, 2px at 0% up to the track's 20px, so 0% reads squared
+  like 100% and leaving it changes nothing beside the handle: the corner
+  rounds under the fill (`--h-fat-ratio` on the root drives it).
 - Press and keyboard focus slim the bar (vertically for the vertical variant).
 - **Room for the handle is the parent's job.** The handle is 72px, fatter than
   the standard 40px, so a scrolling ancestor needs more than the usual 20px of
@@ -1634,7 +1644,9 @@ point and the rest are context. Two consequences:
 Canvas can't read CSS custom properties, so `graph-theme.ts` resolves the
 tokens off the graph's own host element at mount and re-reads them when
 `data-theme` flips — which is also why a graph inside a `.section-dark` island
-on a light page gets the dark ramp. Override any of them per instance with the
+on a light page gets the dark ramp. While `<html>` has no `data-theme`, the
+OS theme decides, as it does for the tokens, and a change of it re-reads them
+too. Override any of them per instance with the
 `theme` prop. The playhead uses the surface's ink (`--color-text-primary`,
 the colour of `HPlayhead`'s beam), the hover crosshair the axis colour (`--color-text-secondary`), the selection ring and
 marquee `--color-stroke-focus`, and optional
@@ -1664,8 +1676,10 @@ the picture at every pixel, carries no state — you can't tell it is
 draggable — and says nothing about how far in you are. The parts answer those
 in turn: the **cap** is something definite to take hold of, and its **glow**
 lifts it off a field of any colour; the **beam** is strong where the hand is
-and soft over the picture it crosses; the cap **burns brighter** while it is
-held; and the **ahead-wash** splits the strip into played and not-played.
+and soft over the picture it crosses; while it is **held** the cap swells and
+burns brighter and the beam thickens and carries further down, under a
+`grabbing` cursor (`grab` over an interactive strip); and the **ahead-wash**
+splits the strip into played and not-played.
 Ink rather than a colour, because the strips it marks are usually colour
 already — a heatmap is every colour at once.
 
@@ -1676,7 +1690,7 @@ already — a heatmap is every colour at once.
     :value="currentTime"
     :max="duration"
     :label="clock"
-    aria-label="Playhead"
+    aria-label="Video position"
     interactive
     @seek="t => seek(t)"
   />
@@ -1690,22 +1704,27 @@ already — a heatmap is every colour at once.
 }
 ```
 
-| Prop            | Type                            | Default      | Notes                                                                   |
-| --------------- | ------------------------------- | ------------ | ----------------------------------------------------------------------- |
-| `value`         | `number`                        | required     | In the caller's own units                                               |
-| `min` / `max`   | `number`                        | `0` / `100`  | A zero-width range pins at the left                                     |
-| `interactive`   | `boolean`                       | `false`      | Scrubber + keyboard slider. Off = pure indicator with no pointer events |
-| `showHandle`    | `boolean`                       | `true`       | `false` keeps a strip seekable while the position is unknown            |
-| `label`         | `string`                        | `""`         | Text beside the handle (normally a clock). It flips sides at 50%        |
-| `showLabel`     | `"auto" \| "always" \| "never"` | `"auto"`     | `auto` = while hovering or scrubbing                                    |
-| `dimAhead`      | `number`                        | `0.22`       | Opacity of the not-yet-played wash. `0` disables it                     |
-| `step`          | `number`                        | `0`          | Arrow-key increment (`0` = 1% of the range)                             |
-| `pageStep`      | `number`                        | `0`          | PageUp/Down increment (`0` = 10%)                                       |
-| `ariaLabel`     | `string`                        | `"Playhead"` | What is being scrubbed ("Video position")                               |
-| `ariaValueText` | `string`                        | `""`         | Spoken value, falling back to `label`, then the number                  |
+| Prop            | Type                            | Default     | Notes                                                                                        |
+| --------------- | ------------------------------- | ----------- | -------------------------------------------------------------------------------------------- |
+| `value`         | `number`                        | required    | In the caller's own units                                                                    |
+| `min` / `max`   | `number`                        | `0` / `100` | A zero-width range pins at the left                                                          |
+| `interactive`   | `boolean`                       | `false`     | Scrubber + keyboard slider. Off = pure indicator with no pointer events                      |
+| `showHandle`    | `boolean`                       | `true`      | `false` keeps a strip seekable while the position is unknown                                 |
+| `label`         | `string`                        | `""`        | Text beside the handle (normally a clock). It flips sides at 50%                             |
+| `showLabel`     | `"auto" \| "always" \| "never"` | `"auto"`    | `auto` = while hovering or scrubbing                                                         |
+| `dimAhead`      | `number`                        | `0.22`      | Opacity of the not-yet-played wash. `0` disables it                                          |
+| `held`          | `boolean`                       | `false`     | The held look from outside: an indicator over a strip whose own gestures drag the position   |
+| `grabRadius`    | `number`                        | `12`        | px either side of the handle where a press grabs it instead of seeking; touch gets ≥ 22      |
+| `step`          | `number`                        | `0`         | Arrow-key increment (`0` = 1% of the range)                                                  |
+| `pageStep`      | `number`                        | `0`         | PageUp/Down increment (`0` = 10%)                                                            |
+| `ariaLabel`     | `string`                        | `""`        | What is being scrubbed ("Video position"). Empty reads the kit label `playhead` ("Playhead") |
+| `ariaValueText` | `string`                        | `""`        | Spoken value, falling back to `label`, then the number                                       |
 
 `interactive` makes it a real scrubber: the **whole strip** takes the gesture,
-not just the handle, and it becomes a proper keyboard slider — `role="slider"`
+not just the handle. Near the handle (`grabRadius`) the cursor is an open
+hand and a drag carries the handle by the hand's movement, without jumping it
+under the pointer; anywhere else the cursor is a pointer and a press seeks
+there, then drags from there. It also becomes a proper keyboard slider — `role="slider"`
 with live `aria-valuenow`, arrows step, PageUp/Down jump, Home/End go to the
 ends. A canvas has no keyboard story of its own, which is half the reason this
 is a component rather than four lines of CSS in each host. Left off, it is a
@@ -1726,6 +1745,10 @@ host writes `value` back. `pan("start" | "end")` brackets a drag, same shape
 | `--h-playhead-cap-width`  | `8px`                  | the cap's width                 |
 | `--h-playhead-cap-height` | `10px`                 | the cap's height                |
 
+Every one of them works set on the strip around the playhead or on the
+component itself: the component only reads them, so a strip's value is never
+shadowed by a default of its own.
+
 The colour default is deliberate: it is the same token `graph-theme.ts` gives
 `HGraph`'s playhead, so a chart and the strip under it read as one instrument
 rather than two. A strip that wants a colour instead — the connected purple
@@ -1742,9 +1765,6 @@ matters uniformly across its whole width.
 
 It is fully portable: no Quasar, and every token read has a hard-coded
 fallback.
-
-> **Known issue:** the default `ariaLabel` "Playhead" is inline English. It is
-> the one kit string that bypasses `labels.ts`.
 
 ---
 
@@ -2125,9 +2145,17 @@ The annotation chip: a quiet pill tag for product hero shots and spec rows
 
 Props: `label?: string` and `icon?: string` (16px). The default slot overrides
 the label. The background is `--h-chip-bg`, which each surface scope
-re-declares so a chip never blends into what it sits on: Soft Gray on white,
-translucent white on dark, card-white on a Soft Gray `.h-section--alt`. A host
-that uses chips on its own surfaces must re-declare it too.
+re-declares so a chip never blends into what it sits on: Soft Gray on the page
+and on cards, translucent white on dark (a dark `.h-section--alt` included),
+card white on a light `.h-section--alt`. A card on that band takes the page's
+fill back, so the chips and `?`s on it don't vanish.
+
+A host that puts chips on a surface of its own re-declares it there, naming
+one of the two fills every scope declares rather than a colour:
+`--h-chip-bg: var(--h-chip-bg-page-alt)` on a Soft Gray panel,
+`var(--h-chip-bg-page)` on a card inside one. Either is right in both themes
+and inside either island, where a colour (`var(--color-bg-card)`) is right on
+light only.
 
 ### HIconTile
 
@@ -2207,7 +2235,14 @@ Slot: default, `{ item, index }`.
   it on `.h-peek`.
 - Give every slide's media one fixed aspect ratio, or the row jumps as it
   scrolls.
+- **The arrows' names are kit labels**, `carouselPrevious` and `carouselNext`
+  (§15): each button's accessible name, its tooltip and its icon's title.
 - It imports `vue3-carousel/carousel.css` itself.
+
+> **Known issue:** two of vue3-carousel's own English strings still reach the
+> page: the row's accessible name, "Gallery", and the live region that
+> announces "Item 1 of 8" as it moves (its `ariaGallery` and `itemXofY`). The
+> `i18n` object that now carries the arrows' names takes those two as well.
 
 ---
 
@@ -2318,7 +2353,8 @@ The state is module-scoped, so every caller shares one `dark` ref.
   `$q.dark` (Quasar's internals). It requires Quasar's `Dark` plugin.
 - Before the first paint, while `<html>` has no `data-theme` yet, the dark
   tokens follow `prefers-color-scheme` (`styles/_tokens.scss`), so a
-  dark-scheme browser never flashes a white page.
+  dark-scheme browser never flashes a white page. The helper variables and
+  `HGraph`'s fallback colours follow it too.
 
 ### `useGlassOnScroll(threshold = 24)`
 
@@ -2456,35 +2492,38 @@ labels with several slots use `kitLabelWith(key, vars)`. Whole sentences are
 keys, never fragments to concatenate, because other languages order words
 differently.
 
-| Key                                    | English                                | Used by                          |
-| -------------------------------------- | -------------------------------------- | -------------------------------- |
-| `close`                                | Close                                  | HModal                           |
-| `copy`                                 | Copy                                   | HConnectionKey (tooltip)         |
-| `copyKey`                              | Copy key                               | HConnectionKey (accessible name) |
-| `dismiss`                              | Dismiss                                | HFeedbackCard, `hToast`          |
-| `readFullText`                         | Read the full text                     | HTextCard                        |
-| `loading`                              | Loading                                | HandyLoader                      |
-| `recommended`                          | Recommended                            | HRadioRow                        |
-| `expert`                               | Expert                                 | HSectionCard                     |
-| `tipLocked`                            | Locked — Esc or click outside to close | HHelpTip                         |
-| `tipLockedTouch`                       | Locked — tap outside to close          | HHelpTip                         |
-| `increase`                             | Increase {label}                       | HNumberStepper                   |
-| `decrease`                             | Decrease {label}                       | HNumberStepper                   |
-| `value`                                | value                                  | fallback for an empty `{label}`  |
-| `sliderReset`                          | Reset {label}                          | HLabeledSlider                   |
-| `sliderValue`                          | {label} value                          | HLabeledSlider, HNumberStepper   |
-| `sliderEditValue`                      | Edit {label} value                     | HLabeledSlider, HNumberStepper   |
-| `sliderMin`                            | {label} minimum value                  | HLabeledSlider (range)           |
-| `sliderEditMin`                        | Edit {label} minimum                   | HLabeledSlider (range)           |
-| `sliderMax`                            | {label} maximum value                  | HLabeledSlider (range)           |
-| `sliderEditMax`                        | Edit {label} maximum                   | HLabeledSlider (range)           |
-| `sliderMenuValue`                      | {label}: {value}                       | HSliderMenu                      |
-| `yes` / `no`                           | Yes / No                               | HInfoCard boolean pills          |
-| `themeToLight`                         | Switch to light mode                   | HThemeToggle (while dark)        |
-| `themeToDark`                          | Switch to dark mode                    | HThemeToggle (while light)       |
-| `themeLight`                           | Light mode                             | HThemeToggle tooltip             |
-| `themeDark`                            | Dark mode                              | HThemeToggle tooltip             |
-| `connected` / `connecting` / `offline` | Connected / Connecting / Offline       | HConnectedDot (button mode)      |
+| Key                                    | English                                | Used by                                  |
+| -------------------------------------- | -------------------------------------- | ---------------------------------------- |
+| `close`                                | Close                                  | HModal                                   |
+| `copy`                                 | Copy                                   | HConnectionKey (tooltip)                 |
+| `copyKey`                              | Copy key                               | HConnectionKey (accessible name)         |
+| `dismiss`                              | Dismiss                                | HFeedbackCard, `hToast`                  |
+| `readFullText`                         | Read the full text                     | HTextCard                                |
+| `loading`                              | Loading                                | HandyLoader                              |
+| `recommended`                          | Recommended                            | HRadioRow                                |
+| `expert`                               | Expert                                 | HSectionCard                             |
+| `tipLocked`                            | Locked — Esc or click outside to close | HHelpTip                                 |
+| `tipLockedTouch`                       | Locked — tap outside to close          | HHelpTip                                 |
+| `increase`                             | Increase {label}                       | HNumberStepper                           |
+| `decrease`                             | Decrease {label}                       | HNumberStepper                           |
+| `value`                                | value                                  | fallback for an empty `{label}`          |
+| `sliderReset`                          | Reset {label}                          | HLabeledSlider                           |
+| `sliderValue`                          | {label} value                          | HLabeledSlider, HNumberStepper           |
+| `sliderEditValue`                      | Edit {label} value                     | HLabeledSlider, HNumberStepper           |
+| `sliderMin`                            | {label} minimum value                  | HLabeledSlider (range)                   |
+| `sliderEditMin`                        | Edit {label} minimum                   | HLabeledSlider (range)                   |
+| `sliderMax`                            | {label} maximum value                  | HLabeledSlider (range)                   |
+| `sliderEditMax`                        | Edit {label} maximum                   | HLabeledSlider (range)                   |
+| `sliderMenuValue`                      | {label}: {value}                       | HSliderMenu                              |
+| `yes` / `no`                           | Yes / No                               | HInfoCard boolean pills                  |
+| `themeToLight`                         | Switch to light mode                   | HThemeToggle (while dark)                |
+| `themeToDark`                          | Switch to dark mode                    | HThemeToggle (while light)               |
+| `themeLight`                           | Light mode                             | HThemeToggle tooltip                     |
+| `themeDark`                            | Dark mode                              | HThemeToggle tooltip                     |
+| `connected` / `connecting` / `offline` | Connected / Connecting / Offline       | HConnectedDot (button mode)              |
+| `playhead`                             | Playhead                               | HPlayhead (when no `ariaLabel` is given) |
+| `carouselPrevious`                     | Navigate to previous slide             | HPeekCarousel (the arrows)               |
+| `carouselNext`                         | Navigate to next slide                 | HPeekCarousel (the arrows)               |
 
 When a key is renamed, every host that translates it has to rename it too.
 `tipPin`/`tipClose` became `tipLocked`/`tipLockedTouch` on 2026-09-09. Nothing
@@ -2505,11 +2544,13 @@ changelog slicing, peer ranges, the hook guard, and an end-to-end
 | ------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
 | `graph-edit.ts`, `graph-decimate.ts`                                                              | `graph-edit.spec.ts` (31), `graph-decimate.spec.ts` (3)                                                  |
 | `slider-format.ts`                                                                                | `slider-format.spec.ts` (9)                                                                              |
+| `graph-theme.ts`: which fallback colours apply (island, `data-theme`, OS) and the OS watch        | `graph-theme.spec.ts` (7)                                                                                |
 | Background: API surface, host detection, config I/O, legibility, fills, lens scope, burst, scenes | `background-*.spec.ts`, `config-io`, `gradient-legibility`, `lens-*`, `motion-burst`, `scene-erin` (148) |
 
 **Not covered:** every `.vue` component (there is no DOM environment and no
 `@vue/test-utils`), `labels.ts`, `keys.ts`, `toast.ts`, `useForwardProgress`,
-`usePinnableTip`, `useHandyTheme`, `graph-funscript.ts` and `graph-theme.ts`.
+`usePinnableTip`, `useHandyTheme`, `graph-funscript.ts`, and the colours
+`graph-theme.ts` reads off the tokens.
 The issues marked _Known issue_ above were all found by reading the code.
 
 Other gates: `npm run typecheck` (vue-tsc), `npm run lint:check` (oxfmt +
@@ -2530,7 +2571,9 @@ build) before it commits a change proposed from an app.
    / `--color-text-on-warning`. If a surface needs a helper variable, declare it
    in **every** scope (`:root`, `[data-theme="dark"]`, `.section-dark`,
    `.section-light`) in `styles/_tokens.scss`, because a `var()` inside a
-   custom property resolves where it is declared.
+   custom property resolves where it is declared. A dark value that isn't a
+   token also goes in the `prefers-color-scheme: dark` block, which stands in
+   for `[data-theme="dark"]` until the attribute is stamped.
 4. **Every string the component says by itself** goes through `KIT_LABELS`,
    read during render, not in setup.
 5. **Link-rendering components** carry `text-decoration: none !important`.

@@ -80,7 +80,20 @@ export const KIT_LABELS = {
    */
   connected: "Connected",
   connecting: "Connecting",
-  offline: "Offline"
+  offline: "Offline",
+  /**
+   * What an interactive playhead calls itself when the caller names nothing
+   * more specific. A caller should: "Video position" says what is being
+   * scrubbed, and this only says what the control is.
+   */
+  playhead: "Playhead",
+  /**
+   * A peek carousel's arrows: their accessible names and their tooltips.
+   * The words are vue3-carousel's own, so an app without a translator reads
+   * what it always did.
+   */
+  carouselPrevious: "Navigate to previous slide",
+  carouselNext: "Navigate to next slide"
 } as const;
 
 export type KitLabel = keyof typeof KIT_LABELS;
