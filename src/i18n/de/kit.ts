@@ -21,8 +21,8 @@ const kit: typeof enUS = {
   expert: "Für Experten",
 
   // "Fixiert", not "Gesperrt": the tip is held open, nothing is locked away.
-  tipLocked: "Fixiert — zum Schließen Esc drücken oder außerhalb klicken",
-  tipLockedTouch: "Fixiert — zum Schließen außerhalb tippen",
+  tipLocked: "Fixiert. Zum Schließen Esc drücken oder außerhalb klicken.",
+  tipLockedTouch: "Fixiert. Zum Schließen außerhalb tippen.",
 
   // Label in front, verb last, the way `reset` does it below. `value` stands
   // in for a missing label, so it is a capitalized noun: "Wert erhöhen".
@@ -64,7 +64,10 @@ const kit: typeof enUS = {
   // locale describes a device that is offline ("ohne Verbindung").
   connected: "Verbunden",
   connecting: "Wird verbunden",
-  offline: "Nicht verbunden"
+  offline: "Nicht verbunden",
+  playhead: "Abspielkopf",
+  carouselPrevious: "Zur vorherigen Folie wechseln",
+  carouselNext: "Zur nächsten Folie wechseln"
 };
 
 export default kit;

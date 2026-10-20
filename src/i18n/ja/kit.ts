@@ -19,8 +19,8 @@ const kit: typeof enUS = {
   recommended: "おすすめ",
   expert: "上級者向け",
 
-  tipLocked: "固定中 — Escキーまたは外側のクリックで閉じます",
-  tipLockedTouch: "固定中 — 外側のタップで閉じます",
+  tipLocked: "固定中。Escキーを押すか外側をクリックすると閉じます。",
+  tipLockedTouch: "固定中。外側をタップすると閉じます。",
 
   increase: "{label}を増やす",
   decrease: "{label}を減らす",
@@ -51,7 +51,10 @@ const kit: typeof enUS = {
   // 接続済み/接続中 is the usual connected/connecting pair in Japanese UI.
   connected: "接続済み",
   connecting: "接続中",
-  offline: "オフライン"
+  offline: "オフライン",
+  playhead: "再生ヘッド",
+  carouselPrevious: "前のスライドへ移動",
+  carouselNext: "次のスライドへ移動"
 };
 
 export default kit;

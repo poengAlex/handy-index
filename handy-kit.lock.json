@@ -6,11 +6,11 @@
     "repo": "poengAlex/handy-playground",
     "dir": "projects/brand-ux",
     "ref": "main",
-    "commit": "7d4bd2218e84aa86603ff79136175fa0ca7bcc79"
+    "commit": "304a6e481169952754cce1610102eed30a4d9d14"
   },
-  "pulledAt": "2026-10-20T13:40:15.799Z",
+  "pulledAt": "2026-10-20T13:51:04.231Z",
   "files": {
-    "CHANGELOG.md": "422aee8f78ce0eb1195c379a852468db8810f9cf1121f24a52b10eed14b87755",
+    "CHANGELOG.md": "17edc49a87e53c5cca632cc22ecb69a835f036b5773aee66296392342941e9c9",
     "HBtn.vue": "575dcf6126b107ec42857030945f46e0ad490bf410cc7793c5f4e6358c5627c0",
     "HBtnGroup.vue": "be5402baa1dac421e03086ccdca13a7987bcd83eae586bb9c2785713a52c534d",
     "HChip.vue": "3df4e839853b567b3dcc9cda8e2b49a1ab5f69a8cd1ddb571c2772851b7a3425",
@@ -50,7 +50,7 @@
     "HThemeToggle.vue": "520962dcabfc452d01103bf7d3da9377110368dfd3f8c0e5ace7d53024572ba5",
     "HToggleRow.vue": "6500c5c05ea265d6bec45d84118eed88d00e604695e86dc4fbd3955577138dc5",
     "HandyLoader.vue": "6e011fa5cdad3ec97da566a1ba37cfa9be424387f134dcfe866c6e57a0a5d502",
-    "README.md": "3f7b58692b79fc1a05645c55a2e74210fa82efdb2ce1f52e0d5ae58cfc7847cb",
+    "README.md": "88a610bc2d56973c67ebc2cba7cb8a4d95b346521cf22bd84559b6d217f0c962",
     "background/GrainOverlay.vue": "d098295d535d110a1175dd4617b8165b6eb0032e9ace18502c52e6026c79e4a5",
     "background/HandyBackground.vue": "8b5cd920ae0def73928aa5ad7aa72a0845498e18d6a8ea2632f4788877a87150",
     "background/LensField.vue": "7e3736cc97b605f78054d3bd647874da202be4d7baaa169bcb43f2905de77592",
@@ -75,7 +75,7 @@
     "install.ts": "8988e15fa4bb00d58fa4d14ad711372fda46b4696057a1c71f17bcaee9ca510c",
     "keys.ts": "8d2685cc5edebd6a57c3febfc4983537dc569ae5b76ea1d41468a413ec433dab",
     "kit.json": "30b4f9b21a91ab7a00aafb1ba349e79491d0ecd74bb0058541e76e3eee201d7d",
-    "labels.ts": "923fd2e756cfd63bfa5e690bb5f646c7ba453d03502fef4562ad34deac0094b2",
+    "labels.ts": "8d145095637796804096d48fe2116b55633e2efd0f56ca2e97d1c138e94d1762",
     "scroll.ts": "b380116c8666e501b1a7260c5c8fca652a3a9560c0d5b20d3153e4db329a8f64",
     "slider-format.ts": "8290e2259f05655bf32869c5ebab8510374518a2d8a35d848cdaf61f96eb33dc",
     "styles/_base.scss": "77c5c5c57f6a5b6dcd9e78284afe605ec4ac4a9787c2eba71712a310054953f2",

@@ -26,8 +26,8 @@ export default {
   // The footer a help tip prints only while it is locked open — the sheet
   // then outlives the cursor, so the line names the ways out: the Esc key or
   // a click for a mouse, a tap for a finger.
-  tipLocked: "Locked — Esc or click outside to close",
-  tipLockedTouch: "Locked — tap outside to close",
+  tipLocked: "Locked. Press Esc or click outside to close.",
+  tipLockedTouch: "Locked. Tap outside to close.",
 
   // HNumberStepper's two buttons. `{label}` is the stepper's own name, or
   // `value` when it has none.
@@ -64,5 +64,11 @@ export default {
   // gave it no other name: the state it is showing.
   connected: "Connected",
   connecting: "Connecting",
-  offline: "Offline"
+  offline: "Offline",
+
+  // HPlayhead's accessible name when the screen gives it none, and the
+  // arrow buttons of HPeekCarousel
+  playhead: "Playhead",
+  carouselPrevious: "Navigate to previous slide",
+  carouselNext: "Navigate to next slide"
 };

@@ -20,8 +20,8 @@ const kit: typeof enUS = {
   expert: "Для опытных",
 
   // "Закреплено", not "Заблокировано": the tip is held open, not locked.
-  tipLocked: "Закреплено — чтобы закрыть, нажми Esc или щёлкни вне подсказки",
-  tipLockedTouch: "Закреплено — чтобы закрыть, коснись вне подсказки",
+  tipLocked: "Закреплено. Чтобы закрыть, нажми Esc или щёлкни вне подсказки.",
+  tipLockedTouch: "Закреплено. Чтобы закрыть, коснись вне подсказки.",
 
   // Same "{label}: …" shape as the slider labels below, so the label stays
   // in the nominative.
@@ -55,7 +55,10 @@ const kit: typeof enUS = {
   // neuter, agreeing with the "устройство" the dot stands for
   connected: "Подключено",
   connecting: "Подключение",
-  offline: "Не в сети"
+  offline: "Не в сети",
+  playhead: "Курсор воспроизведения",
+  carouselPrevious: "Перейти к предыдущему слайду",
+  carouselNext: "Перейти к следующему слайду"
 };
 
 export default kit;

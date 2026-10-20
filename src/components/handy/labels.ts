@@ -29,9 +29,9 @@ export const KIT_LABELS = {
    * is different — the sheet now outlives the cursor, and the way back out is
    * the part that stopped being guessable.
    */
-  tipLocked: "Locked — Esc or click outside to close",
+  tipLocked: "Locked. Press Esc or click outside to close.",
   /** The same line where there is no Esc key and nothing to click with. */
-  tipLockedTouch: "Locked — tap outside to close",
+  tipLockedTouch: "Locked. Tap outside to close.",
   /** `{label}` is the control's own name, or `value` when it has none. */
   increase: "Increase {label}",
   decrease: "Decrease {label}",

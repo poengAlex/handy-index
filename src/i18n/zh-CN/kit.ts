@@ -19,8 +19,8 @@ const kit: typeof enUS = {
   recommended: "推荐",
   expert: "高级",
 
-  tipLocked: "已固定——按 Esc 或点击外部区域关闭",
-  tipLockedTouch: "已固定——轻触外部区域关闭",
+  tipLocked: "已固定。按 Esc 或点击外部区域关闭。",
+  tipLockedTouch: "已固定。轻触外部区域关闭。",
 
   increase: "增加{label}",
   decrease: "减少{label}",
@@ -50,7 +50,10 @@ const kit: typeof enUS = {
 
   connected: "已连接",
   connecting: "正在连接",
-  offline: "离线"
+  offline: "离线",
+  playhead: "播放头",
+  carouselPrevious: "切换到上一张幻灯片",
+  carouselNext: "切换到下一张幻灯片"
 };
 
 export default kit;

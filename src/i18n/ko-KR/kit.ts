@@ -19,8 +19,8 @@ const kit: typeof enUS = {
   recommended: "추천",
   expert: "전문가용",
 
-  tipLocked: "고정됨 — Esc 키를 누르거나 바깥쪽을 클릭하면 닫혀요",
-  tipLockedTouch: "고정됨 — 바깥쪽을 탭하면 닫혀요",
+  tipLocked: "고정됨. Esc 키를 누르거나 바깥쪽을 클릭하면 닫혀요.",
+  tipLockedTouch: "고정됨. 바깥쪽을 탭하면 닫혀요.",
 
   increase: "{label} 늘리기",
   decrease: "{label} 줄이기",
@@ -50,7 +50,10 @@ const kit: typeof enUS = {
 
   connected: "연결됨",
   connecting: "연결 중",
-  offline: "오프라인"
+  offline: "오프라인",
+  playhead: "재생 헤드",
+  carouselPrevious: "이전 슬라이드로 이동",
+  carouselNext: "다음 슬라이드로 이동"
 };
 
 export default kit;

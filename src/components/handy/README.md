@@ -2492,38 +2492,38 @@ labels with several slots use `kitLabelWith(key, vars)`. Whole sentences are
 keys, never fragments to concatenate, because other languages order words
 differently.
 
-| Key                                    | English                                | Used by                                  |
-| -------------------------------------- | -------------------------------------- | ---------------------------------------- |
-| `close`                                | Close                                  | HModal                                   |
-| `copy`                                 | Copy                                   | HConnectionKey (tooltip)                 |
-| `copyKey`                              | Copy key                               | HConnectionKey (accessible name)         |
-| `dismiss`                              | Dismiss                                | HFeedbackCard, `hToast`                  |
-| `readFullText`                         | Read the full text                     | HTextCard                                |
-| `loading`                              | Loading                                | HandyLoader                              |
-| `recommended`                          | Recommended                            | HRadioRow                                |
-| `expert`                               | Expert                                 | HSectionCard                             |
-| `tipLocked`                            | Locked — Esc or click outside to close | HHelpTip                                 |
-| `tipLockedTouch`                       | Locked — tap outside to close          | HHelpTip                                 |
-| `increase`                             | Increase {label}                       | HNumberStepper                           |
-| `decrease`                             | Decrease {label}                       | HNumberStepper                           |
-| `value`                                | value                                  | fallback for an empty `{label}`          |
-| `sliderReset`                          | Reset {label}                          | HLabeledSlider                           |
-| `sliderValue`                          | {label} value                          | HLabeledSlider, HNumberStepper           |
-| `sliderEditValue`                      | Edit {label} value                     | HLabeledSlider, HNumberStepper           |
-| `sliderMin`                            | {label} minimum value                  | HLabeledSlider (range)                   |
-| `sliderEditMin`                        | Edit {label} minimum                   | HLabeledSlider (range)                   |
-| `sliderMax`                            | {label} maximum value                  | HLabeledSlider (range)                   |
-| `sliderEditMax`                        | Edit {label} maximum                   | HLabeledSlider (range)                   |
-| `sliderMenuValue`                      | {label}: {value}                       | HSliderMenu                              |
-| `yes` / `no`                           | Yes / No                               | HInfoCard boolean pills                  |
-| `themeToLight`                         | Switch to light mode                   | HThemeToggle (while dark)                |
-| `themeToDark`                          | Switch to dark mode                    | HThemeToggle (while light)               |
-| `themeLight`                           | Light mode                             | HThemeToggle tooltip                     |
-| `themeDark`                            | Dark mode                              | HThemeToggle tooltip                     |
-| `connected` / `connecting` / `offline` | Connected / Connecting / Offline       | HConnectedDot (button mode)              |
-| `playhead`                             | Playhead                               | HPlayhead (when no `ariaLabel` is given) |
-| `carouselPrevious`                     | Navigate to previous slide             | HPeekCarousel (the arrows)               |
-| `carouselNext`                         | Navigate to next slide                 | HPeekCarousel (the arrows)               |
+| Key                                    | English                                      | Used by                                  |
+| -------------------------------------- | -------------------------------------------- | ---------------------------------------- |
+| `close`                                | Close                                        | HModal                                   |
+| `copy`                                 | Copy                                         | HConnectionKey (tooltip)                 |
+| `copyKey`                              | Copy key                                     | HConnectionKey (accessible name)         |
+| `dismiss`                              | Dismiss                                      | HFeedbackCard, `hToast`                  |
+| `readFullText`                         | Read the full text                           | HTextCard                                |
+| `loading`                              | Loading                                      | HandyLoader                              |
+| `recommended`                          | Recommended                                  | HRadioRow                                |
+| `expert`                               | Expert                                       | HSectionCard                             |
+| `tipLocked`                            | Locked. Press Esc or click outside to close. | HHelpTip                                 |
+| `tipLockedTouch`                       | Locked. Tap outside to close.                | HHelpTip                                 |
+| `increase`                             | Increase {label}                             | HNumberStepper                           |
+| `decrease`                             | Decrease {label}                             | HNumberStepper                           |
+| `value`                                | value                                        | fallback for an empty `{label}`          |
+| `sliderReset`                          | Reset {label}                                | HLabeledSlider                           |
+| `sliderValue`                          | {label} value                                | HLabeledSlider, HNumberStepper           |
+| `sliderEditValue`                      | Edit {label} value                           | HLabeledSlider, HNumberStepper           |
+| `sliderMin`                            | {label} minimum value                        | HLabeledSlider (range)                   |
+| `sliderEditMin`                        | Edit {label} minimum                         | HLabeledSlider (range)                   |
+| `sliderMax`                            | {label} maximum value                        | HLabeledSlider (range)                   |
+| `sliderEditMax`                        | Edit {label} maximum                         | HLabeledSlider (range)                   |
+| `sliderMenuValue`                      | {label}: {value}                             | HSliderMenu                              |
+| `yes` / `no`                           | Yes / No                                     | HInfoCard boolean pills                  |
+| `themeToLight`                         | Switch to light mode                         | HThemeToggle (while dark)                |
+| `themeToDark`                          | Switch to dark mode                          | HThemeToggle (while light)               |
+| `themeLight`                           | Light mode                                   | HThemeToggle tooltip                     |
+| `themeDark`                            | Dark mode                                    | HThemeToggle tooltip                     |
+| `connected` / `connecting` / `offline` | Connected / Connecting / Offline             | HConnectedDot (button mode)              |
+| `playhead`                             | Playhead                                     | HPlayhead (when no `ariaLabel` is given) |
+| `carouselPrevious`                     | Navigate to previous slide                   | HPeekCarousel (the arrows)               |
+| `carouselNext`                         | Navigate to next slide                       | HPeekCarousel (the arrows)               |
 
 When a key is renamed, every host that translates it has to rename it too.
 `tipPin`/`tipClose` became `tipLocked`/`tipLockedTouch` on 2026-09-09. Nothing

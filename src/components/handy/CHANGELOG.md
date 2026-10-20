@@ -15,6 +15,15 @@ Format, which the CLI reads (`tools/kit/lib/changelog.mjs`):
 - Any number of `Consumer action:` lines, each an instruction an app's AI can
   carry out on its own. An entry without one is information only.
 
+## unreleased — The locked help tip's line is two plain sentences
+
+The kit's English for `tipLocked` and `tipLockedTouch` loses its dash, as
+onboardingv4's copy pass (its P5.111) already had it in its own messages:
+"Locked. Press Esc or click outside to close." and "Locked. Tap outside to
+close." (owner's rule for UI text, 2026-10-20: no dashes in running text).
+
+- Consumer action: If the app's own messages carry the kit's old English for `tipLocked` or `tipLockedTouch` ("Locked — Esc or click outside to close", "Locked — tap outside to close"), replace it with the new wording, and give translations the same shape where they copy the dash.
+
 ## unreleased — The playhead is grabbed near its handle, looks held while dragged, and takes its sizes from the strip
 
 `HPlayhead` answers a drag with more than a brighter glow, and a drag no

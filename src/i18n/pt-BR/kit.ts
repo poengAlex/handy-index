@@ -19,8 +19,8 @@ const kit: typeof enUS = {
   recommended: "Recomendado",
   expert: "Avançado",
 
-  tipLocked: "Fixado — pressione Esc ou clique fora para fechar",
-  tipLockedTouch: "Fixado — toque fora para fechar",
+  tipLocked: "Fixado. Pressione Esc ou clique fora para fechar.",
+  tipLockedTouch: "Fixado. Toque fora para fechar.",
 
   increase: "Aumentar {label}",
   decrease: "Diminuir {label}",
@@ -51,7 +51,10 @@ const kit: typeof enUS = {
   // "Offline" is the word this locale already uses for the device (settings.ts)
   connected: "Conectado",
   connecting: "Conectando",
-  offline: "Offline"
+  offline: "Offline",
+  playhead: "Cursor de reprodução",
+  carouselPrevious: "Ir para o slide anterior",
+  carouselNext: "Ir para o próximo slide"
 };
 
 export default kit;

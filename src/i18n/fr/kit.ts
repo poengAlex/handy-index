@@ -21,8 +21,8 @@ const kit: typeof enUS = {
 
   // "Épinglé", not "Verrouillé": the tip is held open, not locked away.
   // "Échap" is what a French keyboard prints on the Esc key.
-  tipLocked: "Épinglé — appuie sur Échap ou clique ailleurs pour fermer",
-  tipLockedTouch: "Épinglé — touche ailleurs pour fermer",
+  tipLocked: "Épinglé. Appuie sur Échap ou clique ailleurs pour fermer.",
+  tipLockedTouch: "Épinglé. Touche ailleurs pour fermer.",
 
   // Same "{label} : …" shape as the slider labels below, so the label never
   // needs an article or an agreement.
@@ -54,7 +54,10 @@ const kit: typeof enUS = {
 
   connected: "Connecté",
   connecting: "Connexion en cours",
-  offline: "Hors ligne"
+  offline: "Hors ligne",
+  playhead: "Tête de lecture",
+  carouselPrevious: "Aller à la diapositive précédente",
+  carouselNext: "Aller à la diapositive suivante"
 };
 
 export default kit;

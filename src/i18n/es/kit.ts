@@ -19,8 +19,8 @@ const kit: typeof enUS = {
   recommended: "Recomendado",
   expert: "Para expertos",
 
-  tipLocked: "Fijado — pulsa Esc o haz clic fuera para cerrar",
-  tipLockedTouch: "Fijado — toca fuera para cerrar",
+  tipLocked: "Fijado. Pulsa Esc o haz clic fuera para cerrar.",
+  tipLockedTouch: "Fijado. Toca fuera para cerrar.",
 
   increase: "Aumentar {label}",
   decrease: "Disminuir {label}",
@@ -50,7 +50,10 @@ const kit: typeof enUS = {
 
   connected: "Conectado",
   connecting: "Conectando",
-  offline: "Sin conexión"
+  offline: "Sin conexión",
+  playhead: "Cursor de reproducción",
+  carouselPrevious: "Ir a la diapositiva anterior",
+  carouselNext: "Ir a la diapositiva siguiente"
 };
 
 export default kit;

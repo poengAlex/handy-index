@@ -11,8 +11,8 @@ const kit: typeof enUS = {
   expert: "Avansert",
 
   // "Festet", not "Låst": the tip is held open, nothing is locked away.
-  tipLocked: "Festet — trykk Esc eller klikk utenfor for å lukke",
-  tipLockedTouch: "Festet — trykk utenfor for å lukke",
+  tipLocked: "Festet. Trykk Esc eller klikk utenfor for å lukke.",
+  tipLockedTouch: "Festet. Trykk utenfor for å lukke.",
 
   // The label lands last here too, for the reason given below.
   increase: "Øk {label}",
@@ -46,7 +46,10 @@ const kit: typeof enUS = {
   // "Frakoblet" is this locale's word for an offline device (settings.ts).
   connected: "Tilkoblet",
   connecting: "Kobler til",
-  offline: "Frakoblet"
+  offline: "Frakoblet",
+  playhead: "Avspillingshode",
+  carouselPrevious: "Gå til forrige lysbilde",
+  carouselNext: "Gå til neste lysbilde"
 };
 
 export default kit;
