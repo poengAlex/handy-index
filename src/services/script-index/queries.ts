@@ -43,21 +43,6 @@ const FILED_UNDER: ReadonlyMap<string, "gay" | "trans"> = new Map([
   ["shemale", "trans"]
 ]);
 
-/** Whether a partner site belongs under the reader's orientation, by the
- * orientation tags `/partners` gives it — filed the way a video's are: gay,
- * trans (shemale with it), and the rest under Straight. A site carrying none
- * says nothing here (true): its videos decide, through the catalog's gate. */
-export function partnerMatchesOrientation(
-  partnerTags: readonly string[],
-  orientation: Orientation,
-  orientationTags: ReadonlySet<string>
-): boolean {
-  if (orientation === "all") return true;
-  const tags = partnerTags.filter(tag => orientationTags.has(tag));
-  if (!tags.length) return true;
-  return tags.some(tag => (FILED_UNDER.get(tag) ?? "straight") === orientation);
-}
-
 /** Orientation goes by the index's own orientation tags (`orientationTags`,
  * the live `/tags` list or the seed above) and nothing else. Looking for the
  * words inside other tags kept misfiling: a prefix test put translated and

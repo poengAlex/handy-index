@@ -137,16 +137,6 @@ export interface PartnerVideo {
   publishedAt?: string;
 }
 
-/** One entry of `/partners`: a partner site. `tags` is the partner's own
- * tag list — its orientation tags among them — when the API carries it. */
-export interface Partner {
-  partnerID: string;
-  /** the site's domain, "pornhub.com" — as `partnerName` on its videos */
-  name: string;
-  description?: string;
-  tags?: string[];
-}
-
 /** One entry of `/tags`. `category` is absent on most tags (29,081 of the
  * live 30,412) and is free text where present — a few hundred even carry the
  * string "undefined" — so only exact values are worth testing. */

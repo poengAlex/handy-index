@@ -5,6 +5,14 @@
      words. Newest release on top. Format: "## <version> — <date>", then
      "### <group>" headings and "- " lines. Keep it English-only. -->
 
+## 2.12.1 — 26 October 2026
+
+### Browsing
+
+- The Sites page now always lists every site. A site your filters leave no
+  videos of stays on the list and shows "0 of" its videos, instead of
+  disappearing.
+
 ## 2.12.0 — 17 October 2026
 
 ### Script requests

@@ -10,7 +10,6 @@ import {
   writeCachedIndex
 } from "./index-cache";
 import type {
-  Partner,
   PartnerVideo,
   PerformerProfile,
   Script,
@@ -233,12 +232,6 @@ export async function getTags(): Promise<Tag[]> {
  * string. */
 export function getCategories(): Promise<string[]> {
   return request<string[]>("/categories");
-}
-
-/** Every partner site, `/partners` — 37 of them, small enough to ask for
- * whenever the site directory opens. */
-export function getPartners(): Promise<Partner[]> {
-  return request<Partner[]>("/partners");
 }
 
 export function getVideo(partnerVideoId: string): Promise<PartnerVideo> {
