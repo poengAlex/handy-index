@@ -131,7 +131,11 @@ export {
   setKitLabelResolver
 } from "./labels";
 export type { KitLabel, KitLabelResolver, KitLabelWithLabel } from "./labels";
-export { formatSliderValue, sliderDecimals } from "./slider-format";
+export {
+  formatSliderValue,
+  sliderDecimals,
+  widestSliderTexts
+} from "./slider-format";
 export { useHandyTheme } from "./useHandyTheme";
 export { useGlassOnScroll } from "./useGlassOnScroll";
 export { usePinnableTip } from "./usePinnableTip";

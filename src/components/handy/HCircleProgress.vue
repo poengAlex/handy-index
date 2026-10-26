@@ -92,7 +92,11 @@ const centerText = computed(
 .h-circle__ring {
   // crisp the arc: force high-precision rendering and flatten Quasar's 3D
   // start-rotation to 2D so the SVG isn't rasterized into a low-res layer
+  // As a block, the svg has no line box. Inline, it sat on a baseline at the
+  // ring's own font size (its size), so the ring was taller than its diameter
+  // by a descender's room: 17px at 112px, enough to scroll a dialog's body.
   :deep(.q-circular-progress__svg) {
+    display: block;
     shape-rendering: geometricPrecision;
     transform: rotate(-90deg) !important;
   }

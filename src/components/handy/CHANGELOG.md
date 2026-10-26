@@ -15,6 +15,70 @@ Format, which the CLI reads (`tools/kit/lib/changelog.mjs`):
 - Any number of `Consumer action:` lines, each an instruction an app's AI can
   carry out on its own. An entry without one is information only.
 
+## unreleased — The circular progress ring is exactly as tall as its diameter
+
+`HCircleProgress` left Quasar's ring svg inline. Quasar sets the ring's font
+size to its size, so the svg sat on a line box that left a descender's room
+under the circle: a 112px ring took 129px. Inside a scroll box such as
+`HModal`'s body the extra 17px showed as a scrollbar. The svg is now a block,
+so the ring is as tall as it is wide. Nothing else moves.
+
+Consumer action: If the app worked around this with `display: block` on `.q-circular-progress__svg` (or a negative margin, or `line-height: 0` under an `HCircleProgress`), remove the workaround.
+
+## unreleased — HPeekCarousel: v-model for the card at the start, and slideTo
+
+`HPeekCarousel` takes `v-model`, the index of the card at the start of the
+row: a host can start the row on a given card, move the row when its data
+moves (a player whose row is the whole list, the playing video kept in view)
+and read where the person dragged to. It also exposes `slideTo(index)`,
+`next()` and `prev()`. Without the model the row behaves as before and starts
+on the first card.
+
+## unreleased — design.md 6.11: cards on the background have no edge at rest on dark
+
+- design.md v4.8 says how cards sit on `HandyBackground` (6.11, still not ratified): on light, a 1px hairline at rest in 12% ink (`rgba(28, 43, 51, 0.12)`); on dark, none at rest, because the elevated fill carries the edge and a white hairline reads as a glowing rim along edge-to-edge media. The kit's dark hover hairlines are unchanged. Documentation only; no kit file changes.
+
+Consumer action: if the app draws its own at-rest edge on cards over `HandyBackground`, make it transparent on dark (`[data-theme="dark"]` and `.section-dark`) and keep the light 12% ink hairline (design.md 6.11).
+
+## unreleased — Typed values and resets commit like a drag; a disabled slider takes no input; dialogs carry their title
+
+From an outside review (2026-10-23), owner-approved items only:
+
+- `HLabeledSlider` emits `change` after `update:modelValue` for a typed value
+  and for a label reset, as it already did for a released drag. Before, only
+  the drag did, so a host that saved or redrew on `change` (scripter4's
+  pipeline thresholds) missed every typed value. Nothing is emitted when the
+  value did not actually move.
+- An emptied value field no longer commits 0 (`Number("")` is 0, and the
+  guard after it let that through). `HLabeledSlider` goes back to its `reset`
+  value when it has one and otherwise keeps the old value; `HNumberStepper`
+  keeps the old value.
+- `disable` on `HLabeledSlider` now also disables the reset label and the
+  click-to-type numbers, and closes an edit that is open when it turns on.
+  The model can still be set from outside; only human input is blocked.
+- `HLabeledSlider`'s track is named by its label for assistive tech, and
+  `HModal` names the `q-dialog` around it with its title (unless the host
+  already named the dialog).
+- `HNavCard` without `to` renders `type="button"`, so it can no longer submit
+  a form it sits in.
+
+- Consumer action: Find every `HLabeledSlider` (and `HSliderMenu`) that listens to both `@update:model-value` and `@change`. If the app added its own save or redraw on `update:model-value` to catch typed values or resets, remove it; `change` now fires for those.
+
+## unreleased — The slider menu's value keeps the width of the widest it can show
+
+`HSliderMenu`'s button was as wide as its current value, so it grew and
+shrank as the value moved ("1s" to "120s", "250ms" to "1m") and pushed
+whatever sat beside it along (owner request 2026-10-21, design.md v4.7). The
+value now keeps the width of the widest text it can show, as
+`HNumberStepper`'s does: `widestSliderTexts`, new in `slider-format.ts` and
+exported from the kit's index, works those texts out from the range, the
+step and the format (`formatValue` included, sampled across the range), and
+the button lays them out unseen under the value, so the font decides which
+is widest. A value the range didn't predict (a preset off the step, one the
+host sets) widens it once, and it keeps that width.
+
+- Consumer action: Check every `HSliderMenu` where it sits. Its button is now as wide as the widest value it can show, not as its current one, so a toolbar or header that only just fitted it may need room. If the app gave an `HSliderMenu` a fixed width or a `min-width` to stop it moving, remove that.
+
 ## unreleased — The locked help tip's line is two plain sentences
 
 The kit's English for `tipLocked` and `tipLockedTouch` loses its dash, as

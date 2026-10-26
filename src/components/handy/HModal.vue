@@ -1,5 +1,5 @@
 <template>
-  <div :class="['h-modal', { 'h-modal--sheet': sheet }]">
+  <div ref="rootEl" :class="['h-modal', { 'h-modal--sheet': sheet }]">
     <span v-if="sheet" class="h-modal__handle" aria-hidden="true" />
     <q-btn
       v-if="closable"
@@ -11,7 +11,7 @@
       :aria-label="kitLabel('close')"
       @click="emit('close')"
     />
-    <h3 v-if="title" class="text-h4">{{ title }}</h3>
+    <h3 v-if="title" :id="titleId" class="text-h4">{{ title }}</h3>
     <div class="h-modal__body text-body"><slot /></div>
     <div v-if="$slots.actions" class="h-modal__actions">
       <slot name="actions" />
@@ -40,14 +40,38 @@
 // carries a centred drag handle. Quasar runs it edge to edge on a phone and
 // caps it at the same 560px above that. The handle is a cue, not a control:
 // the dialog closes the usual ways.
+import { onBeforeUnmount, onMounted, ref, useId } from "vue";
 import { kitLabel } from "./labels";
 
-withDefaults(
+const props = withDefaults(
   defineProps<{ title?: string; closable?: boolean; sheet?: boolean }>(),
   { title: "", closable: false, sheet: false }
 );
 
 const emit = defineEmits<{ close: [] }>();
+
+// The title names the dialog. q-dialog owns the role="dialog" element, which
+// sits outside this component, so the title's id is handed up to it — unless
+// the host already named the dialog itself.
+const titleId = useId();
+const rootEl = ref<HTMLElement | null>(null);
+let labelled: HTMLElement | null = null;
+
+onMounted(() => {
+  const dialog = rootEl.value?.closest<HTMLElement>('[role="dialog"]');
+  if (!props.title || !dialog) return;
+  if (
+    dialog.hasAttribute("aria-labelledby") ||
+    dialog.hasAttribute("aria-label")
+  )
+    return;
+  dialog.setAttribute("aria-labelledby", titleId);
+  labelled = dialog;
+});
+
+onBeforeUnmount(() => {
+  labelled?.removeAttribute("aria-labelledby");
+});
 </script>
 
 <style scoped lang="scss">

@@ -49,3 +49,51 @@ export function formatSliderValue(
       : Number(value.toPrecision(SIGNIFICANT))
   );
 }
+
+/** Points a range of more steps than this is tried at, each way. */
+const WIDEST_SAMPLES = 2000;
+/** Texts handed back for the readout to measure. */
+const WIDEST_KEPT = 6;
+
+/**
+ * What a value readout holds room for, so it keeps one width while the
+ * value moves and what sits beside it holds still (design.md 6.4): the
+ * texts it can show at their widest. In tabular figures every digit is as
+ * wide as a 0, so each text counts with its digits as zeros. `text` is tried
+ * at every step of the range, or, for a range of more steps than
+ * WIDEST_SAMPLES, at points spread across it both evenly and (for a range
+ * above zero) logarithmically, as a log track spreads them. The longest
+ * come back, longest first, with those one character short of it: a text of
+ * wider letters can still be the wider one, so the readout lays them all
+ * out under itself, unseen, and the font decides.
+ */
+export function widestSliderTexts(
+  text: (value: number) => string,
+  min: number,
+  max: number,
+  step: number
+): string[] {
+  const lo = Math.min(min, max);
+  const hi = Math.max(min, max);
+  if (!Number.isFinite(lo) || !Number.isFinite(hi)) return [];
+  const span = hi - lo;
+  const stepped = Number.isFinite(step) && step > 0;
+  const snap = (value: number) =>
+    stepped ? Math.min(hi, lo + Math.round((value - lo) / step) * step) : value;
+  const values = new Set<number>([lo, hi]);
+  if (stepped && span / step <= WIDEST_SAMPLES) {
+    for (let i = 1; lo + i * step < hi; i++) values.add(lo + i * step);
+  } else if (span > 0) {
+    for (let i = 1; i < WIDEST_SAMPLES; i++) {
+      values.add(snap(lo + (span * i) / WIDEST_SAMPLES));
+      if (lo > 0) values.add(snap(lo * (hi / lo) ** (i / WIDEST_SAMPLES)));
+    }
+  }
+  const texts = new Set<string>();
+  for (const value of values) texts.add(text(value).replace(/\d/g, "0"));
+  const longest = Math.max(0, ...[...texts].map(t => t.length));
+  return [...texts]
+    .filter(t => t.length >= longest - 1)
+    .sort((a, b) => b.length - a.length)
+    .slice(0, WIDEST_KEPT);
+}

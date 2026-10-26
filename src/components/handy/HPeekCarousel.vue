@@ -23,6 +23,7 @@
         'h-peek__carousel',
         { 'h-peek__carousel--bounded': !loop && !skeleton }
       ]"
+      @update:model-value="emit('update:modelValue', $event)"
     >
       <template v-if="skeleton">
         <Slide v-for="n in skeletonCount" :key="`sk-${n}`">
@@ -77,6 +78,12 @@ const props = withDefaults(
     skeletonHeight?: string;
     /** bound the row to its parent instead of breaking out full-bleed */
     contained?: boolean;
+    /**
+     * v-model: the index of the card at the start of the row. Set it to
+     * start the row on a card and to move the row when the data moves; it
+     * follows a drag. Leave it out and the row starts on the first card.
+     */
+    modelValue?: number | undefined;
   }>(),
   {
     items: () => [],
@@ -86,13 +93,27 @@ const props = withDefaults(
     skeleton: false,
     skeletonCount: 8,
     skeletonHeight: "",
-    contained: false
+    contained: false,
+    modelValue: undefined
   }
 );
 
+const emit = defineEmits<{ "update:modelValue": [index: number] }>();
+
 defineSlots<{ default(props: { item: T; index: number }): unknown }>();
 
-const carousel = ref<{ next: () => void; prev: () => void } | null>(null);
+const carousel = ref<{
+  next: () => void;
+  prev: () => void;
+  slideTo: (index: number) => void;
+} | null>(null);
+
+defineExpose({
+  /** slide the row so the card at `index` is at its start */
+  slideTo: (index: number) => carousel.value?.slideTo(index),
+  next: () => carousel.value?.next(),
+  prev: () => carousel.value?.prev()
+});
 
 // The nav arrows earn their place: hidden by default (a fresh page shows
 // clean cards), summoned by the pointer or keyboard focus landing on the
@@ -166,6 +187,9 @@ const config = computed(() => {
     // the library ignores (and warns about) preventExcessiveDragging when
     // wrapAround is on, so only set it on the non-looping carousel
     ...(wrap ? {} : { preventExcessiveDragging: true }),
+    // bound only when the host set it: the library's prop is a number, and
+    // a host built with exactOptionalPropertyTypes may not hand it undefined
+    ...(props.modelValue !== undefined ? { modelValue: props.modelValue } : {}),
     ...(props.autoplay && !props.skeleton
       ? { autoplay: props.autoplay, pauseAutoplayOnHover: true }
       : {}),

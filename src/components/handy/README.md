@@ -796,6 +796,14 @@ round-tripped through another unit prints `3.5`, not `3.5000000000000004`.
 extra content into the menu under the presets (a hint line, a second control),
 and a `#tooltip` slot takes a `q-tooltip` for the resting button.
 
+The value keeps the width of the widest it can show, as `HNumberStepper`'s
+does, so the button, the open menu and whatever sits beside it hold still
+while the value moves (design.md 6.4). `widestSliderTexts` works the widest
+texts out from the range, the step and the format, and they sit unseen under
+the value, where the font decides between them. A value the range didn't
+predict (a preset off the step, one the host sets) widens it once, and it
+keeps that width.
+
 The open state is visible on the button, because the menu can land anywhere
 on screen. The panel sets `--h-slider-gap` to the card colour (the menu
 portals to `<body>`) and pads for the handle's overhang, since the menu is the
@@ -2432,6 +2440,14 @@ decimals), then drops trailing zeros. `3.5000000000000004` prints as `3.5`, and
 a 15-digit integer is not rounded off. `sliderDecimals(decimals, step)` is the
 precision on its own. The model is never touched.
 
+`widestSliderTexts(text, min, max, step)` is what a readout holds room for, so
+it keeps one width as its value moves: the widest texts `text` prints across
+the range, with each digit as a 0 (in tabular figures every digit is as wide).
+It tries every step, or, for a range of more than 2000 steps, points spread
+evenly and logarithmically, and returns the longest few, longest first; the
+readout lays them out unseen under itself and the font decides. `HSliderMenu`
+uses it, and the vanilla kit's `<h-slider-menu>` too.
+
 ### `scroll.ts`
 
 `H_SCROLL_THUMB_STYLE`, `H_SCROLL_BAR_STYLE` and their `_HORIZONTAL` twins:
@@ -2543,7 +2559,7 @@ changelog slicing, peer ranges, the hook guard, and an end-to-end
 | Covered                                                                                           | Specs                                                                                                    |
 | ------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
 | `graph-edit.ts`, `graph-decimate.ts`                                                              | `graph-edit.spec.ts` (31), `graph-decimate.spec.ts` (3)                                                  |
-| `slider-format.ts`                                                                                | `slider-format.spec.ts` (9)                                                                              |
+| `slider-format.ts`                                                                                | `slider-format.spec.ts` (15)                                                                             |
 | `graph-theme.ts`: which fallback colours apply (island, `data-theme`, OS) and the OS watch        | `graph-theme.spec.ts` (7)                                                                                |
 | Background: API surface, host detection, config I/O, legibility, fills, lens scope, burst, scenes | `background-*.spec.ts`, `config-io`, `gradient-legibility`, `lens-*`, `motion-burst`, `scene-erin` (148) |
 

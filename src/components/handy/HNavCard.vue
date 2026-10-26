@@ -2,6 +2,7 @@
   <component
     :is="to ? 'router-link' : 'button'"
     :to="to"
+    :type="to ? undefined : 'button'"
     class="h-navcard"
     @click="emit('click')"
   >

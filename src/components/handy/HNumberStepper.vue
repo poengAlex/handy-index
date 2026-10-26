@@ -255,8 +255,11 @@ function commitEdit() {
   if (!editing.value) return;
   editing.value = false;
   if (draft.value === draftStart) return;
-  const parsed = Number(draft.value.replace(",", "."));
-  if (!Number.isFinite(parsed)) return; // empty/gibberish → keep the old value
+  const text = draft.value.trim();
+  // Number("") is 0, so an emptied field has to be caught before parsing
+  if (text === "" || text === "-") return; // empty → keep the old value
+  const parsed = Number(text.replace(",", "."));
+  if (!Number.isFinite(parsed)) return; // gibberish → keep the old value
   // typed precision is the contract when decimals are allowed; otherwise the
   // value snaps to the same lattice the buttons walk, so typing and stepping
   // can't reach different sets of values

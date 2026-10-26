@@ -9,7 +9,16 @@
     :aria-expanded="open"
   >
     <q-icon :name="icon" size="16px" class="h-slidermenu__icon" />
-    <HTabularNum class="h-slidermenu__value" :value="valueText" />
+    <span class="h-slidermenu__readout">
+      <HTabularNum class="h-slidermenu__value" :value="valueText" />
+      <span
+        v-for="text in reserve"
+        :key="text"
+        class="h-slidermenu__widest"
+        aria-hidden="true"
+        >{{ text }}</span
+      >
+    </span>
     <q-icon name="expand_more" size="14px" class="h-slidermenu__caret" />
 
     <q-menu
@@ -78,9 +87,9 @@
 // live mix, the fat sliders on the device page). A gesture behind a menu is
 // a gesture you can't repeat quickly, and the menu covers what you're
 // watching. Those stay open on the surface.
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import HLabeledSlider from "./HLabeledSlider.vue";
-import { formatSliderValue } from "./slider-format";
+import { formatSliderValue, widestSliderTexts } from "./slider-format";
 import { kitLabelWith } from "./labels";
 import HTabularNum from "./HTabularNum.vue";
 
@@ -138,12 +147,35 @@ const emit = defineEmits<{
 
 const open = ref(false);
 
-const valueText = computed(() =>
-  props.formatValue
-    ? props.formatValue(props.modelValue)
+function textOf(value: number): string {
+  return props.formatValue
+    ? props.formatValue(value)
     : // same filter the slider's own header uses, so the closed button and the
       // open panel never disagree about the value
-      `${formatSliderValue(props.modelValue, props.decimals, props.step)}${props.unit}`
+      `${formatSliderValue(value, props.decimals, props.step)}${props.unit}`;
+}
+
+const valueText = computed(() => textOf(props.modelValue));
+
+// The value holds one width, so the caret and whatever sits beside the
+// button hold still as it changes (design.md 6.4), as the number stepper's
+// does: the widest texts it can show sit unseen under it (the readout and
+// .h-slidermenu__widest below), and the font decides which is widest. A
+// value the range didn't predict (a preset off the step, one from the
+// host) widens it once and it keeps that width; new bounds, step, unit or
+// format start over from their own widest.
+const widest = computed(() =>
+  widestSliderTexts(textOf, props.min, props.max, props.step)
+);
+const reserve = ref<string[]>([]);
+watch(
+  [widest, valueText],
+  ([wide, text], previous) => {
+    const base = previous?.[0] === wide ? reserve.value : wide;
+    const own = text.replace(/\d/g, "0");
+    reserve.value = own.length > (base[0]?.length ?? 0) ? [own, ...base] : base;
+  },
+  { immediate: true }
 );
 
 const presetList = computed<Required<HSliderMenuPreset>[]>(() =>
@@ -217,6 +249,23 @@ function pick(value: number) {
 
 .h-slidermenu__icon {
   color: var(--color-text-tertiary);
+}
+
+// the value, and under it the widest it can show (`reserve`), each a line of
+// no height: the readout takes the widest's width, so the button holds its
+// size. Hidden, they are neither seen nor read out.
+.h-slidermenu__readout {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.h-slidermenu__widest {
+  height: 0;
+  overflow: hidden;
+  visibility: hidden;
+  font-variant-numeric: tabular-nums;
 }
 
 .h-slidermenu--open .h-slidermenu__icon,

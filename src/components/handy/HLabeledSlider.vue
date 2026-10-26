@@ -9,7 +9,8 @@
           type="button"
           class="text-body-compact h-lslider__label-btn"
           :aria-label="kitLabelFor('sliderReset', label)"
-          @click="emit('update:modelValue', reset)"
+          :disabled="disable"
+          @click="resetValue"
         >
           {{ label }}
         </button>
@@ -48,6 +49,7 @@
               type="button"
               class="h-lslider__value-btn"
               :aria-label="kitLabelFor('sliderEditValue', label)"
+              :disabled="disable"
               @click="startEdit('single')"
             >
               <HTabularNum :value="valueText" />
@@ -73,6 +75,7 @@
               type="button"
               class="h-lslider__value-btn"
               :aria-label="kitLabelFor('sliderEditMin', label)"
+              :disabled="disable"
               @click="startEdit('min')"
             >
               <HTabularNum
@@ -99,6 +102,7 @@
               type="button"
               class="h-lslider__value-btn"
               :aria-label="kitLabelFor('sliderEditMax', label)"
+              :disabled="disable"
               @click="startEdit('max')"
             >
               <HTabularNum
@@ -127,6 +131,7 @@
     >
       <q-range
         :model-value="modelValue as HLabeledSliderRange"
+        :aria-label="label"
         :min="min"
         :max="max"
         :step="step"
@@ -140,6 +145,7 @@
     <q-slider
       v-else
       :model-value="trackValue"
+      :aria-label="label"
       :min="logScale ? 0 : min"
       :max="logScale ? LOG_TICKS : max"
       :step="logScale ? 1 : step"
@@ -185,6 +191,13 @@
 // the readout keeps the real number. With `reset` set, the label becomes
 // a same-looking button (pointer cursor) that snaps the value back to it.
 //
+// Every completed change — a drag released, a keyboard step, a typed value,
+// a reset — emits `update:modelValue` and then `change`, so a host that
+// previews on the one and saves on the other misses none of them. An empty
+// typed value goes back to `reset` when there is one, and otherwise keeps
+// the value it had. `disable` blocks every human path (track, typing,
+// reset); the model can still be changed from outside.
+//
 // For wrappers that own a device round trip (smart sliders): the track's
 // `change` (commit on release / per keystroke) and `pan` (drag start/end)
 // are re-emitted, `disable` passes through, and the `value-prefix` slot
@@ -217,7 +230,14 @@
 // because they are scroll containers themselves and owe the guarantee to
 // anyone who copies them. Clipping is the WRONG fix — `overflow-x: clip`
 // slices the handle in half at exactly 0 and 100.
-import { computed, nextTick, onBeforeUnmount, onMounted, ref } from "vue";
+import {
+  computed,
+  nextTick,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  watch
+} from "vue";
 import HTabularNum from "./HTabularNum.vue";
 import HHelpTip from "./HHelpTip.vue";
 import { formatSliderValue } from "./slider-format";
@@ -374,6 +394,7 @@ const draft = ref("");
 const inputEl = ref<HTMLInputElement | null>(null);
 
 function startEdit(field: EditField) {
+  if (props.disable) return;
   const value = props.modelValue;
   if (field === "single") {
     if (typeof value !== "number") return;
@@ -418,8 +439,28 @@ function commitEdit() {
   const field = editing.value;
   if (field === null) return;
   editing.value = null;
-  const parsed = Number(draft.value.replace(",", "."));
-  if (!Number.isFinite(parsed)) return; // empty/gibberish → keep the old value
+  if (props.disable) return;
+  const text = draft.value.trim();
+  // an emptied field (Number("") is 0, so this goes first) means "back to
+  // the default": the reset value when there is one, else the old value
+  if (text === "" || text === "-") {
+    const fallback = props.reset;
+    if (fallback === undefined) return;
+    if (field === "single") {
+      if (typeof fallback === "number") commit(fallback);
+      return;
+    }
+    if (typeof fallback !== "object") return;
+    const range = props.modelValue as HLabeledSliderRange;
+    commit(
+      field === "min"
+        ? { min: Math.min(fallback.min, range.max), max: range.max }
+        : { min: range.min, max: Math.max(fallback.max, range.min) }
+    );
+    return;
+  }
+  const parsed = Number(text.replace(",", "."));
+  if (!Number.isFinite(parsed)) return; // gibberish → keep the old value
   // with decimals the typed precision is the contract (round to it);
   // otherwise the value snaps to the slider's step — except on a log track,
   // where `step` is not an amount and snapping to it would quantise the top
@@ -434,14 +475,13 @@ function commitEdit() {
     ? settled
     : Math.min(props.max, Math.max(props.min, settled));
   if (field === "single") {
-    emit("update:modelValue", bounded);
+    commit(bounded);
     return;
   }
   // range: the edited end stops at the other — handles never cross, same
   // as dragging (this ordering holds even with `unclamped`)
   const range = props.modelValue as HLabeledSliderRange;
-  emit(
-    "update:modelValue",
+  commit(
     field === "min"
       ? { min: Math.min(bounded, range.max), max: range.max }
       : { min: range.min, max: Math.max(bounded, range.min) }
@@ -450,6 +490,33 @@ function commitEdit() {
 
 function cancelEdit() {
   editing.value = null;
+}
+
+// disabled mid-edit: the open field closes without committing
+watch(
+  () => props.disable,
+  disabled => {
+    if (disabled) cancelEdit();
+  }
+);
+
+function resetValue() {
+  if (props.disable || props.reset === undefined) return;
+  commit(props.reset);
+}
+
+/** A typed value or a reset, committed the way a released drag is: the
+ * model, then `change` — only when it actually moved, so Enter on an
+ * untouched number saves nothing. */
+function commit(next: number | HLabeledSliderRange) {
+  const now = props.modelValue;
+  const same =
+    typeof next === "number"
+      ? next === now
+      : typeof now === "object" && next.min === now.min && next.max === now.max;
+  if (same) return;
+  emit("update:modelValue", next);
+  emit("change", next);
 }
 
 // ── the band drags, on a hold ──
@@ -856,6 +923,10 @@ onBeforeUnmount(() => {
   letter-spacing: inherit;
   color: inherit;
   cursor: pointer;
+
+  &:disabled {
+    cursor: default;
+  }
 }
 
 // the resting editable value is a button that looks exactly like the text
@@ -869,6 +940,10 @@ onBeforeUnmount(() => {
   letter-spacing: inherit;
   color: inherit;
   cursor: text;
+
+  &:disabled {
+    cursor: default;
+  }
 }
 
 // the inline input inherits the value's exact type; the focus ring is
