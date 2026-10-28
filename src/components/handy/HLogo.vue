@@ -11,7 +11,9 @@
 <script setup lang="ts">
 // The Handy logo. One component, every official lockup — pick with `variant`
 // (mark · wordmark · wordmark-2line · horizontal · stacked · horizontal-2line),
-// plus the two Handyverse lockups (handyverse · handyverse-wordmark).
+// plus three each for Handyverse (handyverse · handyverse-wordmark ·
+// handyverse-mark) and Handy Onboarding (handy-onboarding ·
+// handy-onboarding-wordmark · handy-onboarding-mark).
 // Rendered in currentColor so it flips black/white per theme (see styles); the
 // inverted "2" series isn't needed. `mark` is a back-compat shortcut for
 // variant="mark". Nav heights per §7: 24px desktop, 20px mobile.
@@ -32,7 +34,11 @@ const props = withDefaults(
 const variant = computed(() => (props.mark ? "mark" : props.variant));
 const art = computed(() => handyLogoArt[variant.value]);
 const label = computed(() =>
-  variant.value.startsWith("handyverse") ? "Handyverse" : "The Handy"
+  variant.value.startsWith("handyverse")
+    ? "Handyverse"
+    : variant.value.startsWith("handy-onboarding")
+      ? "Handy Onboarding"
+      : "The Handy"
 );
 </script>
 

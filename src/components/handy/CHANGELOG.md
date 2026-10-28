@@ -15,6 +15,26 @@ Format, which the CLI reads (`tools/kit/lib/changelog.mjs`):
 - Any number of `Consumer action:` lines, each an instruction an app's AI can
   carry out on its own. An entry without one is information only.
 
+## unreleased — HLogo: the Handyverse pictogram and the Handy Onboarding lockups
+
+`HLogo` draws the new product logos (design.md 5.1, v4.9). Each product is
+three lockups: its pictogram with its wordmark, the wordmark alone and the
+pictogram alone. A pictogram is the mark with a symbol set into a round
+cut-out, drawn on the mark's frame, so at the same height it is the mark's
+size.
+
+- Handyverse: `handyverse` draws the Handyverse pictogram (a play button) in
+  place of the plain mark, at the same width for a given height.
+  `handyverse-wordmark` is unchanged. `handyverse-mark` is new: the
+  pictogram alone.
+- Handy Onboarding, all new: `handy-onboarding` (the pictogram, a gear, with
+  "handy onboarding"), `handy-onboarding-wordmark` and
+  `handy-onboarding-mark`, named "Handy Onboarding". The art is a new file,
+  `handy-onboarding-logo-art.ts`, which `handy-logo-art.ts` spreads in; the
+  logo art grows by about 9 KB.
+
+Consumer action: If the app carries its own copy of the Handyverse or Handy Onboarding logo or pictogram (an SVG or PNG file, an inline svg), draw it with `HLogo` and the matching variant instead.
+
 ## unreleased — The circular progress ring is exactly as tall as its diameter
 
 `HCircleProgress` left Quasar's ring svg inline. Quasar sets the ring's font

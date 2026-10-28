@@ -11,7 +11,8 @@ This README is the reference for the whole folder: what each component is for,
 its full API, how it behaves, and what the host app has to supply for it to
 work. The live reference is the app itself. `/components` shows every
 component once, `/showcase/*` shows each family in depth, and `/design` shows
-`design.md` with specimens between its sections.
+`design.md` with specimens between its sections. Every variant and state
+`/components` shows is also used in a showcase screen; a test checks it.
 
 > **Where something is marked _Known issue_**, it was verified against the
 > code during the 2026-09-28 review. It describes today's behaviour, so check
@@ -2036,8 +2037,8 @@ still has to call `useHandyTheme().init()` once when it mounts.
 
 ### HLogo
 
-Every official lockup of The Handy, plus the two Handyverse lockups, as inline
-SVG in `currentColor`. The logo is **strictly black or white**: black on light
+Every official lockup of The Handy, plus three each for Handyverse and Handy
+Onboarding, as inline SVG in `currentColor`. The logo is **strictly black or white**: black on light
 surfaces and `.section-light`, white on dark and `.section-dark`. Glass
 surfaces decide by their own ink (black on `.glass-light` even in dark mode).
 It is never tinted by theme greys.
@@ -2049,6 +2050,7 @@ It is never tinted by theme greys.
 <!-- the "h" pictogram only -->
 <HLogo variant="stacked" :height="48" />
 <HLogo variant="handyverse" :height="32" />
+<HLogo variant="handy-onboarding-wordmark" :height="24" />
 ```
 
 | Prop      | Type           | Default        | Notes                                     |
@@ -2058,22 +2060,27 @@ It is never tinted by theme greys.
 | `mark`    | `boolean`      | `false`        | Back-compat shortcut for `variant="mark"` |
 
 Variants: `horizontal`, `stacked`, `horizontal-2line`, `wordmark`,
-`wordmark-2line`, `mark`, `handyverse` (the mark and the wordmark) and
-`handyverse-wordmark`. The old Handyverse names still render: `-v2-horizontal`
-is `handyverse` and `-v3-horizontal` is `handyverse-wordmark`, and the retired
-"the handyverse" lockups (`-v1-*`, `-v4-*`) fall back to the nearest of the
-two. It is `role="img"` named
-"The Handy" or "Handyverse" (product names are never translated, per
-design.md chapter 10).
+`wordmark-2line`, `mark`; for Handyverse, `handyverse` (its pictogram and the
+wordmark), `handyverse-wordmark` and `handyverse-mark` (the pictogram alone);
+for Handy Onboarding, `handy-onboarding`, `handy-onboarding-wordmark` and
+`handy-onboarding-mark`. A product's pictogram is the mark with its symbol set
+into a round cut-out (a play button, a gear), drawn on the mark's frame, so
+at the same height it is the mark's size. The old Handyverse names still
+render: `-v2-horizontal` is `handyverse` and `-v3-horizontal` is
+`handyverse-wordmark`, and the retired "the handyverse" lockups (`-v1-*`,
+`-v4-*`) fall back to the nearer of those two. It is `role="img"` named "The
+Handy", "Handyverse" or "Handy Onboarding" (the product's name, in every
+language, per design.md 5.1).
 
-- Never redraw the mark. `mark` is the lockup's own first two paths.
+- Never redraw the mark. `mark` is the lockup's own first two paths, and each
+  product lockup draws its `-mark`'s own paths.
 - The lockup's viewBox reserves descender space, so text flex-centred next to
   it rides about 2px high at nav sizes. Nudge the neighbour down onto the
   wordmark's baseline.
 
-> **Note:** all eight lockups live in one lookup table (`handy-logo-art.ts` +
-> `handyverse-logo-art.ts`, about 27 KB of source). Rendering only the mark
-> still ships them all.
+> **Note:** all twelve lockups live in one lookup table (`handy-logo-art.ts`,
+> `handyverse-logo-art.ts` and `handy-onboarding-logo-art.ts`, about 36 KB of
+> source). Rendering only the mark still ships them all.
 
 ### HConnectedDot
 
