@@ -24,6 +24,7 @@
     "icons:check": "node scripts/check-icons.mjs",
     "icons:subset": "python3 scripts/subset-icons.py",
     "favicons:fetch": "python3 scripts/fetch-favicons.py",
+    "share:card": "node scripts/make-share-card.mjs",
     "start": "node server.js",
     "postinstall": "quasar prepare --silent",
     "kit": "node scripts/handy-kit/bootstrap.mjs"
@@ -50,6 +51,7 @@
     "oxfmt": "^0.x",
     "oxlint": "^1.x",
     "oxlint-tsgolint": "^0.x",
+    "playwright": "^1.62.1",
     "typescript": "^6.0.0",
     "vue-tsc": "^3.3.3"
   },

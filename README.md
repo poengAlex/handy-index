@@ -53,6 +53,17 @@ pip install fonttools brotli   # once
 npm run icons:subset
 ```
 
+### The share card
+
+`public/og-image.png` is the picture a chat or a social site shows for a
+shared IVDB link: brand-ux design.md 9.3's card, the Handy logo, a purple
+rule and the name. A headless browser draws it from the kit's logo art and
+Figtree; commit the file it writes.
+
+```bash
+npm run share:card
+```
+
 ## Changing something users can see
 
 Every user-visible change bumps `version` in `package.json` and adds lines to
