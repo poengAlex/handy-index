@@ -20,6 +20,35 @@ export { default as HLabeledSlider } from "./HLabeledSlider.vue";
 export { default as HSliderMenu } from "./HSliderMenu.vue";
 export { default as HHelpTip } from "./HHelpTip.vue";
 
+// Files: the picker (a drop zone, a button, the whole window) and how a file
+// is shown
+export { default as HDropZone } from "./HDropZone.vue";
+export { default as HFileBtn } from "./HFileBtn.vue";
+export { default as HDropOverlay } from "./HDropOverlay.vue";
+export { useFileDrop, type FileDropOptions } from "./useFileDrop";
+export { default as HFileName } from "./HFileName.vue";
+export { default as HFileRow } from "./HFileRow.vue";
+export { default as HMediaTile } from "./HMediaTile.vue";
+export {
+  canPickFolder,
+  carriesFiles,
+  FILE_KIND_ICONS,
+  fileExtension,
+  fileKind,
+  fileKindIcon,
+  filesFromDrop,
+  formatDuration,
+  formatFileSize,
+  installDropGuard,
+  isHiddenFile,
+  pickFiles,
+  pickFolder,
+  splitFileName,
+  trackDrag,
+  type DragTracker,
+  type FileKind
+} from "./files";
+
 // Containers & surfaces
 export { default as HInfoCard } from "./HInfoCard.vue";
 export { default as HSectionCard } from "./HSectionCard.vue";

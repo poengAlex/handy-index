@@ -67,7 +67,15 @@ const kit: typeof enUS = {
   offline: "Nicht verbunden",
   playhead: "Abspielkopf",
   carouselPrevious: "Zur vorherigen Folie wechseln",
-  carouselNext: "Zur nächsten Folie wechseln"
+  carouselNext: "Zur nächsten Folie wechseln",
+  chooseFile: "Datei wählen",
+  chooseFiles: "Dateien wählen",
+  chooseFolder: "Ordner wählen",
+  dropToOpen: "Zum Öffnen loslassen",
+  dropZone: "Dateien hier ablegen oder zum Wählen klicken",
+  dropZoneTouch: "Tippen, um Dateien zu wählen",
+  dropHere: "Hier ablegen",
+  removeFile: "{label} entfernen"
 };
 
 export default kit;

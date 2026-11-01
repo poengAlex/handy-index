@@ -53,7 +53,15 @@ const kit: typeof enUS = {
   offline: "离线",
   playhead: "播放头",
   carouselPrevious: "切换到上一张幻灯片",
-  carouselNext: "切换到下一张幻灯片"
+  carouselNext: "切换到下一张幻灯片",
+  chooseFile: "选择文件",
+  chooseFiles: "选择文件",
+  chooseFolder: "选择文件夹",
+  dropToOpen: "松开以打开",
+  dropZone: "将文件拖到这里，或点击选择",
+  dropZoneTouch: "轻触以选择文件",
+  dropHere: "拖到这里",
+  removeFile: "移除{label}"
 };
 
 export default kit;

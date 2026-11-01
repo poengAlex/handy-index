@@ -54,7 +54,15 @@ const kit: typeof enUS = {
   offline: "オフライン",
   playhead: "再生ヘッド",
   carouselPrevious: "前のスライドへ移動",
-  carouselNext: "次のスライドへ移動"
+  carouselNext: "次のスライドへ移動",
+  chooseFile: "ファイルを選ぶ",
+  chooseFiles: "ファイルを選ぶ",
+  chooseFolder: "フォルダーを選ぶ",
+  dropToOpen: "ドロップして開く",
+  dropZone: "ここにファイルをドロップするか、クリックして選ぶ",
+  dropZoneTouch: "タップしてファイルを選ぶ",
+  dropHere: "ここにドロップ",
+  removeFile: "{label}を取り除く"
 };
 
 export default kit;

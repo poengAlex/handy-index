@@ -49,7 +49,15 @@ const kit: typeof enUS = {
   offline: "Frakoblet",
   playhead: "Avspillingshode",
   carouselPrevious: "Gå til forrige lysbilde",
-  carouselNext: "Gå til neste lysbilde"
+  carouselNext: "Gå til neste lysbilde",
+  chooseFile: "Velg fil",
+  chooseFiles: "Velg filer",
+  chooseFolder: "Velg mappe",
+  dropToOpen: "Slipp for å åpne",
+  dropZone: "Slipp filer her, eller klikk for å velge",
+  dropZoneTouch: "Trykk for å velge filer",
+  dropHere: "Slipp her",
+  removeFile: "Fjern {label}"
 };
 
 export default kit;

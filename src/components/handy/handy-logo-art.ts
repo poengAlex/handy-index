@@ -1,7 +1,7 @@
 import {
-  handyOnboardingLogoArt,
-  type HandyOnboardingLogoVariant
-} from "./handy-onboarding-logo-art";
+  handyCompanionLogoArt,
+  type HandyCompanionLogoVariant
+} from "./handy-companion-logo-art";
 import {
   handyverseLogoArt,
   type HandyverseLogoVariant
@@ -10,7 +10,7 @@ import {
 // The Handy logo lockups, as inline SVG markup rendered in `currentColor`
 // (the source art is the dark "1" series; colour is dropped so HLogo can flip
 // it per theme — no separate inverted files needed). One mark, one wordmark,
-// and the lockups that combine them, plus the Handyverse and Handy Onboarding
+// and the lockups that combine them, plus the Handyverse and Handy Companion
 // lockups from their own files. Used by HLogo via `variant`.
 
 export type HLogoVariant =
@@ -21,7 +21,7 @@ export type HLogoVariant =
   | "wordmark-2line" // two-line wordmark only
   | "mark" // the "h" pictogram only
   | HandyverseLogoVariant // the three Handyverse lockups (and retired names)
-  | HandyOnboardingLogoVariant; // the three Handy Onboarding lockups
+  | HandyCompanionLogoVariant; // the three Handy Companion lockups (and old names)
 
 // 1D — pictogram only
 const mark = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 105.64 142.88" fill="currentColor">
@@ -118,5 +118,5 @@ export const handyLogoArt: Record<HLogoVariant, string> = {
   "wordmark-2line": wordmark2line,
   mark,
   ...handyverseLogoArt,
-  ...handyOnboardingLogoArt
+  ...handyCompanionLogoArt
 };

@@ -70,5 +70,15 @@ export default {
   // arrow buttons of HPeekCarousel
   playhead: "Playhead",
   carouselPrevious: "Navigate to previous slide",
-  carouselNext: "Navigate to next slide"
+  carouselNext: "Navigate to next slide",
+  // HFileBtn, HDropOverlay and HDropZone's own words, and the accessible
+  // name of HFileRow's remove button ({label} is the file's name)
+  chooseFile: "Choose file",
+  chooseFiles: "Choose files",
+  chooseFolder: "Choose folder",
+  dropToOpen: "Drop to open",
+  dropZone: "Drop files here, or click to choose",
+  dropZoneTouch: "Tap to choose files",
+  dropHere: "Drop here",
+  removeFile: "Remove {label}"
 };

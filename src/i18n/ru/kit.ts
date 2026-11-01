@@ -58,7 +58,15 @@ const kit: typeof enUS = {
   offline: "Не в сети",
   playhead: "Курсор воспроизведения",
   carouselPrevious: "Перейти к предыдущему слайду",
-  carouselNext: "Перейти к следующему слайду"
+  carouselNext: "Перейти к следующему слайду",
+  chooseFile: "Выбрать файл",
+  chooseFiles: "Выбрать файлы",
+  chooseFolder: "Выбрать папку",
+  dropToOpen: "Отпустите, чтобы открыть",
+  dropZone: "Перетащите файлы сюда или нажмите, чтобы выбрать",
+  dropZoneTouch: "Коснитесь, чтобы выбрать файлы",
+  dropHere: "Перетащите сюда",
+  removeFile: "{label}: убрать"
 };
 
 export default kit;

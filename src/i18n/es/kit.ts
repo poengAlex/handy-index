@@ -53,7 +53,15 @@ const kit: typeof enUS = {
   offline: "Sin conexión",
   playhead: "Cursor de reproducción",
   carouselPrevious: "Ir a la diapositiva anterior",
-  carouselNext: "Ir a la diapositiva siguiente"
+  carouselNext: "Ir a la diapositiva siguiente",
+  chooseFile: "Elegir archivo",
+  chooseFiles: "Elegir archivos",
+  chooseFolder: "Elegir carpeta",
+  dropToOpen: "Suelta para abrir",
+  dropZone: "Suelta archivos aquí o haz clic para elegir",
+  dropZoneTouch: "Toca para elegir archivos",
+  dropHere: "Suelta aquí",
+  removeFile: "Quitar {label}"
 };
 
 export default kit;

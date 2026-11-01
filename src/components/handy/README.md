@@ -285,48 +285,54 @@ graphics are `aria-hidden`.
 
 ## 3. Component index
 
-| Component                                         | Family     | What it is                                                              | Built on                    | Live reference               |
-| ------------------------------------------------- | ---------- | ----------------------------------------------------------------------- | --------------------------- | ---------------------------- |
-| [HBtn](#hbtn)                                     | Actions    | The button: primary / secondary / tertiary / danger, pill, sm–lg, round | `q-btn`                     | `/showcase/buttons`          |
-| [HBtnGroup](#hbtngroup)                           | Actions    | Lays buttons out inline, equal 50/50, or stacked                        | —                           | `/showcase/buttons`          |
-| [HHoldBtn](#hholdbtn)                             | Actions    | Tap for the light action, hold for the heavy one                        | `HBtn`                      | `/showcase/buttons`          |
-| [HSegmented](#hsegmented)                         | Inputs     | 2–4 options with a sliding thumb                                        | native buttons              | `/showcase/forms`            |
-| [HNumberStepper](#hnumberstepper)                 | Inputs     | −/value/+ with hold-to-repeat, optional typing                          | `q-btn`                     | `/showcase/forms`            |
-| [HFatSlider](#hfatslider)                         | Inputs     | The 56px device slider (speed, depth, volume)                           | `q-slider`                  | `/showcase/forms`            |
-| [HLabeledSlider](#hlabeledslider)                 | Inputs     | Slider or range with a label/value header, click-to-type                | `q-slider` / `q-range`      | `/showcase/forms`            |
-| [HSliderMenu](#hslidermenu)                       | Inputs     | A labeled slider folded behind an icon + value chip                     | `q-menu` + `HLabeledSlider` | `/showcase/forms`            |
-| [HHelpTip](#hhelptip)                             | Inputs     | The `?` beside a control's label: hover previews, click locks           | `q-menu`                    | `/showcase/help`             |
-| [HInfoCard](#hinfocard)                           | Surfaces   | Key/value card with pills, badges, highlights, notes                    | —                           | `/showcase/data`             |
-| [HSectionCard](#hsectioncard)                     | Surfaces   | Titled card with hint, `?`, "Expert" marker and one action              | `HHelpTip`                  | `/components`                |
-| [HTextCard](#htextcard)                           | Surfaces   | Long-form copy, optionally height-capped with an expand-to-modal        | `q-scroll-area`, `HModal`   | `/components`                |
-| [HNavCard](#hnavcard)                             | Surfaces   | "Tap to go deeper" tile: icon chip, label, caption, chevron             | —                           | `/showcase/navigation`       |
-| [HProductCard](#hproductcard)                     | Surfaces   | Product render, name, price, sale pill, rating                          | —                           | `/showcase/cards`            |
-| [HModal](#hmodal)                                 | Surfaces   | The dialog card (goes inside `q-dialog`)                                | `q-btn`                     | `/showcase/overlays`         |
-| [HList](#hlist)                                   | Lists      | The grouped-list card (one card, or one card per row)                   | `q-list`                    | `/showcase/page-anatomy`     |
-| [HListRow](#hlistrow)                             | Lists      | The settings/menu row: leading, label, caption, trailing, chevron       | `q-item`                    | `/showcase/page-anatomy`     |
-| [HRadioRow](#hradiorow)                           | Lists      | A whole-row radio option                                                | `HListRow` + `q-radio`      | `/showcase/forms`            |
-| [HToggleRow](#htogglerow)                         | Lists      | A whole-row toggle setting                                              | `HListRow` + `q-toggle`     | `/showcase/forms`            |
-| [HTabularNum](#htabularnum)                       | Data       | Tabular figures for live numbers                                        | —                           | `/showcase/data`             |
-| [HCircleProgress](#hcircleprogress)               | Data       | Determinate ring / stat dial                                            | `q-circular-progress`       | `/showcase/data`             |
-| [HGraph](#hgraph)                                 | Data       | Canvas chart: funscript timeline, 2D curves, editor                     | uPlot                       | `/showcase/graphs`           |
-| [HPlayhead](#hplayhead)                           | Data       | Slider-handle playhead for strips that stand for time                   | —                           | `/showcase/graphs`           |
-| [HFeedbackCard](#hfeedbackcard)                   | Feedback   | Inline alert / banner                                                   | `HBtn`                      | `/showcase/feedback`         |
-| [HStatusBadge](#hstatusbadge)                     | Feedback   | Tinted semantic pill                                                    | —                           | `/showcase/data`             |
-| [HEmptyState](#hemptystate)                       | Feedback   | "Nothing here yet" block with an action                                 | `HBtn`                      | `/showcase/feedback`         |
-| [HSuccessMark](#hsuccessmark)                     | Feedback   | The one completion animation                                            | SVG                         | `/showcase/feedback`         |
-| [HSuccessMoment](#hsuccessmoment)                 | Feedback   | Success screen: mark + title + sub-line                                 | `HSuccessMark`              | `/showcase/feedback`         |
-| [HInlineDots](#hinlinedots)                       | Feedback   | Tier-1 loader: the pulsing "…" after a word                             | —                           | `/showcase/feedback`         |
-| [HandyLoader](#handyloader)                       | Feedback   | Tier-3 branded "h" loader                                               | SVG (SMIL)                  | `/showcase/feedback`         |
-| [HDrawerItem](#hdraweritem)                       | Navigation | Drawer / hamburger-panel row                                            | router-link / `a`           | `/showcase/navigation`       |
-| [HThemeToggle](#hthemetoggle)                     | Navigation | The dark-mode icon button                                               | `HBtn`                      | every shell's nav            |
-| [HLogo](#hlogo)                                   | Brand      | Every Handy and Handyverse lockup, in `currentColor`                    | inline SVG                  | `/showcase/identity`         |
-| [HConnectedDot](#hconnecteddot)                   | Brand      | Connected / connecting / offline indicator, optionally a button         | `HBtn` (button mode)        | `/showcase/data`             |
-| [HConnectionKey](#hconnectionkey)                 | Brand      | Colour-coded connection key with copy                                   | `q-btn`                     | `/showcase/data`             |
-| [HChip](#hchip)                                   | Brand      | Annotation chip that never blends into its surface                      | —                           | `/showcase/cards`            |
-| [HIconTile](#hicontile)                           | Brand      | Square launcher tile                                                    | `<button>`                  | `/showcase/cards`            |
-| [HFeaturePoint](#hfeaturepoint)                   | Brand      | Icon above a short label (presentational)                               | —                           | `/showcase/cards`            |
-| [HPeekCarousel](#hpeekcarousel)                   | Content    | Full-bleed, content-aligned card carousel with skeletons                | `vue3-carousel`             | `/showcase/carousel`         |
-| [HandyBackground](#13-background-handybackground) | Background | Grainy, defocused gradient field behind a page (unratified)             | vue only                    | `/components`, `/playground` |
+| Component                                         | Family     | What it is                                                                   | Built on                    | Live reference               |
+| ------------------------------------------------- | ---------- | ---------------------------------------------------------------------------- | --------------------------- | ---------------------------- |
+| [HBtn](#hbtn)                                     | Actions    | The button: primary / secondary / tertiary / danger, pill, sm–lg, round      | `q-btn`                     | `/showcase/buttons`          |
+| [HBtnGroup](#hbtngroup)                           | Actions    | Lays buttons out inline, equal 50/50, or stacked                             | —                           | `/showcase/buttons`          |
+| [HHoldBtn](#hholdbtn)                             | Actions    | Tap for the light action, hold for the heavy one                             | `HBtn`                      | `/showcase/buttons`          |
+| [HSegmented](#hsegmented)                         | Inputs     | 2–4 options with a sliding thumb                                             | native buttons              | `/showcase/forms`            |
+| [HNumberStepper](#hnumberstepper)                 | Inputs     | −/value/+ with hold-to-repeat, optional typing                               | `q-btn`                     | `/showcase/forms`            |
+| [HFatSlider](#hfatslider)                         | Inputs     | The 56px device slider (speed, depth, volume)                                | `q-slider`                  | `/showcase/forms`            |
+| [HLabeledSlider](#hlabeledslider)                 | Inputs     | Slider or range with a label/value header, click-to-type                     | `q-slider` / `q-range`      | `/showcase/forms`            |
+| [HSliderMenu](#hslidermenu)                       | Inputs     | A labeled slider folded behind an icon + value chip                          | `q-menu` + `HLabeledSlider` | `/showcase/forms`            |
+| [HHelpTip](#hhelptip)                             | Inputs     | The `?` beside a control's label: hover previews, click locks                | `q-menu`                    | `/showcase/help`             |
+| [HDropZone](#hdropzone)                           | Inputs     | The file picker as a place: a dashed box that opens the picker, takes a drop | `<button>`                  | `/showcase/files`            |
+| [HFileBtn](#hfilebtn)                             | Inputs     | The file picker's button: files, or a folder where the browser can           | `HBtn`                      | `/showcase/files`            |
+| [HDropOverlay](#hdropoverlay-and-usefiledrop)     | Inputs     | The whole-window drop target, shown by `useFileDrop()`                       | `Teleport`                  | `/showcase/files`            |
+| [HInfoCard](#hinfocard)                           | Surfaces   | Key/value card with pills, badges, highlights, notes                         | —                           | `/showcase/data`             |
+| [HSectionCard](#hsectioncard)                     | Surfaces   | Titled card with hint, `?`, "Expert" marker and one action                   | `HHelpTip`                  | `/components`                |
+| [HTextCard](#htextcard)                           | Surfaces   | Long-form copy, optionally height-capped with an expand-to-modal             | `q-scroll-area`, `HModal`   | `/components`                |
+| [HNavCard](#hnavcard)                             | Surfaces   | "Tap to go deeper" tile: icon chip, label, caption, chevron                  | —                           | `/showcase/navigation`       |
+| [HProductCard](#hproductcard)                     | Surfaces   | Product render, name, price, sale pill, rating                               | —                           | `/showcase/cards`            |
+| [HModal](#hmodal)                                 | Surfaces   | The dialog card (goes inside `q-dialog`)                                     | `q-btn`                     | `/showcase/overlays`         |
+| [HList](#hlist)                                   | Lists      | The grouped-list card (one card, or one card per row)                        | `q-list`                    | `/showcase/page-anatomy`     |
+| [HListRow](#hlistrow)                             | Lists      | The settings/menu row: leading, label, caption, trailing, chevron            | `q-item`                    | `/showcase/page-anatomy`     |
+| [HRadioRow](#hradiorow)                           | Lists      | A whole-row radio option                                                     | `HListRow` + `q-radio`      | `/showcase/forms`            |
+| [HToggleRow](#htogglerow)                         | Lists      | A whole-row toggle setting                                                   | `HListRow` + `q-toggle`     | `/showcase/forms`            |
+| [HFileRow](#hfilerow)                             | Lists      | A file as a row: kind icon or thumbnail, name, facts, remove                 | `HListRow` + `HFileName`    | `/showcase/files`            |
+| [HTabularNum](#htabularnum)                       | Data       | Tabular figures for live numbers                                             | —                           | `/showcase/data`             |
+| [HCircleProgress](#hcircleprogress)               | Data       | Determinate ring / stat dial                                                 | `q-circular-progress`       | `/showcase/data`             |
+| [HGraph](#hgraph)                                 | Data       | Canvas chart: funscript timeline, 2D curves, editor                          | uPlot                       | `/showcase/graphs`           |
+| [HPlayhead](#hplayhead)                           | Data       | Slider-handle playhead for strips that stand for time                        | —                           | `/showcase/graphs`           |
+| [HFeedbackCard](#hfeedbackcard)                   | Feedback   | Inline alert / banner                                                        | `HBtn`                      | `/showcase/feedback`         |
+| [HStatusBadge](#hstatusbadge)                     | Feedback   | Tinted semantic pill                                                         | —                           | `/showcase/data`             |
+| [HEmptyState](#hemptystate)                       | Feedback   | "Nothing here yet" block with an action                                      | `HBtn`                      | `/showcase/feedback`         |
+| [HSuccessMark](#hsuccessmark)                     | Feedback   | The one completion animation                                                 | SVG                         | `/showcase/feedback`         |
+| [HSuccessMoment](#hsuccessmoment)                 | Feedback   | Success screen: mark + title + sub-line                                      | `HSuccessMark`              | `/showcase/feedback`         |
+| [HInlineDots](#hinlinedots)                       | Feedback   | Tier-1 loader: the pulsing "…" after a word                                  | —                           | `/showcase/feedback`         |
+| [HandyLoader](#handyloader)                       | Feedback   | Tier-3 branded "h" loader                                                    | SVG (SMIL)                  | `/showcase/feedback`         |
+| [HDrawerItem](#hdraweritem)                       | Navigation | Drawer / hamburger-panel row                                                 | router-link / `a`           | `/showcase/navigation`       |
+| [HThemeToggle](#hthemetoggle)                     | Navigation | The dark-mode icon button                                                    | `HBtn`                      | every shell's nav            |
+| [HLogo](#hlogo)                                   | Brand      | Every Handy and Handyverse lockup, in `currentColor`                         | inline SVG                  | `/showcase/identity`         |
+| [HConnectedDot](#hconnecteddot)                   | Brand      | Connected / connecting / offline indicator, optionally a button              | `HBtn` (button mode)        | `/showcase/data`             |
+| [HConnectionKey](#hconnectionkey)                 | Brand      | Colour-coded connection key with copy                                        | `q-btn`                     | `/showcase/data`             |
+| [HChip](#hchip)                                   | Brand      | Annotation chip that never blends into its surface                           | —                           | `/showcase/cards`            |
+| [HIconTile](#hicontile)                           | Brand      | Square launcher tile                                                         | `<button>`                  | `/showcase/cards`            |
+| [HFeaturePoint](#hfeaturepoint)                   | Brand      | Icon above a short label (presentational)                                    | —                           | `/showcase/cards`            |
+| [HPeekCarousel](#hpeekcarousel)                   | Content    | Full-bleed, content-aligned card carousel with skeletons                     | `vue3-carousel`             | `/showcase/carousel`         |
+| [HMediaTile](#hmediatile)                         | Content    | A video or audio file as a grid tile: poster, length, name, one line         | `<button>` + `HFileName`    | `/showcase/files`            |
+| [HFileName](#hfilename)                           | Content    | A file name on one line, cut in the middle, the whole name on hover          | measured text               | `/showcase/files`            |
+| [HandyBackground](#13-background-handybackground) | Background | Grainy, defocused gradient field behind a page (unratified)                  | vue only                    | `/components`, `/playground` |
 
 ---
 
@@ -883,6 +889,149 @@ don't put a ? on a control whose consequence is obvious from its label.
 > `role="menu"`, but it contains paragraphs rather than menu items.
 > `role="dialog"` on the `q-menu` would describe it truthfully.
 
+### HDropZone
+
+The file picker as a place (design.md 6.4), for a page that is waiting for
+files: the Handyverse player's empty stage with a dashed line a little inside
+its edge. The whole box is one `<button>` that opens the system's picker, and
+it takes a drop on itself. On its own it is the **drop zone only** mode: while
+files are dragged anywhere over the window it lights up hard ("Drop here"),
+and a drop anywhere else is refused. For **drop anywhere**, add `useFileDrop`
+and `HDropOverlay` to the page ([below](#hdropoverlay-and-usefiledrop)).
+
+```vue
+<div class="stage"><!-- aspect-ratio: 16 / 9 -->
+  <HDropZone
+    v-if="!video"
+    multiple
+    accept="video/*,.funscript"
+    icon="movie"
+    title="Drop a video and its script here"
+    caption="Or click to choose them"
+    @files="open"
+  />
+  <video v-else :src="video" controls />
+</div>
+```
+
+| Prop       | Type      | Default         | Notes                                                                                            |
+| ---------- | --------- | --------------- | ------------------------------------------------------------------------------------------------ |
+| `accept`   | `string`  | `""`            | What the picker offers. A hint, not a check: look at what arrives                                |
+| `multiple` | `boolean` | `false`         |                                                                                                  |
+| `title`    | `string`  | the kit's words | What to drop. Without it: "Drop files here, or click to choose", "Tap to choose files" on touch  |
+| `caption`  | `string`  | `""`            | A quieter line under the title, caption size in the tertiary grey: "Or click to choose them"     |
+| `icon`     | `string`  | `download`      | 40px                                                                                             |
+| `dragging` | `boolean` | `false`         | The drag state without a drag (a drag the page tracks itself, a demo). A real drag needs nothing |
+| `disable`  | `boolean` | `false`         | 50%; no click, and a drop goes past it                                                           |
+
+Event: `files(files, transfer)`. A pick passes `transfer` as `null` and is
+never empty. A drop passes its DataTransfer, which empties when the handler
+returns (read a folder's handle from it before the first `await`), and leaves
+out hidden files and folders, so `files` can be empty: a folder on its own was
+dropped.
+
+- It fills its container and is at least 160px tall, so a player that keeps a
+  16:9 stage keeps it with the zone in it.
+- It watches the window for file drags itself (document listeners in the
+  capture phase, so nothing further down can hide one from it) and lights up
+  while one is anywhere over the window: the dashed line thickens to 3px in the
+  link colour, the tint is the link colour at 16%, and the title reads "Drop
+  here" (kit label `dropHere`), the caption keeping its room, hidden. Pointed at
+  without a drag, it takes the lighter hover: the link colour at 2px and the
+  row-hover tint.
+- While mounted it holds a drop guard (`installDropGuard`), so a drop outside
+  it is refused and never opens the file in the tab. A page that also takes
+  drops anywhere (`useFileDrop`) is unaffected: it takes the events first.
+- What it takes it marks with `preventDefault()` and lets bubble; it stops
+  nothing. `useFileDrop` sees a drop the zone took and only ends its drag, so
+  the drop overlay closes at once, and the guard leaves taken events alone.
+- The dashed line is the chip-filled box's `::before`, 8px in and following
+  the corners, in the tertiary text colour at 55% at rest.
+
+### HFileBtn
+
+The file picker's button (design.md 6.4): an `HBtn` that opens the system's
+picker and emits what was chosen, for a toolbar, beside a list, or wherever a
+drop zone has no room. The whole window taking a drop is the third form
+([below](#hdropoverlay-and-usefiledrop)).
+
+```vue
+<HFileBtn
+  multiple
+  accept="video/*,.funscript"
+  label="Add files"
+  icon="note_add"
+  @files="add"
+/>
+<HFileBtn folder label="Add folder" icon="create_new_folder" @folder="keep" />
+```
+
+| Prop       | Type                                     | Default         | Notes                                                                                                                                  |
+| ---------- | ---------------------------------------- | --------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| `accept`   | `string`                                 | `""`            | What the picker offers. A hint, not a check: look at what arrives                                                                      |
+| `multiple` | `boolean`                                | `false`         |                                                                                                                                        |
+| `folder`   | `boolean`                                | `false`         | Asks for a folder and emits its handle. **Renders nothing** where the browser can't keep a folder (only Chrome and Edge on a computer) |
+| `label`    | `string`                                 | the kit's words | "Choose file", "Choose files" or "Choose folder" (§15); pass the page's own verb                                                       |
+| `icon`     | `string`                                 | `upload_file`   | `folder_open` with `folder`                                                                                                            |
+| `variant`  | `"primary" \| "secondary" \| "tertiary"` | `"secondary"`   | As `HBtn`                                                                                                                              |
+| `size`     | `"sm" \| "md" \| "lg"`                   | `"md"`          | As `HBtn`                                                                                                                              |
+| `disable`  | `boolean`                                | `false`         |                                                                                                                                        |
+
+Events: `files` (`File[]`, never empty; nothing when the picker is cancelled)
+and `folder` (`FileSystemDirectoryHandle`). It opens the picker straight from
+the click, with nothing awaited first, which the browser requires; the same
+holds for `pickFiles()` and `pickFolder()` (§14) called from anything else
+(an empty state's action, a menu row). Keeping a folder between visits, and
+asking again for its permission, are the app's.
+
+### HDropOverlay and `useFileDrop`
+
+The **drop anywhere** mode (design.md 6.4), for an app where files can arrive
+at any time (scripter4, the classifier): the whole window is the drop target.
+`useFileDrop()` listens on the document while the page that calls it is
+mounted; `HDropOverlay` covers the window for the whole drag and says what a
+drop will do. A page that takes files only in a drop zone doesn't call it.
+
+```vue
+<template>
+  <HDropOverlay
+    :show="drop.over.value"
+    title="Drop to open"
+    body="A video and its script"
+  />
+</template>
+
+<script setup lang="ts">
+const drop = useFileDrop({
+  enabled: () => !busy.value, // optional; defaults to always
+  onFiles(files, transfer) {
+    if (files.length) void open(files);
+    else hToast("info", "Drop the files, not the folder.");
+  }
+});
+</script>
+```
+
+- `onFiles(files, transfer)` gets the drop's files with hidden files
+  (`.DS_Store`) and folders left out, so `files` can be empty: a folder on its
+  own was dropped. It runs inside the drop's own turn, and the transfer
+  empties when it returns, so read anything else from it (a folder's handle,
+  `item.getAsFileSystemHandle()`) **before the first `await`**.
+- Enter and leave are counted (they fire for every element the pointer
+  crosses), and a drag that ends without a leave expires after 1.2 s.
+- What it takes it marks with `preventDefault()`, which tells the guard on the
+  window to leave it alone; it stops nothing. A drop an `HDropZone` already
+  took only ends its drag. A page that takes no drops still mustn't open a
+  dropped file in the tab: install `installDropGuard()` (§14) once, in the
+  layout or a boot file (a mounted `HDropZone` holds one too).
+- `HDropOverlay` props: `show` (required), `title` (defaults to the kit's
+  "Drop to open"), `body`, `icon` (`download`). It teleports to `<body>`, sits
+  at z-index 9999, above every Quasar layer, dialogs and toasts included,
+  takes no pointer events, and is `aria-hidden`.
+- With an `HDropZone` on the page, the overlay still covers the window for the
+  whole drag (the page takes a drop anywhere, so there is nowhere to aim), and a
+  drop that lands on the zone is the zone's.
+
 ---
 
 ## 6. Containers & surfaces
@@ -1212,6 +1361,7 @@ Event: `click` (only when clickable or linked).
 | Slot        | Takes                                                                                         |
 | ----------- | --------------------------------------------------------------------------------------------- |
 | `#leading`  | A radio or other leading control (replaces `icon`)                                            |
+| `#label`    | The label's own markup in place of its plain text (`HFileRow`'s cut name)                     |
 | `#suffix`   | Something beside the label: a pill or a `?`                                                   |
 | `#below`    | Supplementary content under the caption (a spec line, chips). The row grows, so keep it quiet |
 | `#trailing` | A toggle, value or badge (replaces the chevron)                                               |
@@ -1280,6 +1430,55 @@ no checkboxes).
 | `help` / `helpDetail` / `helpNote` | `string`  | `""`     | Renders an `HHelpTip` beside the label                                                             |
 
 Event: `update:modelValue`.
+
+### HFileRow
+
+One file in a list (design.md 6.7): `HListRow` with a file wired in. An icon
+for its kind or a 16:9 thumbnail, the name cut in the middle (`HFileName`), a
+caption of facts, and at its end an optional remove button.
+
+```vue
+<HList>
+  <HFileRow
+    v-for="f in files"
+    :key="f.id"
+    :name="f.name"
+    :size="f.size"
+    :duration-ms="f.durationMs"
+    :thumbnail="f.poster ?? ''"
+    clickable
+    removable
+    @click="open(f)"
+    @remove="forget(f)"
+  />
+  <HFileRow name="Takes" kind="folder" caption="12 files" />
+</HList>
+```
+
+| Prop         | Type       | Default   | Notes                                                                                                               |
+| ------------ | ---------- | --------- | ------------------------------------------------------------------------------------------------------------------- |
+| `name`       | `string`   | required  | Also decides the kind's icon (`fileKind`, §14)                                                                      |
+| `size`       | `number`   | —         | Bytes, first in the caption ("1.2 GB")                                                                              |
+| `durationMs` | `number`   | —         | A media file's length, after the size ("12:04")                                                                     |
+| `caption`    | `string`   | `""`      | The rest of the caption, after the size and length                                                                  |
+| `kind`       | `FileKind` | from name | `"folder"` for a folder; any kind to override the name                                                              |
+| `thumbnail`  | `string`   | —         | A picture URL. `""` holds the 16:9 box until one arrives; left out, the row shows the icon                          |
+| `removable`  | `boolean`  | `false`   | A trailing close button that emits `remove`; its accessible name is the kit's "Remove {label}" (§15)                |
+| `clickable`  | `boolean`  | `false`   | The row opens the file: hover tint, ripple, `click`                                                                 |
+| `disable`    | `boolean`  | `false`   | A file out of reach: the icon and the text dim and the row doesn't open, but the remove button still works. Say why |
+
+Events: `click`, `remove`. Slots: `#suffix` (a badge beside the name, which
+gives way before the badge does) and `#trailing` (a ring, a menu: before the
+remove button).
+
+- **In a list that mixes, give every row the box** (`thumbnail=""` for a file
+  with no picture), so the names line up: a 24px icon puts its name 56px
+  left of a thumbnail row's.
+- `disable` is not Quasar's disabled item on purpose: that rule strips the
+  focus ring and the cursor from everything inside the row, and
+  `aria-disabled` would disable the remove button for assistive tech too.
+- Showing a picked file's picture or video needs `img-src data: blob:` and
+  `media-src blob:` in the page's Content-Security-Policy, where it has one.
 
 ---
 
@@ -2038,7 +2237,7 @@ still has to call `useHandyTheme().init()` once when it mounts.
 ### HLogo
 
 Every official lockup of The Handy, plus three each for Handyverse and Handy
-Onboarding, as inline SVG in `currentColor`. The logo is **strictly black or white**: black on light
+Companion, as inline SVG in `currentColor`. The logo is **strictly black or white**: black on light
 surfaces and `.section-light`, white on dark and `.section-dark`. Glass
 surfaces decide by their own ink (black on `.glass-light` even in dark mode).
 It is never tinted by theme greys.
@@ -2050,7 +2249,7 @@ It is never tinted by theme greys.
 <!-- the "h" pictogram only -->
 <HLogo variant="stacked" :height="48" />
 <HLogo variant="handyverse" :height="32" />
-<HLogo variant="handy-onboarding-wordmark" :height="24" />
+<HLogo variant="handy-companion-wordmark" :height="24" />
 ```
 
 | Prop      | Type           | Default        | Notes                                     |
@@ -2062,14 +2261,16 @@ It is never tinted by theme greys.
 Variants: `horizontal`, `stacked`, `horizontal-2line`, `wordmark`,
 `wordmark-2line`, `mark`; for Handyverse, `handyverse` (its pictogram and the
 wordmark), `handyverse-wordmark` and `handyverse-mark` (the pictogram alone);
-for Handy Onboarding, `handy-onboarding`, `handy-onboarding-wordmark` and
-`handy-onboarding-mark`. A product's pictogram is the mark with its symbol set
+for Handy Companion, `handy-companion`, `handy-companion-wordmark` and
+`handy-companion-mark`. A product's pictogram is the mark with its symbol set
 into a round cut-out (a play button, a gear), drawn on the mark's frame, so
 at the same height it is the mark's size. The old Handyverse names still
 render: `-v2-horizontal` is `handyverse` and `-v3-horizontal` is
 `handyverse-wordmark`, and the retired "the handyverse" lockups (`-v1-*`,
-`-v4-*`) fall back to the nearer of those two. It is `role="img"` named "The
-Handy", "Handyverse" or "Handy Onboarding" (the product's name, in every
+`-v4-*`) fall back to the nearer of those two. The app was called Handy
+Onboarding until 2026-10-29: `handy-onboarding`, `-wordmark` and `-mark` draw
+the Handy Companion lockup of the same shape. It is `role="img"` named "The
+Handy", "Handyverse" or "Handy Companion" (the product's name, in every
 language, per design.md 5.1).
 
 - Never redraw the mark. `mark` is the lockup's own first two paths, and each
@@ -2079,7 +2280,7 @@ language, per design.md 5.1).
   wordmark's baseline.
 
 > **Note:** all twelve lockups live in one lookup table (`handy-logo-art.ts`,
-> `handyverse-logo-art.ts` and `handy-onboarding-logo-art.ts`, about 36 KB of
+> `handyverse-logo-art.ts` and `handy-companion-logo-art.ts`, about 36 KB of
 > source). Rendering only the mark still ships them all.
 
 ### HConnectedDot
@@ -2258,6 +2459,73 @@ Slot: default, `{ item, index }`.
 > page: the row's accessible name, "Gallery", and the live region that
 > announces "Item 1 of 8" as it moves (its `ariaGallery` and `itemXofY`). The
 > `i18n` object that now carries the arrows' names takes those two as well.
+
+### HMediaTile
+
+A video or audio file as a tile in a grid (design.md 6.7), from onboardingv4's
+library: a 16:9 poster with the length on its bottom-right corner, the name
+cut in the middle, and one line under it. The tile is one `<button>`.
+
+```vue
+<div class="media-grid">
+  <HMediaTile
+    v-for="v in videos"
+    :key="v.id"
+    :name="v.name"
+    :poster="v.poster"
+    :duration-ms="v.durationMs"
+    :caption="v.script ? 'With script' : 'No script'"
+    @click="play(v)"
+  >
+    <template #corner><HChip label="VR" /></template>
+  </HMediaTile>
+</div>
+
+<style>
+/* at least 160px a column (design.md 6.5); grid items stretch, so a row of
+   tiles is one height (5.4) */
+.media-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: var(--space-md) var(--space-sm);
+}
+</style>
+```
+
+| Prop         | Type       | Default   | Notes                                                             |
+| ------------ | ---------- | --------- | ----------------------------------------------------------------- |
+| `name`       | `string`   | required  | Also decides the icon that stands in for a missing poster         |
+| `poster`     | `string`   | `""`      | A picture URL. The box keeps its shape without one                |
+| `durationMs` | `number`   | `0`       | Shown on the poster's corner; nothing at 0                        |
+| `caption`    | `string`   | `""`      | The one line under the name                                       |
+| `kind`       | `FileKind` | from name | Overrides the name                                                |
+| `disable`    | `boolean`  | `false`   | Dims the tile and stops its click; `#corner` still works (Remove) |
+
+Event: `click`. Slot: `#corner`, over the poster's top right, beside the
+button rather than inside it, so a menu there is a button of its own. The
+page reads the length and draws the poster (a frame a little way in, drawn to
+a canvas); `/showcase/files` has a worked example. The hover is a lift on
+light and a hairline on dark, as on a card that goes somewhere.
+
+### HFileName
+
+A file name on one line (design.md 6.7). When it doesn't fit, it is cut in the
+middle: the start gives way, and the end (the extension and the last `keep`
+characters before it, 6 by default) always shows. The whole name is a
+tooltip, offered only while the name is cut, and it is what a screen reader
+reads, from a visually hidden copy.
+
+```vue
+<HFileName :name="file.name" class="text-body-compact" />
+```
+
+It measures rather than leaving it to CSS. Middle truncation in CSS needs the
+name in two boxes, and an ellipsis stops at the last whole character and
+leaves the rest of its box blank, which reads as a space before the end. So it
+writes exactly the characters that fit (canvas `measureText` in its own font,
+letter spacing included) and fits again when its parent resizes and when the
+web font arrives. It is a block: it takes the width it is given. `HFileRow` and
+`HMediaTile` use it.
 
 ---
 
@@ -2462,6 +2730,26 @@ the slim token-coloured thumb on an invisible track, for `q-scroll-area`'s
 `thumb-style` / `bar-style` props. Every scrolling region inside a card uses
 them, so no native bar punches through a radius.
 
+### `files.ts`
+
+Files from the person's computer, without Vue (the vanilla kit can share it).
+Nothing here keeps a file or a handle.
+
+| Export                                       | What for                                                                                                                                                                |
+| -------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `pickFiles({ accept, multiple })`            | The system's file picker. Resolves with what was chosen, `[]` on cancel. Call it straight from the click                                                                |
+| `pickFolder({ id, mode, startIn })`          | The folder picker. Resolves with the handle, or `null` on cancel or where there is none                                                                                 |
+| `canPickFolder()`                            | Chrome and Edge on a computer. Probes the picker itself, not the handle types Firefox and Safari define without one                                                     |
+| `filesFromDrop(transfer)`                    | A drop's files, hidden files and folders left out. Synchronous: call it in the drop handler                                                                             |
+| `carriesFiles(event)`                        | Is a drag carrying files from the computer (not text or a link)?                                                                                                        |
+| `trackDrag(onChange, staleMs)`               | Is a drag over an element: enter and leave counted, a drag ended without a leave expired (1.2 s). `useFileDrop` and `HDropZone` share it                                |
+| `installDropGuard()`                         | Refuses a file dropped where nothing took it, so it never opens in the tab; leaves a taken event (`preventDefault`) alone. Once, in the layout; returns the uninstaller |
+| `fileKind(fileOrName)`, `fileKindIcon(kind)` | The kind by extension first (a dropped file often has no type, a funscript never), then MIME; and its icon (`FILE_KIND_ICONS`)                                          |
+| `fileExtension(name)`, `isHiddenFile(name)`  | `"mp4"`, and `.DS_Store`-style names                                                                                                                                    |
+| `formatFileSize(bytes)`                      | design.md 10.3: decimal units with a space, one decimal under 10 (`8.4 KB`, `84 KB`, `1.2 GB`), judged on the rounded figure                                            |
+| `formatDuration(ms)`                         | design.md 10.3: `m:ss`, or `h:mm:ss` from an hour; rounded, since it is a length; `""` for none                                                                         |
+| `splitFileName(name, keep)`                  | The start and the end `HFileName` cuts between                                                                                                                          |
+
 ### Graph modules
 
 | Module               | Exports                                                                                                  | What for                                                                                             |
@@ -2515,38 +2803,45 @@ labels with several slots use `kitLabelWith(key, vars)`. Whole sentences are
 keys, never fragments to concatenate, because other languages order words
 differently.
 
-| Key                                    | English                                      | Used by                                  |
-| -------------------------------------- | -------------------------------------------- | ---------------------------------------- |
-| `close`                                | Close                                        | HModal                                   |
-| `copy`                                 | Copy                                         | HConnectionKey (tooltip)                 |
-| `copyKey`                              | Copy key                                     | HConnectionKey (accessible name)         |
-| `dismiss`                              | Dismiss                                      | HFeedbackCard, `hToast`                  |
-| `readFullText`                         | Read the full text                           | HTextCard                                |
-| `loading`                              | Loading                                      | HandyLoader                              |
-| `recommended`                          | Recommended                                  | HRadioRow                                |
-| `expert`                               | Expert                                       | HSectionCard                             |
-| `tipLocked`                            | Locked. Press Esc or click outside to close. | HHelpTip                                 |
-| `tipLockedTouch`                       | Locked. Tap outside to close.                | HHelpTip                                 |
-| `increase`                             | Increase {label}                             | HNumberStepper                           |
-| `decrease`                             | Decrease {label}                             | HNumberStepper                           |
-| `value`                                | value                                        | fallback for an empty `{label}`          |
-| `sliderReset`                          | Reset {label}                                | HLabeledSlider                           |
-| `sliderValue`                          | {label} value                                | HLabeledSlider, HNumberStepper           |
-| `sliderEditValue`                      | Edit {label} value                           | HLabeledSlider, HNumberStepper           |
-| `sliderMin`                            | {label} minimum value                        | HLabeledSlider (range)                   |
-| `sliderEditMin`                        | Edit {label} minimum                         | HLabeledSlider (range)                   |
-| `sliderMax`                            | {label} maximum value                        | HLabeledSlider (range)                   |
-| `sliderEditMax`                        | Edit {label} maximum                         | HLabeledSlider (range)                   |
-| `sliderMenuValue`                      | {label}: {value}                             | HSliderMenu                              |
-| `yes` / `no`                           | Yes / No                                     | HInfoCard boolean pills                  |
-| `themeToLight`                         | Switch to light mode                         | HThemeToggle (while dark)                |
-| `themeToDark`                          | Switch to dark mode                          | HThemeToggle (while light)               |
-| `themeLight`                           | Light mode                                   | HThemeToggle tooltip                     |
-| `themeDark`                            | Dark mode                                    | HThemeToggle tooltip                     |
-| `connected` / `connecting` / `offline` | Connected / Connecting / Offline             | HConnectedDot (button mode)              |
-| `playhead`                             | Playhead                                     | HPlayhead (when no `ariaLabel` is given) |
-| `carouselPrevious`                     | Navigate to previous slide                   | HPeekCarousel (the arrows)               |
-| `carouselNext`                         | Navigate to next slide                       | HPeekCarousel (the arrows)               |
+| Key                                    | English                                      | Used by                                                |
+| -------------------------------------- | -------------------------------------------- | ------------------------------------------------------ |
+| `close`                                | Close                                        | HModal                                                 |
+| `copy`                                 | Copy                                         | HConnectionKey (tooltip)                               |
+| `copyKey`                              | Copy key                                     | HConnectionKey (accessible name)                       |
+| `dismiss`                              | Dismiss                                      | HFeedbackCard, `hToast`                                |
+| `readFullText`                         | Read the full text                           | HTextCard                                              |
+| `loading`                              | Loading                                      | HandyLoader                                            |
+| `recommended`                          | Recommended                                  | HRadioRow                                              |
+| `expert`                               | Expert                                       | HSectionCard                                           |
+| `tipLocked`                            | Locked. Press Esc or click outside to close. | HHelpTip                                               |
+| `tipLockedTouch`                       | Locked. Tap outside to close.                | HHelpTip                                               |
+| `increase`                             | Increase {label}                             | HNumberStepper                                         |
+| `decrease`                             | Decrease {label}                             | HNumberStepper                                         |
+| `value`                                | value                                        | fallback for an empty `{label}`                        |
+| `sliderReset`                          | Reset {label}                                | HLabeledSlider                                         |
+| `sliderValue`                          | {label} value                                | HLabeledSlider, HNumberStepper                         |
+| `sliderEditValue`                      | Edit {label} value                           | HLabeledSlider, HNumberStepper                         |
+| `sliderMin`                            | {label} minimum value                        | HLabeledSlider (range)                                 |
+| `sliderEditMin`                        | Edit {label} minimum                         | HLabeledSlider (range)                                 |
+| `sliderMax`                            | {label} maximum value                        | HLabeledSlider (range)                                 |
+| `sliderEditMax`                        | Edit {label} maximum                         | HLabeledSlider (range)                                 |
+| `sliderMenuValue`                      | {label}: {value}                             | HSliderMenu                                            |
+| `yes` / `no`                           | Yes / No                                     | HInfoCard boolean pills                                |
+| `themeToLight`                         | Switch to light mode                         | HThemeToggle (while dark)                              |
+| `themeToDark`                          | Switch to dark mode                          | HThemeToggle (while light)                             |
+| `themeLight`                           | Light mode                                   | HThemeToggle tooltip                                   |
+| `themeDark`                            | Dark mode                                    | HThemeToggle tooltip                                   |
+| `connected` / `connecting` / `offline` | Connected / Connecting / Offline             | HConnectedDot (button mode)                            |
+| `playhead`                             | Playhead                                     | HPlayhead (when no `ariaLabel` is given)               |
+| `carouselPrevious`                     | Navigate to previous slide                   | HPeekCarousel (the arrows)                             |
+| `carouselNext`                         | Navigate to next slide                       | HPeekCarousel (the arrows)                             |
+| `chooseFile` / `chooseFiles`           | Choose file / Choose files                   | HFileBtn (when the page gives no label)                |
+| `chooseFolder`                         | Choose folder                                | HFileBtn with `folder`                                 |
+| `dropToOpen`                           | Drop to open                                 | HDropOverlay (when given no title)                     |
+| `dropZone`                             | Drop files here, or click to choose          | HDropZone (when given no title)                        |
+| `dropZoneTouch`                        | Tap to choose files                          | HDropZone on a touch screen                            |
+| `dropHere`                             | Drop here                                    | HDropZone while files are dragged in                   |
+| `removeFile`                           | Remove {label}                               | HFileRow's remove button; `{label}` is the file's name |
 
 When a key is renamed, every host that translates it has to rename it too.
 `tipPin`/`tipClose` became `tipLocked`/`tipLockedTouch` on 2026-09-09. Nothing
@@ -2563,12 +2858,13 @@ tests on 2026-10-04), then the sync tooling's own tests
 changelog slicing, peer ranges, the hook guard, and an end-to-end
 `init`/`pull`/`status`/`upstream` run against a throwaway repo).
 
-| Covered                                                                                           | Specs                                                                                                    |
-| ------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
-| `graph-edit.ts`, `graph-decimate.ts`                                                              | `graph-edit.spec.ts` (31), `graph-decimate.spec.ts` (3)                                                  |
-| `slider-format.ts`                                                                                | `slider-format.spec.ts` (15)                                                                             |
-| `graph-theme.ts`: which fallback colours apply (island, `data-theme`, OS) and the OS watch        | `graph-theme.spec.ts` (7)                                                                                |
-| Background: API surface, host detection, config I/O, legibility, fills, lens scope, burst, scenes | `background-*.spec.ts`, `config-io`, `gradient-legibility`, `lens-*`, `motion-burst`, `scene-erin` (148) |
+| Covered                                                                                                       | Specs                                                                                                    |
+| ------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| `graph-edit.ts`, `graph-decimate.ts`                                                                          | `graph-edit.spec.ts` (31), `graph-decimate.spec.ts` (3)                                                  |
+| `slider-format.ts`                                                                                            | `slider-format.spec.ts` (15)                                                                             |
+| `files.ts`: kinds, sizes, lengths, the middle cut, a drop's files, drag counting, the guard, no folder picker | `files.spec.ts` (21)                                                                                     |
+| `graph-theme.ts`: which fallback colours apply (island, `data-theme`, OS) and the OS watch                    | `graph-theme.spec.ts` (7)                                                                                |
+| Background: API surface, host detection, config I/O, legibility, fills, lens scope, burst, scenes             | `background-*.spec.ts`, `config-io`, `gradient-legibility`, `lens-*`, `motion-burst`, `scene-erin` (148) |
 
 **Not covered:** every `.vue` component (there is no DOM environment and no
 `@vue/test-utils`), `labels.ts`, `keys.ts`, `toast.ts`, `useForwardProgress`,

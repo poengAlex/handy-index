@@ -93,7 +93,30 @@ export const KIT_LABELS = {
    * what it always did.
    */
   carouselPrevious: "Navigate to previous slide",
-  carouselNext: "Navigate to next slide"
+  carouselNext: "Navigate to next slide",
+  /**
+   * A file button's label when the page gives none: one file, several, or a
+   * folder (HFileBtn). Pages usually say their own verb ("Add files").
+   */
+  chooseFile: "Choose file",
+  chooseFiles: "Choose files",
+  chooseFolder: "Choose folder",
+  /** The drop overlay's title when the page gives none (HDropOverlay). */
+  dropToOpen: "Drop to open",
+  /**
+   * A drop zone's title when the page gives none (HDropZone): what a pointer
+   * can do there, and the one thing a touch screen can.
+   */
+  dropZone: "Drop files here, or click to choose",
+  dropZoneTouch: "Tap to choose files",
+  /** A drop zone's title while files are dragged over the window. */
+  dropHere: "Drop here",
+  /**
+   * The accessible name of a file row's remove button. `{label}` is the
+   * file's name: the row's own label, so it takes `kitLabelFor` like the
+   * stepper's buttons, and a vue-i18n host needs no new slot for it.
+   */
+  removeFile: "Remove {label}"
 } as const;
 
 export type KitLabel = keyof typeof KIT_LABELS;
@@ -136,7 +159,8 @@ export type KitLabelWithLabel =
   | "sliderMin"
   | "sliderEditMin"
   | "sliderMax"
-  | "sliderEditMax";
+  | "sliderEditMax"
+  | "removeFile";
 
 /** One of those, with the control's name filled in. */
 export function kitLabelFor(key: KitLabelWithLabel, label: string): string {

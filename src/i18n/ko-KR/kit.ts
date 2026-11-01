@@ -53,7 +53,15 @@ const kit: typeof enUS = {
   offline: "오프라인",
   playhead: "재생 헤드",
   carouselPrevious: "이전 슬라이드로 이동",
-  carouselNext: "다음 슬라이드로 이동"
+  carouselNext: "다음 슬라이드로 이동",
+  chooseFile: "파일 고르기",
+  chooseFiles: "파일 고르기",
+  chooseFolder: "폴더 고르기",
+  dropToOpen: "놓아서 열기",
+  dropZone: "여기에 파일을 놓거나 클릭해서 고르기",
+  dropZoneTouch: "탭해서 파일 고르기",
+  dropHere: "여기에 놓기",
+  removeFile: "{label} 제거"
 };
 
 export default kit;

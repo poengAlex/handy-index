@@ -15,6 +15,63 @@ Format, which the CLI reads (`tools/kit/lib/changelog.mjs`):
 - Any number of `Consumer action:` lines, each an instruction an app's AI can
   carry out on its own. An entry without one is information only.
 
+## unreleased — Files: HDropZone, HFileBtn, HDropOverlay with useFileDrop, HFileRow, HMediaTile and HFileName
+
+The file picker and two ways of showing files (design.md 6.4 and 6.7, v4.13),
+unified from what the apps had built. All new; nothing existing changes. Each
+app picks how it takes a drop: anywhere on the page (`useFileDrop` with
+`HDropOverlay`), or in a drop zone only (`HDropZone` on its own).
+
+- `HDropZone`: the file picker as a place, after the Handyverse player's
+  empty stage (onboardingv4's `EmptyStage`) with a dashed line a little inside
+  its edge. The whole box opens the picker and it takes a drop on itself.
+  While files are dragged anywhere over the window it lights up hard (3px
+  dashes, a deeper tint, "Drop here"), and while mounted it refuses drops
+  outside it.
+- `HFileBtn`: the button that opens the system's picker and emits `files`, or
+  with `folder` a folder's handle. Where the browser can't keep a folder it
+  renders nothing. Its default words are new kit labels.
+- `useFileDrop({ onFiles, enabled })` with `HDropOverlay`: the whole window
+  takes a drop. The classifier's mechanics (enter and leave counted, a stale
+  drag expiring, hidden files left out) plus scripter4's rule that the drop
+  is read in its own turn: `onFiles(files, transfer)` runs inside the drop
+  handler, so a folder's handle can still be claimed from the transfer. The
+  overlay sits at z-index 9999, above every Quasar layer. Whatever takes a
+  drag event marks it with `preventDefault()`, and the rest (`useFileDrop`,
+  `installDropGuard`) leave a taken event alone; nothing stops propagation.
+- `HFileRow`: `HListRow` with a file wired in. `HListRow` has a new `#label`
+  slot for it.
+- `HMediaTile`: a video or audio file as a grid tile, from onboardingv4's
+  `MediaTile`.
+- `HFileName`: a file name on one line, cut in the middle by measuring.
+- `files.ts`: `pickFiles`, `pickFolder`, `canPickFolder`, `filesFromDrop`,
+  `carriesFiles`, `installDropGuard`, `trackDrag`, `fileKind`, `fileKindIcon`,
+  `FILE_KIND_ICONS`, `fileExtension`, `isHiddenFile`, `formatFileSize`,
+  `formatDuration`, `splitFileName`.
+
+The apps' own versions (scripter4's `.drop-overlay` and library rows, the
+classifier's `DropOverlay` and `useDropzone`, onboardingv4's `EmptyStage`,
+`MediaDropZone` and `MediaTile`) can move to these when their area is next
+worked on; that is information, not an action. Showing a picked file's
+picture or video needs `img-src data: blob:` and `media-src blob:` in a
+page's CSP.
+
+Consumer action: If the app translates the kit's labels, add the eight new keys: `chooseFile` ("Choose file"), `chooseFiles` ("Choose files"), `chooseFolder` ("Choose folder"), `dropToOpen` ("Drop to open"), `dropZone` ("Drop files here, or click to choose"), `dropZoneTouch` ("Tap to choose files"), `dropHere` ("Drop here") and `removeFile` ("Remove {label}", keeping `{label}`, which is the file's name). An app that doesn't translate them has nothing to do.
+
+## unreleased — HLogo: Handy Onboarding is renamed Handy Companion
+
+The onboarding app is called Handy Companion (design.md 5.1, v4.10). Its
+three lockups are `handy-companion` (the gear pictogram with "handy
+companion"), `handy-companion-wordmark` and `handy-companion-mark`, named
+"Handy Companion". The pictogram is unchanged; "companion" replaces
+"onboarding" in the same lighter lettering, at the same scale and baseline.
+The art file is `handy-companion-logo-art.ts` (it replaces
+`handy-onboarding-logo-art.ts`). The old names `handy-onboarding`,
+`handy-onboarding-wordmark` and `handy-onboarding-mark` still render, as the
+Handy Companion lockup of the same shape, and are deprecated.
+
+Consumer action: Replace `variant="handy-onboarding"`, `"handy-onboarding-wordmark"` and `"handy-onboarding-mark"` with `"handy-companion"`, `"handy-companion-wordmark"` and `"handy-companion-mark"`, and any text naming the logo "Handy Onboarding" with "Handy Companion". An app that has none has nothing to do.
+
 ## unreleased — HLogo: the Handyverse pictogram and the Handy Onboarding lockups
 
 `HLogo` draws the new product logos (design.md 5.1, v4.9). Each product is

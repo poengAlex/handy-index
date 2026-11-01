@@ -19,7 +19,9 @@
 
     <q-item-section>
       <q-item-label class="h-list-row__label">
-        <span class="text-body-compact">{{ label }}</span>
+        <slot name="label">
+          <span class="text-body-compact">{{ label }}</span>
+        </slot>
         <slot name="suffix" />
       </q-item-label>
       <q-item-label v-if="caption" class="h-list-row__caption text-body-sm">{{
@@ -54,8 +56,10 @@
 // radio, the #trailing slot a toggle/value; otherwise a chevron
 // promises the forward page transition. The #below slot takes supplementary
 // content under the caption (a spec line, chips) — the row grows for it, so
-// keep it quiet. The default slot is for out-of-flow children — a
-// q-tooltip for the row's shortcut, say. The whole row is the tap target.
+// keep it quiet. The #label slot replaces the label's plain text with markup
+// of its own (HFileRow's name, cut in the middle). The default slot is for
+// out-of-flow children — a q-tooltip for the row's shortcut, say. The whole
+// row is the tap target.
 const props = withDefaults(
   defineProps<{
     label: string;
