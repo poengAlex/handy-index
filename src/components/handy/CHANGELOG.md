@@ -15,6 +15,22 @@ Format, which the CLI reads (`tools/kit/lib/changelog.mjs`):
 - Any number of `Consumer action:` lines, each an instruction an app's AI can
   carry out on its own. An entry without one is information only.
 
+## unreleased — HConnectedDot: connected breathes, and a Bluetooth state
+
+Connected no longer sends two rings outward (design.md 6.9, v4.14): two
+rings always on their way out read as searching. The disc breathes instead,
+swelling a little and settling. As it settles, one hairline ring lifts off its
+edge and fades out on the connecting arc's outer edge, every 2.2s, so
+connected reaches exactly as far as connecting. The owner picked it from
+eighteen options compared on brand-ux's `/test/connected-dot`. The new
+`state="bluetooth"` is the same breath in `--color-feedback-info`, for a
+device connected over Bluetooth rather than online. Reduced motion is
+unchanged: one still ring. The vanilla kit's `<h-connected-dot>` has both.
+
+Consumer action: If the app translates the kit's labels, add `bluetooth` ("Connected over Bluetooth"). An app that doesn't translate them has nothing to do.
+
+Consumer action: If the app's own words or tests say the connected dot pulses two rings outward, update them: it breathes, with one ring.
+
 ## unreleased — Files: HDropZone, HFileBtn, HDropOverlay with useFileDrop, HFileRow, HMediaTile and HFileName
 
 The file picker and two ways of showing files (design.md 6.4 and 6.7, v4.13),

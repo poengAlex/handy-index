@@ -63,6 +63,7 @@ const kit: typeof enUS = {
   // "Nicht verbunden" pairs with "Verbunden", and is how the rest of this
   // locale describes a device that is offline ("ohne Verbindung").
   connected: "Verbunden",
+  bluetooth: "Über Bluetooth verbunden",
   connecting: "Wird verbunden",
   offline: "Nicht verbunden",
   playhead: "Abspielkopf",

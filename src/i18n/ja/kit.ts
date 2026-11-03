@@ -50,6 +50,7 @@ const kit: typeof enUS = {
 
   // 接続済み/接続中 is the usual connected/connecting pair in Japanese UI.
   connected: "接続済み",
+  bluetooth: "Bluetooth で接続済み",
   connecting: "接続中",
   offline: "オフライン",
   playhead: "再生ヘッド",

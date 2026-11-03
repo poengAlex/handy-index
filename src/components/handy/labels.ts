@@ -79,6 +79,7 @@ export const KIT_LABELS = {
    * whose button does something more specific ("Reconnect") passes `label`.
    */
   connected: "Connected",
+  bluetooth: "Connected over Bluetooth",
   connecting: "Connecting",
   offline: "Offline",
   /**

@@ -50,6 +50,7 @@ const kit: typeof enUS = {
 
   // "Offline" is the word this locale already uses for the device (settings.ts)
   connected: "Conectado",
+  bluetooth: "Conectado via Bluetooth",
   connecting: "Conectando",
   offline: "Offline",
   playhead: "Cursor de reprodução",

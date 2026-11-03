@@ -53,6 +53,7 @@ const kit: typeof enUS = {
   themeDark: "Mode sombre",
 
   connected: "Connecté",
+  bluetooth: "Connecté en Bluetooth",
   connecting: "Connexion en cours",
   offline: "Hors ligne",
   playhead: "Tête de lecture",

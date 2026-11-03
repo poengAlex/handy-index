@@ -49,6 +49,7 @@ const kit: typeof enUS = {
   themeDark: "深色模式",
 
   connected: "已连接",
+  bluetooth: "已通过 Bluetooth 连接",
   connecting: "正在连接",
   offline: "离线",
   playhead: "播放头",

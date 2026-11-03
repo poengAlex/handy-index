@@ -45,6 +45,7 @@ const kit: typeof enUS = {
 
   // "Frakoblet" is this locale's word for an offline device (settings.ts).
   connected: "Tilkoblet",
+  bluetooth: "Tilkoblet via Bluetooth",
   connecting: "Kobler til",
   offline: "Frakoblet",
   playhead: "Avspillingshode",

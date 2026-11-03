@@ -30,24 +30,29 @@ import { computed } from "vue";
 import HBtn from "./HBtn.vue";
 import { kitLabel } from "./labels";
 
-// Connection-state LED (design.md 6.9). Three states:
-//   connected  — purple, with faint rings pulsing steadily outward. Purple is
-//                the *connected colour*, the same Connected Purple as the
-//                device's hardware LED when it's linked to our online
-//                services, so the UI mirrors the device.
+// Connection-state LED (design.md 6.9). Four states:
+//   connected  — purple, breathing: the disc swells a little and settles,
+//                and as it settles a faint hairline ring lifts off its edge
+//                and drifts out to where the connecting arc runs, every
+//                2.2s. Purple is the *connected colour*, the same Connected
+//                Purple as the device's hardware LED when it's linked to our
+//                online services, so the UI mirrors the device.
+//   bluetooth  — connected over Bluetooth: the same breath in the status
+//                blue, --color-feedback-info.
 //   connecting — amber, with a hairline arc sweeping around it: the handshake
 //                is in progress, nothing has settled yet.
 //   offline    — the same dot, muted, fading slowly in and out: asleep
-//                rather than dead. No movement, half the tempo of the pulse.
-// One flat disc in all three — no gloss, no glow, no hollow ring. The motion
+//                rather than dead. No movement, half the tempo of the breath.
+// One flat disc in all four — no gloss, no glow, no hollow ring. The motion
 // carries the state; the dot itself stays a dot.
 //
 // `size` is the slot the dot occupies, not the disc: the disc sits a little
-// under it, which leaves the rings and the arc room to travel inside the
-// dot's own footprint rather than sprawling across whatever sits beside it.
+// under it. The connecting arc orbits just outside the slot, and the
+// connected ring ends exactly on the arc's outer edge, so every state reaches
+// as far as the others, and all of it out of layout.
 //
 // Motion honours prefers-reduced-motion, which leaves colour alone to tell the
-// three states apart — so pair the dot with its word wherever the state
+// four states apart — so pair the dot with its word wherever the state
 // actually matters.
 //
 // `clickable` turns it into an icon button — the system's own round HBtn with
@@ -58,7 +63,7 @@ import { kitLabel } from "./labels";
 // shout about a device's connection the way a primary action shouts about
 // the one thing on the screen. It names itself with the state it is showing
 // unless the caller passes a `label` for what pressing it actually does.
-type ConnectedState = "connected" | "connecting" | "offline";
+type ConnectedState = "connected" | "bluetooth" | "connecting" | "offline";
 
 const props = withDefaults(
   defineProps<{
@@ -106,10 +111,17 @@ const resolved = computed<ConnectedState>(
    to a point: past ~20px a proportional orbit and stroke turn chunky. */
 const clamp = (n: number, lo: number, hi: number) =>
   Math.min(hi, Math.max(lo, n));
+const coreSize = computed(() => Math.max(4, Math.round(props.size * 0.7)));
+const orbit = computed(() => clamp(Math.round(props.size * 0.5), 3, 6));
 const box = computed(() => `${props.size}px`);
-const core = computed(() => `${Math.max(4, Math.round(props.size * 0.7))}px`);
-const ring = computed(() => `${clamp(Math.round(props.size * 0.5), 3, 6)}px`);
+const core = computed(() => `${coreSize.value}px`);
+const ring = computed(() => `${orbit.value}px`);
 const edge = computed(() => `${clamp(Math.round(props.size * 0.15), 1, 2)}px`);
+/* how far the connected ring grows, as a scale of the disc: to the
+   connecting arc's outer edge, the slot plus the arc's orbit each side */
+const reach = computed(() =>
+  String((props.size + 2 * orbit.value) / coreSize.value)
+);
 </script>
 
 <style scoped lang="scss">
@@ -141,17 +153,33 @@ const edge = computed(() => `${clamp(Math.round(props.size * 0.15), 1, 2)}px`);
   border-radius: 50%;
 }
 
-/* ---- connected: a flat purple dot with a slow outward pulse ---- */
-.h-cdot--connected .h-cdot__core {
-  background: var(--color-accent);
+/* ---- connected and bluetooth: a breath, and one ring on the out-breath ---- */
+.h-cdot--connected {
+  --h-cdot-tint: var(--color-accent);
 }
 
-/* Two hairline rings on the same 2.8s cycle, the second half a cycle behind,
-   so one is always on its way out — a single ring reads as an occasional
-   blink, a pair reads as continuously live. Kept faint on purpose: a status
-   dot should be noticed, not watched. */
+/* connected over Bluetooth rather than to our online services: the same
+   breath in the status blue */
+.h-cdot--bluetooth {
+  --h-cdot-tint: var(--color-feedback-info);
+}
+
+/* The disc swells to 1.18x over the first 40% of the cycle, settles back by
+   80% and rests. Slight on purpose: a status dot should be noticed, not
+   watched. Picked by the owner from eighteen options (/test/connected-dot):
+   two rings always on their way out read as searching, not connected. */
+.h-cdot--connected .h-cdot__core,
+.h-cdot--bluetooth .h-cdot__core {
+  background: var(--h-cdot-tint);
+  animation: h-cdot-breath 2.2s ease-in-out infinite;
+}
+
+/* One hairline ring. It waits on the swollen disc's edge and lets go at the
+   top of the breath, so it drifts off as the disc settles, at an even pace,
+   fading in and away. It ends on the connecting arc's outer edge (reach), so
+   connected reaches exactly as far as connecting. */
 .h-cdot--connected::before,
-.h-cdot--connected::after {
+.h-cdot--bluetooth::before {
   content: "";
   position: absolute;
   inset: 0;
@@ -159,12 +187,9 @@ const edge = computed(() => `${clamp(Math.round(props.size * 0.15), 1, 2)}px`);
   width: v-bind(core);
   height: v-bind(core);
   border-radius: 50%;
-  border: 1px solid var(--color-accent);
-  animation: h-cdot-pulse 2.8s cubic-bezier(0.22, 0.61, 0.36, 1) infinite;
-}
-
-.h-cdot--connected::after {
-  animation-delay: 1.4s;
+  border: 1px solid var(--h-cdot-tint);
+  opacity: 0;
+  animation: h-cdot-pulse 2.2s linear infinite;
 }
 
 /* ---- connecting: amber, with a hairline arc sweeping around it ---- */
@@ -205,20 +230,32 @@ const edge = computed(() => `${clamp(Math.round(props.size * 0.15), 1, 2)}px`);
   animation: h-cdot-idle 4.4s ease-in-out infinite;
 }
 
-@keyframes h-cdot-pulse {
-  0% {
-    opacity: 0.38;
+@keyframes h-cdot-breath {
+  0%,
+  80%,
+  100% {
     transform: scale(1);
   }
 
-  75% {
+  40% {
+    transform: scale(1.18);
+  }
+}
+
+@keyframes h-cdot-pulse {
+  0%,
+  40% {
     opacity: 0;
-    transform: scale(2.9);
+    transform: scale(1.18);
+  }
+
+  55% {
+    opacity: 0.3;
   }
 
   100% {
     opacity: 0;
-    transform: scale(2.9);
+    transform: scale(v-bind(reach));
   }
 }
 
@@ -239,11 +276,14 @@ const edge = computed(() => `${clamp(Math.round(props.size * 0.15), 1, 2)}px`);
   }
 }
 
-/* Motion off: the colours still separate the three states, and connected
-   keeps one still ring — it is the one worth telling apart at a glance. */
+/* Motion off: the colours still separate the four states, and connected
+   (and Bluetooth) keeps one still ring — it is the one worth telling apart
+   at a glance. */
 @media (prefers-reduced-motion: reduce) {
   .h-cdot--connected::before,
-  .h-cdot--connected::after,
+  .h-cdot--bluetooth::before,
+  .h-cdot--connected .h-cdot__core,
+  .h-cdot--bluetooth .h-cdot__core,
   .h-cdot--connecting::before,
   .h-cdot--offline .h-cdot__core {
     animation: none;
@@ -253,15 +293,12 @@ const edge = computed(() => `${clamp(Math.round(props.size * 0.15), 1, 2)}px`);
     opacity: 0.75;
   }
 
-  /* One still ring, parked where the pulse is partway out — at the pulse's
-     *start* size it sits exactly on the disc's edge and vanishes into it. */
-  .h-cdot--connected::before {
+  /* One still ring, parked partway out — at the ring's start size it sits
+     on the swollen disc's edge and would vanish into it. */
+  .h-cdot--connected::before,
+  .h-cdot--bluetooth::before {
     opacity: 0.4;
     transform: scale(1.9);
-  }
-
-  .h-cdot--connected::after {
-    display: none;
   }
 }
 </style>

@@ -54,6 +54,7 @@ const kit: typeof enUS = {
 
   // neuter, agreeing with the "устройство" the dot stands for
   connected: "Подключено",
+  bluetooth: "Подключено по Bluetooth",
   connecting: "Подключение",
   offline: "Не в сети",
   playhead: "Курсор воспроизведения",

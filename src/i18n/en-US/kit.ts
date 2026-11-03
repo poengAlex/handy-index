@@ -63,6 +63,7 @@ export default {
   // What a device-status dot calls itself when it is a button and the caller
   // gave it no other name: the state it is showing.
   connected: "Connected",
+  bluetooth: "Connected over Bluetooth",
   connecting: "Connecting",
   offline: "Offline",
 

@@ -324,7 +324,7 @@ graphics are `aria-hidden`.
 | [HDrawerItem](#hdraweritem)                       | Navigation | Drawer / hamburger-panel row                                                 | router-link / `a`           | `/showcase/navigation`       |
 | [HThemeToggle](#hthemetoggle)                     | Navigation | The dark-mode icon button                                                    | `HBtn`                      | every shell's nav            |
 | [HLogo](#hlogo)                                   | Brand      | Every Handy and Handyverse lockup, in `currentColor`                         | inline SVG                  | `/showcase/identity`         |
-| [HConnectedDot](#hconnecteddot)                   | Brand      | Connected / connecting / offline indicator, optionally a button              | `HBtn` (button mode)        | `/showcase/data`             |
+| [HConnectedDot](#hconnecteddot)                   | Brand      | Connected / Bluetooth / connecting / offline indicator, optionally a button  | `HBtn` (button mode)        | `/showcase/data`             |
 | [HConnectionKey](#hconnectionkey)                 | Brand      | Colour-coded connection key with copy                                        | `q-btn`                     | `/showcase/data`             |
 | [HChip](#hchip)                                   | Brand      | Annotation chip that never blends into its surface                           | —                           | `/showcase/cards`            |
 | [HIconTile](#hicontile)                           | Brand      | Square launcher tile                                                         | `<button>`                  | `/showcase/cards`            |
@@ -2285,42 +2285,48 @@ language, per design.md 5.1).
 
 ### HConnectedDot
 
-The connection-state indicator, in three states, mirroring the device's LED:
+The connection-state indicator, in four states, mirroring the device's LED:
 
-- **connected** — `--color-accent` (Connected Purple), with two hairline rings
-  pulsing outward half a cycle apart (2.8s), so the dot reads as continuously
-  live.
+- **connected** — `--color-accent` (Connected Purple), breathing: the disc
+  swells a little and settles, and as it settles one hairline ring lifts off
+  its edge and fades out where the connecting arc runs (2.2s). Calm rather
+  than searching.
+- **bluetooth** — connected over Bluetooth: the same breath in
+  `--color-feedback-info`, the status blue.
 - **connecting** — `--color-feedback-warning`, with a hairline arc sweeping
   round it (1.1s): the handshake is in progress.
 - **offline** — muted, fading slowly (4.4s) with no movement: asleep, not dead.
 
-The dot itself is a flat disc in all three states: no gloss, no glow.
+The dot itself is a flat disc in every state: no gloss, no glow.
 
 ```vue
 <HConnectedDot state="connected" />
 Connected
+<HConnectedDot state="bluetooth" />
+Connected over Bluetooth
 <HConnectedDot state="connecting" label="Connecting to device" :size="12" />
 <HConnectedDot clickable :state="s" label="Reconnect" @click="reconnect" />
 ```
 
-| Prop         | Type                                                 | Default      | Notes                                                                                          |
-| ------------ | ---------------------------------------------------- | ------------ | ---------------------------------------------------------------------------------------------- |
-| `state`      | `"connected" \| "connecting" \| "offline"`           | —            | The modern prop                                                                                |
-| `live`       | `boolean`                                            | `true`       | Legacy: `false` = offline. Ignored when `state` is set                                         |
-| `size`       | `number`                                             | `8`          | The **slot** in px. The disc is ~0.7 of it, leaving room for the rings and the arc             |
-| `label`      | `string`                                             | —            | Accessible name. As an indicator it makes the dot `role="img"`; unlabelled it is `aria-hidden` |
-| `clickable`  | `boolean`                                            | `false`      | Renders inside a round `HBtn`                                                                  |
-| `variant`    | `"primary" \| "secondary" \| "tertiary" \| "danger"` | `"tertiary"` | Button mode only                                                                               |
-| `buttonSize` | `"sm" \| "md" \| "lg"`                               | `"md"`       | Button mode only (inert, see HBtn)                                                             |
+| Prop         | Type                                                      | Default      | Notes                                                                                          |
+| ------------ | --------------------------------------------------------- | ------------ | ---------------------------------------------------------------------------------------------- |
+| `state`      | `"connected" \| "bluetooth" \| "connecting" \| "offline"` | —            | The modern prop                                                                                |
+| `live`       | `boolean`                                                 | `true`       | Legacy: `false` = offline. Ignored when `state` is set                                         |
+| `size`       | `number`                                                  | `8`          | The **slot** in px. The disc is ~0.7 of it; the ring and the arc reach past it, out of layout  |
+| `label`      | `string`                                                  | —            | Accessible name. As an indicator it makes the dot `role="img"`; unlabelled it is `aria-hidden` |
+| `clickable`  | `boolean`                                                 | `false`      | Renders inside a round `HBtn`                                                                  |
+| `variant`    | `"primary" \| "secondary" \| "tertiary" \| "danger"`      | `"tertiary"` | Button mode only                                                                               |
+| `buttonSize` | `"sm" \| "md" \| "lg"`                                    | `"md"`       | Button mode only (inert, see HBtn)                                                             |
 
 - **Pair it with its word** wherever the state matters. Under reduced motion
-  all animation stops and connected keeps one still ring. Connecting and
-  offline are then told apart by colour alone.
+  all animation stops and connected and Bluetooth keep one still ring.
+  Connecting and offline are then told apart by colour alone.
 - As a button it names itself with the state it shows ("Connected"), unless
   `label` says what pressing it does. Other attributes (`disable`, `loading`,
   `to`, `@click`) fall through to `HBtn`.
-- The arc and ring sizes scale with `size` but are clamped, because past ~20px
-  a proportional ring turns chunky.
+- The arc's orbit and stroke scale with `size` but are clamped, because past
+  ~20px a proportional arc turns chunky. The connected ring ends on the arc's
+  outer edge, so the states reach equally far at every size.
 
 ### HConnectionKey
 
@@ -2832,6 +2838,7 @@ differently.
 | `themeLight`                           | Light mode                                   | HThemeToggle tooltip                                   |
 | `themeDark`                            | Dark mode                                    | HThemeToggle tooltip                                   |
 | `connected` / `connecting` / `offline` | Connected / Connecting / Offline             | HConnectedDot (button mode)                            |
+| `bluetooth`                            | Connected over Bluetooth                     | HConnectedDot (button mode)                            |
 | `playhead`                             | Playhead                                     | HPlayhead (when no `ariaLabel` is given)               |
 | `carouselPrevious`                     | Navigate to previous slide                   | HPeekCarousel (the arrows)                             |
 | `carouselNext`                         | Navigate to next slide                       | HPeekCarousel (the arrows)                             |

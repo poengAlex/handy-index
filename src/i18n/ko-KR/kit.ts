@@ -49,6 +49,7 @@ const kit: typeof enUS = {
   themeDark: "다크 모드",
 
   connected: "연결됨",
+  bluetooth: "Bluetooth로 연결됨",
   connecting: "연결 중",
   offline: "오프라인",
   playhead: "재생 헤드",
