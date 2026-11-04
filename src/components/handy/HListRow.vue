@@ -127,9 +127,14 @@ function onClick() {
   color: var(--color-text-link);
 }
 
-// brand row-hover tint instead of Quasar's neutral wash (only when clickable)
+// brand row-hover tint instead of Quasar's neutral wash (only when clickable),
+// laid over the row's fill rather than replacing it: a separated row is its
+// own card, and the translucent tint alone let the page show through
 .h-list-row.q-item--clickable:hover {
-  background: var(--color-row-hover);
+  background-image: linear-gradient(
+    var(--color-row-hover),
+    var(--color-row-hover)
+  );
 }
 
 .h-list-row :deep(.q-focus-helper) {

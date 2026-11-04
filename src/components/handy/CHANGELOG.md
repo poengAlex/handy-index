@@ -15,6 +15,15 @@ Format, which the CLI reads (`tools/kit/lib/changelog.mjs`):
 - Any number of `Consumer action:` lines, each an instruction an app's AI can
   carry out on its own. An entry without one is information only.
 
+## unreleased — List rows: the hover tint lies over the row's fill
+
+A clickable list row's hover replaced its background with the translucent
+row-hover tint. In a grouped list that was right, since the list is the card,
+but a separated row is its own card, so on hover the card's fill went and
+the page showed through. The tint is now a background image over the fill,
+in `HListRow` (so `HRadioRow`, `HToggleRow` and `HFileRow` too) and in the
+vanilla `.h-list-row` and `.h-file-row`. Grouped rows look exactly as before.
+
 ## unreleased — HConnectedDot: connected breathes, and a Bluetooth state
 
 Connected no longer sends two rings outward (design.md 6.9, v4.14): two

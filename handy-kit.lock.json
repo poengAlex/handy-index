@@ -6,11 +6,11 @@
     "repo": "poengAlex/handy-playground",
     "dir": "projects/brand-ux",
     "ref": "main",
-    "commit": "35ba3df34c41435ac83da71a6a5dee1f14582cd1"
+    "commit": "83ae5eacab9823c6918262f241e901cab0ee6af2"
   },
-  "pulledAt": "2026-11-03T09:12:57.009Z",
+  "pulledAt": "2026-11-04T14:21:40.604Z",
   "files": {
-    "CHANGELOG.md": "c7bad51acd4f7aaff4fb8bd13920c713f7e6043272b714e1df5f6947aaf9c40e",
+    "CHANGELOG.md": "3e2513b2e284f92f66e684911380f50479a1654909041e30db6a1806d7e607b7",
     "HBtn.vue": "575dcf6126b107ec42857030945f46e0ad490bf410cc7793c5f4e6358c5627c0",
     "HBtnGroup.vue": "be5402baa1dac421e03086ccdca13a7987bcd83eae586bb9c2785713a52c534d",
     "HChip.vue": "3df4e839853b567b3dcc9cda8e2b49a1ab5f69a8cd1ddb571c2772851b7a3425",
@@ -35,7 +35,7 @@
     "HInlineDots.vue": "31bc1b03f1b39411d8e6a849bf69d1ec9ec009dfadf010d275d6243cad45868c",
     "HLabeledSlider.vue": "e72193d749b95f846c3363a907d9686ea5b58b9293574bd39d195af706017eb0",
     "HList.vue": "b30e1649841b47bf0ffccc2f486e1a2284ff8978b368988c5a52b8ae59bf61ca",
-    "HListRow.vue": "7617ece21bcbb5db230f3161708e3bc9abfd5939e62887b0b4598b459ca84a58",
+    "HListRow.vue": "a474be2c7710fda4af5ea84aa8f48abc8b0c78e13c94ea2774053269ea9908d9",
     "HLogo.vue": "8dcbc38ce16f3348017f251452267ec40819889646c2f4039c01987d171ce97e",
     "HMediaTile.vue": "dff779c243073956a9d0b365a3b274bd25459e24f58cb56d77b1ad669ab1e9ed",
     "HModal.vue": "badc6324a10a5f4027844eef3cc9c488af7fda83c90cd0fc3cf945333d55588e",
