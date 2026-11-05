@@ -14,6 +14,8 @@
 
 export const KIT_LABELS = {
   close: "Close",
+  /** The action dock's menu of everything but its main actions. */
+  more: "More",
   copy: "Copy",
   copyKey: "Copy key",
   dismiss: "Dismiss",

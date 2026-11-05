@@ -69,7 +69,7 @@ const iconName = computed(() => props.icon || icons[props.severity] || "info");
   flex-wrap: wrap;
   column-gap: var(--space-sm);
   align-items: flex-start;
-  padding: var(--space-sm) var(--space-md) var(--space-sm) var(--space-md);
+  padding: var(--space-sm) var(--card-inset);
   border-radius: var(--radius-md);
   border-left: 4px solid;
   background: var(--color-bg-card);

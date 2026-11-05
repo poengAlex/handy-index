@@ -51,8 +51,10 @@ const emit = defineEmits<{ click: [] }>();
     color 180ms ease,
     background 180ms ease;
 
-  &:hover {
-    color: var(--color-text-primary);
+  @media (hover: hover) {
+    &:hover {
+      color: var(--color-text-primary);
+    }
   }
 }
 

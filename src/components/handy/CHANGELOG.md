@@ -15,6 +15,38 @@ Format, which the CLI reads (`tools/kit/lib/changelog.mjs`):
 - Any number of `Consumer action:` lines, each an instruction an app's AI can
   carry out on its own. An entry without one is information only.
 
+## unreleased — phones get their own rules
+
+Below 600px a page built of cards has its own side spacing, through new tokens
+in `styles/_tokens.scss`: `--page-gutter` 12px, `--card-inset` 16px,
+`--modal-inset` 24px, `--row-icon-gap` 12px and `--row-trailing-gap` 8px. Every
+kit card reads them. Also on a phone: `HToggleRow`'s caption runs under its
+switch, `HIconTile` sizes to its content, `HSegmented` never leaves its parent,
+and a centred dialog has a 16px margin. On a touch screen every `q-btn` and a
+labeled slider's value have a 44px hit area, with no visual change. Body large
+is 16px on a phone. New: `HPageBar`, the page header, and `HActionDock`, which
+keeps a tool page's main actions on screen. From 600px up nothing moves.
+
+Consumer action: delete any phone override of the kit's card padding, such as `--space-md` re-declared on kit cards, and any app-level `--page-gutter` or `--card-inset` that repeats the kit's values. Use `var(--page-gutter)` for your page column's side padding.
+Consumer action: the new kit label `more` ("More") needs a translation where the app translates kit labels. `HActionDock` draws the `more_vert` icon, so an icon subset needs it.
+Consumer action: on a phone, put each page's title in `HPageBar` and remove the page's second title, and move a tool page's main actions into `HActionDock` (design.md 7.1, 6.3).
+Consumer action: a launcher on a phone can now hold three or four `HIconTile` to a row; set your grid's columns below 600px.
+
+## unreleased — hover states only where a pointer hovers
+
+A touch screen keeps `:hover` on the last thing touched, so on Android a tapped
+`HListRow` stayed tinted, a tapped `HBtn` stayed in its hover colour, and a row
+that came to lie under that spot after a page change looked hovered too. Every
+hover state in the kit now sits under `@media (hover: hover)`: `HListRow`,
+`HNavCard`, `HIconTile`, `HMediaTile`, `HProductCard`, `HBtn`, `HSegmented`,
+`HSliderMenu`, `HDrawerItem`, `HHelpTip`, `HDropZone`, the toast's close button
+and the global link underline. `HTextCard`'s faded expand button un-fades on
+focus alone on a touch screen. Mouse behaviour is unchanged, and
+`test/kit-hover.spec.ts` fails on a new unguarded `:hover`.
+
+Consumer action: none. An app's own `:hover` rules stick the same way, so wrap
+any on a tappable element in `@media (hover: hover)`.
+
 ## unreleased — List rows: the hover tint lies over the row's fill
 
 A clickable list row's hover replaced its background with the translucent

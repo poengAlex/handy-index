@@ -251,6 +251,8 @@ async function onKeydown(event: KeyboardEvent) {
 
   position: relative;
   display: inline-flex;
+  // it never leaves its parent: on a phone the segments shrink instead
+  max-width: 100%;
   padding: var(--h-segmented-inset);
   background: var(--h-segmented-track, var(--color-bg-page-alt));
   // Fully rounded, like every other action in this system: the buttons are
@@ -330,13 +332,23 @@ async function onKeydown(event: KeyboardEvent) {
   // only the ink moves — the thumb underneath carries the fill
   transition: color 180ms ease;
 
-  &:hover:not(:disabled) {
-    color: var(--color-text-primary);
+  @media (hover: hover) {
+    &:hover:not(:disabled) {
+      color: var(--color-text-primary);
+    }
   }
 
   &:disabled {
     cursor: not-allowed;
     opacity: 0.5;
+  }
+}
+
+// Three labels at the natural width's padding need about 290px, more than a
+// narrow phone's card has.
+@media (max-width: 599.98px) {
+  .h-segmented__seg {
+    padding: 0 var(--space-sm);
   }
 }
 

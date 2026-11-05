@@ -82,6 +82,8 @@ async function copy() {
   align-items: center;
   gap: var(--space-xs);
   max-width: 100%;
+  // as a flex item it wouldn't shrink below its value, and left a narrow card
+  min-width: 0;
   padding: var(--space-xs) var(--space-sm);
   border-radius: var(--radius-full);
   background: var(--color-bg-page-alt);

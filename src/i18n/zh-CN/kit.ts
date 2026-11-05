@@ -11,6 +11,7 @@ import type enUS from "../en-US/kit";
 // it is added here.
 const kit: typeof enUS = {
   close: "关闭",
+  more: "更多",
   copy: "复制",
   copyKey: "复制 connection key",
   dismiss: "关闭",

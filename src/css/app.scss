@@ -79,3 +79,15 @@
 .section-dark {
   --heat-ink-strong: #c86ee8;
 }
+
+// A phone: this site is built of cards, so its margin follows the kit's phone
+// rule, 12px beside a card's 16px (design.md 5.4).
+@media (max-width: 599.98px) {
+  .h-container {
+    padding-inline: var(--page-gutter);
+  }
+
+  .h-peek:not(.h-peek--contained) {
+    --h-gutter: var(--page-gutter);
+  }
+}

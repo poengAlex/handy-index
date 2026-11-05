@@ -54,8 +54,10 @@ const emit = defineEmits<{ click: [] }>();
     transform 120ms ease,
     background-color 120ms ease;
 
-  &:hover {
-    box-shadow: var(--shadow-md);
+  @media (hover: hover) {
+    &:hover {
+      box-shadow: var(--shadow-md);
+    }
   }
 
   &:active {
@@ -66,6 +68,28 @@ const emit = defineEmits<{ click: [] }>();
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+  }
+}
+
+// On a phone a square takes its height from the width, 160px and up, and a
+// two-line label keeps it from going narrower than about 136px, so it left a
+// narrow card. There it sizes to its content, and a grid can hold three or four.
+@media (max-width: 599.98px) {
+  .h-icon-tile {
+    aspect-ratio: auto;
+    min-height: 88px;
+    min-width: 0;
+    gap: var(--space-xs);
+    padding: var(--space-sm) var(--space-2xs) 12px;
+
+    :deep(.q-icon) {
+      font-size: 24px !important;
+    }
+  }
+
+  .h-icon-tile__label {
+    font-size: var(--text-caption-size) !important;
+    letter-spacing: 0 !important;
   }
 }
 
@@ -86,8 +110,10 @@ const emit = defineEmits<{ click: [] }>();
 // there. On dark, hover lifts via a hairline outline instead (the dark-mode
 // "separation is surface/stroke, not shadow" rule) — the same treatment
 // HNavCard gets, for the same reason.
-[data-theme="dark"] .h-icon-tile:hover,
-.section-dark .h-icon-tile:hover {
-  box-shadow: inset 0 0 0 1px var(--color-stroke-default);
+@media (hover: hover) {
+  [data-theme="dark"] .h-icon-tile:hover,
+  .section-dark .h-icon-tile:hover {
+    box-shadow: inset 0 0 0 1px var(--color-stroke-default);
+  }
 }
 </style>

@@ -113,8 +113,10 @@ const length = computed(() => formatDuration(props.durationMs));
 
 // a tile that does something lifts on hover, as a card that goes somewhere
 // does (design.md 6.5); dark draws a hairline instead, in the unscoped block
-.h-media-tile__card:not(:disabled):hover .h-media-tile__poster {
-  box-shadow: var(--shadow-md);
+@media (hover: hover) {
+  .h-media-tile__card:not(:disabled):hover .h-media-tile__poster {
+    box-shadow: var(--shadow-md);
+  }
 }
 
 // over any picture, so a fixed ink on the overlay colour, not a theme token
@@ -150,12 +152,14 @@ const length = computed(() => formatDuration(props.durationMs));
 <style lang="scss">
 // Shadows don't read on dark: the hover is a hairline, as on a nav card. An
 // outline rather than an inset shadow, which the picture would cover.
-[data-theme="dark"]
-  .h-media-tile__card:not(:disabled):hover
-  .h-media-tile__poster,
-.section-dark .h-media-tile__card:not(:disabled):hover .h-media-tile__poster {
-  box-shadow: none;
-  outline: 1px solid var(--color-stroke-default);
-  outline-offset: -1px;
+@media (hover: hover) {
+  [data-theme="dark"]
+    .h-media-tile__card:not(:disabled):hover
+    .h-media-tile__poster,
+  .section-dark .h-media-tile__card:not(:disabled):hover .h-media-tile__poster {
+    box-shadow: none;
+    outline: 1px solid var(--color-stroke-default);
+    outline-offset: -1px;
+  }
 }
 </style>

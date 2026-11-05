@@ -139,7 +139,7 @@ onUnmounted(() => resizeObserver?.disconnect());
   width: 100%;
   background: var(--color-bg-card);
   border-radius: var(--radius-lg);
-  padding: var(--space-md);
+  padding: var(--card-inset);
 }
 
 // title follows the card rule — h5, 16px beneath — but scrolls away with
@@ -161,14 +161,23 @@ onUnmounted(() => resizeObserver?.disconnect());
   transition: opacity 180ms ease;
 }
 
-// hover/focus restore it — faded is a de-emphasis, not a disable
-.h-text-card__expand--faded:not(:hover, :focus-visible) {
-  opacity: 0.35;
+// hover/focus restore it — faded is a de-emphasis, not a disable. A touch
+// screen keeps :hover on the last thing touched, so there only focus counts.
+@media (hover: hover) {
+  .h-text-card__expand--faded:not(:hover, :focus-visible) {
+    opacity: 0.35;
+  }
+}
+
+@media (hover: none) {
+  .h-text-card__expand--faded:not(:focus-visible) {
+    opacity: 0.35;
+  }
 }
 
 // across the card's right padding, so the bar sits on the card's edge ...
 .h-text-card__scroll {
-  margin-right: calc(-1 * var(--space-md));
+  margin-right: calc(-1 * var(--card-inset));
 }
 
 .h-text-card__content {
@@ -186,6 +195,6 @@ onUnmounted(() => resizeObserver?.disconnect());
 // ... and the text gets that padding back, so it keeps the same 24px margin
 // on both sides and stays 16px clear of the thumb
 .h-text-card__scroll .h-text-card__content {
-  padding-right: var(--space-md);
+  padding-right: var(--card-inset);
 }
 </style>

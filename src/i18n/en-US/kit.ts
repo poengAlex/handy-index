@@ -13,6 +13,7 @@
 // hands them through untouched for the kit to fill in.
 export default {
   close: "Close",
+  more: "More",
   copy: "Copy",
   // the accessible name of the copy button beside a device's connection key
   copyKey: "Copy key",

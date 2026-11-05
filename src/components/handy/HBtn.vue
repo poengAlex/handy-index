@@ -89,8 +89,12 @@ withDefaults(
   background: var(--color-action-primary) !important;
   color: var(--color-action-primary-label) !important;
 
-  &:hover {
-    background: var(--color-action-primary-hover) !important;
+  // hover states only where a pointer hovers: a touch screen keeps :hover on
+  // the last thing touched, so a tapped button would stay in this colour
+  @media (hover: hover) {
+    &:hover {
+      background: var(--color-action-primary-hover) !important;
+    }
   }
 }
 
@@ -101,8 +105,10 @@ withDefaults(
     border: 1px solid var(--color-action-secondary-stroke);
   }
 
-  &:hover:before {
-    border-color: var(--color-action-secondary-hover-stroke);
+  @media (hover: hover) {
+    &:hover:before {
+      border-color: var(--color-action-secondary-hover-stroke);
+    }
   }
 }
 
@@ -111,16 +117,20 @@ withDefaults(
   background: var(--color-feedback-negative) !important;
   color: var(--color-text-on-fill) !important;
 
-  &:hover {
-    filter: brightness(0.88);
+  @media (hover: hover) {
+    &:hover {
+      filter: brightness(0.88);
+    }
   }
 }
 
 .h-btn--tertiary {
   color: var(--color-action-tertiary-label) !important;
 
-  &:hover {
-    color: var(--color-action-tertiary-hover) !important;
+  @media (hover: hover) {
+    &:hover {
+      color: var(--color-action-tertiary-hover) !important;
+    }
   }
 }
 

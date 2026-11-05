@@ -131,9 +131,11 @@ const ariaLabel = computed(() =>
     color 180ms ease,
     background 180ms ease;
 
-  &:hover {
-    color: var(--color-text-primary);
-    background: var(--h-chip-bg);
+  @media (hover: hover) {
+    &:hover {
+      color: var(--color-text-primary);
+      background: var(--h-chip-bg);
+    }
   }
 
   &:focus-visible {

@@ -86,7 +86,7 @@ withDefaults(
   gap: var(--space-sm);
   background: var(--color-bg-card);
   border-radius: var(--radius-lg);
-  padding: var(--space-md);
+  padding: var(--card-inset);
 }
 
 .h-section-card__head {

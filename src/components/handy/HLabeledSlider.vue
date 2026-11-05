@@ -930,6 +930,19 @@ onBeforeUnmount(() => {
 }
 
 // the resting editable value is a button that looks exactly like the text
+// the value's hit area grows sideways and upward, away from the slider's own
+@media (pointer: coarse) {
+  .h-lslider__value-btn {
+    position: relative;
+  }
+
+  .h-lslider__value-btn::after {
+    content: "";
+    position: absolute;
+    inset: -18px -12px -2px;
+  }
+}
+
 .h-lslider__value-btn {
   appearance: none;
   background: none;

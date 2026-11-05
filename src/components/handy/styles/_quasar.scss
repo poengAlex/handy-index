@@ -368,6 +368,30 @@ input[type="number"] {
   }
 }
 
+// Touch targets [design.md 8.7]: at least 44px on a touch screen, whatever the
+// button looks like. An invisible box centred on the button, so nothing moves.
+@media (pointer: coarse) {
+  .q-btn::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: max(100%, 44px);
+    height: max(100%, 44px);
+    transform: translate(-50%, -50%);
+  }
+}
+
+// A centred dialog's margin on a phone [design.md 6.5]. A bottom sheet keeps
+// Quasar's zero.
+@media (max-width: 599.98px) {
+  .q-dialog__inner--minimized:not(.q-dialog__inner--bottom):not(
+      .q-dialog__inner--top
+    ) {
+    padding: var(--space-sm);
+  }
+}
+
 // Dialogs — overlay token + 4px blur (overrides design.md v2's no-blur rule)
 .q-dialog__backdrop {
   background: var(--color-bg-overlay);

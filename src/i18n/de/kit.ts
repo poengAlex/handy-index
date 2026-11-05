@@ -11,6 +11,7 @@ import type enUS from "../en-US/kit";
 // it is added here.
 const kit: typeof enUS = {
   close: "Schließen",
+  more: "Mehr",
   copy: "Kopieren",
   // `connection key` stays English, as everywhere in this locale
   copyKey: "Connection key kopieren",

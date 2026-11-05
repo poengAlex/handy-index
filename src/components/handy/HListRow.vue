@@ -92,7 +92,7 @@ function onClick() {
 .h-list-row {
   position: relative;
   min-height: 52px;
-  padding: var(--space-sm) var(--space-md);
+  padding: var(--space-sm) var(--card-inset);
   color: var(--color-text-primary);
   // `to` renders the row as a router-link <a>, which app.scss's global
   // `a:hover { text-decoration: underline }` (0,1,1) then claims. !important
@@ -115,11 +115,13 @@ function onClick() {
 
 .h-list-row__trailing {
   margin-left: auto;
+  padding-left: var(--row-trailing-gap);
 }
 
 // keep the leading icon / control tight rather than the 56px avatar gutter
 .h-list-row__leading {
   min-width: 0;
+  padding-right: var(--row-icon-gap);
   color: var(--color-text-secondary);
 }
 
@@ -130,11 +132,16 @@ function onClick() {
 // brand row-hover tint instead of Quasar's neutral wash (only when clickable),
 // laid over the row's fill rather than replacing it: a separated row is its
 // own card, and the translucent tint alone let the page show through
-.h-list-row.q-item--clickable:hover {
-  background-image: linear-gradient(
-    var(--color-row-hover),
-    var(--color-row-hover)
-  );
+// Only where a pointer really hovers: a touch screen keeps :hover on the last
+// thing touched, so the row would stay tinted after a tap, and on whatever row
+// comes to lie under that spot after a page change.
+@media (hover: hover) {
+  .h-list-row.q-item--clickable:hover {
+    background-image: linear-gradient(
+      var(--color-row-hover),
+      var(--color-row-hover)
+    );
+  }
 }
 
 .h-list-row :deep(.q-focus-helper) {

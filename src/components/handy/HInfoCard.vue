@@ -105,7 +105,7 @@ function boolTone(item: InfoItem): string {
 .h-info {
   background: var(--color-bg-card);
   border-radius: var(--radius-lg);
-  padding: var(--space-md);
+  padding: var(--card-inset);
 }
 
 .h-info__head {

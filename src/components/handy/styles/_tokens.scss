@@ -89,6 +89,15 @@
   --space-3xl: 80px;
   --space-4xl: 96px;
 
+  /* Side spacing of an app surface [design.md 5.4]. They change together on a
+     phone (below): a page margin plus a card's padding stays at 32px or less,
+     and the gaps inside a row give back what the margin keeps. */
+  --page-gutter: var(--space-md);
+  --card-inset: var(--space-md);
+  --modal-inset: var(--space-lg);
+  --row-icon-gap: var(--space-sm);
+  --row-trailing-gap: var(--space-sm);
+
   /* Radius [design.md 5.4] */
   --radius-none: 0px;
   --radius-xs: 8px;
@@ -243,6 +252,19 @@
 
 [data-theme="dark"] {
   @include dark-tokens;
+}
+
+// A phone [design.md 5.4, 5.9]. .h-container keeps its 24px: a reading page has
+// no card inside it, so the two paddings never add up there.
+@media (max-width: 599.98px) {
+  :root {
+    --page-gutter: 12px;
+    --card-inset: var(--space-sm);
+    --modal-inset: var(--space-md);
+    --row-icon-gap: 12px;
+    --row-trailing-gap: var(--space-xs);
+    --text-body-lg-size: var(--text-body-size);
+  }
 }
 
 @media (prefers-color-scheme: dark) {

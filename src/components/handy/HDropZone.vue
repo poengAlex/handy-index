@@ -215,19 +215,21 @@ onBeforeUnmount(() => {
 
 // pointed at: the line and the icon take the link colour, and the box the
 // row-hover tint, laid over the fill because it is translucent
-.h-drop-zone:not(:disabled):hover {
-  color: var(--color-text-primary);
-  background-image: linear-gradient(
-    var(--color-row-hover),
-    var(--color-row-hover)
-  );
+@media (hover: hover) {
+  .h-drop-zone:not(:disabled):hover {
+    color: var(--color-text-primary);
+    background-image: linear-gradient(
+      var(--color-row-hover),
+      var(--color-row-hover)
+    );
 
-  &::before {
-    border-color: var(--color-text-link);
-  }
+    &::before {
+      border-color: var(--color-text-link);
+    }
 
-  .h-drop-zone__icon {
-    color: var(--color-text-link);
+    .h-drop-zone__icon {
+      color: var(--color-text-link);
+    }
   }
 }
 

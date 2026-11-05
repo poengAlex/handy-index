@@ -151,8 +151,10 @@ function onKeydown(e: KeyboardEvent) {
 .h-product--interactive {
   cursor: pointer;
 
-  &:hover {
-    box-shadow: var(--shadow-md);
+  @media (hover: hover) {
+    &:hover {
+      box-shadow: var(--shadow-md);
+    }
   }
 }
 
@@ -183,7 +185,7 @@ function onKeydown(e: KeyboardEvent) {
 }
 
 .h-product__body {
-  padding: var(--space-md);
+  padding: var(--card-inset);
   display: flex;
   flex-direction: column;
   gap: var(--space-xs);
@@ -232,9 +234,11 @@ function onKeydown(e: KeyboardEvent) {
 // inset: the media's opaque Soft-Gray top paints over an inset shadow,
 // leaving only the body's bottom edge — the outset ring sits outside the
 // card and reads all the way around. overflow:hidden clips children, not this.
-[data-theme="dark"] .h-product--interactive:hover,
-.section-dark .h-product--interactive:hover {
-  box-shadow: 0 0 0 1px var(--color-stroke-default);
+@media (hover: hover) {
+  [data-theme="dark"] .h-product--interactive:hover,
+  .section-dark .h-product--interactive:hover {
+    box-shadow: 0 0 0 1px var(--color-stroke-default);
+  }
 }
 
 // --color-action-primary is a FILL token — #0064e0 in both themes, sized for

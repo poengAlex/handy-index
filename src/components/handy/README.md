@@ -1,7 +1,7 @@
 # The Handy component kit
 
 `src/components/handy/` is the Handy design system as Vue 3 + Quasar 2
-components: 40 single-file components, a canvas graph kit, a self-contained
+components: 42 single-file components, a canvas graph kit, a self-contained
 gradient-background sub-kit, and the composables and helpers they share. It is
 the implementation of `design.md` chapters 5–10, and it is the folder that other
 Handy apps carry a copy of (scripter4, onboardingv4 and handy-index), kept in
@@ -26,6 +26,7 @@ component once, `/showcase/*` shows each family in depth, and `/design` shows
 4. [Actions](#4-actions): HBtn · HBtnGroup · HHoldBtn
 5. [Inputs & controls](#5-inputs--controls): HSegmented · HNumberStepper · HFatSlider · HLabeledSlider · HSliderMenu · HHelpTip
 6. [Containers & surfaces](#6-containers--surfaces): HInfoCard · HSectionCard · HTextCard · HNavCard · HProductCard · HModal
+   Phone chrome: HPageBar (the page header, slots `lead`, `suffix`, `actions`) · HActionDock (main actions fixed to the bottom on a phone, slots default and `more`, prop `inline`)
 7. [Lists & rows](#7-lists--rows): HList · HListRow · HRadioRow · HToggleRow
 8. [Data display & visualization](#8-data-display--visualization): HTabularNum · HCircleProgress · HGraph · HPlayhead
 9. [Feedback & status](#9-feedback--status): HFeedbackCard · HStatusBadge · HEmptyState · HSuccessMark · HSuccessMoment · HInlineDots · HandyLoader · toasts
@@ -250,6 +251,11 @@ not a text link, and the underline reads as a different control. Only real
 inline text links get one. (The kit's `styles/_base.scss` also guards the rule
 at the source with `a:hover:not(.q-btn)`. The per-component guard is still what
 protects a host whose stylesheet does not.)
+
+A hover state goes under `@media (hover: hover)`. A touch screen keeps `:hover`
+on the last thing touched, so a tapped element would stay hovered, and so would
+whatever comes to lie under that spot after a page change. The same goes for a
+host's own rules. `test/kit-hover.spec.ts` holds the kit to it.
 
 **Motion.** Every component that animates carries its own
 `prefers-reduced-motion` block, following design.md 5.6. Decorative motion

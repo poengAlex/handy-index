@@ -46,8 +46,13 @@
   opacity: 0.7;
   transition: opacity 180ms ease;
 
-  &:hover,
   &:focus-visible {
     opacity: 1;
+  }
+
+  @media (hover: hover) {
+    &:hover {
+      opacity: 1;
+    }
   }
 }

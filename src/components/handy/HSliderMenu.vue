@@ -224,9 +224,11 @@ function pick(value: number) {
     color 180ms ease,
     box-shadow 180ms ease;
 
-  &:hover {
-    color: var(--color-text-primary);
-    box-shadow: inset 0 0 0 1px var(--color-stroke-default);
+  @media (hover: hover) {
+    &:hover {
+      color: var(--color-text-primary);
+      box-shadow: inset 0 0 0 1px var(--color-stroke-default);
+    }
   }
 
   &:focus-visible {
@@ -268,9 +270,14 @@ function pick(value: number) {
   font-variant-numeric: tabular-nums;
 }
 
-.h-slidermenu--open .h-slidermenu__icon,
-.h-slidermenu:hover .h-slidermenu__icon {
+.h-slidermenu--open .h-slidermenu__icon {
   color: inherit;
+}
+
+@media (hover: hover) {
+  .h-slidermenu:hover .h-slidermenu__icon {
+    color: inherit;
+  }
 }
 
 .h-slidermenu__caret {
@@ -323,9 +330,11 @@ function pick(value: number) {
     color 180ms ease,
     box-shadow 180ms ease;
 
-  &:hover {
-    color: var(--color-text-primary);
-    box-shadow: inset 0 0 0 1px var(--color-stroke-default);
+  @media (hover: hover) {
+    &:hover {
+      color: var(--color-text-primary);
+      box-shadow: inset 0 0 0 1px var(--color-stroke-default);
+    }
   }
 
   &:focus-visible {

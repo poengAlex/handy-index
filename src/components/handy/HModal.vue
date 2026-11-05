@@ -82,13 +82,13 @@ onBeforeUnmount(() => {
   --h-slider-gap: var(--color-bg-card);
   // the card's side padding, which the body (below) reaches across so its
   // scrollbar lands on the card's edge
-  --h-modal-pad-x: var(--space-lg);
+  --h-modal-pad-x: var(--modal-inset);
 
   position: relative;
   background: var(--color-bg-card);
   color: var(--color-text-primary);
   border-radius: var(--radius-lg);
-  padding: var(--space-lg) var(--h-modal-pad-x);
+  padding: var(--modal-inset) var(--h-modal-pad-x);
   width: 100%;
   max-width: 560px;
   box-shadow: var(--shadow-xl);
@@ -105,7 +105,7 @@ onBeforeUnmount(() => {
 }
 
 .h-modal--sheet {
-  --h-modal-pad-x: var(--space-md);
+  --h-modal-pad-x: var(--card-inset);
 
   border-radius: var(--radius-lg) var(--radius-lg) 0 0;
   padding: var(--space-sm) var(--h-modal-pad-x)

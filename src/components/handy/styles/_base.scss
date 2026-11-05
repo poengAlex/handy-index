@@ -46,8 +46,10 @@ a {
   // Quasar's own `.q-btn { text-decoration: none }` (0,1,0) and underlines
   // the label — or, on an icon-only button, the Material Symbols glyph,
   // which is text too. Guarding here fixes it once instead of per component.
-  &:hover:not(.q-btn) {
-    text-decoration: underline;
+  @media (hover: hover) {
+    &:hover:not(.q-btn) {
+      text-decoration: underline;
+    }
   }
 }
 

@@ -2,6 +2,7 @@ import type enUS from "../en-US/kit";
 
 const kit: typeof enUS = {
   close: "Lukk",
+  more: "Mer",
   copy: "Kopier",
   copyKey: "Kopier connection key",
   dismiss: "Skjul",

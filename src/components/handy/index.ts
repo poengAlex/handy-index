@@ -54,6 +54,8 @@ export { default as HInfoCard } from "./HInfoCard.vue";
 export { default as HSectionCard } from "./HSectionCard.vue";
 export { default as HTextCard } from "./HTextCard.vue";
 export { default as HNavCard } from "./HNavCard.vue";
+export { default as HPageBar } from "./HPageBar.vue";
+export { default as HActionDock } from "./HActionDock.vue";
 export { default as HProductCard } from "./HProductCard.vue";
 export { default as HModal } from "./HModal.vue";
 export { default as HList } from "./HList.vue";
