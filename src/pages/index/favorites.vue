@@ -19,7 +19,7 @@
     <div v-else class="h-section">
       <div class="h-container">
         <header class="favorites-page__header">
-          <h1 class="text-h2 favorites-page__title">
+          <h1 class="text-h2 favorites-page__title page-title--in-bar">
             {{ $t("library.favorites.title") }}
           </h1>
           <p v-if="favorites.length" class="text-body-sm favorites-page__count">

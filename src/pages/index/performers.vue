@@ -14,7 +14,7 @@
 
         <template v-else>
           <header class="performers-page__header">
-            <h1 class="text-h2 performers-page__title">
+            <h1 class="text-h2 performers-page__title page-title--in-bar">
               {{ $t("performers.title") }}
             </h1>
             <p

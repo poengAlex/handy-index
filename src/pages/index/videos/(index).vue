@@ -2,7 +2,9 @@
   <q-page class="videos-page h-section">
     <div class="h-container">
       <header class="videos-page__head">
-        <h1 class="text-h2 videos-page__title">{{ $t("browse.title") }}</h1>
+        <h1 class="text-h2 videos-page__title page-title--in-bar">{{
+          $t("browse.title")
+        }}</h1>
         <p
           v-if="catalog.status === 'ready'"
           class="text-body-sm videos-page__count"

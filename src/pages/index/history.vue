@@ -19,7 +19,7 @@
     <div v-else class="h-section">
       <div class="h-container">
         <header class="history-page__header">
-          <h1 class="text-h2 history-page__title">
+          <h1 class="text-h2 history-page__title page-title--in-bar">
             {{ $t("library.history.title") }}
           </h1>
           <!-- the count is its own dot-separated item, not part of the note

@@ -90,4 +90,23 @@
   .h-peek:not(.h-peek--contained) {
     --h-gutter: var(--page-gutter);
   }
+
+  // A list page's title is in the bar (pages/index.vue), so the page starts
+  // right under it. The heading stays in the document for screen readers.
+  .q-page.h-section:has(.page-title--in-bar) {
+    padding-top: 12px;
+  }
+
+  .page-title--in-bar {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+
+    + * {
+      margin-top: 0;
+    }
+  }
 }

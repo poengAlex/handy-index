@@ -19,7 +19,9 @@
     <div v-else class="h-section">
       <div class="h-container">
         <header class="sites-page__header">
-          <h1 class="text-h2 sites-page__title">{{ $t("sites.title") }}</h1>
+          <h1 class="text-h2 sites-page__title page-title--in-bar">{{
+            $t("sites.title")
+          }}</h1>
           <p class="text-body-sm sites-page__count">{{ countLabel }}</p>
           <GateNotice />
         </header>

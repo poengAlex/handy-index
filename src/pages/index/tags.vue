@@ -13,7 +13,9 @@
 
       <template v-else>
         <header class="tags-page__header">
-          <h1 class="text-h2 tags-page__title">{{ $t("tags.title") }}</h1>
+          <h1 class="text-h2 tags-page__title page-title--in-bar">{{
+            $t("tags.title")
+          }}</h1>
           <p
             v-if="catalog.status === 'ready'"
             class="text-body-sm tags-page__count"

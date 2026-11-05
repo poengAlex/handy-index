@@ -2,7 +2,9 @@
   <q-page class="privacy-page">
     <div class="h-section">
       <div class="h-container">
-        <h1 class="text-h2 privacy-page__title">{{ $t("privacy.title") }}</h1>
+        <h1 class="text-h2 privacy-page__title page-title--in-bar">{{
+          $t("privacy.title")
+        }}</h1>
 
         <PrivacyStatement class="privacy-page__statement" />
 

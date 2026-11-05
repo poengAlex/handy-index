@@ -2,7 +2,7 @@
   <q-page class="ai-scripts-page h-section">
     <div class="h-container">
       <header class="ai-scripts-page__header">
-        <h1 class="text-h2 ai-scripts-page__title">
+        <h1 class="text-h2 ai-scripts-page__title page-title--in-bar">
           {{ $t("aiScripts.title") }}
         </h1>
         <p class="text-body-sm ai-scripts-page__lead">

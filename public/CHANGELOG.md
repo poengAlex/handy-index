@@ -5,6 +5,15 @@
      words. Newest release on top. Format: "## <version> — <date>", then
      "### <group>" headings and "- " lines. Keep it English-only. -->
 
+## 2.13.0 — 5 November 2026
+
+### On a phone
+
+- A list page's title now sits in the top bar, and the page starts right under
+  it, so you see more videos on the first screen.
+- The top bar is calmer: Favorites, Recently viewed and Help are in the menu.
+- Pages and cards use more of the screen's width, and buttons are easier to tap.
+
 ## 2.12.1 — 26 October 2026
 
 ### Browsing

@@ -45,7 +45,15 @@
           class="app-toolbar__btn"
           @click="drawer = !drawer"
         />
-        <router-link to="/" class="app-logo" :aria-label="$t('nav.homeAria')">
+        <!-- on a phone a list page's title is in the bar, and the page starts
+             right under it (design.md 7.1); Home and a video keep the logo -->
+        <HPageBar v-if="barTitle" :title="barTitle" class="app-page-bar" />
+        <router-link
+          v-else
+          to="/"
+          class="app-logo"
+          :aria-label="$t('nav.homeAria')"
+        >
           <HLogo :height="22" :mark="$q.screen.xs" />
           <span class="text-body-compact app-logo__suffix">IVDB</span>
         </router-link>
@@ -64,8 +72,11 @@
             :class="{ 'app-nav__link--active': isActive(link.to) }"
           />
         </nav>
-        <q-space />
+        <q-space v-if="!barTitle" />
+        <!-- on a phone these three are in the drawer, and the bar keeps what
+             changes the page you are on -->
         <q-btn
+          v-if="!$q.screen.xs"
           flat
           round
           dense
@@ -75,6 +86,7 @@
           to="/favorites"
         />
         <q-btn
+          v-if="!$q.screen.xs"
           flat
           round
           dense
@@ -102,6 +114,7 @@
           <q-tooltip>{{ mutedLabel }}</q-tooltip>
         </q-btn>
         <q-btn
+          v-if="!$q.screen.xs"
           flat
           round
           dense
@@ -198,6 +211,7 @@ import {
   HBtn,
   HDrawerItem,
   HLogo,
+  HPageBar,
   useGlassOnScroll,
   useHandyTheme
 } from "@/components/handy";
@@ -232,6 +246,26 @@ const navLinks = computed(() => [
   { label: t("nav.links.playlists"), to: "/playlists", icon: "playlist_play" },
   { label: t("nav.links.requests"), to: "/requests", icon: "how_to_vote" }
 ]);
+
+// A phone's bar carries the title of a list page, whose own <h1> is then only
+// for screen readers (.page-title--in-bar). A detail page keeps its long title
+// in the page and the logo in the bar.
+const barTitles: Record<string, () => string> = {
+  "/videos": () => t("browse.title"),
+  "/tags": () => t("tags.title"),
+  "/sites": () => t("sites.title"),
+  "/performers": () => t("performers.title"),
+  "/playlists": () => t("playlists.title"),
+  "/requests": () => t("requests.board.title"),
+  "/favorites": () => t("library.favorites.title"),
+  "/history": () => t("library.history.title"),
+  "/help": () => t("help.title"),
+  "/privacy": () => t("privacy.title"),
+  "/ai-scripts": () => t("aiScripts.title")
+};
+const barTitle = computed(() =>
+  $q.screen.xs ? (barTitles[route.path]?.() ?? null) : null
+);
 
 // leads with the cost, not the count: "1 tag muted" reads as trivia, while
 // the video figure is the thing that surprised you
@@ -340,6 +374,12 @@ onMounted(() => {
   @media (max-width: 599px) {
     height: 56px;
   }
+}
+
+.app-page-bar {
+  flex: 1 1 0;
+  width: auto;
+  margin-left: var(--space-2xs);
 }
 
 .app-toolbar__btn {

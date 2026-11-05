@@ -3,7 +3,7 @@
     <div class="h-section">
       <div class="h-container">
         <header class="requests-page__header">
-          <h1 class="text-h2 requests-page__title">
+          <h1 class="text-h2 requests-page__title page-title--in-bar">
             {{ $t("requests.board.title") }}
           </h1>
           <p class="text-body requests-page__lead">
