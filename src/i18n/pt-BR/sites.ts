@@ -24,6 +24,7 @@ const sites: typeof enUS = {
 
   errorTitle: "Não foi possível carregar os sites",
   emptyBody: "O índice voltou sem nenhum site. Tente carregar de novo.",
+  // every site in the index is behind a preference
   noMatchTitle: "Nenhum site encontrado",
   noMatchBody: "Nenhum nome de site bate com essa busca. Tente menos letras."
 };

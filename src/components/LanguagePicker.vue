@@ -158,7 +158,7 @@ const options = computed<
 // for the text beside it, not a preference — so it is present but quiet
 .lang-picker--compact .lang-picker__chip {
   padding: 4px 10px;
-  font-size: 13px;
+  font-size: var(--text-compact-size);
 }
 
 .lang-picker--compact .lang-picker__chips {

@@ -25,10 +25,10 @@ withDefaults(
 .h-status {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--space-2xs);
   padding: var(--space-xs) var(--space-sm);
   border-radius: var(--radius-full);
-  font-size: 12px;
+  font-size: var(--text-caption-size);
   font-weight: 500;
   line-height: 1;
 }

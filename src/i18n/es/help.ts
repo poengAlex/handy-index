@@ -84,6 +84,11 @@ const help: typeof enUS = {
       label: "Solicitar vídeos",
       caption:
         "Pide un script para cualquier vídeo y vota cuáles tendrán script a continuación"
+    },
+    aiScripts: {
+      label: "Scripts de IA",
+      caption:
+        "Muy experimental: scripts creados por IA para vídeos solicitados, sin revisar por ningún humano"
     }
   },
 

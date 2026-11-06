@@ -1,0 +1,426 @@
+// Part of the kit's global CSS — loaded through kit.scss, never on its own.
+// Quasar component re-skins.
+
+// ------------------------------------------------------------
+// Quasar re-skins  [DESIGN.md §7]
+// ------------------------------------------------------------
+
+// Buttons — sentence case, pill, tight tracking
+.q-btn {
+  text-transform: none;
+  letter-spacing: -0.14px;
+  font-weight: 500;
+
+  // icon-to-label gap is --space-xs per §5; Quasar ships 6px
+  .on-left {
+    margin-right: var(--space-xs);
+  }
+
+  .on-right {
+    margin-left: var(--space-xs);
+  }
+}
+
+// Secondary (outlined) — MD2 default border is thicker
+.q-btn--outline:before {
+  border-width: 1px;
+}
+
+// Form fields — 8px radius all corners, full 2px focus border
+.q-field--filled,
+.q-field--outlined {
+  .q-field__control {
+    border-radius: var(--radius-xs);
+    background: var(--color-bg-input);
+  }
+}
+
+.q-field--filled {
+  .q-field__control {
+    box-shadow: inset 0 0 0 1px var(--color-stroke-subtle);
+    transition: box-shadow 180ms ease;
+
+    &:before,
+    &:after {
+      display: none; // kill MD2's bottom-border-grows pattern
+    }
+  }
+
+  &.q-field--focused .q-field__control {
+    box-shadow: inset 0 0 0 2px var(--color-stroke-focus);
+  }
+
+  &.q-field--error .q-field__control {
+    box-shadow: inset 0 0 0 2px var(--color-stroke-error);
+  }
+}
+
+// Quasar paints the focused floating label with $primary in both themes —
+// on dark that's Brand Blue as text (forbidden, changes.md Color). The link
+// token resolves to the same hex as --color-stroke-focus per theme, so the
+// label and the 2px focus border always match. Error keeps Quasar's negative.
+.q-field--focused:not(.q-field--error) .q-field__label {
+  color: var(--color-text-link);
+}
+
+// Disabled is 50% [§5.6], every control. Quasar ships a global 60%
+// (`.disabled, [disabled] { opacity: .6 !important }`) and its own figure on
+// a few controls on top (`.q-btn.disabled` 70%, `.q-toggle.disabled` and
+// `.q-radio.disabled` 75%), all !important. That beat every component rule
+// written without one, so the kit's own 50% rules never applied and a
+// disabled control looked different from one kind to the next.
+.disabled,
+[disabled] {
+  opacity: 0.5 !important;
+}
+
+.q-btn.disabled,
+.q-toggle.disabled,
+.q-radio.disabled,
+.q-checkbox.disabled {
+  opacity: 0.5 !important;
+}
+
+.q-field--disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+// The field's own 50% is the whole state. Quasar dims the control's insides
+// again (60%), and the native input once more as [disabled], which left a
+// disabled value at a fifth of its ink.
+.q-field--disabled .q-field__control > div,
+.q-field--disabled [disabled] {
+  opacity: 1 !important;
+}
+
+// Once, though: a disabled control inside a disabled control (a stepper's
+// buttons, a slider inside a disabled fat slider) doesn't dim a second time.
+// After the rules above, which it ties with on specificity.
+:is(.disabled, [disabled]) :is(.disabled, [disabled]) {
+  opacity: 1 !important;
+}
+
+// Number inputs — hide native spin buttons; steppers and inline ±
+// buttons provide the affordance
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+}
+
+// Cards [§5.6 Card] — 20px radius is set via $generic-border-radius. Flat by
+// default: Quasar gives every q-card a shadow unless it is `flat`, so the
+// reset lives here instead of in a prop every page has to remember. Outlined
+// is Quasar's `bordered`, on the subtle stroke rather than Quasar's separator
+// grey.
+.q-card {
+  background: var(--color-bg-card);
+  color: var(--color-text-primary);
+  box-shadow: none;
+}
+
+.q-card--bordered {
+  border-color: var(--color-stroke-subtle);
+}
+
+// The other two card variants, for any card-shaped surface: a q-card or a kit
+// card alike. Plain is the default and needs nothing. !important because a
+// `flat` q-card carries Quasar's `.no-shadow`, which is !important itself.
+//
+// Lifted: a card on a surface of its own colour. A shadow on light; on dark a
+// shadow doesn't read, so the lift is a hairline instead.
+.h-lifted {
+  box-shadow: var(--shadow-sm) !important;
+}
+
+[data-theme="dark"] .h-lifted,
+.section-dark .h-lifted {
+  box-shadow: inset 0 0 0 1px var(--color-stroke-default) !important;
+}
+
+.section-light .h-lifted {
+  box-shadow: var(--shadow-sm) !important;
+}
+
+// Outlined, for a card that isn't a q-card: an explicit boundary (comparison
+// tables, plan tiers). Inset, so the hairline never changes the card's size.
+.h-outlined {
+  box-shadow: inset 0 0 0 1px var(--color-stroke-subtle) !important;
+}
+
+// Tabs — active underline, brand blue [§7]
+.q-tab {
+  text-transform: none;
+  letter-spacing: -0.14px;
+}
+
+// Brand Blue as *text* is forbidden on dark surfaces (changes.md, Color):
+// active tab labels lighten to the link token. The 2px underline is a
+// non-text accent and stays Brand Blue.
+[data-theme="dark"] .q-tab.text-primary,
+.section-dark .q-tab.text-primary {
+  color: var(--color-text-link) !important;
+}
+
+.q-tabs .q-tab__indicator {
+  height: 2px;
+  transition: transform 180ms ease;
+}
+
+// Active tab is bold; resting tabs stay regular weight. With the Brand Blue
+// label + 2px underline, weight is the third signal that sets active apart.
+.q-tab .q-tab__label {
+  font-weight: 400;
+}
+
+.q-tab--active .q-tab__label {
+  font-weight: 700;
+}
+
+// Chips
+.q-chip {
+  border-radius: var(--radius-full);
+}
+
+// $generic-border-radius is 20px for cards/dialogs (§5), but Quasar also
+// feeds it to small components where 20px breaks geometry. Scope them back:
+// slider/range value balloon — 20px on a 25px-tall bubble curves away the
+// flat bottom edge its arrow docks against.
+.q-slider__text-container {
+  border-radius: var(--radius-xs);
+}
+
+// --h-slider-gap, the surface colour of the handle's gap, is declared per
+// scope in _tokens.scss.
+
+// Mobile drag fix. Quasar's slider (use-slider.js) binds TouchPan with
+// `prevent: true` and relies on preventDefault-ing the FIRST touchmove to
+// win the gesture — but ships no touch-action, so the browser usually
+// claims the swipe for page scroll before the slider ever sees it (desktop
+// is unaffected: mousedown has no such race). Declare the intent up front:
+// keep the page-scroll axis native, hand the slider's own axis to the drag
+// handler. Editable only — disabled/readonly sliders shouldn't eat swipes.
+// QRange carries the same q-slider--h/--v classes, so ranges are covered.
+.q-slider--h.q-slider--editable {
+  touch-action: pan-y;
+}
+
+.q-slider--v.q-slider--editable {
+  touch-action: pan-x;
+}
+
+// long-pressing a slider on iOS otherwise starts text selection on the
+// value balloon / marker labels mid-drag
+.q-slider--editable {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+// The cursor says what a press does there. Quasar shows `grab` along the
+// whole track, but only a handle is ever grabbed: a press anywhere else —
+// the bare track, or a range's band — moves the nearer handle to that point,
+// which makes the track a click target and its cursor the pointer. The
+// handles keep `grab`; while one drags, Quasar puts `grabbing` on the whole
+// page. Disabled (not-allowed) and readonly (default) are Quasar's own and
+// untouched here — neither is --editable. HLabeledSlider's drag-range band is
+// the one other thing that can be grabbed, and says so itself.
+.q-slider--editable .q-slider__track-container {
+  cursor: pointer;
+}
+
+.q-slider--editable .q-slider__thumb {
+  cursor: grab;
+}
+
+.q-slider__thumb-shape {
+  stroke-width: 0;
+
+  path {
+    fill: currentColor;
+    // 6-unit stroke, half under the fill → a 3-unit (≈6px at the 40px
+    // thumb) surface-colored gap either side of the bar
+    stroke: var(--h-slider-gap);
+    stroke-width: 6;
+    paint-order: stroke;
+    transform-box: fill-box;
+    transform-origin: center;
+    transition: transform 120ms ease;
+  }
+}
+
+// M3 press state: the handle bar slims while dragging — thickness only,
+// never its length. scaleX fits every vertical bar; sliders whose bar is
+// horizontal (the vertical fat variant) override the axis to scaleY.
+.q-slider--active .q-slider__thumb-shape path {
+  transform: scaleX(0.55);
+}
+
+// Range: slim ONLY the touched handle. Quasar suppresses the focus class
+// during a pointer drag (`preventFocus`), so we can't key on it — instead
+// it puts an inline `z-index: 2` on the dragged thumb. The other knob has
+// no z-index, so restore its resting width.
+.q-range.q-slider--active
+  .q-slider__thumb:not([style*="z-index"])
+  .q-slider__thumb-shape
+  path {
+  transform: none;
+}
+
+// Quasar scales the whole thumb svg 1.5× while dragging — and hides it
+// entirely (scale 0) on labeled sliders. M3 does neither: pin the svg
+// and let the path-level slim above be the only press response.
+.q-slider--active .q-slider__thumb-shape,
+.q-slider--active.q-slider--label .q-slider__thumb-shape {
+  transform: scale(1) !important;
+}
+
+// No hover halo. Quasar's M2 focus-ring is a thumb-sized circle scaled
+// 1.55× on hover/focus — at the 40px thumb (72px fat) it spills far past
+// the 16px track and its card: clipped arcs where a parent clips, and a
+// stray horizontal scrollbar at the track ends (transformed overflow still
+// counts as scrollable). M3 sliders have no halo — hover feedback is the
+// cursor; keyboard focus gets the press treatment below.
+.q-slider__focus-ring {
+  display: none;
+}
+
+// Keyboard focus reuses the M3 press response (the spec gives focused and
+// pressed handles the same slimmed bar). Pointer use never sets --focus
+// (Quasar blurs on pan), so this only shows for keyboard users. The
+// vertical fat variant re-axes it to scaleY in HFatSlider, same as its
+// press rule.
+.q-slider--focus .q-slider__thumb-shape path {
+  transform: scaleX(0.55);
+}
+
+// M3: the active fill is flat-cut (2px) where it meets the handle; only
+// its outer end keeps the pill radius. The handle's surface-colored gap
+// masks the flat corners near the track's rounded caps. Vertical sliders
+// are always used `reverse` (fill from the bottom → flat edge on top).
+// outer corners use the track's own radius ($generic-border-radius, 20px)
+// — anything rounder under-shoots the cap and lets the track peek out
+// around the fill at the end
+.q-slider__track-container--h .q-slider__selection {
+  border-radius: var(--radius-lg) 2px 2px var(--radius-lg);
+}
+
+.q-slider__track-container--v .q-slider__selection {
+  border-radius: 2px 2px var(--radius-lg) var(--radius-lg);
+}
+
+// ranges: both fill edges meet a handle
+.q-range .q-slider__selection {
+  border-radius: 2px;
+}
+
+// Dropdowns (design.md 5.5, 6.5): --radius-md (16px), not the 20px card
+// radius, lifted on --shadow-lg, on the card surface. Quasar paints menus
+// white with its own shadow, and on dark in the page colour (--q-dark) with a
+// white-tinted one. Components with a sheet of their own (HHelpTip,
+// HSliderMenu) qualify their selectors and keep it.
+.q-menu {
+  border-radius: var(--radius-md);
+  background: var(--color-bg-card);
+  box-shadow: var(--shadow-lg);
+}
+
+// Helper text under a field (design.md 6.4): caption size, tertiary ink.
+// Quasar's dense field drops it to 11px, under the type scale's floor. An
+// error keeps Quasar's error colour.
+.q-field .q-field__bottom {
+  font-size: var(--text-caption-size);
+}
+
+.q-field:not(.q-field--error) .q-field__bottom {
+  color: var(--color-text-tertiary);
+}
+
+// Tooltips [design.md, Tooltip] — a small dark label in caption type, 8px
+// radius: at the menus' 16px a one-line tooltip turns into a pill and reads
+// as a chip. Quasar's default is a grey from outside the palette at 10px,
+// under the type scale's 12px floor. Dark in both themes, so on a dark page
+// it takes a hairline: dark on dark has no edge of its own.
+.q-tooltip--style {
+  background: var(--color-bg-hero-dark);
+  color: var(--color-text-on-fill);
+  border-radius: var(--radius-xs);
+  font-size: var(--text-caption-size);
+  line-height: 133%;
+  padding: 6px 12px;
+}
+
+[data-theme="dark"] .q-tooltip--style {
+  box-shadow: inset 0 0 0 1px var(--color-stroke-default);
+}
+
+// Quasar enlarges tooltips on a phone (14px), where one is read rarely and
+// at arm's length. Keep that rather than shrinking it back to caption.
+@media (max-width: 599.98px) {
+  .q-tooltip--style {
+    font-size: var(--text-body-sm-size);
+    padding: var(--space-xs) var(--space-sm);
+  }
+}
+
+// Touch targets [design.md 8.7]: at least 44px on a touch screen, whatever the
+// button looks like. An invisible box centred on the button, so nothing moves.
+@media (pointer: coarse) {
+  .q-btn::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: max(100%, 44px);
+    height: max(100%, 44px);
+    transform: translate(-50%, -50%);
+  }
+}
+
+// A centred dialog's margin on a phone [design.md 6.5]. A bottom sheet keeps
+// Quasar's zero.
+@media (max-width: 599.98px) {
+  .q-dialog__inner--minimized:not(.q-dialog__inner--bottom):not(
+      .q-dialog__inner--top
+    ) {
+    padding: var(--space-sm);
+  }
+}
+
+// Dialogs — overlay token + 4px blur (overrides design.md v2's no-blur rule)
+.q-dialog__backdrop {
+  background: var(--color-bg-overlay);
+  backdrop-filter: blur(4px);
+}
+
+// A dialog holds still while it closes. Quasar up to 2.23 locks the page
+// under a dialog by fixing <body> and forcing a scrollbar onto it, and that
+// bar keeps the page's own in place only if body's overflow reaches the
+// window. The clip on <html> (_base.scss) stops it, so the window's bar
+// vanished while a dialog was open and came back the moment it started to
+// leave: the window narrowed mid-animation and a centred dialog slid half a
+// scrollbar sideways (a bottom sheet made it obvious). Lifting the clip for
+// as long as the lock forces that bar lets it stay where it was; the body is
+// fixed then, so nothing can pan sideways anyway. Quasar 2.34 locks <html>
+// itself and reserves the bar's space (`q-document--reserve-scrollbar`), so
+// the forcing class never appears there and this rule stays out of its way.
+html:has(> body.q-body--force-scrollbar-y) {
+  overflow-x: visible;
+}
+
+// Drawer backdrop — same 4px blur as dialogs so the page softens behind an
+// open drawer (Quasar keeps its own dark scrim; we just add the blur)
+.q-drawer__backdrop {
+  backdrop-filter: blur(4px);
+}
+
+// Notify toasts — card bg, semantic border-left accent [§7]
+.q-notification {
+  border-radius: var(--radius-md);
+  font-family: var(--font-brand);
+}

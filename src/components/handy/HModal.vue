@@ -1,5 +1,6 @@
 <template>
-  <div class="h-modal">
+  <div ref="rootEl" :class="['h-modal', { 'h-modal--sheet': sheet }]">
+    <span v-if="sheet" class="h-modal__handle" aria-hidden="true" />
     <q-btn
       v-if="closable"
       v-close-popup
@@ -10,7 +11,7 @@
       :aria-label="kitLabel('close')"
       @click="emit('close')"
     />
-    <h3 v-if="title" class="text-h4">{{ title }}</h3>
+    <h3 v-if="title" :id="titleId" class="text-h4">{{ title }}</h3>
     <div class="h-modal__body text-body"><slot /></div>
     <div v-if="$slots.actions" class="h-modal__actions">
       <slot name="actions" />
@@ -19,7 +20,7 @@
 </template>
 
 <script setup lang="ts">
-// The dialog card (§7 modal): 20px radius, 560px max, generous padding,
+// The dialog card (design.md 6.5): 20px radius, 560px max, generous padding,
 // optional close top-right, actions right-aligned — separation inside via
 // spacing, never lines. Use INSIDE a q-dialog (which owns backdrop, focus
 // trap, ESC):
@@ -33,14 +34,44 @@
 //       </template>
 //     </HModal>
 //   </q-dialog>
-import { kitLabel } from "@/components/handy/labels";
+//
+// `sheet` is the mobile form (design.md 6.5, Modal and sheet): put it in a
+// `<q-dialog position="bottom">` and it rounds only its top corners and
+// carries a centred drag handle. Quasar runs it edge to edge on a phone and
+// caps it at the same 560px above that. The handle is a cue, not a control:
+// the dialog closes the usual ways.
+import { onBeforeUnmount, onMounted, ref, useId } from "vue";
+import { kitLabel } from "./labels";
 
-withDefaults(defineProps<{ title?: string; closable?: boolean }>(), {
-  title: "",
-  closable: false
-});
+const props = withDefaults(
+  defineProps<{ title?: string; closable?: boolean; sheet?: boolean }>(),
+  { title: "", closable: false, sheet: false }
+);
 
 const emit = defineEmits<{ close: [] }>();
+
+// The title names the dialog. q-dialog owns the role="dialog" element, which
+// sits outside this component, so the title's id is handed up to it — unless
+// the host already named the dialog itself.
+const titleId = useId();
+const rootEl = ref<HTMLElement | null>(null);
+let labelled: HTMLElement | null = null;
+
+onMounted(() => {
+  const dialog = rootEl.value?.closest<HTMLElement>('[role="dialog"]');
+  if (!props.title || !dialog) return;
+  if (
+    dialog.hasAttribute("aria-labelledby") ||
+    dialog.hasAttribute("aria-label")
+  )
+    return;
+  dialog.setAttribute("aria-labelledby", titleId);
+  labelled = dialog;
+});
+
+onBeforeUnmount(() => {
+  labelled?.removeAttribute("aria-labelledby");
+});
 </script>
 
 <style scoped lang="scss">
@@ -49,12 +80,15 @@ const emit = defineEmits<{ close: [] }>();
   // surface is a card, not the page — on dark the two genuinely differ, so
   // without this the handle wears a page-coloured halo
   --h-slider-gap: var(--color-bg-card);
+  // the card's side padding, which the body (below) reaches across so its
+  // scrollbar lands on the card's edge
+  --h-modal-pad-x: var(--modal-inset);
 
   position: relative;
   background: var(--color-bg-card);
   color: var(--color-text-primary);
   border-radius: var(--radius-lg);
-  padding: var(--space-lg);
+  padding: var(--modal-inset) var(--h-modal-pad-x);
   width: 100%;
   max-width: 560px;
   box-shadow: var(--shadow-xl);
@@ -68,6 +102,25 @@ const emit = defineEmits<{ close: [] }>();
     margin: 0;
     padding-right: 48px;
   }
+}
+
+.h-modal--sheet {
+  --h-modal-pad-x: var(--card-inset);
+
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  padding: var(--space-sm) var(--h-modal-pad-x)
+    calc(var(--space-md) + env(safe-area-inset-bottom));
+  max-height: calc(100dvh - var(--space-2xl));
+}
+
+.h-modal__handle {
+  flex: none;
+  align-self: center;
+  width: 32px;
+  height: var(--space-2xs);
+  border-radius: var(--radius-full);
+  background: var(--color-stroke-default);
+  margin-bottom: var(--space-sm);
 }
 
 .h-modal__close {
@@ -84,7 +137,7 @@ const emit = defineEmits<{ close: [] }>();
   flex: 1 1 auto;
   min-height: 0;
   overflow-y: auto;
-  // the slim scrollbar skin is global now (app.scss, "Scrollbars")
+  // the slim scrollbar skin is global now (styles/_layout.scss, "Scrollbars")
 
   // A modal must never scroll sideways, and the usual reason it does is a
   // slider: Quasar's handle is a 40px box centred on its position, so at
@@ -94,16 +147,24 @@ const emit = defineEmits<{ close: [] }>();
   // about 20px of travel. Clipping is the wrong answer — it slices the handle
   // in half exactly at 0 and 100 — so instead the box is padded by the
   // overhang and given the same amount back as negative margin. Content lands
-  // where it always did; only the scrollbar moves outward, into padding the
-  // card already had (--space-lg is 32px, so 12px still remains).
+  // where it always did; only the box's edges move outward, into padding the
+  // card already had.
   //
-  // This is the app.scss `.slider-thumb-room` utility, inlined: HModal owes
-  // the guarantee to every project that copies it, and app.scss is
-  // hand-merged per repo rather than synced.
+  // This is the kit's `.slider-thumb-room` utility (styles/_layout.scss),
+  // inlined: HModal owes the guarantee to every project that uses it,
+  // whatever that project's own global CSS does.
   --slider-thumb-overhang: 20px;
 
-  padding-inline: var(--slider-thumb-overhang);
-  margin-inline: calc(-1 * var(--slider-thumb-overhang));
+  padding-left: var(--slider-thumb-overhang);
+  margin-left: calc(-1 * var(--slider-thumb-overhang));
+  // The right side takes the same trick the whole way, across all of the
+  // card's padding, so the scrollbar runs down the card's own edge rather
+  // than floating inside it (and the padding still covers the overhang).
+  // Nothing is needed at the top and bottom: the card's padding plus the
+  // body's own margins keep both ends of the bar well clear of the 20px
+  // corners, with or without a title and actions.
+  padding-right: var(--h-modal-pad-x);
+  margin-right: calc(-1 * var(--h-modal-pad-x));
 }
 
 .h-modal__actions {

@@ -29,6 +29,18 @@ withDefaults(defineProps<{ layout?: "inline" | "equal" | "stack" }>(), {
 
 .h-btngroup--equal > :deep(*) {
   flex: 1;
+  min-width: 0;
+}
+
+// a pair sharing a narrow phone: the label gets the room, not the padding
+@media (max-width: 599.98px) {
+  .h-btngroup {
+    gap: var(--space-xs);
+  }
+
+  .h-btngroup--equal > :deep(.q-btn) {
+    padding-inline: var(--space-sm);
+  }
 }
 
 .h-btngroup--stack {

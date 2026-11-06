@@ -85,6 +85,11 @@ const help: typeof enUS = {
       label: "Videos anfragen",
       caption:
         "Für jedes Video ein script anfragen und mit abstimmen, was als Nächstes drankommt"
+    },
+    aiScripts: {
+      label: "KI-Scripts",
+      caption:
+        "Hochgradig experimentell: von KI erstellte Scripts für angefragte Videos, von keinem Menschen geprüft"
     }
   },
 

@@ -26,7 +26,7 @@ withDefaults(defineProps<{ title?: string; separated?: boolean }>(), {
 
 // title follows the InfoCard rule — h5, 24px inset, 16px beneath
 .h-list__title {
-  padding: var(--space-md) var(--space-md) var(--space-sm);
+  padding: var(--card-inset) var(--card-inset) var(--space-sm);
   color: var(--color-text-primary);
 }
 
@@ -37,8 +37,8 @@ withDefaults(defineProps<{ title?: string; separated?: boolean }>(), {
   content: "";
   position: absolute;
   top: 0;
-  left: var(--space-md);
-  right: var(--space-md);
+  left: var(--card-inset);
+  right: var(--card-inset);
   height: 1px;
   background: var(--color-stroke-subtle);
 }

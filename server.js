@@ -2,11 +2,13 @@
 // so plain static serving is all this needs — except the social-preview tags:
 // link scrapers require an absolute og:image URL, so index.html is served
 // with the request's own origin substituted in (keeps the repo domain-free) —
-// and the slimmed catalog snapshot, see server/catalog.js.
+// the slimmed catalog snapshot, see server/catalog.js, and the request
+// board's AI scripts, see server/ai-scripts.js.
 import express from "express";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { serveAiScripts } from "./server/ai-scripts.js";
 import { serveCatalog } from "./server/catalog.js";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -28,6 +30,7 @@ const serveIndex = (req, res) => {
 app.get("/", serveIndex);
 app.get("/index.html", serveIndex);
 serveCatalog(app);
+serveAiScripts(app);
 
 app.use(express.static(spa));
 app.listen(port);

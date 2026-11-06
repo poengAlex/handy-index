@@ -26,6 +26,7 @@ const sites: typeof enUS = {
 
   errorTitle: "Не удалось загрузить сайты",
   emptyBody: "Индекс вернулся без единого сайта. Попробуй загрузить его снова.",
+  // every site in the index is behind a preference
   noMatchTitle: "Сайты не найдены",
   noMatchBody:
     "Ни одно название сайта не совпало с запросом. Попробуй ввести меньше букв."

@@ -20,6 +20,7 @@ const sites: typeof enUS = {
   errorTitle: "Kunne ikke laste nettstedene",
   emptyBody:
     "Indeksen kom tilbake uten et eneste nettsted. Prøv å laste den inn på nytt.",
+  // every site in the index is behind a preference
   noMatchTitle: "Ingen treff blant nettstedene",
   noMatchBody: "Ingen nettstedsnavn passer til søket. Prøv med færre bokstaver."
 };

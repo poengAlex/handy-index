@@ -42,7 +42,7 @@
 //     @copy-error="hToast('negative', 'Couldn’t copy — select it instead.')"
 //   />
 import { computed } from "vue";
-import { kitLabel } from "@/components/handy/labels";
+import { kitLabel } from "./labels";
 
 const props = defineProps<{ value: string }>();
 
@@ -82,15 +82,16 @@ async function copy() {
   align-items: center;
   gap: var(--space-xs);
   max-width: 100%;
+  // as a flex item it wouldn't shrink below its value, and left a narrow card
+  min-width: 0;
   padding: var(--space-xs) var(--space-sm);
   border-radius: var(--radius-full);
   background: var(--color-bg-page-alt);
 }
 
 .h-key__value {
-  font-family:
-    ui-monospace, "SF Mono", "Cascadia Mono", "Roboto Mono", Menlo, monospace;
-  font-size: 16px;
+  font-family: var(--font-mono);
+  font-size: var(--text-body-size);
   font-weight: 600;
   letter-spacing: 2px;
   padding-inline: var(--space-xs);

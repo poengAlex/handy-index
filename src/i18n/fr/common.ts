@@ -40,7 +40,8 @@ const common: typeof enUS = {
   ofTotal: {
     videos: "{shown} sur {total} vidéo | {shown} sur {total} vidéos",
     performers: "{shown} sur {total} acteur | {shown} sur {total} acteurs",
-    tags: "{shown} sur {total} étiquette | {shown} sur {total} étiquettes"
+    tags: "{shown} sur {total} étiquette | {shown} sur {total} étiquettes",
+    sites: "{shown} sur {total} site | {shown} sur {total} sites"
   },
 
   count: {

@@ -38,6 +38,15 @@ const tags: typeof enUS = {
     mutedCount: "已屏蔽（{count}）"
   },
 
+  // The category pills over the cloud. The pills themselves carry the
+  // API's own category names, as the tag pills carry tag names; only
+  // these two are ours.
+  categories: {
+    title: "分类",
+    label: "按分类筛选标签",
+    all: "全部"
+  },
+
   empty: {
     searchTitle: "没有匹配的标签",
     searchBody: "索引里没有匹配“{query}”的内容。",

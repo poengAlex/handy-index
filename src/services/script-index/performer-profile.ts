@@ -79,6 +79,23 @@ export function profileWeight(raw?: string): number | undefined {
   return undefined;
 }
 
+/** Outside this the height and weight don't belong to one adult: a 185 cm
+ * man at 36 kg (10.5), and three identical 160 cm / 150 kg profiles (58.6)
+ * that read like some site's default. Real profiles run 14–37. */
+const BMI = { min: 13, max: 45 };
+
+/** Body mass index — kilograms over metres squared — to one decimal, from
+ * the height and weight as read above. Undefined unless both are there and
+ * the pair is plausible. */
+export function profileBmi(
+  height: number | undefined,
+  weight: number | undefined
+): number | undefined {
+  if (!height || !weight) return undefined;
+  const bmi = Math.round((weight / (height / 100) ** 2) * 10) / 10;
+  return bmi >= BMI.min && bmi <= BMI.max ? bmi : undefined;
+}
+
 /** The same height in feet and inches, for the messages that print it so. */
 export function feetAndInches(cm: number): { feet: number; inches: number } {
   const total = Math.round(cm / CM_PER_INCH);
@@ -257,20 +274,27 @@ const SITE_NAMES: [RegExp, string][] = [
 
 const MAX_LINKS = 8;
 
+/** A web address worth making a link of, or undefined: anything but http(s)
+ * (javascript:, data:) never becomes an href. */
+function webUrl(raw: string | undefined): URL | undefined {
+  try {
+    const url = new URL(raw?.trim() ?? "");
+    return url.protocol === "https:" || url.protocol === "http:"
+      ? url
+      : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
 /** Their own links, web addresses only, one per site. Two X accounts would
  * print as two identical pills, so the first of each wins. */
 export function profileLinks(profile: PerformerProfile): ProfileLink[] {
   const links: ProfileLink[] = [];
   const seen = new Set<string>();
   for (const entry of profile.some ?? []) {
-    let url: URL;
-    try {
-      url = new URL(entry.url?.trim() ?? "");
-    } catch {
-      continue;
-    }
-    // anything but a web address (javascript:, data:) never becomes an href
-    if (url.protocol !== "https:" && url.protocol !== "http:") continue;
+    const url = webUrl(entry.url);
+    if (!url) continue;
     const host = url.hostname.toLowerCase().replace(/^www\./, "");
     const label =
       SITE_NAMES.find(([pattern]) => pattern.test(host))?.[1] ?? host;
@@ -278,6 +302,26 @@ export function profileLinks(profile: PerformerProfile): ProfileLink[] {
     seen.add(label);
     links.push({ label, url: url.href });
     if (links.length === MAX_LINKS) break;
+  }
+  return links;
+}
+
+/** Their profile on the partner sites that carry them — where there are more
+ * of their videos than the index has scripts for. Labelled with the site's
+ * domain, as the rest of the app names partners ("pornhub.com"), and one per
+ * site: a site listed twice would print as two identical pills. */
+export function profilePartnerLinks(profile: PerformerProfile): ProfileLink[] {
+  const links: ProfileLink[] = [];
+  const seen = new Set<string>();
+  for (const ref of profile.partnerSiteRefs ?? []) {
+    const url = webUrl(ref.url);
+    if (!url) continue;
+    const label = (ref.partner_name?.trim() || url.hostname)
+      .toLowerCase()
+      .replace(/^www\./, "");
+    if (seen.has(label)) continue;
+    seen.add(label);
+    links.push({ label, url: url.href });
   }
   return links;
 }

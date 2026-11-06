@@ -39,6 +39,15 @@ const tags: typeof enUS = {
     mutedCount: "En sourdine ({count})"
   },
 
+  // The category pills over the cloud. The pills themselves carry the
+  // API's own category names, as the tag pills carry tag names; only
+  // these two are ours.
+  categories: {
+    title: "Catégorie",
+    label: "Filtrer les étiquettes par catégorie",
+    all: "Toutes"
+  },
+
   empty: {
     searchTitle: "Aucune étiquette ne correspond",
     searchBody: "Rien dans l'index ne correspond à « {query} ».",

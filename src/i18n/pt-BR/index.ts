@@ -13,6 +13,7 @@ import performers from "./performers";
 import playlists from "./playlists";
 import privacy from "./privacy";
 import requests from "./requests";
+import aiScripts from "./aiScripts";
 import services from "./services";
 import settings from "./settings";
 import sites from "./sites";
@@ -38,6 +39,7 @@ const ptBR: typeof enUSMessages = {
   playlists,
   privacy,
   requests,
+  aiScripts,
   services,
   settings,
   sites,

@@ -14,6 +14,7 @@ import sites from "./sites";
 import performers from "./performers";
 import playlists from "./playlists";
 import requests from "./requests";
+import aiScripts from "./aiScripts";
 import help from "./help";
 import about from "./about";
 import privacy from "./privacy";
@@ -39,6 +40,7 @@ const nbNO: typeof enUSMessages = {
   performers,
   playlists,
   requests,
+  aiScripts,
   help,
   about,
   privacy,

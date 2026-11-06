@@ -61,8 +61,12 @@ const browse: typeof enUS = {
     // one row of any picker: the tag, site or performer name, then how
     // many videos picking it would leave on screen
     option: "{name} ({count})",
-    vrLabel: "Nur VR",
-    vrCaption: "Nur Virtual-Reality-Videos",
+    vrLabel: "VR-Videos",
+    vrCaption: "Videos in virtueller Realität zeigen",
+    flatLabel: "Flache Videos",
+    flatCaption: "Normale Videos ohne VR zeigen",
+    formatLastOn:
+      "VR oder flach muss an bleiben – schalte zuerst das andere ein",
     orientation: "Orientierung",
     access: "Zugang",
     premiumScriptsLabel: "Premium-Scripts",

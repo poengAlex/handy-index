@@ -2,7 +2,7 @@
   <q-page class="playlists-page h-section">
     <div class="h-container">
       <header class="playlists-page__head">
-        <h1 class="text-h2 playlists-page__title">
+        <h1 class="text-h2 playlists-page__title page-title--in-bar">
           {{ $t("playlists.title") }}
         </h1>
         <p

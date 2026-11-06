@@ -24,8 +24,15 @@ export type EventGroup =
   | "settings"
   | "health";
 
-/** Where on screen an action was taken. */
-export type Surface = "video_page" | "quick_menu" | "playlist";
+/** Where on screen an action was taken. `request_board` is the download of
+ * an AI script on a request tile, `ai_scripts_page` one from the AI scripts
+ * page's list. */
+export type Surface =
+  | "video_page"
+  | "quick_menu"
+  | "playlist"
+  | "request_board"
+  | "ai_scripts_page";
 
 /** How a key-gated or network action ended. `no_key` means the key prompt
  * opened instead; `key_rejected` that the API refused the saved key. */
@@ -58,6 +65,9 @@ export type SettingName =
   | "premium_scripts"
   | "premium_videos"
   | "embedded_players"
+  | "performer_media"
+  | "video_card_previews"
+  | "performer_card_previews"
   | "full_width"
   | "background"
   | "background_motion";
@@ -107,6 +117,8 @@ export interface EventProps {
     performer: boolean;
     scripter: boolean;
     vr: boolean;
+    /** the inverse: non-VR videos only */
+    flat: boolean;
     clip: boolean;
     published: boolean;
     duration: boolean;
@@ -117,6 +129,10 @@ export interface EventProps {
     what: "video" | "results";
     method: "share_sheet" | "clipboard";
     outcome: "ok" | "failed";
+  };
+  promo_clicked: {
+    /** which ad, by a fixed id of ours: never the performer's name */
+    promo: "handycast";
   };
 
   // --- library ---
@@ -192,7 +208,7 @@ export const EVENTS: { readonly [K in EventName]: EventSpec } = {
     group: "core",
     enabled: true,
     description:
-      "Get script, the quick-menu download, or a playlist's Get all scripts"
+      "Get script, the quick-menu download, a playlist's Get all scripts, or a request's AI script"
   },
   partner_outbound_click: {
     group: "core",
@@ -219,6 +235,11 @@ export const EVENTS: { readonly [K in EventName]: EventSpec } = {
     group: "discovery",
     enabled: true,
     description: "Share or copy link, on a video or on browse results"
+  },
+  promo_clicked: {
+    group: "discovery",
+    enabled: true,
+    description: "An ad on the front page opened, such as the next Handycast"
   },
 
   favorite_toggled: {

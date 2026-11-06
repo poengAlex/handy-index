@@ -15,6 +15,10 @@ const settings: typeof enUS = {
     nsfwCaption: "無地のタイルではなく実際のサムネイルを表示します",
     playersLabel: "埋め込みプレーヤー",
     playersCaption: "PornhubとxHamsterの動画を動画ページ上で直接再生します",
+    // the photo carousel and the reel of preview clips on a performer's page
+    performerMediaLabel: "出演者の写真とクリップ",
+    performerMediaCaption:
+      "出演者ページに写真とプレビュークリップのカルーセルを表示します。オフにすると読み込みが軽くなります",
     fullWidthLabel: "全幅レイアウト",
     fullWidthCaption: "中央寄せの列ではなく画面全体を使います"
   },
@@ -61,7 +65,15 @@ const settings: typeof enUS = {
       "カードにカーソルを合わせる、または指で触れるとプレビューが再生されます。" +
       "ラベルをクリックすると、その速度が元に戻ります。",
     imageSpeed: "画像の速度",
-    clipSpeed: "クリップの速度"
+    clipSpeed: "クリップの速度",
+    // the two switches: previews on video cards (the request board's too),
+    // and on the performer directory's cards
+    videoCardsLabel: "動画カードのプレビュー",
+    videoCardsCaption:
+      "動画カードにカーソルを合わせるかタップすると、プレビューを再生します",
+    performerCardsLabel: "出演者カードのプレビュー",
+    performerCardsCaption:
+      "出演者カードにカーソルを合わせるかタップすると、最も再生されたクリップを再生します"
   },
 
   // Shared by the settings field and the connection-key prompt. "connection

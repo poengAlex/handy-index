@@ -85,6 +85,11 @@ const help: typeof enUS = {
       label: "動画をリクエスト",
       caption:
         "好きな動画のscript作成を依頼し、次に作るものを投票で決められます"
+    },
+    aiScripts: {
+      label: "AI script",
+      caption:
+        "非常に実験的：リクエストされた動画用にAIが作ったscriptで、人間は誰も確認していません"
     }
   },
 

@@ -23,6 +23,7 @@
         'h-peek__carousel',
         { 'h-peek__carousel--bounded': !loop && !skeleton }
       ]"
+      @update:model-value="emit('update:modelValue', $event)"
     >
       <template v-if="skeleton">
         <Slide v-for="n in skeletonCount" :key="`sk-${n}`">
@@ -64,6 +65,7 @@
 import { computed, onBeforeUnmount, ref } from "vue";
 import { Carousel, Navigation, Slide } from "vue3-carousel";
 import "vue3-carousel/carousel.css";
+import { kitLabel } from "./labels";
 
 const props = withDefaults(
   defineProps<{
@@ -76,6 +78,12 @@ const props = withDefaults(
     skeletonHeight?: string;
     /** bound the row to its parent instead of breaking out full-bleed */
     contained?: boolean;
+    /**
+     * v-model: the index of the card at the start of the row. Set it to
+     * start the row on a card and to move the row when the data moves; it
+     * follows a drag. Leave it out and the row starts on the first card.
+     */
+    modelValue?: number | undefined;
   }>(),
   {
     items: () => [],
@@ -85,13 +93,27 @@ const props = withDefaults(
     skeleton: false,
     skeletonCount: 8,
     skeletonHeight: "",
-    contained: false
+    contained: false,
+    modelValue: undefined
   }
 );
 
+const emit = defineEmits<{ "update:modelValue": [index: number] }>();
+
 defineSlots<{ default(props: { item: T; index: number }): unknown }>();
 
-const carousel = ref<{ next: () => void; prev: () => void } | null>(null);
+const carousel = ref<{
+  next: () => void;
+  prev: () => void;
+  slideTo: (index: number) => void;
+} | null>(null);
+
+defineExpose({
+  /** slide the row so the card at `index` is at its start */
+  slideTo: (index: number) => carousel.value?.slideTo(index),
+  next: () => carousel.value?.next(),
+  prev: () => carousel.value?.prev()
+});
 
 // The nav arrows earn their place: hidden by default (a fresh page shows
 // clean cards), summoned by the pointer or keyboard focus landing on the
@@ -155,12 +177,32 @@ const config = computed(() => {
     gap: 16,
     snapAlign: "start" as const,
     wrapAround: wrap,
+    // vue3-carousel (0.17 to 0.19) tracks CSS animations by default: on mount
+    // it puts animationstart/animationend listeners on `document`, and takes
+    // them off only from an effect the unmount has already stopped, so every
+    // carousel stayed reachable from `document`, its page with it (found with
+    // heap snapshots in the onboarding app, 2026-10-04). The cards are a
+    // fixed width; there is nothing to track.
+    ignoreAnimations: true,
     // the library ignores (and warns about) preventExcessiveDragging when
     // wrapAround is on, so only set it on the non-looping carousel
     ...(wrap ? {} : { preventExcessiveDragging: true }),
+    // bound only when the host set it: the library's prop is a number, and
+    // a host built with exactOptionalPropertyTypes may not hand it undefined
+    ...(props.modelValue !== undefined ? { modelValue: props.modelValue } : {}),
     ...(props.autoplay && !props.skeleton
       ? { autoplay: props.autoplay, pauseAutoplayOnHover: true }
-      : {})
+      : {}),
+    // The arrows' names are kit labels, so a host's translator reaches them.
+    // The library names each arrow twice, the button and the icon inside it
+    // (whose <title> is the tooltip over most of the button), so both say
+    // the same thing. The row runs left to right, so left is previous.
+    i18n: {
+      ariaPreviousSlide: kitLabel("carouselPrevious"),
+      ariaNextSlide: kitLabel("carouselNext"),
+      iconArrowLeft: kitLabel("carouselPrevious"),
+      iconArrowRight: kitLabel("carouselNext")
+    }
   };
 });
 </script>
@@ -230,7 +272,6 @@ const config = computed(() => {
 .h-peek__carousel :deep(.carousel__next) {
   box-shadow: var(--shadow-md);
   backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
   transition: opacity 220ms ease;
 }
 

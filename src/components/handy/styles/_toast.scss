@@ -1,0 +1,58 @@
+// Part of the kit's global CSS — loaded through kit.scss, never on its own.
+// The hToast() skin.
+
+// Toast skin [§7] — semantic left accent on the card surface; global (not
+// page-scoped) because q-notify renders in a portal. Fired via hToast().
+.h-toast {
+  border-left: 4px solid;
+  border-radius: var(--radius-md);
+  font-family: var(--font-brand);
+  background: var(--color-bg-card) !important;
+  color: var(--color-text-primary) !important;
+}
+
+.h-toast--positive {
+  border-color: var(--color-feedback-positive);
+}
+
+.h-toast--info {
+  border-color: var(--color-feedback-info);
+}
+
+.h-toast--warning {
+  border-color: var(--color-feedback-warning);
+
+  // Quasar paints the icon with its palette class (`.text-warning`, amber,
+  // !important), 1.76:1 on the card; the readable warning tier instead
+  .q-notification__icon {
+    color: var(--color-text-warning) !important;
+  }
+}
+
+.h-toast--negative {
+  border-color: var(--color-feedback-negative);
+}
+
+// Whole toast is clickable to dismiss (attrs.onClick in toast.ts).
+.h-toast--dismissable {
+  cursor: pointer;
+}
+
+// The × on a toast — the keyboard/AT way out, since the card itself is a
+// role="alert" div and never takes focus.
+.h-toast__dismiss {
+  margin-left: var(--space-xs);
+  color: var(--color-text-secondary);
+  opacity: 0.7;
+  transition: opacity 180ms ease;
+
+  &:focus-visible {
+    opacity: 1;
+  }
+
+  @media (hover: hover) {
+    &:hover {
+      opacity: 1;
+    }
+  }
+}

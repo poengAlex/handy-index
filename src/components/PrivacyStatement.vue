@@ -53,6 +53,7 @@
 
       <h2 :class="headingClass">{{ $t("privacy.catalog.title") }}</h2>
       <p class="text-body">{{ $t("privacy.catalog.body") }}</p>
+      <p class="text-body">{{ $t("privacy.catalog.aiScripts") }}</p>
 
       <h2 :class="headingClass">{{ $t("privacy.statistics.title") }}</h2>
       <p class="text-body">{{ $t("privacy.statistics.sent") }}</p>

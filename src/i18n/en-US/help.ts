@@ -79,6 +79,11 @@ export default {
       label: "Request videos",
       caption:
         "Ask for a script for any video, and vote on what gets scripted next"
+    },
+    aiScripts: {
+      label: "AI scripts",
+      caption:
+        "Highly experimental: scripts made by AI for requested videos, not checked by any human"
     }
   },
 

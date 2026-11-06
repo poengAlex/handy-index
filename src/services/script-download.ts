@@ -101,7 +101,9 @@ export async function downloadFreeScript(
   saveBlob(blob, urlFilename(token.url) ?? funscriptName(video));
 }
 
-function saveBlob(blob: Blob, filename: string): void {
+/** Saves a fetched file through a same-origin object URL, so the `download`
+ * filename sticks. */
+export function saveBlob(blob: Blob, filename: string): void {
   const objectUrl = URL.createObjectURL(blob);
   const anchor = document.createElement("a");
   anchor.href = objectUrl;

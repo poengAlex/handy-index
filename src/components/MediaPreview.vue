@@ -81,8 +81,10 @@ const props = withDefaults(
     /** partner roll clip, when there is one */
     preview?: string;
     alt?: string;
+    /** off: a still picture, nothing previews — the reader's setting */
+    enabled?: boolean;
   }>(),
-  { images: () => [], preview: "", alt: "" }
+  { images: () => [], preview: "", alt: "", enabled: true }
 );
 
 const CLIP_TIMEOUT_MS = 1500;
@@ -154,7 +156,7 @@ function onLeave(e: PointerEvent) {
 }
 
 function start() {
-  if (active.value) return;
+  if (active.value || !props.enabled) return;
   // take the stage first: this stops whatever was playing elsewhere
   if (root.value) claimPreview(root.value);
   active.value = true;
@@ -214,6 +216,14 @@ function failClip() {
   // answer they would have given on their own
   startCycling(true);
 }
+
+// switched off in settings: one already playing stops on the spot
+watch(
+  () => props.enabled,
+  on => {
+    if (!on) stop();
+  }
+);
 
 // a recycled tile (carousels and the grid reuse DOM as you scroll) must not
 // keep the previous video's frame index or dead-clip verdict

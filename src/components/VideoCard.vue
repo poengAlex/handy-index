@@ -13,6 +13,7 @@
         :images="video.images ?? []"
         :preview="video.preview ?? ''"
         :alt="video.title ?? $t('media.card.fallbackTitle')"
+        :enabled="settings.videoCardPreviews"
         class="tile-card__img"
       />
       <div v-else class="tile-card__placeholder">
@@ -103,7 +104,9 @@
             @click="openOnSite"
           >
             <q-item-section side>
-              <q-icon name="language" size="20px" />
+              <SiteIcon :url="video.videoUrl">
+                <q-icon name="language" size="20px" />
+              </SiteIcon>
             </q-item-section>
             <q-item-section>{{ watchLabel }}</q-item-section>
           </q-item>
@@ -167,6 +170,7 @@ import AddToPlaylistDialog from "@/components/AddToPlaylistDialog.vue";
 import ConnectionKeyDialog from "@/components/ConnectionKeyDialog.vue";
 import MediaPreview from "@/components/MediaPreview.vue";
 import TileCard from "@/components/TileCard.vue";
+import SiteIcon from "@/components/SiteIcon.vue";
 import { canHover } from "@/composables/useCanHover";
 import { useFormat } from "@/composables/useFormat";
 import {

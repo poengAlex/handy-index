@@ -61,8 +61,12 @@ const browse: typeof enUS = {
     // one row of any picker: the tag, site or performer name, then how
     // many videos picking it would leave on screen
     option: "{name}（{count}）",
-    vrLabel: "VRのみ",
-    vrCaption: "VR動画だけを表示します",
+    vrLabel: "VR動画",
+    vrCaption: "VR（バーチャルリアリティ）動画を表示",
+    flatLabel: "通常の動画",
+    flatCaption: "VRではない通常の動画を表示",
+    formatLastOn:
+      "VRか通常のどちらかはオンのままにしてください。先にもう一方をオンにします",
     orientation: "性的指向",
     access: "利用条件",
     premiumScriptsLabel: "有料script",

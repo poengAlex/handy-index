@@ -78,6 +78,22 @@ const requests: typeof enUS = {
     rank: "{rank}位"
   },
 
+  // The AI script on a tile, when Handy's auto-scripter has made one for
+  // the video. `note` sits under the button and says what it is: `{when}`
+  // is a relative time ("3 hours ago") of when the script was made or last
+  // replaced. `gone*` is the toast when the script was taken down since the
+  // board loaded; the button then hides.
+  ai: {
+    action: "AI自動Scriptをダウンロード",
+    note: "AIが作成・人による確認なし · {when}",
+    goneTitle: "AI scriptは取り下げられました",
+    goneBody:
+      "このAI scriptは利用できなくなりました。新しく作成されると、ここに再び表示されます。",
+    failedTitle: "ダウンロードに失敗しました",
+    failedBody:
+      "AI scriptのサーバーが応答しませんでした。少し待ってからもう一度お試しください。"
+  },
+
   // The control row above the list.
   filters: {
     searchPlaceholder: "リクエストを検索",

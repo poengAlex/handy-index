@@ -15,6 +15,9 @@ const settings: typeof enUS = {
     nsfwCaption: "显示真实封面，而不是中性占位图",
     playersLabel: "内嵌播放器",
     playersCaption: "直接在视频页播放 Pornhub 和 xHamster 的视频",
+    // the photo carousel and the reel of preview clips on a performer's page
+    performerMediaLabel: "演员照片和片段",
+    performerMediaCaption: "在演员页面显示照片和预览片段轮播。关闭可减少加载量",
     fullWidthLabel: "全宽布局",
     fullWidthCaption: "铺满整个屏幕，而不是居中单栏"
   },
@@ -57,7 +60,13 @@ const settings: typeof enUS = {
     title: "卡片预览",
     hint: "把鼠标悬停在卡片上，或用手指触碰卡片，就能预览。点一下速度名称即可恢复默认。",
     imageSpeed: "图片速度",
-    clipSpeed: "片段速度"
+    clipSpeed: "片段速度",
+    // the two switches: previews on video cards (the request board's too),
+    // and on the performer directory's cards
+    videoCardsLabel: "视频卡片预览",
+    videoCardsCaption: "鼠标悬停或轻触视频卡片时播放预览",
+    performerCardsLabel: "演员卡片预览",
+    performerCardsCaption: "鼠标悬停或轻触演员卡片时播放其播放次数最多的片段"
   },
 
   // shared by the settings field and the connection-key prompt

@@ -84,6 +84,11 @@ const help: typeof enUS = {
       label: "동영상 요청",
       caption:
         "어떤 동영상이든 script를 요청하고, 다음에 무엇을 만들지 투표할 수 있어요"
+    },
+    aiScripts: {
+      label: "AI script",
+      caption:
+        "매우 실험적: 요청된 동영상을 위해 AI가 만든 script로, 어떤 사람도 확인하지 않았어요"
     }
   },
 

@@ -4,6 +4,7 @@
     :caption="caption"
     :icon="icon"
     :clickable="!disable"
+    class="h-toggle-row"
     @click="emit('update:modelValue', !modelValue)"
   >
     <template #trailing>
@@ -33,8 +34,8 @@
 // whole row flips the value, and a direct tap on the switch is stopped so
 // it can't double-flip. Toggle = an independent on/off setting (§6); it
 // sits trailing, one row per card or grouped in an HList.
-import HListRow from "@/components/handy/HListRow.vue";
-import HHelpTip from "@/components/handy/HHelpTip.vue";
+import HListRow from "./HListRow.vue";
+import HHelpTip from "./HHelpTip.vue";
 
 withDefaults(
   defineProps<{
@@ -70,3 +71,25 @@ withDefaults(
 
 const emit = defineEmits<{ "update:modelValue": [value: boolean] }>();
 </script>
+
+<style scoped lang="scss">
+// On a phone the switch sits on the label's line and the caption runs the whole
+// row under it: the switch only needs one line, and beside the text it took
+// about 60px from all of them, so a caption of two lines came out as three.
+@media (max-width: 599.98px) {
+  .h-toggle-row > :deep(.h-list-row__trailing) {
+    position: absolute;
+    top: var(--space-xs);
+    right: 12px;
+    padding-left: 0;
+  }
+
+  .h-toggle-row :deep(.h-list-row__label) {
+    padding-right: 56px;
+  }
+
+  .h-toggle-row > :deep(.h-list-row__leading) {
+    align-self: flex-start;
+  }
+}
+</style>

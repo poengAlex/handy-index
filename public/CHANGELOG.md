@@ -5,6 +5,133 @@
      words. Newest release on top. Format: "## <version> — <date>", then
      "### <group>" headings and "- " lines. Keep it English-only. -->
 
+## 2.14.0 — 6 November 2026
+
+### Home
+
+- The front page now shows when the next Handycast is: a live show on
+  Stripchat where one model controls every connected Handy. It's free to join,
+  and the card links to how it works.
+
+## 2.13.0 — 5 November 2026
+
+### On a phone
+
+- A list page's title now sits in the top bar, and the page starts right under
+  it, so you see more videos on the first screen.
+- The top bar is calmer: Favorites, Recently viewed and Help are in the menu.
+- Pages and cards use more of the screen's width, and buttons are easier to tap.
+
+## 2.12.1 — 26 October 2026
+
+### Browsing
+
+- The Sites page now always lists every site. A site your filters leave no
+  videos of stays on the list and shows "0 of" its videos, instead of
+  disappearing.
+
+## 2.12.0 — 17 October 2026
+
+### Script requests
+
+- A new AI scripts page lists every script Handy's AI has made, newest
+  first, with a search and a download button for each. It is highly
+  experimental: none of these scripts have been checked by a human. You find
+  it under Help.
+
+## 2.11.0 — 16 October 2026
+
+### Script requests
+
+- Some requests now come with a script made by Handy's AI, ready before a
+  person has scripted the video. Look for the "Download AI auto script"
+  button on a request. These scripts are made by AI and have not been
+  checked by a human; the note under the button says when it was made.
+- The privacy page says where these AI scripts come from.
+
+## 2.10.4 — 12 October 2026
+
+### Look and feel
+
+- If your device is set to dark mode, the page is dark from the very first
+  moment instead of flashing white while it loads.
+- In light mode, the top bar and the back-to-top button are a little more
+  solid once you scroll, so the page behind them no longer shows through as
+  a visible edge on wide screens.
+- On phones, the page behind the menu blurs softly while the menu is open.
+
+## 2.10.3 — 8 October 2026
+
+### Loading
+
+- On your first visit, the page no longer dims and blurs itself a moment after
+  loading. The welcome message is simply there when the page appears.
+
+## 2.10.2 — 6 October 2026
+
+### Finding videos
+
+- The video filters have two switches, VR videos and flat videos, both on to
+  begin with: switch either off to see only the other kind.
+
+### Performer pages
+
+- A performer's clip reel keeps looping. With only one clip, it plays again
+  instead of stopping after the first time.
+
+## 2.10.1 — 6 October 2026
+
+### Performers
+
+- Performer cards preview like video cards: hover them, or touch one on a
+  phone or tablet. The separate play button is gone.
+
+## 2.10.0 — 6 October 2026
+
+### Performers
+
+- Filter performers by gender, hair, eyes, ethnicity, cup size, natural or
+  enhanced breasts, tattoos, piercings, age, height and build. Each option
+  shows how many performers it leaves.
+- Sort performers by age, height, weight, build or cup size. Performers whose
+  profile doesn't say come last, whichever way round.
+- Hover a performer to see a clip from their most played video, picked from
+  scenes with them alone or with one partner where there are any. On phones
+  and tablets, tap the play button on the picture.
+
+### Performer pages
+
+- A photo slideshow and a reel of their videos' preview clips, most played
+  first. Only one clip plays at a time, and both pause when you look away.
+- Their social links and a "More of" section with their profiles on partner
+  sites, each with the site's icon.
+- The ? next to Profile explains where the details come from, and lets you
+  report a mistake to us by email.
+
+### Video pages
+
+- Plays, votes, rating and views are now loaded fresh each time you open a
+  video.
+- "Watch on" links show the site's icon, in the menu on video cards too.
+
+### Tags, performers and sites
+
+- Pick a category on the tags page to see only those tags.
+- The sites page shows each site's icon, and only lists sites your
+  preferences leave videos from.
+
+### Settings
+
+- New switches for performer photos and reels, and for the previews on video
+  cards and performer cards — turn any of them off to load less.
+
+## 2.9.5 — 6 October 2026
+
+### Speed
+
+- The site has about a third less code to download before it can start, so
+  it opens a little sooner, especially on a phone.
+
 ## 2.9.4 — 6 October 2026
 
 ### Browsing

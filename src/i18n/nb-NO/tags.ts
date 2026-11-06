@@ -30,6 +30,12 @@ const tags: typeof enUS = {
     mutedCount: "Dempet ({count})"
   },
 
+  categories: {
+    title: "Kategori",
+    label: "Filtrer tagger etter kategori",
+    all: "Alle"
+  },
+
   empty: {
     searchTitle: "Ingen treff blant taggene",
     searchBody: "Ingenting i indeksen passer til «{query}».",

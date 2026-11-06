@@ -63,6 +63,16 @@ const requests: typeof enUS = {
     rank: "{rank}."
   },
 
+  ai: {
+    action: "Last ned AI-autoscript",
+    note: "Laget av AI, ikke sjekket av et menneske · {when}",
+    goneTitle: "AI-scriptet er fjernet",
+    goneBody:
+      "Dette AI-scriptet er ikke tilgjengelig lenger. Lages det et nytt, dukker det opp her igjen.",
+    failedTitle: "Nedlastingen mislyktes",
+    failedBody: "Serveren for AI-script svarte ikke. Prøv igjen om litt."
+  },
+
   filters: {
     searchPlaceholder: "Søk i forespørsler",
     searchAria: "Søk i forespørsler etter tittel",

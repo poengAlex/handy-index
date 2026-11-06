@@ -1,4 +1,4 @@
-// The theme contract (v11 §12), in one place: persist the choice under
+// The theme contract (design.md 9.2), in one place: persist the choice under
 // "handy-theme", set BOTH the data-theme attribute on <html> (drives the
 // CSS tokens) and Quasar's dark flag (drives q- components). Until the user
 // picks a side, the OS preference decides — and keeps deciding, so the app
@@ -31,11 +31,18 @@ export function useHandyTheme() {
    * toggle out of ever following their OS again.
    */
   function set(value: boolean) {
+    // The switch is instant (design.md 9.2). Every token flips at once, and
+    // the 180ms colour transitions on buttons, segments and fields would
+    // otherwise cross-fade each label from one theme's ink to the other's, so
+    // transitions are off until a frame with the new theme has been painted
+    // (two frames: one is not guaranteed to reach the screen).
+    const root = document.documentElement;
+    root.classList.add("h-theme-switching");
     dark.value = value;
     $q.dark.set(value);
-    document.documentElement.setAttribute(
-      "data-theme",
-      value ? "dark" : "light"
+    root.setAttribute("data-theme", value ? "dark" : "light");
+    requestAnimationFrame(() =>
+      requestAnimationFrame(() => root.classList.remove("h-theme-switching"))
     );
   }
 
@@ -47,6 +54,12 @@ export function useHandyTheme() {
 
   function toggle() {
     apply(!dark.value);
+  }
+
+  /** forget the stored choice and go back to following the browser */
+  function followSystem() {
+    localStorage.removeItem(STORAGE_KEY);
+    set(systemQuery()?.matches ?? false);
   }
 
   /** restore the persisted choice, or follow the OS — from the shell's onMounted */
@@ -70,5 +83,5 @@ export function useHandyTheme() {
     }
   }
 
-  return { dark, apply, toggle, init };
+  return { dark, apply, toggle, followSystem, init };
 }

@@ -548,6 +548,12 @@ export function vrOnly(videos: readonly PartnerVideo[]): PartnerVideo[] {
   return videos.filter(video => video.format?.format === "vr");
 }
 
+/** Everything that isn't VR — flat videos, and the few whose format the
+ * index doesn't know, which are not VR as far as anyone can tell. */
+export function nonVr(videos: readonly PartnerVideo[]): PartnerVideo[] {
+  return videos.filter(video => video.format?.format !== "vr");
+}
+
 export function byIds(
   videos: readonly PartnerVideo[],
   ids: readonly string[]
@@ -787,6 +793,39 @@ export function performersOf(
       avgRating: summary.ratedCount ? ratingSum / summary.ratedCount : 0
     }))
     .sort((a, b) => b.count - a.count);
+}
+
+/** A cast this small is them alone or with one partner — a clip from it
+ * shows them; one from a compilation or a group scene may show anyone. */
+const SMALL_CAST = 2;
+
+/** For each performer, the preview clip their card in the directory plays on
+ * hover: the most played of their videos with a clip and a small cast (them
+ * alone, or with one other), and only where they have none of those, the
+ * most played of any. Performers with no clip on any video are absent. */
+export function topPreviewByPerformer(
+  videos: readonly PartnerVideo[]
+): Map<string, string> {
+  type Best = { preview: string; plays: number };
+  const small = new Map<string, Best>();
+  const any = new Map<string, Best>();
+  const keep = (map: Map<string, Best>, id: string, candidate: Best) => {
+    const current = map.get(id);
+    if (!current || candidate.plays > current.plays) map.set(id, candidate);
+  };
+  for (const video of videos) {
+    if (!video.preview) continue;
+    const candidate = { preview: video.preview, plays: video.scriptPlays ?? 0 };
+    const cast = video.performers ?? [];
+    for (const performer of cast) {
+      keep(any, performer.performerId, candidate);
+      if (cast.length <= SMALL_CAST)
+        keep(small, performer.performerId, candidate);
+    }
+  }
+  return new Map(
+    [...any].map(([id, best]) => [id, (small.get(id) ?? best).preview])
+  );
 }
 
 export interface PerformerStats {

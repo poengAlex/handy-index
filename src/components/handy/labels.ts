@@ -14,15 +14,26 @@
 
 export const KIT_LABELS = {
   close: "Close",
+  /** The action dock's menu of everything but its main actions. */
+  more: "More",
   copy: "Copy",
   copyKey: "Copy key",
   dismiss: "Dismiss",
   readFullText: "Read the full text",
   loading: "Loading",
   recommended: "Recommended",
-  /** The footer of a help tip, in each of its two states. */
-  tipPin: "Click to pin, then scroll",
-  tipClose: "Esc or click outside to close",
+  /** Marks a control a casual user should leave alone (HSectionCard). */
+  expert: "Expert",
+  /**
+   * The foot of a help tip, printed only while it is LOCKED. Nothing
+   * advertises that a click would lock one: a hint for a state the reader is
+   * not in yet costs a line on the surface with the fewest to spare. Locked
+   * is different — the sheet now outlives the cursor, and the way back out is
+   * the part that stopped being guessable.
+   */
+  tipLocked: "Locked. Press Esc or click outside to close.",
+  /** The same line where there is no Esc key and nothing to click with. */
+  tipLockedTouch: "Locked. Tap outside to close.",
   /** `{label}` is the control's own name, or `value` when it has none. */
   increase: "Increase {label}",
   decrease: "Decrease {label}",
@@ -62,12 +73,62 @@ export const KIT_LABELS = {
   themeToLight: "Switch to light mode",
   themeToDark: "Switch to dark mode",
   themeLight: "Light mode",
-  themeDark: "Dark mode"
+  themeDark: "Dark mode",
+  /**
+   * What a connection dot calls itself when it is a BUTTON and the caller
+   * named no other purpose for it. An icon-only button has to say something,
+   * and the state it is showing is the honest thing for it to say — a caller
+   * whose button does something more specific ("Reconnect") passes `label`.
+   */
+  connected: "Connected",
+  bluetooth: "Connected over Bluetooth",
+  connecting: "Connecting",
+  offline: "Offline",
+  /**
+   * What an interactive playhead calls itself when the caller names nothing
+   * more specific. A caller should: "Video position" says what is being
+   * scrubbed, and this only says what the control is.
+   */
+  playhead: "Playhead",
+  /**
+   * A peek carousel's arrows: their accessible names and their tooltips.
+   * The words are vue3-carousel's own, so an app without a translator reads
+   * what it always did.
+   */
+  carouselPrevious: "Navigate to previous slide",
+  carouselNext: "Navigate to next slide",
+  /**
+   * A file button's label when the page gives none: one file, several, or a
+   * folder (HFileBtn). Pages usually say their own verb ("Add files").
+   */
+  chooseFile: "Choose file",
+  chooseFiles: "Choose files",
+  chooseFolder: "Choose folder",
+  /** The drop overlay's title when the page gives none (HDropOverlay). */
+  dropToOpen: "Drop to open",
+  /**
+   * A drop zone's title when the page gives none (HDropZone): what a pointer
+   * can do there, and the one thing a touch screen can.
+   */
+  dropZone: "Drop files here, or click to choose",
+  dropZoneTouch: "Tap to choose files",
+  /** A drop zone's title while files are dragged over the window. */
+  dropHere: "Drop here",
+  /**
+   * The accessible name of a file row's remove button. `{label}` is the
+   * file's name: the row's own label, so it takes `kitLabelFor` like the
+   * stepper's buttons, and a vue-i18n host needs no new slot for it.
+   */
+  removeFile: "Remove {label}"
 } as const;
 
 export type KitLabel = keyof typeof KIT_LABELS;
 
-/** What a host installs to translate them. `fallback` is the English above. */
+/**
+ * What a host installs to translate them. `fallback` is the English above.
+ * Return `{label}` and `{value}` untouched: the kit fills them in after the
+ * resolver returns (a vue-i18n `t()` called without them blanks them).
+ */
 export type KitLabelResolver = (key: KitLabel, fallback: string) => string;
 
 const ENGLISH: KitLabelResolver = (_key, fallback) => fallback;
@@ -101,7 +162,8 @@ export type KitLabelWithLabel =
   | "sliderMin"
   | "sliderEditMin"
   | "sliderMax"
-  | "sliderEditMax";
+  | "sliderEditMax"
+  | "removeFile";
 
 /** One of those, with the control's name filled in. */
 export function kitLabelFor(key: KitLabelWithLabel, label: string): string {

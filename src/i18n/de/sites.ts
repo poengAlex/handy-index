@@ -25,6 +25,7 @@ const sites: typeof enUS = {
   errorTitle: "Websites konnten nicht geladen werden",
   emptyBody:
     "Der Index kam ohne eine einzige Website zurück. Versuche, ihn neu zu laden.",
+  // every site in the index is behind a preference
   noMatchTitle: "Keine passenden Websites",
   noMatchBody:
     "Kein Website-Name passt zu dieser Suche. Versuche es mit weniger Buchstaben."

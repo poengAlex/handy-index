@@ -1,5 +1,10 @@
 <template>
-  <q-dialog :model-value="open" persistent>
+  <q-dialog
+    :model-value="open"
+    persistent
+    :transition-duration="closing ? 300 : 0"
+    @hide="closing = false"
+  >
     <HModal :title="$t('settings.consent.title')">
       <div class="consent-dialog">
         <!-- Above the text, not below it: this is the one screen where the
@@ -31,7 +36,7 @@
 // a guess — a good one, but a reader who gets the wrong guess here would be
 // consenting to an age statement they cannot read, and the settings dialog
 // that would let them fix it sits behind this modal.
-import { computed } from "vue";
+import { computed, nextTick, ref } from "vue";
 import { HBtn, HModal } from "@/components/handy";
 import LanguagePicker from "@/components/LanguagePicker.vue";
 import { useSettingsStore } from "@/stores/settings";
@@ -40,7 +45,21 @@ const settings = useSettingsStore();
 
 const open = computed(() => !settings.consentAnswered);
 
-function answer(accepted: boolean) {
+// It opens with the page, so the stock entrance read as the site dimming and
+// blurring itself a beat after it loaded. 0ms on the way in: the page arrives
+// already behind the overlay. Quasar's 300ms on the way out, so answering
+// still lifts the overlay off softly. The backdrop takes its duration from
+// this same prop, which is why it is not a transition-show override.
+//
+// The 300ms has to be on the elements a render BEFORE the dialog closes:
+// Vue does not re-patch an element it is removing, so a duration that
+// changes in the same render as `open` never reaches the leave. Flipping it
+// on @show is no good either — that fires before the entrance has started.
+const closing = ref(false);
+
+async function answer(accepted: boolean) {
+  closing.value = true;
+  await nextTick();
   settings.answerConsent(accepted);
 }
 </script>

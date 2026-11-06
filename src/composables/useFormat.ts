@@ -70,6 +70,8 @@ export function useFormat() {
         return t("common.ofTotal.performers", params, total);
       case "tags":
         return t("common.ofTotal.tags", params, total);
+      case "sites":
+        return t("common.ofTotal.sites", params, total);
     }
   }
 

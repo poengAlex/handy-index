@@ -19,7 +19,9 @@
 
     <q-item-section>
       <q-item-label class="h-list-row__label">
-        <span class="text-body-compact">{{ label }}</span>
+        <slot name="label">
+          <span class="text-body-compact">{{ label }}</span>
+        </slot>
         <slot name="suffix" />
       </q-item-label>
       <q-item-label v-if="caption" class="h-list-row__caption text-body-sm">{{
@@ -54,8 +56,10 @@
 // radio, the #trailing slot a toggle/value; otherwise a chevron
 // promises the forward page transition. The #below slot takes supplementary
 // content under the caption (a spec line, chips) — the row grows for it, so
-// keep it quiet. The default slot is for out-of-flow children — a
-// q-tooltip for the row's shortcut, say. The whole row is the tap target.
+// keep it quiet. The #label slot replaces the label's plain text with markup
+// of its own (HFileRow's name, cut in the middle). The default slot is for
+// out-of-flow children — a q-tooltip for the row's shortcut, say. The whole
+// row is the tap target.
 const props = withDefaults(
   defineProps<{
     label: string;
@@ -88,7 +92,7 @@ function onClick() {
 .h-list-row {
   position: relative;
   min-height: 52px;
-  padding: var(--space-sm) var(--space-md);
+  padding: var(--space-sm) var(--card-inset);
   color: var(--color-text-primary);
   // `to` renders the row as a router-link <a>, which app.scss's global
   // `a:hover { text-decoration: underline }` (0,1,1) then claims. !important
@@ -97,9 +101,27 @@ function onClick() {
   text-decoration: none !important;
 }
 
+// A trailing control too wide to sit beside the text (a segmented control on
+// a phone) wraps under it, right-aligned, instead of running over the
+// caption: the text keeps at least 8em before the row gives up its one line.
+// Toggles, chevrons and short values never get near that.
+.h-list-row {
+  flex-wrap: wrap;
+}
+
+.h-list-row > .q-item__section--main {
+  min-width: min(8em, 100%);
+}
+
+.h-list-row__trailing {
+  margin-left: auto;
+  padding-left: var(--row-trailing-gap);
+}
+
 // keep the leading icon / control tight rather than the 56px avatar gutter
 .h-list-row__leading {
   min-width: 0;
+  padding-right: var(--row-icon-gap);
   color: var(--color-text-secondary);
 }
 
@@ -107,9 +129,19 @@ function onClick() {
   color: var(--color-text-link);
 }
 
-// brand row-hover tint instead of Quasar's neutral wash (only when clickable)
-.h-list-row.q-item--clickable:hover {
-  background: var(--color-row-hover);
+// brand row-hover tint instead of Quasar's neutral wash (only when clickable),
+// laid over the row's fill rather than replacing it: a separated row is its
+// own card, and the translucent tint alone let the page show through
+// Only where a pointer really hovers: a touch screen keeps :hover on the last
+// thing touched, so the row would stay tinted after a tap, and on whatever row
+// comes to lie under that spot after a page change.
+@media (hover: hover) {
+  .h-list-row.q-item--clickable:hover {
+    background-image: linear-gradient(
+      var(--color-row-hover),
+      var(--color-row-hover)
+    );
+  }
 }
 
 .h-list-row :deep(.q-focus-helper) {
@@ -130,7 +162,7 @@ function onClick() {
 // supplementary block under the caption — quiet by default, its own content
 // decides the type scale
 .h-list-row__below {
-  margin-top: 4px;
+  margin-top: var(--space-2xs);
   color: var(--color-text-secondary);
 }
 

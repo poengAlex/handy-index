@@ -111,6 +111,9 @@ const rows = computed<ClearRow[]>(() => {
     settings.previewFrameMs !== PREVIEW_FRAME_MS.default ||
     settings.previewClipRate !== PREVIEW_CLIP_RATE.default ||
     settings.inlinePlayers ||
+    !settings.performerMedia ||
+    !settings.videoCardPreviews ||
+    !settings.performerCardPreviews ||
     settings.orientation !== "straight";
   return [
     {

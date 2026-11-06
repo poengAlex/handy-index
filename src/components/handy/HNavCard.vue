@@ -2,6 +2,7 @@
   <component
     :is="to ? 'router-link' : 'button'"
     :to="to"
+    :type="to ? undefined : 'button'"
     class="h-navcard"
     @click="emit('click')"
   >
@@ -34,9 +35,9 @@ const emit = defineEmits<{ click: [] }>();
 .h-navcard {
   display: flex;
   align-items: center;
-  gap: var(--space-sm);
+  gap: var(--row-icon-gap);
   width: 100%;
-  padding: var(--space-sm) var(--space-md);
+  padding: var(--space-sm) var(--card-inset);
   border-radius: var(--radius-lg);
   background: var(--color-bg-card);
   border: none;
@@ -44,11 +45,14 @@ const emit = defineEmits<{ click: [] }>();
   cursor: pointer;
   text-decoration: none !important;
   color: var(--color-text-primary);
-  transition: box-shadow 200ms ease;
+  transition: box-shadow 180ms ease;
   font-family: var(--font-brand);
 
-  &:hover {
-    box-shadow: var(--shadow-md);
+  // a touch screen keeps :hover on the last thing touched (see HListRow)
+  @media (hover: hover) {
+    &:hover {
+      box-shadow: var(--shadow-md);
+    }
   }
 }
 
@@ -84,8 +88,10 @@ const emit = defineEmits<{ click: [] }>();
 // Shadows don't read on dark, so the light-mode hover lift is invisible
 // there. On dark, hover lifts via a hairline outline instead (the dark-mode
 // "separation is surface/stroke, not shadow" rule).
-[data-theme="dark"] .h-navcard:hover,
-.section-dark .h-navcard:hover {
-  box-shadow: inset 0 0 0 1px var(--color-stroke-default);
+@media (hover: hover) {
+  [data-theme="dark"] .h-navcard:hover,
+  .section-dark .h-navcard:hover {
+    box-shadow: inset 0 0 0 1px var(--color-stroke-default);
+  }
 }
 </style>

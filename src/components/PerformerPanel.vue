@@ -20,29 +20,21 @@
         </h2>
         <p v-if="statsLine" class="text-body-sm performer-panel__stats">
           {{ statsLine }}
+          <!-- with no profile card to sit beside, the report button sits
+               here, so every performer page has one -->
+          <q-btn
+            v-if="!facts.length"
+            flat
+            round
+            dense
+            size="sm"
+            icon="help_outline"
+            :aria-label="$t('performers.report.helpAria')"
+            :title="$t('performers.report.helpAria')"
+            class="performer-panel__report"
+            @click="reportOpen = true"
+          />
         </p>
-        <div v-if="links.length" class="performer-panel__links">
-          <a
-            v-for="link in links"
-            :key="link.url"
-            :href="link.url"
-            target="_blank"
-            rel="noopener noreferrer nofollow"
-            :aria-label="
-              $t('performers.profile.linkAria', { site: link.label })
-            "
-            class="performer-panel__link"
-          >
-            <HChip>
-              {{ link.label }}
-              <q-icon
-                name="open_in_new"
-                size="14px"
-                class="performer-panel__link-icon"
-              />
-            </HChip>
-          </a>
-        </div>
       </div>
     </div>
 
@@ -58,6 +50,17 @@
       <div v-if="facts.length" class="performer-panel__facts">
         <div class="text-h5 performer-panel__facts-title">
           {{ $t("performers.profile.details") }}
+          <q-btn
+            flat
+            round
+            dense
+            size="sm"
+            icon="help_outline"
+            :aria-label="$t('performers.report.helpAria')"
+            :title="$t('performers.report.helpAria')"
+            class="performer-panel__report"
+            @click="reportOpen = true"
+          />
         </div>
         <dl class="performer-panel__fact-list">
           <div
@@ -85,19 +88,115 @@
         </template>
       </HTextCard>
     </div>
+
+    <!-- Two kinds of link, two cards: where they post (their socials), and
+         where to find more of their videos (their profile on each partner
+         site) — kept apart so a partner page never reads as one of their
+         accounts -->
+    <div
+      v-if="links.length || partnerLinks.length"
+      :class="[
+        'performer-panel__link-cards',
+        {
+          'performer-panel__link-cards--pair':
+            links.length && partnerLinks.length
+        }
+      ]"
+    >
+      <section v-if="links.length" class="performer-panel__link-card">
+        <h3 class="text-h5 performer-panel__card-title">
+          {{ $t("performers.profile.socials") }}
+        </h3>
+        <div class="performer-panel__links">
+          <a
+            v-for="link in links"
+            :key="link.url"
+            :href="link.url"
+            target="_blank"
+            rel="noopener noreferrer nofollow"
+            :aria-label="
+              $t('performers.profile.linkAria', { site: link.label })
+            "
+            class="performer-panel__link"
+          >
+            <HChip>
+              <SiteIcon :url="link.url" />
+              {{ link.label }}
+              <q-icon
+                name="open_in_new"
+                size="14px"
+                class="performer-panel__link-icon"
+              />
+            </HChip>
+          </a>
+        </div>
+      </section>
+
+      <section v-if="partnerLinks.length" class="performer-panel__link-card">
+        <h3 class="text-h5 performer-panel__card-title">
+          {{ $t("performers.profile.moreOf", { name: displayName }) }}
+        </h3>
+        <div class="performer-panel__links">
+          <a
+            v-for="link in partnerLinks"
+            :key="link.url"
+            :href="link.url"
+            target="_blank"
+            rel="noopener noreferrer nofollow"
+            :aria-label="
+              $t('performers.profile.partnerLinkAria', { site: link.label })
+            "
+            class="performer-panel__link"
+          >
+            <HChip>
+              <SiteIcon :url="link.url" />
+              {{ link.label }}
+              <q-icon
+                name="open_in_new"
+                size="14px"
+                class="performer-panel__link-icon"
+              />
+            </HChip>
+          </a>
+        </div>
+      </section>
+    </div>
+
+    <ProfileReportDialog
+      v-model="reportOpen"
+      :performer-id="performerId"
+      :name="displayName"
+      :facts="facts"
+    />
+
+    <!-- explicit by nature, so behind the same switch as every other
+         picture, and behind its own for whoever would rather not download a
+         reel's worth of clips by opening a profile -->
+    <PerformerMedia
+      v-if="
+        showMedia && (photos.length || reel.clips.length || reel.stills.length)
+      "
+      :name="displayName"
+      :photos="photos"
+      :reel="reel"
+    />
   </section>
 </template>
 
 <script setup lang="ts">
 // Who a performer is, above their videos: avatar, name, what the index holds
-// of theirs, their own links, a bio and the profile card. The head draws
+// of theirs, a bio and the profile card, their socials and their profiles on
+// the partner sites. The head draws
 // from the catalog and shows at once; the bio, links and card come from the
 // performer's profile, which most performers have little of — so a missing
 // profile, or a sparse one, is a shorter panel rather than an error.
-import { computed, toRef, useId, watch } from "vue";
+import { computed, ref, toRef, useId, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { HChip, HTextCard } from "@/components/handy";
 import MediaImage from "@/components/MediaImage.vue";
+import PerformerMedia from "@/components/PerformerMedia.vue";
+import ProfileReportDialog from "@/components/ProfileReportDialog.vue";
+import SiteIcon from "@/components/SiteIcon.vue";
 import { useFormat } from "@/composables/useFormat";
 import {
   usePerformerPictures,
@@ -111,13 +210,19 @@ import {
   profileCareer,
   profileHeight,
   profileLinks,
+  profilePartnerLinks,
   profilePlace,
   profileText,
   profileWeight,
   profileYesNo,
   type ProfileCareer
 } from "@/services/script-index/performer-profile";
-import { performerStats } from "@/services/script-index/queries";
+import {
+  performerPhotos,
+  performerReel
+} from "@/services/script-index/performer-media";
+import { byPerformer, performerStats } from "@/services/script-index/queries";
+import type { PerformerProfile } from "@/services/script-index/types";
 import { useCatalogStore } from "@/stores/catalog";
 import { useSettingsStore } from "@/stores/settings";
 
@@ -148,6 +253,9 @@ const stats = computed(() =>
     : undefined
 );
 
+/** the disclaimer and report dialog behind the ? */
+const reportOpen = ref(false);
+
 const displayName = computed(
   () =>
     stats.value?.name ??
@@ -157,6 +265,31 @@ const displayName = computed(
 );
 
 const { pictures, findPictures, working } = usePerformerPictures();
+
+// --- photos and reel ---
+
+const showMedia = computed(() => settings.nsfw && settings.performerMedia);
+
+// the gated pool, unlike the stats line: the stats count a person, the
+// pictures and clips are content, and a muted tag or the orientation filter
+// keeps a video's scenes out of here as it keeps the video out of the grid
+const ownVideos = computed(() =>
+  showMedia.value && catalog.status === "ready"
+    ? byPerformer(catalog.visible, props.performerId)
+    : []
+);
+
+const photos = computed(() =>
+  showMedia.value
+    ? performerPhotos(
+        [stats.value?.avatar, pictures.get(props.performerId)],
+        profile.value,
+        catalog.brokenArtwork
+      )
+    : []
+);
+
+const reel = computed(() => performerReel(ownVideos.value));
 
 // The catalog's and the profile's are the same picture wherever both exist.
 // Without a working one, one of the profile's other pictures — checked for
@@ -200,6 +333,10 @@ const statsLine = computed(() => {
 
 const links = computed(() =>
   profile.value ? profileLinks(profile.value) : []
+);
+
+const partnerLinks = computed(() =>
+  profile.value ? profilePartnerLinks(profile.value) : []
 );
 
 const bio = computed(() => (profile.value ? profileBio(profile.value) : []));
@@ -290,6 +427,8 @@ const facts = computed<{ label: string; value: string }[]>(() => {
 <style scoped lang="scss">
 .performer-panel {
   display: grid;
+  // the media rows break out full-bleed from inside this grid
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--space-md);
 }
 
@@ -314,6 +453,12 @@ const facts = computed<{ label: string; value: string }[]>(() => {
   border-radius: var(--radius-lg);
   padding: var(--space-md);
   min-width: 0;
+}
+
+.performer-panel__report {
+  margin-left: 2px;
+  color: var(--color-text-tertiary);
+  vertical-align: middle;
 }
 
 .performer-panel__facts-title {
@@ -391,11 +536,36 @@ const facts = computed<{ label: string; value: string }[]>(() => {
   color: var(--color-text-secondary);
 }
 
+.performer-panel__link-cards {
+  display: grid;
+  gap: var(--space-md);
+  align-items: start;
+
+  @media (min-width: 600px) {
+    &--pair {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    }
+  }
+}
+
+// the profile card's surface
+.performer-panel__link-card {
+  background: var(--color-bg-card);
+  border-radius: var(--radius-lg);
+  padding: var(--space-md);
+  min-width: 0;
+}
+
+.performer-panel__card-title {
+  margin: 0 0 var(--space-sm);
+  color: var(--color-text-primary);
+  overflow-wrap: anywhere;
+}
+
 .performer-panel__links {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-xs);
-  margin-top: var(--space-xs);
 }
 
 // naked link around the chip, hover ring as on the browse filter chips

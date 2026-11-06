@@ -19,7 +19,9 @@
     <div v-else class="h-section">
       <div class="h-container">
         <header class="sites-page__header">
-          <h1 class="text-h2 sites-page__title">{{ $t("sites.title") }}</h1>
+          <h1 class="text-h2 sites-page__title page-title--in-bar">{{
+            $t("sites.title")
+          }}</h1>
           <p class="text-body-sm sites-page__count">{{ countLabel }}</p>
           <GateNotice />
         </header>
@@ -59,7 +61,7 @@
           <HNavCard
             v-for="partner in filtered"
             :key="partner.partnerId"
-            icon="language"
+            :icon="siteIcon(partner)"
             :label="partner.name"
             :caption="videoCountLabel(partner)"
             :to="`/videos?partnerId=${encodeURIComponent(partner.partnerId)}`"
@@ -71,18 +73,18 @@
 </template>
 
 <script setup lang="ts">
-// The site directory: every partner in the INDEX as a nav card, count-sorted
-// by partnersOf, with a client-side name filter on top. The LIST is ungated —
-// a directory that dropped sites would read as an incomplete index — while
-// every COUNT on the page is fully gated: script access, video access, muted
-// tags and orientation all move it. Each card also breaks the site down by
-// both paywalls, which is the one figure the filters don't touch (it
-// describes the site, not your view of it).
+// The site directory: every partner site in the index, always — your
+// preferences never take a site off the list, they only narrow the counts —
+// as a nav card, count-sorted by partnersOf, with a client-side name filter
+// on top. Each card says how many of the site's videos the catalog's gates
+// leave you (GateNotice says why the rest are hidden), and breaks the site
+// down by both paywalls, which describes the site, not your view of it.
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { HEmptyState, HNavCard, HandyLoader } from "@/components/handy";
 import GateNotice from "@/components/GateNotice.vue";
 import { useFormat } from "@/composables/useFormat";
+import { faviconForHost } from "@/services/favicons";
 import {
   partnersOf,
   type PartnerSummary
@@ -136,6 +138,14 @@ const countLabel = computed(() => {
 // total stays the headline because that is what the site holds; the first
 // number is what your filters leave of it. The two paywalls are named in
 // full: they are different gates, and "500 premium" would not say which.
+/** The site's own icon — bundled, see services/favicons — through q-icon's
+ * `img:` form, so the kit card takes it as it takes a glyph; the globe for a
+ * site without one. */
+function siteIcon(partner: PartnerSummary): string {
+  const icon = faviconForHost(partner.name);
+  return icon ? `img:${icon}` : "language";
+}
+
 function videoCountLabel(partner: PartnerSummary): string {
   const total = count("videos", partner.count);
   const counts = matching.value;

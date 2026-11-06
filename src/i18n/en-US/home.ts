@@ -8,6 +8,17 @@ export default {
   // untranslated.
   oldSite: "IVDB v2 is here. Prefer the old version? It's still at {link}.",
 
+  // The ad beside that card for the next Handycast, a live show on Stripchat.
+  // Handycast and Stripchat stay untranslated. {when} arrives localized, as
+  // the date, time and time zone where the visitor is ("Sat, Nov 7, 9:30 PM
+  // GMT+1"), and {host} is the performer's name. `body` is a caption: about 70
+  // characters, so it stays on two lines on a phone.
+  handycast: {
+    next: "Handycast on Stripchat: {when}",
+    live: "Handycast is live on Stripchat now",
+    body: "{host} controls every connected Handy. Free to join."
+  },
+
   hero: {
     kicker: "Featured",
     /** alt text when the featured video has no title of its own */

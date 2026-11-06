@@ -79,6 +79,11 @@ const help: typeof enUS = {
     requests: {
       label: "请求视频",
       caption: "为任意视频申请 script，并投票决定接下来做哪一个"
+    },
+    aiScripts: {
+      label: "AI scripts",
+      caption:
+        "高度实验性：AI 为被请求的视频制作的 script，没有经过任何人工检查"
     }
   },
 

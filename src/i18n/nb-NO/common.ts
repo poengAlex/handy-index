@@ -35,7 +35,8 @@ const common: typeof enUS = {
     videos: "{shown} av {total} video | {shown} av {total} videoer",
     performers:
       "{shown} av {total} skuespiller | {shown} av {total} skuespillere",
-    tags: "{shown} av {total} tagg | {shown} av {total} tagger"
+    tags: "{shown} av {total} tagg | {shown} av {total} tagger",
+    sites: "{shown} av {total} nettsted | {shown} av {total} nettsteder"
   },
 
   count: {

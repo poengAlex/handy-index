@@ -8,6 +8,12 @@ const home: typeof enUS = {
   oldSite:
     "IVDB v2 ist da. Lieber die alte Version? Die gibt es weiterhin unter {link}.",
 
+  handycast: {
+    next: "Handycast auf Stripchat: {when}",
+    live: "Handycast jetzt live auf Stripchat",
+    body: "{host} steuert alle verbundenen Geräte von The Handy. Kostenlos teilnehmen."
+  },
+
   hero: {
     kicker: "Empfohlen",
     /** alt text when the featured video has no title of its own */

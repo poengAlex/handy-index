@@ -72,6 +72,20 @@ const requests: typeof enUS = {
     rank: "#{rank}"
   },
 
+  // The AI script on a tile, when Handy's auto-scripter has made one for
+  // the video. `note` sits under the button and says what it is: `{when}`
+  // is a relative time ("3 hours ago") of when the script was made or last
+  // replaced. `gone*` is the toast when the script was taken down since the
+  // board loaded; the button then hides.
+  ai: {
+    action: "下载 AI 自动 script",
+    note: "由 AI 生成，未经人工检查 · {when}",
+    goneTitle: "AI script 已下架",
+    goneBody: "这个 AI script 已不可用。如果生成了新的，会重新出现在这里。",
+    failedTitle: "下载失败",
+    failedBody: "AI script 服务器没有响应。请稍后再试。"
+  },
+
   // The control row above the list.
   filters: {
     searchPlaceholder: "搜索请求",

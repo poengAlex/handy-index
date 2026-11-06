@@ -2,7 +2,9 @@
   <q-page class="help-page h-section">
     <div class="h-container">
       <header class="help-page__header">
-        <h1 class="text-h2 help-page__title">{{ $t("help.title") }}</h1>
+        <h1 class="text-h2 help-page__title page-title--in-bar">{{
+          $t("help.title")
+        }}</h1>
         <p class="text-body-sm help-page__lead">{{ $t("help.lead") }}</p>
       </header>
 
@@ -97,6 +99,14 @@
             :caption="$t('help.scripts.requests.caption')"
             chevron
             to="/requests"
+          />
+          <!-- the AI scripts page's only way in: it stays out of the nav -->
+          <HListRow
+            icon="science"
+            :label="$t('help.scripts.aiScripts.label')"
+            :caption="$t('help.scripts.aiScripts.caption')"
+            chevron
+            to="/ai-scripts"
           />
         </HList>
 

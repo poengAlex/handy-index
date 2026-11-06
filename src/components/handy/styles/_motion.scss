@@ -1,0 +1,71 @@
+// Part of the kit's global CSS — loaded through kit.scss, never on its own.
+// Route transitions and reduced motion.
+
+// ------------------------------------------------------------
+// Motion  [DESIGN.md §9]
+// ------------------------------------------------------------
+
+// Directional page transitions (250ms, ease-out in / ease-in out)
+.route-forward-enter-active,
+.route-back-enter-active {
+  transition:
+    transform 250ms ease-out,
+    opacity 250ms ease-out;
+}
+
+.route-forward-leave-active,
+.route-back-leave-active {
+  transition:
+    transform 250ms ease-in,
+    opacity 250ms ease-in;
+}
+
+.route-forward-enter-from {
+  transform: translateX(24px);
+  opacity: 0;
+}
+
+.route-forward-leave-to {
+  transform: translateX(-24px);
+  opacity: 0;
+}
+
+.route-back-enter-from {
+  transform: translateX(-24px);
+  opacity: 0;
+}
+
+.route-back-leave-to {
+  transform: translateX(24px);
+  opacity: 0;
+}
+
+.route-fade-enter-active,
+.route-fade-leave-active {
+  transition: opacity 180ms ease;
+}
+
+.route-fade-enter-from,
+.route-fade-leave-to {
+  opacity: 0;
+}
+
+// Reduced motion, per-class (§5.8): decorative motion off, essential
+// indicators keep working — never a blanket duration clamp. Zeroing every
+// duration also stops spinners, loaders and progress rings, which is why the
+// spec asks for this shape; each kit component with motion carries its own
+// reduced-motion block, and this covers the route transitions on top.
+@media (prefers-reduced-motion: reduce) {
+  .route-fade-enter-active,
+  .route-fade-leave-active,
+  .route-forward-enter-active,
+  .route-forward-leave-active,
+  .route-back-enter-active,
+  .route-back-leave-active {
+    transition: none;
+  }
+
+  html {
+    scroll-behavior: auto;
+  }
+}

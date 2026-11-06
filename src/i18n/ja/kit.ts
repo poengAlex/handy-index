@@ -6,11 +6,26 @@ import type enUS from "../en-US/kit";
 // hardcode. That keeps the folder portable (drop it in any app and it still
 // reads correctly) while letting this app hand them a translation.
 //
-// Only the components this app actually renders have keys here; the rest keep
-// their English defaults until something uses them.
+// It carries the kit's whole label table, so any kit component the app may
+// use is already translated; a key the kit adds later keeps its English until
+// it is added here.
 const kit: typeof enUS = {
   close: "閉じる",
+  more: "その他",
+  copy: "コピー",
+  copyKey: "connection keyをコピー",
+  dismiss: "閉じる",
+  readFullText: "全文を読む",
   loading: "読み込み中",
+  recommended: "おすすめ",
+  expert: "上級者向け",
+
+  tipLocked: "固定中。Escキーを押すか外側をクリックすると閉じます。",
+  tipLockedTouch: "固定中。外側をタップすると閉じます。",
+
+  increase: "{label}を増やす",
+  decrease: "{label}を減らす",
+  value: "値",
 
   // HLabeledSlider builds seven internal aria labels around the slider's own
   // name ("Reset image speed"). It can't assemble them from pieces — English
@@ -22,7 +37,34 @@ const kit: typeof enUS = {
   sliderMin: "{label}の最小値",
   sliderEditMin: "{label}の最小値を編集",
   sliderMax: "{label}の最大値",
-  sliderEditMax: "{label}の最大値を編集"
+  sliderEditMax: "{label}の最大値を編集",
+
+  sliderMenuValue: "{label}：{value}",
+
+  yes: "はい",
+  no: "いいえ",
+
+  themeToLight: "ライトモードに切り替え",
+  themeToDark: "ダークモードに切り替え",
+  themeLight: "ライトモード",
+  themeDark: "ダークモード",
+
+  // 接続済み/接続中 is the usual connected/connecting pair in Japanese UI.
+  connected: "接続済み",
+  bluetooth: "Bluetooth で接続済み",
+  connecting: "接続中",
+  offline: "オフライン",
+  playhead: "再生ヘッド",
+  carouselPrevious: "前のスライドへ移動",
+  carouselNext: "次のスライドへ移動",
+  chooseFile: "ファイルを選ぶ",
+  chooseFiles: "ファイルを選ぶ",
+  chooseFolder: "フォルダーを選ぶ",
+  dropToOpen: "ドロップして開く",
+  dropZone: "ここにファイルをドロップするか、クリックして選ぶ",
+  dropZoneTouch: "タップしてファイルを選ぶ",
+  dropHere: "ここにドロップ",
+  removeFile: "{label}を取り除く"
 };
 
 export default kit;

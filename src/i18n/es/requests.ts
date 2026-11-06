@@ -78,6 +78,22 @@ const requests: typeof enUS = {
     rank: "#{rank}"
   },
 
+  // The AI script on a tile, when Handy's auto-scripter has made one for
+  // the video. `note` sits under the button and says what it is: `{when}`
+  // is a relative time ("3 hours ago") of when the script was made or last
+  // replaced. `gone*` is the toast when the script was taken down since the
+  // board loaded; the button then hides.
+  ai: {
+    action: "Descargar script automático de IA",
+    note: "Hecho por IA, sin revisión humana · {when}",
+    goneTitle: "Script de IA retirado",
+    goneBody:
+      "Este script de IA ya no está disponible. Si se genera uno nuevo, volverá a aparecer aquí.",
+    failedTitle: "Error en la descarga",
+    failedBody:
+      "El servidor de scripts de IA no ha respondido. Vuelve a intentarlo en un momento."
+  },
+
   // The control row above the list.
   filters: {
     searchPlaceholder: "Buscar solicitudes",
