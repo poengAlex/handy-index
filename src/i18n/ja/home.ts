@@ -8,6 +8,12 @@ const home: typeof enUS = {
   oldSite:
     "IVDB v2 を公開しました。旧バージョンは引き続き {link} でご利用いただけます。",
 
+  handycast: {
+    next: "Stripchat で Handycast：{when}",
+    live: "Stripchat で Handycast をライブ配信中",
+    body: "{host} が接続中のすべての Handy を操作します。参加は無料です。"
+  },
+
   hero: {
     kicker: "注目",
     /** alt text when the featured video has no title of its own */

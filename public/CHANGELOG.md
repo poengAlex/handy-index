@@ -5,6 +5,14 @@
      words. Newest release on top. Format: "## <version> — <date>", then
      "### <group>" headings and "- " lines. Keep it English-only. -->
 
+## 2.14.0 — 6 November 2026
+
+### Home
+
+- The front page now shows when the next Handycast is: a live show on
+  Stripchat where one model controls every connected Handy. It's free to join,
+  and the card links to how it works.
+
 ## 2.13.0 — 5 November 2026
 
 ### On a phone

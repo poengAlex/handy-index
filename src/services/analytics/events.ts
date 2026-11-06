@@ -130,6 +130,10 @@ export interface EventProps {
     method: "share_sheet" | "clipboard";
     outcome: "ok" | "failed";
   };
+  promo_clicked: {
+    /** which ad, by a fixed id of ours: never the performer's name */
+    promo: "handycast";
+  };
 
   // --- library ---
   favorite_toggled: { added: boolean };
@@ -231,6 +235,11 @@ export const EVENTS: { readonly [K in EventName]: EventSpec } = {
     group: "discovery",
     enabled: true,
     description: "Share or copy link, on a video or on browse results"
+  },
+  promo_clicked: {
+    group: "discovery",
+    enabled: true,
+    description: "An ad on the front page opened, such as the next Handycast"
   },
 
   favorite_toggled: {

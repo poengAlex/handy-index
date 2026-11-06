@@ -7,6 +7,12 @@ import type enUS from "../en-US/home";
 const home: typeof enUS = {
   oldSite: "IVDB v2 已上线。想用旧版？旧版仍可在 {link} 访问。",
 
+  handycast: {
+    next: "Stripchat 上的 Handycast：{when}",
+    live: "Handycast 正在 Stripchat 直播",
+    body: "{host} 控制所有已连接的 Handy。免费加入。"
+  },
+
   hero: {
     kicker: "精选",
     /** alt text when the featured video has no title of its own */
