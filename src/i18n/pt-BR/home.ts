@@ -7,12 +7,6 @@ import type enUS from "../en-US/home";
 const home: typeof enUS = {
   oldSite: "O IVDB v2 chegou. Prefere a versão antiga? Ela continua em {link}.",
 
-  handycast: {
-    next: "Handycast no Stripchat: {when}",
-    live: "Handycast ao vivo no Stripchat agora",
-    body: "{host} controla todos os Handy conectados. Participar é grátis."
-  },
-
   hero: {
     kicker: "Destaque",
     /** alt text when the featured video has no title of its own */
