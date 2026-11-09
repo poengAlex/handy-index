@@ -61,13 +61,13 @@
         </div>
       </section>
 
-      <!-- where the old site went: returning visitors land here first. Beside
-           it the ad for the next Handycast, while there is one to come. -->
+      <!-- where the old site went: returning visitors land here first -->
       <div class="h-container">
-        <div class="home-notes">
-          <SiteNote keypath="home.oldSite" href="https://old.ivdb.io/" />
-          <HandycastCard />
-        </div>
+        <SiteNote
+          class="home-old-site"
+          keypath="home.oldSite"
+          href="https://old.ivdb.io/"
+        />
       </div>
 
       <!-- Catalog size. The whole index rather than the gated view — it
@@ -168,7 +168,6 @@ import {
   hToast
 } from "@/components/handy";
 import CarouselRow from "@/components/CarouselRow.vue";
-import HandycastCard from "@/components/HandycastCard.vue";
 import MediaHero from "@/components/MediaHero.vue";
 import SiteNote from "@/components/SiteNote.vue";
 import { useFormat } from "@/composables/useFormat";
@@ -468,11 +467,7 @@ const {
   padding-bottom: var(--space-3xl);
 }
 
-// side by side where both fit; a card alone, or on a phone, takes the row
-.home-notes {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 400px), 1fr));
-  gap: var(--space-sm);
+.home-old-site {
   margin-top: var(--space-lg);
 }
 

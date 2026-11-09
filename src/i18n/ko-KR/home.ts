@@ -8,12 +8,6 @@ const home: typeof enUS = {
   oldSite:
     "IVDB v2가 나왔습니다. 이전 버전은 {link}에서 계속 이용할 수 있습니다.",
 
-  handycast: {
-    next: "Stripchat에서 Handycast: {when}",
-    live: "지금 Stripchat에서 Handycast 라이브 중",
-    body: "{host}님이 연결된 모든 Handy를 조종합니다. 무료로 참여할 수 있습니다."
-  },
-
   hero: {
     kicker: "추천",
     /** alt text when the featured video has no title of its own */

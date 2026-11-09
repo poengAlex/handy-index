@@ -4,12 +4,6 @@ const home: typeof enUS = {
   oldSite:
     "IVDB v2 er her. Vil du heller bruke den gamle versjonen? Den finnes fortsatt på {link}.",
 
-  handycast: {
-    next: "Handycast på Stripchat: {when}",
-    live: "Handycast er live på Stripchat nå",
-    body: "{host} styrer alle tilkoblede Handy-enheter. Gratis å bli med."
-  },
-
   hero: {
     kicker: "Utvalgt",
     alt: "Utvalgt video",
