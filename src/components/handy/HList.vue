@@ -64,4 +64,29 @@ withDefaults(defineProps<{ title?: string; separated?: boolean }>(), {
 .h-list--separated :deep(.h-list-row + .h-list-row)::before {
   display: none;
 }
+
+// A separated row is its own card, so it hovers like a card that goes
+// somewhere (design.md 6.5, Card and Navigation tile), the same as HNavCard
+// beside it: a lift on light, a hairline on dark, and no row tint. Grouped
+// rows keep the tint. Only where a pointer really hovers (see HListRow).
+.h-list--separated :deep(.h-list-row.q-item--clickable) {
+  transition: box-shadow 180ms ease;
+}
+
+@media (hover: hover) {
+  .h-list--separated :deep(.h-list-row.q-item--clickable:hover) {
+    background-image: none;
+    box-shadow: var(--shadow-md);
+  }
+}
+</style>
+
+<style lang="scss">
+// Shadows don't read on dark: there the hover is a hairline, as on HNavCard.
+@media (hover: hover) {
+  [data-theme="dark"] .h-list--separated .h-list-row.q-item--clickable:hover,
+  .section-dark .h-list--separated .h-list-row.q-item--clickable:hover {
+    box-shadow: inset 0 0 0 1px var(--color-stroke-default);
+  }
+}
 </style>

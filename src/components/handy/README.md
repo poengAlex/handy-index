@@ -1281,7 +1281,14 @@ spacing, never by lines.
 | `closable` | `boolean` | `false` | Round × top-right (`v-close-popup`, and emits `close`)                                                      |
 | `sheet`    | `boolean` | `false` | The bottom-sheet form: top corners rounded, a centred drag handle. Use it in `<q-dialog position="bottom">` |
 
-Slots: default (the body) and `#actions`. Event: `close`.
+Slots: default (the body), `#actions`, and `#icon`: a symbol on the title's line, before the title, hidden from screen readers (shows only with a `title`). Event: `close`.
+
+```vue
+<HModal title="Play anyway?" closable>
+  <template #icon><q-icon name="warning" color="warning" /></template>
+  …
+</HModal>
+```
 
 - **Tall content scrolls inside the body, not the card.** The card is capped
   at `100dvh − 64px`, so the title and the actions stay pinned and the

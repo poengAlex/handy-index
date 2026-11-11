@@ -11,7 +11,16 @@
       :aria-label="kitLabel('close')"
       @click="emit('close')"
     />
-    <h3 v-if="title" :id="titleId" class="text-h4">{{ title }}</h3>
+    <h3
+      v-if="title"
+      :id="titleId"
+      :class="['text-h4', { 'h-modal__title--icon': $slots.icon }]"
+    >
+      <span v-if="$slots.icon" class="h-modal__title-icon" aria-hidden="true">
+        <slot name="icon" />
+      </span>
+      {{ title }}
+    </h3>
     <div class="h-modal__body text-body"><slot /></div>
     <div v-if="$slots.actions" class="h-modal__actions">
       <slot name="actions" />
@@ -40,6 +49,11 @@
 // carries a centred drag handle. Quasar runs it edge to edge on a phone and
 // caps it at the same 560px above that. The handle is a cue, not a control:
 // the dialog closes the usual ways.
+//
+// `#icon` puts a symbol on the title's line, before the title (a warning, say:
+// `<template #icon><q-icon name="warning" color="warning" /></template>`).
+// It is decoration: hidden from screen readers, so the title alone names the
+// dialog. It shows only with a `title`.
 import { onBeforeUnmount, onMounted, ref, useId } from "vue";
 import { kitLabel } from "./labels";
 
@@ -121,6 +135,19 @@ onBeforeUnmount(() => {
   border-radius: var(--radius-full);
   background: var(--color-stroke-default);
   margin-bottom: var(--space-sm);
+}
+
+.h-modal__title--icon {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.h-modal__title-icon {
+  display: inline-flex;
+  flex: none;
+  // a q-icon at its default size matches the h4 line
+  font-size: 1.2em;
 }
 
 .h-modal__close {

@@ -15,6 +15,26 @@ Format, which the CLI reads (`tools/kit/lib/changelog.mjs`):
 - Any number of `Consumer action:` lines, each an instruction an app's AI can
   carry out on its own. An entry without one is information only.
 
+## unreleased — HModal takes an icon on the title's line
+
+`HModal` has a new `#icon` slot. What goes in it sits on the title's line,
+before the title, hidden from screen readers so the title alone names the
+dialog. It shows only when the modal has a `title`. Without the slot nothing
+changes.
+
+## unreleased — the carousel leaves room for a card's hover lift
+
+`HPeekCarousel` clipped the bottom 4px of a `--shadow-md` hover lift: the row
+left 8px under its cards, and the shadow reaches 12px. The row now leaves 12px
+there, so it is 4px taller. Nothing else moves.
+
+## unreleased — separated rows hover like cards
+
+`HList separated` rows that take a tap or a route now hover like the
+navigation tile next to them: a `--shadow-md` lift on light and a hairline on
+dark, in place of the row-hover tint. Grouped rows keep the tint. Toggle rows
+in a separated list follow the same rule.
+
 ## unreleased — phones get their own rules
 
 Below 600px a page built of cards has its own side spacing, through new tokens

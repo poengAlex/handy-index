@@ -302,9 +302,11 @@ const config = computed(() => {
   right: var(--space-sm);
 }
 
+// the library's viewport clips, so the room for a card's hover lift is this
+// padding: --shadow-md reaches 12px below a card and 4px above it
 .h-peek__carousel :deep(.carousel__slide) {
   align-items: stretch;
-  padding: var(--space-xs) 0;
+  padding: var(--space-xs) 0 12px;
 }
 
 // End position = start position. vue3-carousel "removes whitespace" in
