@@ -19,6 +19,9 @@ const kit: typeof enUS = {
   loading: "加载中",
   recommended: "推荐",
   expert: "高级",
+  // HModeBadge's tooltip. "Pro" stays untranslated (design.md 10.2).
+  proModeTip: "Pro 模式功能。你能看到它，是因为在设置中开启了 Pro 模式。",
+  debugModeTip: "开发者模式工具，仅供团队使用。其他人看不到。",
 
   tipLocked: "已固定。按 Esc 或点击外部区域关闭。",
   tipLockedTouch: "已固定。轻触外部区域关闭。",

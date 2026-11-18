@@ -7,6 +7,9 @@
     class="h-toggle-row"
     @click="emit('update:modelValue', !modelValue)"
   >
+    <template v-if="$slots.leading" #leading>
+      <slot name="leading" />
+    </template>
     <template #trailing>
       <q-toggle
         :model-value="modelValue"

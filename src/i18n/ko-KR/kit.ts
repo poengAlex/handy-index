@@ -19,6 +19,10 @@ const kit: typeof enUS = {
   loading: "불러오는 중",
   recommended: "추천",
   expert: "전문가용",
+  // HModeBadge's tooltip. "Pro" stays untranslated (design.md 10.2).
+  proModeTip: "Pro 모드 기능이에요. 설정에서 Pro 모드가 켜져 있어서 보여요.",
+  debugModeTip:
+    "개발자 모드 도구로, 팀 전용이에요. 다른 사람에게는 보이지 않아요.",
 
   tipLocked: "고정됨. Esc 키를 누르거나 바깥쪽을 클릭하면 닫혀요.",
   tipLockedTouch: "고정됨. 바깥쪽을 탭하면 닫혀요.",

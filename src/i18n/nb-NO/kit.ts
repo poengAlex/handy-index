@@ -10,6 +10,11 @@ const kit: typeof enUS = {
   loading: "Laster",
   recommended: "Anbefalt",
   expert: "Avansert",
+  // HModeBadge's tooltip. "Pro" stays untranslated (design.md 10.2).
+  proModeTip:
+    "En funksjon i Pro-modus. Du ser den fordi Pro-modus er slått på i Innstillinger.",
+  debugModeTip:
+    "Et verktøy i utviklermodus, bare for teamet. Det er skjult for alle andre.",
 
   // "Festet", not "Låst": the tip is held open, nothing is locked away.
   tipLocked: "Festet. Trykk Esc eller klikk utenfor for å lukke.",

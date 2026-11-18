@@ -101,6 +101,7 @@ export type {
 // Feedback & status
 export { default as HFeedbackCard } from "./HFeedbackCard.vue";
 export { default as HStatusBadge } from "./HStatusBadge.vue";
+export { default as HModeBadge } from "./HModeBadge.vue";
 export { default as HEmptyState } from "./HEmptyState.vue";
 export { default as HSuccessMoment } from "./HSuccessMoment.vue";
 export { default as HSuccessMark } from "./HSuccessMark.vue";

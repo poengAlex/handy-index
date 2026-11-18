@@ -23,6 +23,13 @@ export default {
   recommended: "Recommended",
   // HSectionCard's marker on a control a casual user should leave alone
   expert: "Expert",
+  // HModeBadge's tooltip and accessible name: what the mark means and where
+  // the switch is. The badge's own words, Pro and Debug, are mode names and
+  // are never translated (design.md 10.2).
+  proModeTip:
+    "A Pro mode feature. You see it because Pro mode is on in Settings.",
+  debugModeTip:
+    "A developer mode tool, for the team only. It's hidden from everyone else.",
 
   // The footer a help tip prints only while it is locked open — the sheet
   // then outlives the cursor, so the line names the ways out: the Esc key or
