@@ -19,6 +19,11 @@ const kit: typeof enUS = {
   loading: "Загрузка",
   recommended: "Рекомендуется",
   expert: "Для опытных",
+  // HModeBadge's tooltip. "Pro" stays untranslated (design.md 10.2).
+  proModeTip:
+    "Функция режима Pro. Ты видишь её, потому что режим Pro включён в настройках.",
+  debugModeTip:
+    "Инструмент режима разработчика, только для команды. Остальным он не виден.",
 
   // "Закреплено", not "Заблокировано": the tip is held open, not locked.
   tipLocked: "Закреплено. Чтобы закрыть, нажми Esc или щёлкни вне подсказки.",

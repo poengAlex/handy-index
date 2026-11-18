@@ -29,7 +29,7 @@ component once, `/showcase/*` shows each family in depth, and `/design` shows
    Phone chrome: HPageBar (the page header, slots `lead`, `suffix`, `actions`) · HActionDock (main actions fixed to the bottom on a phone, slots default and `more`, prop `inline`)
 7. [Lists & rows](#7-lists--rows): HList · HListRow · HRadioRow · HToggleRow
 8. [Data display & visualization](#8-data-display--visualization): HTabularNum · HCircleProgress · HGraph · HPlayhead
-9. [Feedback & status](#9-feedback--status): HFeedbackCard · HStatusBadge · HEmptyState · HSuccessMark · HSuccessMoment · HInlineDots · HandyLoader · toasts
+9. [Feedback & status](#9-feedback--status): HFeedbackCard · HStatusBadge · HModeBadge · HEmptyState · HSuccessMark · HSuccessMoment · HInlineDots · HandyLoader · toasts
 10. [Navigation & chrome](#10-navigation--chrome): HDrawerItem · HThemeToggle
 11. [Brand](#11-brand): HLogo · HConnectedDot · HConnectionKey · HChip · HIconTile · HFeaturePoint
 12. [Content](#12-content): HPeekCarousel
@@ -322,6 +322,7 @@ graphics are `aria-hidden`.
 | [HPlayhead](#hplayhead)                           | Data       | Slider-handle playhead for strips that stand for time                        | —                           | `/showcase/graphs`           |
 | [HFeedbackCard](#hfeedbackcard)                   | Feedback   | Inline alert / banner                                                        | `HBtn`                      | `/showcase/feedback`         |
 | [HStatusBadge](#hstatusbadge)                     | Feedback   | Tinted semantic pill                                                         | —                           | `/showcase/data`             |
+| [HModeBadge](#hmodebadge)                         | Feedback   | Marks what is only there because Pro or developer mode is on                 | —                           | `/showcase/pro-mode`         |
 | [HEmptyState](#hemptystate)                       | Feedback   | "Nothing here yet" block with an action                                      | `HBtn`                      | `/showcase/feedback`         |
 | [HSuccessMark](#hsuccessmark)                     | Feedback   | The one completion animation                                                 | SVG                         | `/showcase/feedback`         |
 | [HSuccessMoment](#hsuccessmoment)                 | Feedback   | Success screen: mark + title + sub-line                                      | `HSuccessMark`              | `/showcase/feedback`         |
@@ -1442,7 +1443,17 @@ no checkboxes).
 | `tooltip`                          | `string`  | `""`     | A one-line explanation on hover, for a single-line row                                             |
 | `help` / `helpDetail` / `helpNote` | `string`  | `""`     | Renders an `HHelpTip` beside the label                                                             |
 
-Event: `update:modelValue`.
+Event: `update:modelValue`. Slot: `#leading`, in place of the icon. The Pro
+mode switch uses it to show the Pro icon in the badge's purple (design.md
+7.5):
+
+```vue
+<HToggleRow v-model="proMode" label="Pro mode" caption="…">
+  <template #leading>
+    <q-icon name="workspace_premium" size="24px" class="text-pro-token" />
+  </template>
+</HToggleRow>
+```
 
 ### HFileRow
 
@@ -1554,11 +1565,12 @@ forward only**. A decrease and the first paint land instantly through
 `HGraph` renders one or more point series on a canvas, in either of two modes:
 
 - **Playback** (funscripts) — pass `current-time` and `view-span`; the window
-  centers on the playhead, drag scrubs, the **wheel** zooms the span (emits
-  `zoom`).
+  centers on the playhead, drag scrubs, the **wheel** or a **pinch** zooms
+  the span (emits `zoom`).
 - **Static** (any 2D curve) — pass neither; the graph shows the full data
   extent (or `x-domain`), and the **wheel** zooms **x** around the cursor
-  (emits `zoom-range` — hand it back as `x-domain`). One chord per intent:
+  (emits `zoom-range` — hand it back as `x-domain`), as does a **pinch**,
+  about the fingers (see [Pinch zoom](#pinch-zoom)). One chord per intent:
   **Shift+wheel** zooms **both** axes, **Alt+wheel** y alone, and the
   **wheel over the y gutter** y alone (the y ones emit `zoom-y-range` — hand
   it back as `y-domain`). Zooming out converges on home: the data extent
@@ -1583,8 +1595,8 @@ only reports a zoom, it never applies one — so each gesture arms exactly
 when the page listens for the event it produces (`@zoom` for the wheel in
 playback mode, `@zoom-range`, `@zoom-y-range`, `@zoom-reset`) and `zoomable`
 isn't off. Over any other graph a wheel stays what it is everywhere else on
-the page: scroll. A macOS trackpad pinch arrives as ctrlKey wheel events, so
-it zooms through the same path. A funscript page simply doesn't listen for
+the page: scroll. A pinch arms where the plain wheel does (see
+[Pinch zoom](#pinch-zoom)). A funscript page simply doesn't listen for
 `zoom-y-range` — its y axis is a fixed 0–100 position — and the Alt chord
 stays inert there.
 
@@ -1648,17 +1660,17 @@ a pinned window.
 
 #### Events
 
-| Event                                                          | Payload                                           | When                                                     |
-| -------------------------------------------------------------- | ------------------------------------------------- | -------------------------------------------------------- |
-| `seek`                                                         | `timeMs`                                          | Drag or click scrub in playback mode                     |
-| `zoom`                                                         | `spanMs`                                          | Wheel in playback mode                                   |
-| `zoom-range`                                                   | `from, to`                                        | x marquee, static-mode wheel, or panning a pinned window |
-| `zoom-y-range`                                                 | `from, to` (always ascending)                     | y marquee, y wheel, y-gutter drag                        |
-| `zoom-y-fit`                                                   | —                                                 | A clean click on the y gutter                            |
-| `zoom-reset`                                                   | —                                                 | Double-click (not while editing)                         |
-| `select-point`                                                 | `SelectedPointRef \| null`                        | Click near a point, or on empty space                    |
-| `hover`                                                        | `SelectedPointRef \| null`                        | Crosshair target changed                                 |
-| `point-drag` / `point-drag-end` / `point-add` / `point-delete` | see [Editing](#editing--drawing-a-script-by-hand) | Editing mode                                             |
+| Event                                                          | Payload                                           | When                                                   |
+| -------------------------------------------------------------- | ------------------------------------------------- | ------------------------------------------------------ |
+| `seek`                                                         | `timeMs`                                          | Drag or click scrub in playback mode                   |
+| `zoom`                                                         | `spanMs`                                          | Wheel or pinch in playback mode                        |
+| `zoom-range`                                                   | `from, to`                                        | x marquee, static-mode wheel or pinch, or a pinned pan |
+| `zoom-y-range`                                                 | `from, to` (always ascending)                     | y marquee, y wheel, y-gutter drag                      |
+| `zoom-y-fit`                                                   | —                                                 | A clean click on the y gutter                          |
+| `zoom-reset`                                                   | —                                                 | Double-click (not while editing)                       |
+| `select-point`                                                 | `SelectedPointRef \| null`                        | Click near a point, or on empty space                  |
+| `hover`                                                        | `SelectedPointRef \| null`                        | Crosshair target changed                               |
+| `point-drag` / `point-drag-end` / `point-add` / `point-delete` | see [Editing](#editing--drawing-a-script-by-hand) | Editing mode                                           |
 
 Exposed: `snapshot()` (see below). The hover readout chip (dot, series label,
 x and y) is built in and flips sides so it never covers its own point.
@@ -1738,6 +1750,34 @@ instead), `zoomable` must be on, and the page must listen for `zoom-range`.
 A drag that pans does not also emit a click, so a pan never clears a
 selection. Clamp the range you receive — the component reports the gesture,
 not a legal window.
+
+#### Pinch zoom
+
+A pinch zooms x about the fingers' midpoint and reports it exactly as the
+wheel does: `zoom` with the new span in playback mode, `zoom-range` in static
+mode. It arms where the plain wheel does, so a page that handles wheel zoom
+gets the pinch with no extra code. Three kinds arrive:
+
+- **Two fingers on a touch screen.** The value under the midpoint stays under
+  it, so sliding both fingers also moves the window (static mode). The second
+  finger takes over from whatever the first had started: a scrub, a pan or a
+  marquee stops. Lifting one finger ends the pinch, and the other stays inert
+  until it lifts too, or the pinch starts again when a finger goes back down.
+  Off while `editable`: a finger there belongs to the points, and a second
+  one landing mid-drag must not turn an edit into a zoom.
+- **A trackpad pinch in Chrome and Firefox**, which arrives as Ctrl+wheel
+  events. Those deltas get a faster rate than a wheel's, so the window
+  follows the fingers: Chrome sends `deltaY = -100 · ln(scale)`, and a pinch
+  that doubles the fingers' spread halves the window.
+- **A trackpad pinch in Safari**, which sends WebKit `gesturestart` /
+  `gesturechange` / `gestureend` instead. HGraph follows their `scale` and
+  refuses them, so Safari doesn't zoom the page.
+
+The maths, `pinchWindow` in `graph-pinch.ts`, measures every move from where
+the pinch began rather than from the last frame, so a page that applies the
+window a frame late, or clamps it, doesn't make the pinch drift. Zooming out
+stops at the data extent, zooming in at a ten-thousandth of it, and a window
+that fits inside the data stays inside it.
 
 #### Editing — drawing a script by hand
 
@@ -1821,7 +1861,8 @@ still does), and a click on empty canvas is an add rather than a deselect — a
 host that needs `select-point(null)` should clear the selection itself. And
 `touch-action: none` means a finger on an editable plot edits instead of
 scrolling the page: give an editable stage a bounded height and keep scrollable
-page around it.
+page around it. Two fingers don't pinch there either; a trackpad pinch and the
+wheel still zoom.
 
 The pure point maths — `snapTo`, `clampDragX`, `clampToDomain`, `insertionAt`,
 `indexAtOrBefore`, `indexOfX` — lives in `graph-edit.ts` and is unit-tested
@@ -2050,6 +2091,36 @@ warning yellow on a yellow tint would fail). The tints are derived with
 The default slot overrides `label`. The icon is 14px and the text is 12px/500.
 Inside a `.section-dark` or `.section-light` island the badge takes that
 island's text tiers, so it keeps its contrast there too.
+
+### HModeBadge
+
+Marks something that is only there because a mode is on (design.md 7.5), so
+a person can tell what would go away if the switch went off. `mode="pro"` is
+purple with the `workspace_premium` icon; `mode="debug"` is the warning text
+tier with `bug_report`. The full size is the icon and the word in a pill, for
+where there is room: a section heading on a wide screen, the settings section
+with the switch. `compact` is the coloured icon alone, for a phone nearly
+always and for a row, a readout or a menu item at any width. Both sizes carry
+a tooltip that says what the mark means and where the switch is.
+
+```vue
+<span class="text-h5">Script <HModeBadge /></span>
+<HListRow label="Sync offset">
+  <template #suffix><HModeBadge compact /></template>
+</HListRow>
+<HModeBadge mode="debug" compact />
+```
+
+| Prop      | Type               | Default | Notes                                                               |
+| --------- | ------------------ | ------- | ------------------------------------------------------------------- |
+| `mode`    | `"pro" \| "debug"` | `"pro"` |                                                                     |
+| `compact` | `boolean`          | `false` | The icon alone (18px), no pill                                      |
+| `tooltip` | `string`           | `""`    | Replaces the kit's sentence, e.g. when the switch isn't in Settings |
+
+The words Pro and Debug are mode names and stay English in every language
+(design.md 10.2); the tooltip is a kit label (`proModeTip`, `debugModeTip`).
+`.text-pro-token` and `.text-debug-token` colour anything else in a mode's
+colour, such as the Pro mode switch's own icon.
 
 ### HEmptyState
 
@@ -2775,6 +2846,7 @@ Nothing here keeps a file or a handle.
 | -------------------- | -------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
 | `graph-types.ts`     | `GraphPoint`, `GraphSeries`, `GraphRegion`, `GraphMarker`, `SelectedPointRef`, `PointEdit`, `GraphTheme` | The contract between `HGraph` and its host. No imports                                               |
 | `graph-edit.ts`      | `indexAtOrBefore`, `indexOfX`, `snapTo`, `clampToDomain`, `clampDragX`, `insertionAt`                    | Pure point maths (tested). Use it in your own keyboard and edit handlers                             |
+| `graph-pinch.ts`     | `pinchWindow(start, home, startFrac, frac, scale)`                                                       | The x window a pinch asks for, measured from where it began (tested)                                 |
 | `graph-decimate.ts`  | `decimateMinMax(points, from, to, widthPx)`                                                              | Min/max per pixel column, which preserves stroke peaks (tested)                                      |
 | `graph-theme.ts`     | `resolveGraphTheme(host, override)`, `watchGraphTheme(cb)`                                               | Reads the tokens off the host element for the canvas, and follows theme flips                        |
 | `graph-funscript.ts` | `parseFunscript`, `funscriptToPoints`, `pointsToFunscript`, `serializeFunscript`                         | The funscript wire format. `funscriptToPoints` sorts and de-duplicates x (last wins). **Not tested** |
@@ -2832,6 +2904,8 @@ differently.
 | `loading`                              | Loading                                      | HandyLoader                                            |
 | `recommended`                          | Recommended                                  | HRadioRow                                              |
 | `expert`                               | Expert                                       | HSectionCard                                           |
+| `proModeTip`                           | A Pro mode feature. You see it…              | HModeBadge (tooltip, name)                             |
+| `debugModeTip`                         | A developer mode tool, for…                  | HModeBadge (tooltip, name)                             |
 | `tipLocked`                            | Locked. Press Esc or click outside to close. | HHelpTip                                               |
 | `tipLockedTouch`                       | Locked. Tap outside to close.                | HHelpTip                                               |
 | `increase`                             | Increase {label}                             | HNumberStepper                                         |
@@ -2881,6 +2955,7 @@ changelog slicing, peer ranges, the hook guard, and an end-to-end
 | Covered                                                                                                       | Specs                                                                                                    |
 | ------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
 | `graph-edit.ts`, `graph-decimate.ts`                                                                          | `graph-edit.spec.ts` (31), `graph-decimate.spec.ts` (3)                                                  |
+| `graph-pinch.ts`                                                                                              | `graph-pinch.spec.ts` (7)                                                                                |
 | `slider-format.ts`                                                                                            | `slider-format.spec.ts` (15)                                                                             |
 | `files.ts`: kinds, sizes, lengths, the middle cut, a drop's files, drag counting, the guard, no folder picker | `files.spec.ts` (21)                                                                                     |
 | `graph-theme.ts`: which fallback colours apply (island, `data-theme`, OS) and the OS watch                    | `graph-theme.spec.ts` (7)                                                                                |

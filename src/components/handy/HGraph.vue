@@ -30,22 +30,25 @@
 // The one Handy graph: uPlot (via the uplot-vue wrapper) rendering one or more
 // point series, either over a playhead-centered time window (funscripts — pass
 // current-time and view-span) or over a static extent (any 2D curve — pass
-// neither). The chart is also an input device: drag scrubs, the wheel (or a
-// trackpad pinch) zooms X about the cursor, Shift+wheel both axes, Alt+wheel
-// y alone (as does the wheel over the y gutter) — middle-drag (or shift-drag)
-// marks an x range to zoom,
+// neither). The chart is also an input device: drag scrubs, the wheel zooms X
+// about the cursor, Shift+wheel both axes, Alt+wheel y alone (as does the
+// wheel over the y gutter). A pinch zooms X about the fingers' midpoint and
+// follows them: two fingers on a touch screen, or a trackpad pinch (Ctrl+wheel
+// in Chrome and Firefox, WebKit gesture events in Safari). Middle-drag (or
+// shift-drag) marks an x range to zoom,
 // Alt-drag (or Ctrl-drag, where the browser allows it) marks a y range,
 // double-click asks for the home view, the y-axis gutter is a control strip
 // of its own (drag pans a zoomed y window, the wheel zooms y alone, a click
-// asks for a y fit), and on a PINNED window a plain drag pans it sideways
-// into, click selects the nearest point, hover reads values out. Turn on
+// asks for a y fit), and on a PINNED window a plain drag pans it sideways.
+// Click selects the nearest point, hover reads values out. Turn on
 // `editable` and it becomes a shape editor too — drag a point to move it,
 // click empty space to add one, Alt+click to remove one.
 //
-// The wheel is only claimed when the page is wired to apply the zoom it
-// produces (`zoom` in playback mode, `zoom-range` in static mode). The chart
-// is wide and lives in a scrolling grid, so over any graph that can't zoom,
-// the wheel stays what it is everywhere else on the page — scroll.
+// The wheel and the pinch are only claimed when the page is wired to apply
+// the zoom they produce (`zoom` in playback mode, `zoom-range` in static
+// mode). The chart is wide and lives in a scrolling grid, so over any graph
+// that can't zoom, the wheel stays what it is everywhere else on the page —
+// scroll.
 //
 // Series colours come from the design.md 6.7 chart ramp — hero Brand Blue,
 // then Dark Charcoal → Slate Gray → Divider Gray (white-opacity ladder on
@@ -88,6 +91,7 @@ import {
   indexAtOrBefore,
   snapTo
 } from "./graph-edit";
+import { pinchWindow, type XWindow } from "./graph-pinch";
 import { resolveGraphTheme, watchGraphTheme } from "./graph-theme";
 import type {
   GraphMarker,
@@ -145,9 +149,13 @@ const props = withDefaults(
 
     /** Drag and empty-space click scrub the playhead (playback mode only). */
     seekable?: boolean;
-    /** The wheel — and a trackpad pinch — zooms: the window span in playback
-     * mode (emits `zoom`); in static mode the X window about the cursor
-     * (emits `zoom-range`). y is never zoomed by a PLAIN wheel — ask for it
+    /** The wheel zooms: the window span in playback mode (emits `zoom`); in
+     * static mode the X window about the cursor (emits `zoom-range`). A pinch
+     * does the same about the fingers' midpoint and follows them, sliding
+     * the window when they slide: a trackpad pinch, or two fingers on a
+     * touch screen (not while `editable`, where a finger belongs to the
+     * points). It arms where the plain wheel does. y is never zoomed by a
+     * PLAIN wheel or a pinch — ask for it
      * with Shift+wheel (both axes), Alt+wheel (y alone), or the wheel over
      * the y gutter (y alone); all emit `zoom-y-range`. Middle-drag (or
      * shift-drag) marks an x range that
@@ -934,6 +942,36 @@ let pointDrag: { index: number; moved: boolean } | null = null;
  * overwrite the first one's drag, nor consume its release. */
 let activePointerId: number | null = null;
 
+/** Where a pinch began: every move is measured from here (see pinchWindow). */
+interface PinchStart {
+  /** The midpoint's fraction across the plot. */
+  frac: number;
+  /** The x window (static mode). */
+  win: XWindow;
+  /** The span (playback mode). */
+  span: number;
+}
+
+/** Touch points down on the plot, by pointer id. A pinch reads both. */
+const touches = new Map<number, { x: number; y: number }>();
+/**
+ * The two-finger pinch. It outlives a lifted finger: the one still down stays
+ * inert until it lifts too, so ending a pinch one finger at a time never
+ * turns the other into a scrub or a pan. Put the finger back down and the
+ * pinch starts again from there.
+ */
+let pinch:
+  | (PinchStart & {
+      ids: [number, number];
+      /** The fingers' distance when it began, in px. */
+      dist: number;
+      /** False once either finger has lifted. */
+      live: boolean;
+    })
+  | null = null;
+/** Safari's trackpad pinch, while it lasts (see onGestureStart). */
+let gesture: PinchStart | null = null;
+
 /**
  * x units per CSS pixel, read from the scale uPlot has actually APPLIED rather
  * than from the window we intend next: posToVal and valToPos read that same
@@ -1333,6 +1371,8 @@ function releaseGestures(): void {
   marquee.value = null;
   activePointerId = null;
   latchedWindow = null;
+  pinch = null;
+  gesture = null;
 }
 
 /** A gesture ended without a pointerup — cancelled, or the capture was taken
@@ -1368,13 +1408,27 @@ function wheelPixels(e: WheelEvent): number {
   return d;
 }
 
+/** How far a wheel pixel zooms: e^(px · rate). */
+const WHEEL_RATE = 0.003;
+/**
+ * The rate for a Ctrl+wheel, which is how Chrome and Firefox deliver a
+ * trackpad pinch. Chrome sends deltaY = -100 · ln(scale): a pinch that
+ * doubles the fingers' spread sums to -69 px (measured with CDP's
+ * synthesizePinchGesture, 2026-11-17). At the wheel's rate that zooms the
+ * graph less than a third as far as the fingers went; at 1/100 it follows
+ * them exactly. A real Ctrl+mouse-wheel notch (about 100 px) lands at 2.7x,
+ * inside the clamp.
+ */
+const PINCH_RATE = 0.01;
+
 /** The zoom factor a wheel event asks for. Tracks the delta's MAGNITUDE
  * rather than stepping a fixed amount per event: a pinch fires a stream of
  * small deltas, and at a flat 1.25x each it bottoms out the zoom before the
  * fingers have finished moving. The exponential also composes — two
  * half-sized events zoom exactly as far as one whole one. */
 function wheelFactor(e: WheelEvent): number {
-  return Math.min(3, Math.max(1 / 3, Math.exp(wheelPixels(e) * 0.003)));
+  const rate = e.ctrlKey ? PINCH_RATE : WHEEL_RATE;
+  return Math.min(3, Math.max(1 / 3, Math.exp(wheelPixels(e) * rate)));
 }
 
 /**
@@ -1502,8 +1556,10 @@ function onWheel(u: uPlot, e: WheelEvent): void {
   if (!axes.x && !axes.y) return;
   e.preventDefault();
   // a pointer gesture owns the window (it latches mid-scrub); zooming under
-  // one would move the readout without moving the canvas, then snap on release
-  if (activePointerId !== null) return;
+  // one would move the readout without moving the canvas, then snap on
+  // release. A pinch owns it too, and a Ctrl+wheel during Safari's own
+  // gesture would zoom the same fingers twice.
+  if (activePointerId !== null || pinch || gesture) return;
   const factor = wheelFactor(e);
   if (playback.value) {
     const next = Math.min(
@@ -1547,8 +1603,160 @@ function wheelZoomY(u: uPlot, e: WheelEvent, factor: number): void {
 function onGutterWheel(u: uPlot, e: WheelEvent): void {
   if (!marqueeArmed("y")) return;
   e.preventDefault();
-  if (activePointerId !== null) return;
+  if (activePointerId !== null || pinch || gesture) return;
   wheelZoomY(u, e, wheelFactor(e));
+}
+
+// ------------------------------------------------------------------- pinch
+
+/** Whether a pinch zooms: where the plain wheel's x zoom arms, because it
+ * reports the same event. */
+function pinchArmed(): boolean {
+  if (!props.zoomable) return false;
+  return hasListener(playback.value ? "onZoom" : "onZoomRange");
+}
+
+/** A two-finger touch pinch also stays off while editing: a finger there
+ * belongs to the points, and a second one landing mid-drag must not turn the
+ * edit into a zoom. A trackpad pinch moves no pointer, so it zooms an
+ * editable graph just as the wheel does. */
+function touchPinchArmed(): boolean {
+  return !props.editable && pinchArmed();
+}
+
+/** A client x as a fraction across the plot, clamped to it. */
+function plotFrac(u: uPlot, clientX: number): number {
+  const rect = u.over.getBoundingClientRect();
+  return Math.min(
+    1,
+    Math.max(0, (clientX - rect.left) / Math.max(1, rect.width))
+  );
+}
+
+function pinchStart(u: uPlot, clientX: number): PinchStart {
+  return {
+    frac: plotFrac(u, clientX),
+    win: viewWindow(),
+    span: props.viewSpan ?? 0
+  };
+}
+
+/** Zoom to `scale` times the starting span, about the midpoint now at
+ * `clientX`. Reported the way the wheel reports it: the span in playback
+ * mode, the window in static mode. */
+function pinchTo(
+  u: uPlot,
+  start: PinchStart,
+  scale: number,
+  clientX: number
+): void {
+  if (playback.value) {
+    const next = Math.min(
+      props.maxSpan,
+      Math.max(props.minSpan, start.span * scale)
+    );
+    if (Number.isFinite(next) && next !== props.viewSpan) emit("zoom", next);
+    return;
+  }
+  const next = pinchWindow(
+    start.win,
+    dataExtent(),
+    start.frac,
+    plotFrac(u, clientX),
+    scale
+  );
+  const now = viewWindow();
+  if (next.from !== now.from || next.to !== now.to)
+    emit("zoom-range", next.from, next.to);
+}
+
+/** Two fingers' distance and midpoint, while both are down. */
+function spread(
+  ids: readonly [number, number]
+): { dist: number; midX: number } | null {
+  const a = touches.get(ids[0]);
+  const b = touches.get(ids[1]);
+  if (!a || !b) return null;
+  return {
+    // the straight-line distance, not the horizontal one: fingers placed one
+    // above the other would otherwise start a pinch at zero width
+    dist: Math.max(1, Math.hypot(a.x - b.x, a.y - b.y)),
+    midX: (a.x + b.x) / 2
+  };
+}
+
+/** The second finger landed. Whatever the first one started (a scrub, a pan,
+ * a marquee) is dropped, and the pinch takes over from the window as it
+ * stands. */
+function beginPinch(u: uPlot): void {
+  const ids = [...touches.keys()] as [number, number];
+  const now = spread(ids);
+  if (!now) return;
+  releaseGestures();
+  setHover(null);
+  scheduleOverlay();
+  pinch = { ...pinchStart(u, now.midX), ids, dist: now.dist, live: true };
+}
+
+function movePinch(u: uPlot): void {
+  const p = pinch;
+  const now = p?.live ? spread(p.ids) : null;
+  if (!p || !now) return;
+  pinchTo(u, p, p.dist / now.dist, now.midX);
+}
+
+/** A finger joins `touches`. The primary pointer is the first finger of a
+ * fresh contact, so anything still listed then is a finger whose release
+ * never arrived, and a stale entry would turn the next single touch into a
+ * pinch. */
+function trackTouch(e: PointerEvent): void {
+  if (e.pointerType !== "touch") return;
+  if (e.isPrimary) {
+    touches.clear();
+    pinch = null;
+  }
+  touches.set(e.pointerId, { x: e.clientX, y: e.clientY });
+}
+
+/** A finger lifted or was cancelled. True while a pinch owns the fingers:
+ * the event is the pinch's, and the one-finger handlers must leave it be. */
+function releaseTouch(e: PointerEvent): boolean {
+  touches.delete(e.pointerId);
+  if (!pinch) return false;
+  if (pinch.ids.includes(e.pointerId)) pinch.live = false;
+  if (touches.size === 0) pinch = null;
+  return true;
+}
+
+/**
+ * Safari's trackpad pinch on macOS. WebKit sends it as gesturestart /
+ * gesturechange / gestureend, with the scale since the gesture began, and no
+ * Ctrl+wheel at all. Refused with preventDefault wherever a pinch is armed,
+ * or Safari zooms the whole page instead. iOS fires the same events for a
+ * touch pinch, alongside the pointers the touch pinch already follows, so
+ * while any finger is on the plot they are only refused, never applied.
+ * Read from WebKit's documentation, not run in Safari.
+ */
+type WebKitGestureEvent = UIEvent & { scale: number; clientX: number };
+
+function onGestureStart(u: uPlot, e: WebKitGestureEvent): void {
+  if (!pinchArmed()) return;
+  e.preventDefault();
+  if (touches.size > 0 || activePointerId !== null || pinch) return;
+  setHover(null);
+  gesture = pinchStart(u, e.clientX);
+}
+
+function onGestureChange(u: uPlot, e: WebKitGestureEvent): void {
+  if (!pinchArmed()) return;
+  e.preventDefault();
+  if (!gesture || !(e.scale > 0)) return;
+  pinchTo(u, gesture, 1 / e.scale, e.clientX);
+}
+
+function onGestureEnd(e: WebKitGestureEvent): void {
+  if (gesture || pinchArmed()) e.preventDefault();
+  gesture = null;
 }
 
 function attachInteractions(u: uPlot) {
@@ -1576,6 +1784,23 @@ function attachInteractions(u: uPlot) {
   });
 
   over.addEventListener("pointerdown", e => {
+    trackTouch(e);
+    // A second finger pinches, where a pinch is armed: it takes over from
+    // whatever the first finger was doing on the plot. Not from a y-gutter
+    // pan, whose finger never reached this element. A third finger is
+    // ignored, and a finger put back down mid-pinch starts it again.
+    if (pinch) {
+      if (!pinch.live && touches.size === 2 && touchPinchArmed()) beginPinch(u);
+      return;
+    }
+    if (
+      touches.size === 2 &&
+      touchPinchArmed() &&
+      (activePointerId === null || touches.has(activePointerId))
+    ) {
+      beginPinch(u);
+      return;
+    }
     // One gesture at a time, one pointer at a time. Without this a middle
     // press during a point drag latches a marquee on top of it (freezing the
     // drag and then teleporting the point when the window moves), and a second
@@ -1644,6 +1869,12 @@ function attachInteractions(u: uPlot) {
   });
 
   over.addEventListener("pointermove", e => {
+    if (touches.has(e.pointerId))
+      touches.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (pinch) {
+      movePinch(u);
+      return;
+    }
     if (activePointerId !== null && e.pointerId !== activePointerId) return;
     // a latch that outlived its release (the browser ate the pointerup) would
     // otherwise scrub or drag on a bare hover
@@ -1712,6 +1943,8 @@ function attachInteractions(u: uPlot) {
   over.addEventListener("pointerleave", () => setHover(null));
 
   over.addEventListener("pointerup", e => {
+    // a pinch's release is never a click: no seek, no select, no add
+    if (releaseTouch(e)) return;
     if (activePointerId !== null && e.pointerId !== activePointerId) return;
     activePointerId = null;
     latchedWindow = null;
@@ -1757,8 +1990,31 @@ function attachInteractions(u: uPlot) {
     else if (props.selectable) emit("select-point", null);
   });
 
-  over.addEventListener("pointercancel", abortGesture);
-  over.addEventListener("lostpointercapture", abortGesture);
+  over.addEventListener("pointercancel", e => {
+    if (releaseTouch(e)) return;
+    abortGesture();
+  });
+  // a pinching finger loses its capture as it lifts; the pinch ends on its
+  // own terms (releaseTouch), so that is no reason to abort anything
+  over.addEventListener("lostpointercapture", () => {
+    if (!pinch) abortGesture();
+  });
+
+  over.addEventListener(
+    "gesturestart",
+    e => onGestureStart(u, e as WebKitGestureEvent),
+    { passive: false }
+  );
+  over.addEventListener(
+    "gesturechange",
+    e => onGestureChange(u, e as WebKitGestureEvent),
+    { passive: false }
+  );
+  over.addEventListener(
+    "gestureend",
+    e => onGestureEnd(e as WebKitGestureEvent),
+    { passive: false }
+  );
 
   // The y-axis gutter pans a zoomed y window. These sit on the chart ROOT:
   // the overlay div covers only the plot, and the axis labels are drawn
@@ -1818,6 +2074,8 @@ function onDelete() {
   // has to COMMIT — the host has already applied the drag, and abortGesture is
   // its only remaining chance at the undo checkpoint.
   abortGesture();
+  // the fingers on the old canvas will never report their release here
+  touches.clear();
   hovered.value = null;
 }
 

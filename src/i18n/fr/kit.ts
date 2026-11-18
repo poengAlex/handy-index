@@ -19,6 +19,11 @@ const kit: typeof enUS = {
   loading: "Chargement",
   recommended: "Recommandé",
   expert: "Pour experts",
+  // HModeBadge's tooltip. "Pro" stays untranslated (design.md 10.2).
+  proModeTip:
+    "Une fonction du mode Pro. Tu la vois parce que le mode Pro est activé dans les Paramètres.",
+  debugModeTip:
+    "Un outil du mode développeur, réservé à l'équipe. Il est masqué pour tous les autres.",
 
   // "Épinglé", not "Verrouillé": the tip is held open, not locked away.
   // "Échap" is what a French keyboard prints on the Esc key.

@@ -25,6 +25,15 @@ export const KIT_LABELS = {
   /** Marks a control a casual user should leave alone (HSectionCard). */
   expert: "Expert",
   /**
+   * The mode badge's tooltip and accessible name (HModeBadge). Says what the
+   * mark means and where the switch is. The badge's words, Pro and Debug,
+   * are mode names and are not labels: they are never translated.
+   */
+  proModeTip:
+    "A Pro mode feature. You see it because Pro mode is on in Settings.",
+  debugModeTip:
+    "A developer mode tool, for the team only. It's hidden from everyone else.",
+  /**
    * The foot of a help tip, printed only while it is LOCKED. Nothing
    * advertises that a click would lock one: a hint for a state the reader is
    * not in yet costs a line on the surface with the fewest to spare. Locked

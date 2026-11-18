@@ -15,6 +15,38 @@ Format, which the CLI reads (`tools/kit/lib/changelog.mjs`):
 - Any number of `Consumer action:` lines, each an instruction an app's AI can
   carry out on its own. An entry without one is information only.
 
+## unreleased — HModeBadge marks what Pro mode or developer mode shows
+
+New `HModeBadge` (design.md 6.6, 7.5) marks something that is only there
+because a mode is on. `mode="pro"` (default) is purple with the
+`workspace_premium` icon, `mode="debug"` warning yellow with `bug_report`. The
+full size is the icon and the word in a pill, for where there is room;
+`compact` is the coloured icon alone, for phones and for rows, readouts and
+menu items. Both carry a tooltip from two new kit labels, `proModeTip` and
+`debugModeTip`; `tooltip` overrides it. `HToggleRow` now forwards a
+`#leading` slot, and two colour utilities, `.text-pro-token` and
+`.text-debug-token`, colour a mode's icon elsewhere: the Pro mode switch shows
+the Pro icon in purple.
+
+Consumer action: if the app has its own Pro mode or developer mode marker (onboardingv4's `ProTag` and `DebugChip`), replace it with `HModeBadge` (`mode="pro"` or `mode="debug"`): the full size beside section headings where there is room, `compact` on phones and in rows, readouts and menu items, following design.md 7.5.
+Consumer action: give the Pro mode switch the Pro icon in purple: `HToggleRow`'s `#leading` slot with `<q-icon name="workspace_premium" size="24px" class="text-pro-token" />`.
+Consumer action: if the app translates kit labels, add `proModeTip` and `debugModeTip`.
+
+## unreleased — HGraph zooms with a pinch on touch and in Safari
+
+`HGraph` now zooms x when two fingers pinch on a touch screen. The zoom is
+about the fingers' midpoint and follows them, so sliding both fingers moves a
+static window too. It reports what the wheel reports (`zoom` in playback mode,
+`zoom-range` in static mode) and arms where the wheel does. When the second
+finger lands, a scrub, pan or marquee the first finger started stops. Two
+fingers don't pinch while `editable`. A trackpad pinch in Chrome and Firefox
+(Ctrl+wheel) now follows the fingers too: before, a whole pinch zoomed about a
+third as far as the fingers moved. Safari's trackpad pinch (WebKit gesture
+events) zooms the graph instead of the page. The maths is `pinchWindow` in the
+new `graph-pinch.ts`.
+
+Consumer action: where a page tells people they can't pinch-zoom an `HGraph` on a phone, or offers zoom buttons only because of that, update the text: on a graph that handles `zoom-range` (or `zoom` in playback mode) two fingers now zoom.
+
 ## unreleased — HModal takes an icon on the title's line
 
 `HModal` has a new `#icon` slot. What goes in it sits on the title's line,

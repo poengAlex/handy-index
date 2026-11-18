@@ -121,6 +121,16 @@
   color: var(--color-text-tertiary);
 }
 
+// A mode's own colour (design.md 7.5): the Pro mode switch's icon wears the
+// Pro badge's purple, so the switch shows what to look for once it is on.
+.text-pro-token {
+  color: var(--color-text-connected);
+}
+
+.text-debug-token {
+  color: var(--color-text-warning);
+}
+
 // Realtime / frequently-updating numbers use tabular figures so digit
 // widths don't reflow as values change — Figtree's default numerals are
 // proportional. Apply to any live readout (speed, battery, temp, timers).
