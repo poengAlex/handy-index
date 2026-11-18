@@ -226,6 +226,12 @@ is off. `uPlot is not a constructor` means the alias is missing.
   where the dimension is free.
 - Colours come from tokens only. Labels on saturated fills use
   `--color-text-on-fill` / `--color-text-on-warning`.
+- **A pill has even padding on both sides** (design.md 5.7, 6.1), with or
+  without a leading icon; don't trim the icon's side for its blank margin (the
+  owner chose even padding over ink-centred on 2026-11-18). Read a token's
+  value, not its name: `--space-sm` is 16px, not 8px, which is how
+  `HModeBadge` first shipped with 6px before its icon and 16px after its word.
+  Measure both ends in the browser before calling a pill done.
 
 **Theming.** Every component paints from CSS custom properties, so dark mode,
 `.section-dark` islands on a light page and `.section-light` islands on a dark

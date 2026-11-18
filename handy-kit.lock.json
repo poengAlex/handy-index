@@ -6,11 +6,11 @@
     "repo": "poengAlex/handy-playground",
     "dir": "projects/brand-ux",
     "ref": "main",
-    "commit": "e51d987f8fc4f184d0c25c007223b7967798eb26"
+    "commit": "0c79323e251461abd4a7413f1fcc0821e8845b74"
   },
-  "pulledAt": "2026-11-18T07:52:59.764Z",
+  "pulledAt": "2026-11-18T08:20:22.936Z",
   "files": {
-    "CHANGELOG.md": "976a4107c0c0c4dec32fa1953baab5271058b22ed95628cc2a55f1f12635a237",
+    "CHANGELOG.md": "eafd5f6896874ea702ca2b29eb448b54701358610fc89885615e2f66c395babb",
     "HActionDock.vue": "3c11ff4d97eafaec0c157a0e832ca6bc7c66d49f8cb2349783baa8eaeeaf1a17",
     "HBtn.vue": "66cb18b7084a85fc39c3a5df0d09a8df9657e08704991fb07b7db04eb64bd002",
     "HBtnGroup.vue": "74f45f3dede4b3dc411094d9b77ee214ca9995729d25ce27342ae50a70fd5f80",
@@ -40,7 +40,7 @@
     "HLogo.vue": "8dcbc38ce16f3348017f251452267ec40819889646c2f4039c01987d171ce97e",
     "HMediaTile.vue": "b2485f74c0a564bb54936dfa6fca8fc9c9eb2edbed76faabb24dda7493e7731b",
     "HModal.vue": "7e0e88e968f8e6e69b7a38c50edd24ca5018a3ac9e8abc369b11a5a3757733aa",
-    "HModeBadge.vue": "ccf1d1f36c642fc65a291f4c7b227fca19eb7ed18e67e100ba6fcb3bf41980f1",
+    "HModeBadge.vue": "5f1c4c59dce02f9e26a357a865394f0fb0025b66447ff1eab8b59983cf8a2ceb",
     "HNavCard.vue": "fd9d61b97f96336826681f4320a6aa9688c31e41324c1d40efa6745bad3178dc",
     "HNumberStepper.vue": "b067092e35d841b55fe593d433329b56a5c16840c42e2c6a5e2dceb4093a0609",
     "HPageBar.vue": "612768d7650f68fcbb92357bfd37f80afab551301a156a9737916419562bc112",
@@ -59,7 +59,7 @@
     "HThemeToggle.vue": "520962dcabfc452d01103bf7d3da9377110368dfd3f8c0e5ace7d53024572ba5",
     "HToggleRow.vue": "37dfeff8b972db851f13b62e79a895609f48a788d8eb2c98b6ec104d60f53816",
     "HandyLoader.vue": "6e011fa5cdad3ec97da566a1ba37cfa9be424387f134dcfe866c6e57a0a5d502",
-    "README.md": "1bdddd47d89081ff706b7e205ea04786d57bf552436ff2d6f145cc54bab99784",
+    "README.md": "362ec59b65a9cae9eac0a9aa54f08509ae0943587a8cbd73c5cba930efcca6b5",
     "background/GrainOverlay.vue": "d098295d535d110a1175dd4617b8165b6eb0032e9ace18502c52e6026c79e4a5",
     "background/HandyBackground.vue": "8b5cd920ae0def73928aa5ad7aa72a0845498e18d6a8ea2632f4788877a87150",
     "background/LensField.vue": "7e3736cc97b605f78054d3bd647874da202be4d7baaa169bcb43f2905de77592",

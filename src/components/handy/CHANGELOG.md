@@ -15,6 +15,14 @@ Format, which the CLI reads (`tools/kit/lib/changelog.mjs`):
 - Any number of `Consumer action:` lines, each an instruction an app's AI can
   carry out on its own. An entry without one is information only.
 
+## unreleased — HModeBadge's pill is centred
+
+The full-size `HModeBadge` had 6px of padding before the icon and 16px after
+the word (`--space-sm` is 16px, not 8px), so the pill looked pushed to the
+left. It now has 8px on both sides (design.md 5.7: even padding, the owner's
+pick), and the word's trailing letter-spacing is taken back. The pill is 6px
+narrower.
+
 ## unreleased — HModeBadge marks what Pro mode or developer mode shows
 
 New `HModeBadge` (design.md 6.6, 7.5) marks something that is only there

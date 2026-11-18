@@ -66,7 +66,10 @@ const tip = computed(
   gap: var(--space-2xs);
   flex: 0 0 auto;
   height: 20px;
-  padding: 0 var(--space-sm) 0 6px;
+  // 8px on both sides, the owner's pick of 2026-11-18 (/test/mode-badge-centre,
+  // option B): even padding on the box, with no allowance for the icon's
+  // blank margin (design.md 5.7)
+  padding: 0 var(--space-xs);
   border-radius: var(--radius-full);
   // the mode's colour as a tint, not a fill: the badge annotates someone
   // else's heading or row, so it must never out-shout that row's own content
@@ -79,6 +82,12 @@ const tip = computed(
   text-transform: uppercase;
   white-space: nowrap;
   vertical-align: middle;
+}
+
+// letter-spacing adds its 0.4px after the last letter too; take it back so
+// the word's ink, not its box, sits the same distance from the edge
+.h-mode-badge__word {
+  margin-right: -0.4px;
 }
 
 .h-mode-badge--pro {
